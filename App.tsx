@@ -5,19 +5,20 @@ import { expo } from './app.json';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
+import { NavigationContainer } from "@react-navigation/native";
 
 
 export default function App() {
-  return (
+  return ( <NavigationContainer>
     <PaperProvider>
-    <View style={styles.container}>
-      <Text>{expo.name}, die beste App fürs Lernen!</Text>
-      <StatusBar style="auto" />
-      <Button icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
-    Press me
-  </Button>
-    </View>
-    </PaperProvider>
+      <View style={styles.container}>
+        <Text>{expo.name}, die beste App fürs Lernen!</Text>
+        <StatusBar style="auto" />
+        <Button icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
+          Press me
+        </Button>
+      </View>
+    </PaperProvider></NavigationContainer>
   );
 }
 
