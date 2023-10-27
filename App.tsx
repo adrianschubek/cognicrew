@@ -8,6 +8,8 @@ import { Button } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { supabase } from "./supabase";
+import  HomeScreen from "./screens/Home";
+import  ManageFriends from "./screens/ManageFriends";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,49 +30,8 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-function HomeScreen( {navigation}) {
-  return (
-    <PaperProvider>
-    <View style={styles.container}>
-      <Text>{expo.name}, die beste App fürs Lernen!</Text>
-      <StatusBar style="auto" />
-      <Button
-        icon="account-multiple"
-        mode="contained"
-        onPress={() => {
-          navigation.navigate("ManageFriends")
-          console.log("Home Screen Pressed")
-          }
-        }
-      >
-        Manage your friends!
-      </Button>
-    </View>
-  </PaperProvider>
-  );
-}
-function ManageFriends({navigation}) {
-  return (
-    <PaperProvider>
-    <View style={styles.container}>
-      <Text>Leider hast du keine Freunde. Denk mal darüber nach!</Text>
-      <StatusBar style="auto" />
-      <Button
-        icon="home"
-        mode="contained"
-        onPress={() => {
-          navigation.goBack();
-          console.log("ManageFriends Screen Pressed")
-          }
-        }
-      >
-        Go back to the homescreen
-      </Button>
-    </View>
-  </PaperProvider>
-  );
-}
+/*
+//we need global sytles 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -78,4 +39,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});
+});*/
