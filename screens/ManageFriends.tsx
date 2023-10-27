@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
@@ -26,9 +25,7 @@ export default function ManageFriends({navigation}) {
     </PaperProvider>
     );
   }
-
-
-
+  
 const styles = StyleSheet.create({
     container: {
       flex: 1,

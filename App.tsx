@@ -31,7 +31,7 @@ export default function App() {
   );
 }
 /*
-//we need global sytles 
+//we need global styles 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -39,4 +39,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-});*/
+}); */
