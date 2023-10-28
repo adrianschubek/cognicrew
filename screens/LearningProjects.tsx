@@ -6,7 +6,6 @@ import { Button } from "react-native-paper";
 
 export default function LearningProjects({navigation}) {
     return (
-      <PaperProvider>
       <View style={styles.container}>
         <Text>Wer nichts im Kopf hat kann auch nichts lernen!</Text>
         <StatusBar style="auto" />
@@ -22,7 +21,6 @@ export default function LearningProjects({navigation}) {
           Go back to the homescreen
         </Button>
       </View>
-    </PaperProvider>
     );
   }
   

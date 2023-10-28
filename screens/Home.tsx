@@ -16,6 +16,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="auto" />
       <View style={styles.upperContainerChild}>
         <Image
           source={require("../assets/icon.png")}
