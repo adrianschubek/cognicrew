@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 
 export default function HomeScreen({ navigation }) {
-  const [joinCode, setJoinCode] = useState("");
+  const [joinCode, setJoinCode] = useState("#");
 
   return (
     <View style={styles.container}>
@@ -56,6 +56,10 @@ export default function HomeScreen({ navigation }) {
           editable
           value={joinCode}
           onChangeText={(text) => {
+            // if text is empty, set it to #
+            if (text === "") {
+              text = "#";
+            }
             // only allow numbers
             text = text.replace(/[^0-9]/g, "");
             // if the first character is not a #, add it. only for visual purposes
