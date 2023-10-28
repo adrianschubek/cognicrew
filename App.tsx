@@ -30,10 +30,11 @@ function MainTab() {
 }
 
 function SettingsTab() {
-  return;
-  <SafeAreaView>
-    <Text>Settixxxngs</Text>
-  </SafeAreaView>;
+  return (
+    <SafeAreaView>
+      <Text>Settixxxngs</Text>
+    </SafeAreaView>
+  );
 }
 
 export default function App() {
