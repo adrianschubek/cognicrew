@@ -52,7 +52,7 @@ export default function HomeScreen({ navigation }) {
           Join room via ID:
         </Text>
         <TextInput
-          placeholder="#0420"
+          placeholder="#"
           editable
           value={joinCode}
           onChangeText={(text) => {
