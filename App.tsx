@@ -10,6 +10,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { supabase } from "./supabase";
 import  HomeScreen from "./screens/Home";
 import  ManageFriends from "./screens/ManageFriends";
+import  LearningProjects from "./screens/LearningProjects";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="ManageFriends" component={ManageFriends} />
+        <Stack.Screen name="LearningProjects" component={LearningProjects} />
       </Stack.Navigator>
     </NavigationContainer>
   );

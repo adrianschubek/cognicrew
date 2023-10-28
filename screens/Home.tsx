@@ -1,5 +1,5 @@
 import * as React from "react";
-import { PaperProvider } from "react-native-paper";
+import { PaperProvider, TextInput } from "react-native-paper";
 import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
@@ -10,7 +10,28 @@ export default function HomeScreen( {navigation}) {
       <PaperProvider>
       <View style={styles.container}>
         <Text>{expo.name}, die beste App fürs Lernen!</Text>
-        <StatusBar style="auto" />
+       {/*<StatusBar style="auto" /> not sure what this does*/}
+       <Text>Join room via ID:</Text>
+       <TextInput
+       placeholder="#0420"
+       />
+       <Button
+       style={styles.buttonStyle}
+       mode="contained"
+       >
+        Ask to join
+       </Button>
+        <Button
+          icon="account-multiple"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate("LearningProjects")
+            console.log("Home Screen Pressed")
+            }
+          }
+        >
+          Learning Projects
+        </Button>
         <Button
           icon="account-multiple"
           mode="contained"
@@ -33,5 +54,9 @@ export default function HomeScreen( {navigation}) {
       backgroundColor: "#fff",
       alignItems: "center",
       justifyContent: "center",
+    },
+    buttonStyle:{
+      paddingBottom: 10,
+      paddingTop: 10,
     },
   });
