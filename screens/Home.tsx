@@ -9,8 +9,11 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import { useState } from "react";
 
 export default function HomeScreen({ navigation }) {
+  const [joinCode, setJoinCode] = useState("");
+
   return (
     <View style={styles.container}>
       <View style={styles.upperContainerChild}>
@@ -51,13 +54,25 @@ export default function HomeScreen({ navigation }) {
         <TextInput
           placeholder="#0420"
           editable
-          maxLength={4}
+          value={joinCode}
+          onChangeText={(text) => {
+            // only allow numbers
+            text = text.replace(/[^0-9]/g, "");
+            // if the first character is not a #, add it. only for visual purposes
+            if (!text.includes("#")) {
+              text = "#" + text;
+            }
+            setJoinCode(text);
+          }}
+          maxLength={5}
           inputMode="numeric"
           style={{ width: responsiveWidth(30), height: responsiveHeight(5) }}
         />
-        <Button 
-        labelStyle={{textAlignVertical:"center"}}
-        style={[styles.buttonStyle,{width: responsiveWidth(40),}]} mode="contained">
+        <Button
+          labelStyle={{ textAlignVertical: "center" }}
+          style={[styles.buttonStyle, { width: responsiveWidth(40) }]}
+          mode="contained"
+        >
           Ask to join
         </Button>
       </View>
@@ -130,14 +145,12 @@ const styles = StyleSheet.create({
   buttonStyle: {
     marginBottom: responsiveHeight(2.5),
     marginTop: responsiveHeight(1.5),
-    
   },
   bigLabelStyle: {
     fontSize: responsiveFontSize(2.5),
     paddingBottom: responsiveHeight(0.5),
     paddingTop: responsiveHeight(0.5),
-    height:responsiveHeight(5),
-    textAlignVertical:"center"
-    
+    height: responsiveHeight(5),
+    textAlignVertical: "center",
   },
 });
