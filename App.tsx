@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AppRegistry } from "react-native";
-import { PaperProvider } from "react-native-paper";
+import { MD3DarkTheme, PaperProvider } from "react-native-paper";
 import { expo } from "./app.json";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
@@ -11,9 +11,26 @@ import { supabase } from "./supabase";
 import HomeScreen from "./screens/Home";
 import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
-import BottomNav from "./components/BottomNav";
+
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+
+const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
+
+function MainTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="ManageFriends" component={ManageFriends} />
+      <Stack.Screen name="LearningProjects" component={LearningProjects} />
+    </Stack.Navigator>
+  );
+}
+
+function SettingsTab() {
+  return <Text>Settings</Text>;
+}
 
 export default function App() {
   supabase.auth
@@ -26,13 +43,20 @@ export default function App() {
     });
 
   return (
-    <PaperProvider>
+    <PaperProvider >
       <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="ManageFriends" component={ManageFriends} />
-          <Stack.Screen name="LearningProjects" component={LearningProjects} />
-        </Stack.Navigator>
+        <Tab.Navigator initialRouteName="Home" shifting={true}>
+          <Tab.Screen
+            name="Home"
+            options={{ tabBarIcon: "home" }}
+            component={MainTab}
+          />
+          <Tab.Screen
+            name="Settings"
+            options={{ tabBarIcon: "cogs" }}
+            component={SettingsTab}
+          />
+        </Tab.Navigator>
       </NavigationContainer>
     </PaperProvider>
   );
