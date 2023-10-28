@@ -52,7 +52,6 @@ export default function HomeScreen({ navigation }) {
           Join room via ID:
         </Text>
         <TextInput
-          placeholder="#"
           editable
           value={joinCode}
           onChangeText={(text) => {
@@ -76,6 +75,14 @@ export default function HomeScreen({ navigation }) {
           labelStyle={{ textAlignVertical: "center" }}
           style={[styles.buttonStyle, { width: responsiveWidth(40) }]}
           mode="contained"
+          onPress={() => {
+            // if text code not equal to 5, show error
+            if (joinCode.length !== 5) {
+              alert("Please enter a valid code");
+            } else {
+              navigation.navigate("Room", { code: joinCode });
+            }
+          }}
         >
           Ask to join
         </Button>

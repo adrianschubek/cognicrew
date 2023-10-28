@@ -13,6 +13,7 @@ import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -29,7 +30,10 @@ function MainTab() {
 }
 
 function SettingsTab() {
-  return <Text>Settings</Text>;
+  return;
+  <SafeAreaView>
+    <Text>Settixxxngs</Text>
+  </SafeAreaView>;
 }
 
 export default function App() {
@@ -43,7 +47,7 @@ export default function App() {
     });
 
   return (
-    <PaperProvider >
+    <PaperProvider>
       <NavigationContainer>
         <Tab.Navigator initialRouteName="Home" shifting={true}>
           <Tab.Screen
