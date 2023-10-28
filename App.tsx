@@ -8,9 +8,9 @@ import { Button } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { supabase } from "./supabase";
-import  HomeScreen from "./screens/Home";
-import  ManageFriends from "./screens/ManageFriends";
-import  LearningProjects from "./screens/LearningProjects";
+import HomeScreen from "./screens/Home";
+import ManageFriends from "./screens/ManageFriends";
+import LearningProjects from "./screens/LearningProjects";
 
 const Stack = createNativeStackNavigator();
 
