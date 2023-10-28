@@ -53,6 +53,7 @@ export default function HomeScreen({ navigation }) {
         </Text>
         <TextInput
           editable
+          placeholder="#"
           value={joinCode}
           onChangeText={(text) => {
             // if text is empty, set it to #
