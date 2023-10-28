@@ -6,30 +6,35 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { supabase } from "./supabase";
 import HomeScreen from "./screens/Home";
 import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
+import BottomNav from "./components/BottomNav";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  supabase.auth.signInWithPassword({
-    email: "foo@bar.de",
-    password: "123456",
-  }).catch((error) => {
-    console.log(error);
-  });
+  supabase.auth
+    .signInWithPassword({
+      email: "foo@bar.de",
+      password: "123456",
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="ManageFriends" component={ManageFriends} />
-        <Stack.Screen name="LearningProjects" component={LearningProjects} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="ManageFriends" component={ManageFriends} />
+          <Stack.Screen name="LearningProjects" component={LearningProjects} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 /*
