@@ -17,6 +17,7 @@ import PasswordChange from "../components/settings/PasswordChange";
 import EmailChange from "../components/settings/EmailChange";
 import AccountInfo from "../components/settings/AccountInfo";
 import DangerZone from "../components/settings/DangerZone";
+import Visual from "../components/settings/Visual";
 
 export default function AccountSettings({ nav }) {
   const theme = useTheme();
@@ -31,6 +32,9 @@ export default function AccountSettings({ nav }) {
     >
       <StatusBar style="auto" />
       <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
+      <Visual
+        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+      />
       <MusicSettings
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />

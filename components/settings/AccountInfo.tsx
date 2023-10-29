@@ -37,9 +37,9 @@ const LogoutButton = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <IconButton
+      <Button
         mode="outlined"
-        iconColor={theme.colors.error}
+        textColor={theme.colors.error}
         style={{
           borderColor: theme.colors.error,
           marginRight: 10,
@@ -49,7 +49,7 @@ const LogoutButton = () => {
         onPress={() => {
           setShowConfirm(true);
         }}
-      />
+      >Logout</Button>
     </>
   );
 };
