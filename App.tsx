@@ -1,6 +1,6 @@
 import * as React from "react";
 import { AppRegistry } from "react-native";
-import { MD3DarkTheme, PaperProvider } from "react-native-paper";
+import { DefaultTheme, MD3DarkTheme, PaperProvider } from "react-native-paper";
 import { expo } from "./app.json";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
@@ -14,6 +14,7 @@ import LearningProjects from "./screens/LearningProjects";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Settings from "./screens/AccountSettings";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -31,9 +32,9 @@ function MainTab() {
 
 function SettingsTab() {
   return (
-    <SafeAreaView>
-      <Text>Settixxxngs</Text>
-    </SafeAreaView>
+    <Stack.Navigator>
+      <Stack.Screen name="Settings" component={Settings} />
+    </Stack.Navigator>
   );
 }
 
@@ -48,7 +49,13 @@ export default function App() {
     });
 
   return (
-    <PaperProvider>
+    <PaperProvider
+      theme={{
+        ...DefaultTheme,
+        roundness: 2,
+        ...require("./theme-light.json"),
+      }}
+    >
       <NavigationContainer>
         <Tab.Navigator initialRouteName="Home" shifting={true}>
           <Tab.Screen
