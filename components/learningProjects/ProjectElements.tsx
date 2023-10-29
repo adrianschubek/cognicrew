@@ -15,7 +15,7 @@ const dummyProjects = [
   { name: "Spanish" },
 ];
 
-export default function ProjectElement() {
+export default function ProjectElements() {
   return dummyProjects.map((project) => (
     <View style={styles.projectElement}>
       <Avatar.Text
@@ -35,6 +35,7 @@ export default function ProjectElement() {
 const styles = StyleSheet.create({
   projectElement: {
     width: responsiveWidth(27),
+    paddingBottom: responsiveFontSize(1),
     //backgroundColor: "red",
   },
   textStyle: {
