@@ -1,19 +1,14 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, ScrollView } from "react-native";
-import { Button, Card } from "react-native-paper";
+import { Button } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import ProjectElement from "../components/learningProjects/ProjectElement";
+import ProjectGroup from "../components/learningProjects/ProjectGroup";
 
-const dummyProjectGroups = [
-  { name: "WiSe21/22" },
-  { name: "SoSe22" },
-  { name: "WiSe22/23" },
-];
 export default function LearningProjects({ navigation }) {
   return (
     <View style={styles.container}>
@@ -35,14 +30,7 @@ export default function LearningProjects({ navigation }) {
       </View>
       <View  style={styles.bottomContainerChild}>
       <ScrollView>
-        {dummyProjectGroups.map((projectGroup) => (
-          <Card style={styles.projectGroup}>
-            <Card.Title title={projectGroup.name} />
-            <Card.Content style={styles.projectGroupContent}>
-              <ProjectElement/>
-            </Card.Content>
-          </Card>
-        ))}
+        <ProjectGroup/>
       </ScrollView>
       </View>
     </View>
@@ -66,14 +54,6 @@ const styles = StyleSheet.create({
     //backgroundColor: "blue",
     width: responsiveWidth(100),
     padding: responsiveFontSize(1),
-  },
-  projectGroup: {
-    marginBottom: responsiveFontSize(1),
-  },
-  projectGroupContent: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "flex-start",
   },
   textStyle: {
     fontSize: responsiveFontSize(2),
