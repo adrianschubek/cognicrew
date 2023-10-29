@@ -31,6 +31,7 @@ export default function PasswordChange(props) {
           error={pw1.length > 0 && !validator}
         ></TextInput>
         <TextInput
+          style={{ marginTop: 10 }}
           theme={{ roundness: 10 }}
           value={pw2}
           onChangeText={(t) => setPw2(t)}
