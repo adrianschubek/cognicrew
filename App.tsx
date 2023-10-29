@@ -49,7 +49,7 @@ export default function App() {
     });
 
   return (
-    <PaperProvider
+    <PaperProvider    
       theme={{
         ...DefaultTheme,
         roundness: 2,
