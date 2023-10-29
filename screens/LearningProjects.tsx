@@ -7,7 +7,7 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import ProjectGroup from "../components/learningProjects/ProjectGroup";
+import ProjectGroup from "../components/learningProjects/ProjectGroups";
 
 export default function LearningProjects({ navigation }) {
   return (
@@ -23,8 +23,8 @@ export default function LearningProjects({ navigation }) {
           }}
           contentStyle={{ flexDirection: "row-reverse" }}
         >
-          <Text style={{ fontSize: responsiveFontSize(2) }}>
-            create new project
+          <Text style={{ fontSize: responsiveFontSize(2.2) }}>
+            create new category
           </Text>
         </Button>
       </View>
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   bottomContainerChild: {
-    flex: 7,
+    flex: 8,
     //backgroundColor: "blue",
     width: responsiveWidth(100),
     padding: responsiveFontSize(1),
