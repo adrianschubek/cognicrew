@@ -17,6 +17,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/Home";
 import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
+import LearningProject from "./screens/LearningProject";
 
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Settings from "./screens/AccountSettings";
@@ -37,6 +38,7 @@ function MainTab() {
       />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
+      <Stack.Screen name="LearningProject" component={LearningProject} />
     </Stack.Navigator>
   );
 }

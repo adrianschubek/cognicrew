@@ -22,9 +22,12 @@ export default function LearningProjects({ navigation }) {
             fontSize: responsiveFontSize(3.5),
           }}
           contentStyle={{ flexDirection: "row-reverse" }}
+          onPress={()=> {
+            navigation.navigate("LearningProject");
+          }}
         >
           <Text style={{ fontSize: responsiveFontSize(2.2) }}>
-            create new category
+            {/*create new category*/} go to learningProject
           </Text>
         </Button>
       </View>
