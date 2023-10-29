@@ -19,6 +19,7 @@ export default function MusicSettings(props) {
         <Slider
           step={0.01}
           value={masterVolume}
+          // @ts-ignore
           onValueChange={(v) => setMasterVolume(v)}
         ></Slider>
         <Text variant="bodyMedium">
@@ -27,6 +28,7 @@ export default function MusicSettings(props) {
         <Slider
           step={0.01}
           value={musicVolume}
+           // @ts-ignore
           onValueChange={(v) => setMusicVolume(v)}
         ></Slider>
         <Text variant="bodyMedium">
@@ -35,6 +37,7 @@ export default function MusicSettings(props) {
         <Slider
           step={0.01}
           value={soundsVolume}
+           // @ts-ignore
           onValueChange={(v) => setSoundsVolume(v)}
         ></Slider>
       </Card.Content>
