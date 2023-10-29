@@ -1,5 +1,4 @@
 import * as React from "react";
-import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
