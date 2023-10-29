@@ -57,7 +57,7 @@ export default function App() {
       }}
     >
       <NavigationContainer>
-        <Tab.Navigator initialRouteName="Home" shifting={true}>
+        <Tab.Navigator initialRouteName="Home" shifting={true} sceneAnimationEnabled={true}>
           <Tab.Screen
             name="Home"
             options={{ tabBarIcon: "home" }}

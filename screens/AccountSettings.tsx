@@ -13,6 +13,9 @@ import {
 } from "react-native-paper";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
+const Music = (props) => <Avatar.Icon {...props} icon="music" />;
+const KeyIcon = (props) => <Avatar.Icon {...props} icon="key" />;
+const Danger = (props) => <Avatar.Icon {...props} icon="alert" />;
 
 const LogoutButton = () => {
   const theme = useTheme();
@@ -62,6 +65,7 @@ const data = {
 };
 
 export default function AccountSettings({ nav }) {
+  const theme = useTheme();
   return (
     <View
       style={{
@@ -84,19 +88,36 @@ export default function AccountSettings({ nav }) {
         </Card.Content>
       </Card>
       <Card>
-        <Card.Title
-          title="Card Title"
-          subtitle="Card Subtitle"
-          left={Account}
-        />
+        <Card.Title title="Sounds" left={Music} />
         <Card.Content>
-          <Text variant="titleLarge">Card title</Text>
+          <Text variant="titleLarge">Sounds</Text>
+          <Text variant="bodyMedium">Card content</Text>
+        </Card.Content>
+      </Card>
+      <Card>
+        <Card.Title title="Change Passsword" left={KeyIcon} />
+        <Card.Content>
+          <Text variant="titleLarge">Password</Text>
           <Text variant="bodyMedium">Card content</Text>
         </Card.Content>
         <Card.Actions>
           <Button>Cancel</Button>
           <Button>Ok</Button>
         </Card.Actions>
+      </Card>
+      <Card style={{ backgroundColor: theme.colors.errorContainer }}>
+        <Card.Title title="Danger Zone" left={Danger} />
+        <Card.Content>
+          <Button
+            buttonColor={theme.colors.error}
+            textColor="white"
+            mode="contained-tonal"
+          >
+            Terminate Account
+          </Button>
+        </Card.Content>
+        {/* <Card.Actions> */}
+        {/* </Card.Actions> */}
       </Card>
     </View>
   );
