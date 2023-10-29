@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Dialog,
+  Divider,
   IconButton,
   Portal,
   Text,
@@ -32,18 +33,23 @@ export default function AccountSettings({ nav }) {
     >
       <StatusBar style="auto" />
       <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
+      <Divider />
       <Visual
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
+      <Divider />
       <MusicSettings
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
+      <Divider />
       <PasswordChange
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
+      <Divider />
       <EmailChange
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
+      <Divider />
       <DangerZone
         style={{
           marginTop: 10,

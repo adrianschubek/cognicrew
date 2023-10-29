@@ -13,11 +13,11 @@ export default function Visual(props) {
       <Card.Title title="Design" left={Icon} />
       <Card.Content>
         <Button
-          icon="weather-night"
+          icon={isThemeDark ? "weather-sunny" : "weather-night"}
           mode="contained-tonal"
           onPress={() => toggleTheme()}
         >
-          Enable Darkmode
+          {isThemeDark ? "Lightmode" : "Darkmode"}
         </Button>
       </Card.Content>
     </Card>
