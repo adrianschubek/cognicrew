@@ -4,13 +4,13 @@ import { Avatar, Card, Text } from "react-native-paper";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
-export default function MusicSettings() {
+export default function MusicSettings(props) {
   const [masterVolume, setMasterVolume] = useState(0.5);
   const [musicVolume, setMusicVolume] = useState(0.5);
   const [soundsVolume, setSoundsVolume] = useState(0.5);
 
   return (
-    <Card>
+    <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
       <Card.Content>
         <Text variant="bodyMedium">
