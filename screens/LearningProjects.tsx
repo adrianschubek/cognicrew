@@ -70,7 +70,6 @@ export default function LearningProjects({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -87,7 +86,7 @@ const styles = StyleSheet.create({
     padding: responsiveFontSize(1),
   },
   projectGroup: {
-    marginBottom: responsiveFontSize(2),
+    marginBottom: responsiveFontSize(1),
   },
   projectGroupContent: {
     flexDirection: "row",
