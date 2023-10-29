@@ -85,7 +85,7 @@ export default function HomeScreen({ navigation }) {
               }
               setJoinCode(text);
             }}
-            maxLength={5}
+            maxLength={7}
             inputMode="numeric"
             style={{ width: responsiveWidth(30), height: responsiveHeight(5) }}
           />
