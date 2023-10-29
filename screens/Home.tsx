@@ -1,8 +1,14 @@
 import * as React from "react";
-import { Dialog, PaperProvider, Portal, TextInput } from "react-native-paper";
+import {
+  Dialog,
+  PaperProvider,
+  Portal,
+  TextInput,
+  Text,
+} from "react-native-paper";
 import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { Button } from "react-native-paper";
 import {
   responsiveHeight,
@@ -73,6 +79,7 @@ export default function HomeScreen({ navigation }) {
             editable
             placeholder="#"
             value={joinCode}
+            error={joinCode.length > 1 && joinCode.length !== 7}
             onChangeText={(text) => {
               if (text === "") {
                 text = "#";
@@ -94,7 +101,7 @@ export default function HomeScreen({ navigation }) {
             style={[styles.buttonStyle, { width: responsiveWidth(40) }]}
             mode="contained"
             onPress={() => {
-              if (joinCode.length !== 5) {
+              if (joinCode.length !== 7) {
                 setShowErrorJoin(true);
               } else {
                 navigation.navigate("Room", { code: joinCode });
