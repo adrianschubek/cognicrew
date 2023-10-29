@@ -1,6 +1,6 @@
 import React,{ useState }    from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Button, Card, IconButton } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Button, Card, IconButton, Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,

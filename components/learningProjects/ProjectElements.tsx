@@ -1,6 +1,6 @@
 import * as React from "react";
-import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
-import { Avatar, Button } from "react-native-paper";
+import { StyleSheet, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Avatar, Button, Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
