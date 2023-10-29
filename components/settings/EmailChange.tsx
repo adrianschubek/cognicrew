@@ -1,24 +1,34 @@
 import { Slider } from "@miblanchard/react-native-slider";
 import { useState } from "react";
-import { Avatar, Button, Card, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 
-const Icon = (props) => <Avatar.Icon {...props} icon="key" />;
+const Icon = (props) => <Avatar.Icon {...props} icon="email" />;
 
 export default function EmailChange(props) {
   const theme = useTheme();
-  const [masterVolume, setMasterVolume] = useState(0.5);
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [soundsVolume, setSoundsVolume] = useState(0.5);
+  const [mail, setMail] = useState("");
 
   return (
     <Card {...props} mode="contained">
-      <Card.Title title="Change Password" left={Icon} />
+      <Card.Title title="Change E-Mail" left={Icon} />
       <Card.Content>
-        <TextInput label={"New email"}></TextInput>
-        <TextInput label={"Confirm New email"}></TextInput>
+        <TextInput
+          keyboardType="email-address"
+          onChangeText={(e) => setMail(e)}
+          label={"New E-Mail"}
+        ></TextInput>
       </Card.Content>
       <Card.Actions>
-        <Button mode="contained-tonal">Update Email</Button>
+        <Button disabled={mail.length === 0} mode="contained-tonal">
+          Update E-Mail
+        </Button>
       </Card.Actions>
     </Card>
   );

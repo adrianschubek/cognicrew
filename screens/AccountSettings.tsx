@@ -15,8 +15,8 @@ import {
 import MusicSettings from "../components/settings/Music";
 import PasswordChange from "../components/settings/PasswordChange";
 import EmailChange from "../components/settings/EmailChange";
-
-const Danger = (props) => <Avatar.Icon {...props} icon="alert" />;
+import AccountInfo from "../components/settings/AccountInfo";
+import DangerZone from "../components/settings/DangerZone";
 
 export default function AccountSettings({ nav }) {
   const theme = useTheme();
@@ -30,7 +30,7 @@ export default function AccountSettings({ nav }) {
       }}
     >
       <StatusBar style="auto" />
-      
+      <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
       <MusicSettings
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
@@ -40,18 +40,13 @@ export default function AccountSettings({ nav }) {
       <EmailChange
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
-      <Card style={{ backgroundColor: theme.colors.errorContainer }}>
-        <Card.Title title="Danger Zone" left={Danger} />
-        <Card.Content>
-          <Button
-            buttonColor={theme.colors.error}
-            textColor="white"
-            mode="contained-tonal"
-          >
-            Terminate Account
-          </Button>
-        </Card.Content>
-      </Card>
+      <DangerZone
+        style={{
+          marginTop: 10,
+          marginBottom: 10,
+          backgroundColor: theme.colors.errorContainer,
+        }}
+      />
     </ScrollView>
   );
 }

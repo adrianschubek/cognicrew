@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Avatar, Button, Card, Dialog, IconButton, Portal, Text, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  Dialog,
+  IconButton,
+  Portal,
+  Text,
+  useTheme,
+} from "react-native-paper";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -50,10 +59,10 @@ const data = {
   email: "foo@bar.de",
 };
 
-export default function AccountInfo() {
+export default function AccountInfo(props) {
   const theme = useTheme();
   return (
-    <Card style={{ backgroundColor: theme.colors.surface }} mode="contained">
+    <Card {...props} mode="contained">
       <Card.Title
         title="Account Information"
         left={Account}
@@ -62,7 +71,8 @@ export default function AccountInfo() {
       <Card.Content>
         <Text variant="bodyLarge">{data.name}</Text>
         <Text variant="bodyMedium">{data.email}</Text>
-        <Text variant="bodyMedium">Account created on XXXXXXX</Text>
+        <Text variant="bodyMedium">Account created on XX.XX.XXXX</Text>
+        <Text variant="bodyMedium">Last login on XX.XX.XXXX HH:mm:ss</Text>
       </Card.Content>
     </Card>
   );
