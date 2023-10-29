@@ -99,13 +99,13 @@ export default function App() {
             sceneAnimationEnabled={true}
           >
             <Tab.Screen
-              name="Home"
-              options={{ tabBarIcon: "home" }}
+              name="HomeTab"
+              options={{ tabBarIcon: "home", title: "Home" }}
               component={MainTab}
             />
             <Tab.Screen
-              name="Settings"
-              options={{ tabBarIcon: "cogs" }}
+              name="SettingsTab"
+              options={{ tabBarIcon: "cogs", title: "Settings" }}
               component={SettingsTab}
             />
           </Tab.Navigator>
