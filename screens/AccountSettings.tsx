@@ -1,3 +1,4 @@
+import { Slider } from "@miblanchard/react-native-slider";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { View } from "react-native";
@@ -11,9 +12,9 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
+import MusicSettings from "../components/settings/Music";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
-const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 const KeyIcon = (props) => <Avatar.Icon {...props} icon="key" />;
 const Danger = (props) => <Avatar.Icon {...props} icon="alert" />;
 
@@ -66,6 +67,7 @@ const data = {
 
 export default function AccountSettings({ nav }) {
   const theme = useTheme();
+
   return (
     <View
       style={{
@@ -87,22 +89,14 @@ export default function AccountSettings({ nav }) {
           <Text variant="bodyMedium">Account created on XXXXXXX</Text>
         </Card.Content>
       </Card>
-      <Card>
-        <Card.Title title="Sounds" left={Music} />
-        <Card.Content>
-          <Text variant="titleLarge">Sounds</Text>
-          <Text variant="bodyMedium">Card content</Text>
-        </Card.Content>
-      </Card>
+      <MusicSettings />
       <Card>
         <Card.Title title="Change Passsword" left={KeyIcon} />
         <Card.Content>
-          <Text variant="titleLarge">Password</Text>
-          <Text variant="bodyMedium">Card content</Text>
+
         </Card.Content>
         <Card.Actions>
-          <Button>Cancel</Button>
-          <Button>Ok</Button>
+          <Button>Confirm</Button>
         </Card.Actions>
       </Card>
       <Card style={{ backgroundColor: theme.colors.errorContainer }}>
