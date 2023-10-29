@@ -1,12 +1,9 @@
 import * as React from "react";
 import {
-  Dialog,
-  PaperProvider,
-  Portal,
+  Dialog, Portal,
   TextInput,
-  Text,
+  Text
 } from "react-native-paper";
-import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Avatar } from "react-native-paper";
