@@ -22,6 +22,7 @@ export default function EmailChange(props) {
       <Card.Title title="Change E-Mail" left={Icon} />
       <Card.Content>
         <TextInput
+          theme={{ roundness: 10 }}
           keyboardType="email-address"
           onChangeText={(e) => setMail(e)}
           label={"New E-Mail"}

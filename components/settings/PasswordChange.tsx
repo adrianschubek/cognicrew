@@ -23,6 +23,7 @@ export default function PasswordChange(props) {
       <Card.Title title="Change Password" left={Icon} />
       <Card.Content>
         <TextInput
+          theme={{ roundness: 10 }}
           value={pw1}
           onChangeText={(t) => setPw1(t)}
           label={"New Password"}
@@ -30,6 +31,7 @@ export default function PasswordChange(props) {
           error={pw1.length > 0 && !validator}
         ></TextInput>
         <TextInput
+          theme={{ roundness: 10 }}
           value={pw2}
           onChangeText={(t) => setPw2(t)}
           label={"Confirm New Password"}
