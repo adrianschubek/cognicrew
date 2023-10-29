@@ -1,6 +1,6 @@
 import React,{ useState }    from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { Button, Card } from "react-native-paper";
+import { Button, Card, IconButton } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -25,18 +25,13 @@ return(
       <Card style={styles.projectGroup} key={i}>
         <Card.Title title={projectGroup.name}
         right={() => 
-     <Button
+     <IconButton
      icon="plus"
-     mode="text"
-     labelStyle={{
-       fontSize: responsiveFontSize(3.5),
-     }}
-     contentStyle={{ flexDirection: "row-reverse" }}
+     size={responsiveFontSize(3.5)}
      onPress={() => {
         dummyProjects.push({name: "German"})
      }}
-   >
-   </Button>    
+   /> 
     }/>
         <Card.Content style={styles.projectGroupContent}>
           <ProjectElement/>

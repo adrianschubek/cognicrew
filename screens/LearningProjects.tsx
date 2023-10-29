@@ -19,7 +19,7 @@ export default function LearningProjects({ navigation }) {
           mode="text"
           labelStyle={{
             textAlignVertical: "center",
-            fontSize: responsiveFontSize(3),
+            fontSize: responsiveFontSize(3.5),
           }}
           contentStyle={{ flexDirection: "row-reverse" }}
         >

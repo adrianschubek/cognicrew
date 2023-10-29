@@ -1,6 +1,6 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Avatar } from "react-native-paper";
+import { StyleSheet, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { Avatar, Button } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -18,16 +18,23 @@ const dummyProjects = [
 export default function ProjectElements() {
   return dummyProjects.map((project) => (
     <View style={styles.projectElement}>
-      <Avatar.Text
-        style={styles.avatar}
-        size={responsiveFontSize(10)}
-        label={project.name.substring(0, 2)}
-      />
-      <Text style={styles.textStyle}>
-        {project.name.length > 15
-          ? project.name.substring(0, 13) + "..."
-          : project.name.substring(0, 13)}
-      </Text>
+      <TouchableOpacity
+      onPress={
+        ()=> {}
+      }>
+        <>
+        <Avatar.Text
+          style={styles.avatar}
+          size={responsiveFontSize(10)}
+          label={project.name.substring(0, 2)}
+        />
+        <Text style={styles.textStyle}>
+          {project.name.length > 15
+            ? project.name.substring(0, 13) + "..."
+            : project.name.substring(0, 13)}
+        </Text>
+        </>
+      </TouchableOpacity>
     </View>
   ));
 }
