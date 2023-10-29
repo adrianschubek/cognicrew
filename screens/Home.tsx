@@ -9,7 +9,7 @@ import {
 import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Avatar } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -51,19 +51,16 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.rightUpperContainerChild}>
             <Text
               style={{
-                paddingTop: responsiveHeight(1.5),
+                paddingTop: responsiveHeight(1.8),
                 paddingRight: responsiveWidth(1),
               }}
             >
               Hello, username
             </Text>
-            <Image
-              source={require("../assets/3d_avatar_10.png")}
-              style={{
-                height: responsiveFontSize(6),
-                width: responsiveFontSize(6),
-              }}
-            />
+            <Avatar.Text
+          size={responsiveFontSize(6)}
+          label={"Ti"}
+        />
           </View>
         </View>
         <View style={styles.middleContainerChild}>
