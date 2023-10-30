@@ -1,8 +1,7 @@
 import * as React from "react";
-import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 
 export default function ManageFriends({navigation}) {
     return (
@@ -27,7 +26,6 @@ export default function ManageFriends({navigation}) {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "#fff",
       alignItems: "center",
       justifyContent: "center",
     },

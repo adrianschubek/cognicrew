@@ -7,7 +7,8 @@ import { StyleSheet, View, Image } from "react-native";
 import {Text} from "react-native-paper"
 import { Button } from "react-native-paper";
 import Modal from "react-native-modal";
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
+import { Pressable } from "react-native";
 
 
 export default function Login({navigation}) {
@@ -63,17 +64,12 @@ export default function Login({navigation}) {
           />
       </View>
       <View style={styles.container}>
-        <View style={styles.oneLine}>
+
           <Text>
-            Your first time? You can register 
+            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}>here</Pressable>!
           </Text>
-          <Button onPress={toggleModal}  > 
-          here
-          </Button>
-          <Text>
-            !
-          </Text>
-          <Button
+
+          <Button style={styles.noHover}
             onPress={() => {
               navigation.goBack();
               console.log("Login screen pressed")
@@ -91,7 +87,7 @@ export default function Login({navigation}) {
           </Modal>
           <StatusBar style="auto" />
       </View>
-          <Button
+          <Button style={styles.dataInput}
             mode="contained"
             onPress={() => {
               navigation.navigate("Home")
@@ -133,5 +129,11 @@ const styles = StyleSheet.create({
     dataInput: {
       //backgroundColor: 'white',
       width: 300,
+    },
+    oneLine: {
+      flexDirection: 'row',
+    },
+    noHover: {
+        backgroundColor: "#FFF"
     }
   });
