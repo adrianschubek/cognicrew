@@ -104,7 +104,6 @@ export default function App() {
           <Tab.Navigator
             initialRouteName="Home"
             shifting={true}
-            sceneAnimationEnabled={true}
           >
             <Tab.Screen
               name="HomeTab"
