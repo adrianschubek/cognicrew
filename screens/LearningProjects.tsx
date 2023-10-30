@@ -1,34 +1,66 @@
 import * as React from "react";
-import { PaperProvider } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
-import { Button } from "react-native-paper";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { Button, Text } from "react-native-paper";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
+import ProjectGroup from "../components/learningProjects/ProjectGroups";
 
-export default function LearningProjects({navigation}) {
-    return (
-      <View style={styles.container}>
-        <Text>Wer nichts im Kopf hat kann auch nichts lernen!</Text>
-        <StatusBar style="auto" />
+export default function LearningProjects({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      <View style={styles.upperContainerChild}>
         <Button
-          icon="home"
-          mode="contained"
-          onPress={() => {
-            navigation.goBack();
-            console.log("Learning Projects Screen Pressed")
-            }
-          }
+          icon="plus"
+          mode="text"
+          labelStyle={{
+            textAlignVertical: "center",
+            fontSize: responsiveFontSize(3.5),
+          }}
+          contentStyle={{ flexDirection: "row-reverse" }}
+          onPress={()=> {
+            navigation.navigate("LearningProject");
+          }}
         >
-          Go back to the homescreen
+          <Text style={{ fontSize: responsiveFontSize(2.2) }}>
+            {/*create new category*/} go to learningProject
+          </Text>
         </Button>
       </View>
-    );
-  }
-  
+      <View  style={styles.bottomContainerChild}>
+      <ScrollView>
+        <ProjectGroup/>
+      </ScrollView>
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: "#fff",
-      alignItems: "center",
-      justifyContent: "center",
-    },
-  });
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  upperContainerChild: {
+    flex: 1,
+    width: responsiveWidth(100),
+    //backgroundColor: "red",
+    alignItems: "flex-end",
+  },
+  bottomContainerChild: {
+    flex: 8,
+    //backgroundColor: "blue",
+    width: responsiveWidth(100),
+    padding: responsiveFontSize(1),
+  },
+  textStyle: {
+    fontSize: responsiveFontSize(2),
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+});
