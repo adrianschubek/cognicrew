@@ -27,7 +27,7 @@
       "package": "de.w101.cognicrew"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     }
   }
 }

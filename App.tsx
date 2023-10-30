@@ -23,6 +23,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import Settings from "./screens/AccountSettings";
 import { useCallback, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
+import Login from "./screens/Login";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -31,7 +32,12 @@ const Stack = createNativeStackNavigator();
 function MainTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: "CogniCrew" }}
+      />
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
