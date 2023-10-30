@@ -6,7 +6,6 @@ import { Button } from "react-native-paper";
 
 export default function ManageFriends({navigation}) {
     return (
-      <PaperProvider>
       <View style={styles.container}>
         <Text>Leider hast du keine Freunde. Denk mal darüber nach!</Text>
         <StatusBar style="auto" />
@@ -22,7 +21,6 @@ export default function ManageFriends({navigation}) {
           Go back to the homescreen
         </Button>
       </View>
-    </PaperProvider>
     );
   }
   
