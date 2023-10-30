@@ -23,6 +23,8 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import Settings from "./screens/AccountSettings";
 import { useCallback, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
+import Login from "./screens/Login";
+import AwesomeIcon from 'react-native-vector-icons/AntDesign';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -36,6 +38,7 @@ function MainTab() {
         component={HomeScreen}
         options={{ title: "CogniCrew" }}
       />
+      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
@@ -97,7 +100,9 @@ export default function App() {
 
   return (
     <PreferencesContext.Provider value={preferences}>
-      <PaperProvider theme={theme}>
+      <PaperProvider theme={theme} 
+                    settings={{icon: props => <AwesomeIcon {...props} />}}
+>
         <NavigationContainer theme={theme}>
           <Tab.Navigator
             initialRouteName="Home"

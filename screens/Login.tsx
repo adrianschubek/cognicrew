@@ -7,7 +7,7 @@ import { StyleSheet, View, Image } from "react-native";
 import {Text} from "react-native-paper"
 import { Button } from "react-native-paper";
 import Modal from "react-native-modal";
-import { IconButton, MD3Colors } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { Pressable } from "react-native";
 
 
