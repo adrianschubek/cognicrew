@@ -35,7 +35,7 @@ function MainTab() {
     <Stack.Navigator>
       <Stack.Screen
         name="Home"
-        component={HomeScreen}
+        component={Login}
         options={{ title: "CogniCrew" }}
       />
       <Stack.Screen name="Login" component={Login} />
