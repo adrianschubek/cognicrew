@@ -7,7 +7,6 @@ import { Button } from "react-native-paper";
 
 export default function HomeScreen( {navigation}) {
     return (
-      <PaperProvider>
       <View style={styles.container}>
         <Text>{expo.name}, die beste App fürs Lernen!</Text>
        {/*<StatusBar style="auto" /> not sure what this does*/}
@@ -44,7 +43,6 @@ export default function HomeScreen( {navigation}) {
           Manage your friends!
         </Button>
       </View>
-    </PaperProvider>
     );
   }
 
