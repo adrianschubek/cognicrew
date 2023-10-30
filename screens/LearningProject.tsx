@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, View, Image } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, Text, Divider } from "react-native-paper";
 import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
 import {
   responsiveHeight,
@@ -13,17 +13,33 @@ export default function ManageFriends({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.category}>
-      <Image
-        style={styles.imageStyle}
-        resizeMode="contain"
-        source={require("../assets/camera_symbol.png")}
-      />
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/cards_symbol.png")}
+        />
       </View>
       <View style={styles.category}>
-        
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/completed_task_symbol.png")}
+        />
       </View>
-      <View style={styles.category}></View>
-    <View style={styles.category}></View>
+      <View style={styles.category}>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/camera_symbol.png")}
+        />
+      </View>
+      <View style={styles.category}>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/files_symbol.png")}
+        />
+      </View>
       <StatusBar style="auto" />
       <Button
         icon="home"
@@ -43,23 +59,23 @@ const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
     height: responsiveHeight(100),
-     flex: 1,
+    flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start", 
+    justifyContent: "flex-start",
   },
   category: {
     width: responsiveWidth(100),
     height: responsiveHeight(12),
     marginBottom: responsiveHeight(2),
-    flexDirection:"row",
-    justifyContent:"flex-end",
+    flexDirection: "row",
+    justifyContent: "flex-end",
     //backgroundColor: "red"
   },
   imageStyle: {
     height: responsiveHeight(12),
     width: responsiveWidth(40.5),
-    flex:0,
+    flex: 0,
     //backgroundColor:"green"
   },
 });
