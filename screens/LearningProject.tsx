@@ -2,7 +2,7 @@ import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { ImageBackground, StyleSheet, View, Image } from "react-native";
 import { Button, Text } from "react-native-paper";
-import ImageResizeMode from 'react-native/Libraries/Image/ImageResizeMode'
+import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -12,19 +12,19 @@ import {
 export default function ManageFriends({ navigation }) {
   return (
     <View style={styles.container}>
-      {/*<Image
-        height={responsiveHeight(100)}
-        width={responsiveWidth(100)}
-        resizeMode={Image.resizeMode.center}
+      <View style={styles.category}>
+      <Image
+        style={styles.imageStyle}
+        resizeMode="contain"
+        resizeMethod="scale"
         source={require("../assets/camera_symbol.png")}
-  />*/}
-      {/*<View style={styles.category}>
+      />
       </View>
       <View style={styles.category}>
         
       </View>
       <View style={styles.category}></View>
-  <View style={styles.category}></View> */}
+    <View style={styles.category}></View>
       <StatusBar style="auto" />
       <Button
         icon="home"
@@ -42,15 +42,25 @@ export default function ManageFriends({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-   /* flex: 1,
+    width: responsiveWidth(100),
+    height: responsiveHeight(100),
+     flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    justifyContent: "flex-start", */
+    justifyContent: "flex-start", 
   },
   category: {
     width: responsiveWidth(100),
     height: responsiveHeight(12),
     marginBottom: responsiveHeight(2),
+    flexDirection:"row",
+    justifyContent:"flex-end",
     //backgroundColor: "red"
+  },
+  imageStyle: {
+    height: responsiveHeight(12),
+    width: responsiveWidth(40.5),
+    flex:0,
+    //backgroundColor:"green"
   },
 });
