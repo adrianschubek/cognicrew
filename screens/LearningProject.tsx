@@ -16,7 +16,6 @@ export default function ManageFriends({ navigation }) {
       <Image
         style={styles.imageStyle}
         resizeMode="contain"
-        resizeMethod="scale"
         source={require("../assets/camera_symbol.png")}
       />
       </View>
