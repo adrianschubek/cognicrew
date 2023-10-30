@@ -24,7 +24,6 @@ import Settings from "./screens/AccountSettings";
 import { useCallback, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import Login from "./screens/Login";
-import AwesomeIcon from 'react-native-vector-icons/AntDesign';
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -100,9 +99,7 @@ export default function App() {
 
   return (
     <PreferencesContext.Provider value={preferences}>
-      <PaperProvider theme={theme} 
-                    settings={{icon: props => <AwesomeIcon {...props} />}}
->
+      <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
           <Tab.Navigator
             initialRouteName="Home"
