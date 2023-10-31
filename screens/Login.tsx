@@ -14,6 +14,11 @@ import { Pressable } from "react-native";
 export default function Login({navigation}) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
+  const [text3, setText3] = React.useState("");
+  const [text4, setText4] = React.useState("");
+  const [text5, setText5] = React.useState("");
+  const [text6, setText6] = React.useState("");
+  const [text7, setText7] = React.useState("");
 
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -29,7 +34,7 @@ export default function Login({navigation}) {
           source={require("../assets/icon.png")}
           style={{width: 100, height: 100}} />
           <IconButton
-              icon="setting"
+              icon="camera"
               iconColor={'#303F9F'}
               size={60}
               onPress={() => console.log('Pressed')}
@@ -66,7 +71,7 @@ export default function Login({navigation}) {
       <View style={styles.container}>
 
           <Text>
-            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}>here</Pressable>!
+            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}> here </Pressable>!
           </Text>
 
           <Button style={styles.noHover}
@@ -81,6 +86,40 @@ export default function Login({navigation}) {
       
           <Modal isVisible={isModalVisible}>
             <Text>If you havent already got an account please fill in the form below:</Text>
+            <TextInput 
+            style={styles.dataInput}
+            label="Username:"
+            value={text3}
+            onChangeText={text3 => setText3(text3)}
+            />
+            <TextInput 
+            style={styles.dataInput}
+            label="E-mail:"
+            inputMode="email"
+            keyboardType="email-address"
+            value={text4}
+            onChangeText={text4 => setText4(text4)}
+            />
+            <TextInput 
+            style={styles.dataInput}
+            label="Password:"
+            value={text5}
+            secureTextEntry={true}
+            onChangeText={text5 => setText5(text5)}
+            />
+            <TextInput 
+            style={styles.dataInput}
+            label="Confirm password:"
+            value={text6}
+            secureTextEntry={true}
+            onChangeText={text6 => setText6(text6)}
+            />
+            <TextInput 
+            style={styles.dataInput}
+            label="Icon:"
+            value={text7}
+            onChangeText={text7 => setText7(text7)}
+            />
             <Button onPress={toggleModal} 
             > Submit form
             </Button>
