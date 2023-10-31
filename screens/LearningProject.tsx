@@ -13,40 +13,60 @@ export default function ManageFriends({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.category}>
+        <Text style={styles.textStyle}> Flashcards </Text>
         <Image
           style={styles.imageStyle}
           resizeMode="contain"
           source={require("../assets/cards_symbol.png")}
         />
       </View>
+      <Divider style={styles.dividerStyle} />
       <View style={styles.category}>
+        <Text style={styles.textStyle}> Exercises </Text>
         <Image
           style={styles.imageStyle}
           resizeMode="contain"
           source={require("../assets/completed_task_symbol.png")}
         />
       </View>
+      <Divider style={styles.dividerStyle} />
       <View style={styles.category}>
+        <Text style={styles.textStyle}> Videos </Text>
         <Image
           style={styles.imageStyle}
           resizeMode="contain"
           source={require("../assets/camera_symbol.png")}
         />
       </View>
+      <Divider style={styles.dividerStyle} />
       <View style={styles.category}>
+        <Text style={styles.textStyle}> Files </Text>
         <Image
           style={styles.imageStyle}
           resizeMode="contain"
           source={require("../assets/files_symbol.png")}
         />
       </View>
+      <Divider style={styles.dividerStyle} />
       <StatusBar style="auto" />
       <Button
         icon="home"
         mode="contained"
+        style={{ marginTop: responsiveHeight(5) }}
+        contentStyle={{
+          height: responsiveHeight(10),
+          /*backgroundColor:"yellow",*/ alignItems: "center",
+        }}
+        labelStyle={{
+          lineHeight: responsiveFontSize(3.25),
+          fontSize: responsiveFontSize(3),
+          textAlignVertical: "center",
+          padding: 0,
+          height: responsiveFontSize(3),
+          //backgroundColor:"red"
+        }}
         onPress={() => {
           navigation.goBack();
-          console.log("ManageFriends Screen Pressed");
         }}
       >
         Create Room
@@ -66,16 +86,24 @@ const styles = StyleSheet.create({
   },
   category: {
     width: responsiveWidth(100),
-    height: responsiveHeight(12),
-    marginBottom: responsiveHeight(2),
+    height: responsiveHeight(13),
     flexDirection: "row",
-    justifyContent: "flex-end",
-    //backgroundColor: "red"
+    justifyContent: "space-between",
+    //backgroundColor:"red",
   },
   imageStyle: {
-    height: responsiveHeight(12),
-    width: responsiveWidth(40.5),
+    height: responsiveHeight(13),
+    width: responsiveWidth(38),
     flex: 0,
-    //backgroundColor:"green"
+    //backgroundColor: "green",
+  },
+  dividerStyle: {
+    width: "100%",
+    marginBottom: responsiveHeight(2),
+  },
+  textStyle: {
+    fontSize: responsiveFontSize(3),
+    textAlignVertical: "center",
+    paddingLeft: responsiveWidth(5),
   },
 });

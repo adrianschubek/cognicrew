@@ -71,7 +71,7 @@ export default function Login({navigation}) {
       <View style={styles.container}>
 
           <Text>
-            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}> here </Pressable>!
+            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}><Text> here </Text></Pressable>!
           </Text>
 
           <Button style={styles.noHover}
