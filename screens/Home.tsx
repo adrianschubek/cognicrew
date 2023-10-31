@@ -130,6 +130,14 @@ export default function HomeScreen({ navigation }) {
           >
             Manage your friends!
           </Button>
+          <Button 
+            style={styles.buttonStyle}
+            onPress={() => {
+              navigation.navigate("Login");
+              console.log("Login screen pressed");
+              }}
+            > Test Login
+          </Button>
         </View>
       </View>
     </>
