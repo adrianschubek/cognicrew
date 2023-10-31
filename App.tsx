@@ -12,18 +12,18 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useCallback, useMemo, useState } from "react";
+import { PreferencesContext } from "./stores/PreferencesContext";
 import HomeScreen from "./screens/Home";
 import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
 import LearningProject from "./screens/LearningProject";
-
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import Settings from "./screens/AccountSettings";
-import { useCallback, useMemo, useState } from "react";
-import { PreferencesContext } from "./stores/PreferencesContext";
 import Login from "./screens/Login";
+import LearningRoom from "./screens/LearningRoom";
+import { usePreferencesStore } from "./stores/PreferencesStore";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -41,6 +41,7 @@ function MainTab() {
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
+      <Stack.Screen name="LearningRoom" component={LearningRoom} />
     </Stack.Navigator>
   );
 }
@@ -80,31 +81,29 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
-  const [isThemeDark, setIsThemeDark] = useState(false);
+  const { darkmode, setDarkmode } = usePreferencesStore();
+  // const [isThemeDark, setIsThemeDark] = useState(false);
 
-  let theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
+  let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
 
   const toggleTheme = useCallback(
-    () => setIsThemeDark(!isThemeDark),
-    [isThemeDark],
+    () => setDarkmode(!darkmode),
+    [darkmode],
   );
 
   const preferences = useMemo(
     () => ({
       toggleTheme,
-      isThemeDark,
+      darkmode,
     }),
-    [toggleTheme, isThemeDark],
+    [toggleTheme, darkmode],
   );
 
   return (
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <Tab.Navigator
-            initialRouteName="Home"
-            shifting={true}
-          >
+          <Tab.Navigator initialRouteName="Home" shifting={true}>
             <Tab.Screen
               name="HomeTab"
               options={{ tabBarIcon: "home", title: "Home" }}
