@@ -94,7 +94,7 @@ export default function Login({navigation}) {
           <Modal isVisible={isModal2Visible}>
               <View style={styles.whiteModal}>
                 <Text>
-                  Please insert your e-mail and your password
+                  Please insert your e-mail address and a mail will be sent to your address with the option to change your password. 
                 </Text>
                 <TextInput 
                         style={styles.dataInput}
@@ -108,7 +108,7 @@ export default function Login({navigation}) {
                 <Button style={styles.dataInput}
                   onPress={toggleModal2} 
                   mode="contained"
-                > Submit form
+                > Send new password
                 </Button>
               </View>
           </Modal>
@@ -159,7 +159,7 @@ export default function Login({navigation}) {
                         onChangeText={text6 => setText6(text6)}
                         />
                         </View>
-                  <View style={styles.leftSide}>
+                  <View style={{...styles.leftSide, backgroundColor:'white'}}>
                         <Text>
                           Upload icon:
                         </Text>
@@ -214,12 +214,11 @@ const styles = StyleSheet.create({
     },
     baseText: {
       fontSize: 18,
-      fontFamily: 'Roboto',
+
     },
     titleText: {
       fontSize: 24,
       fontWeight: 'bold',
-      fontFamily: 'Roboto',
     },
     dataInput: {
       //backgroundColor: 'white',
