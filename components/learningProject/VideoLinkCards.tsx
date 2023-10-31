@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Text, Card, Avatar } from "react-native-paper";
+import { Text, Card, Avatar, IconButton } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -16,16 +16,21 @@ const videos = [
 export default function VideoLinkCards() {
   return videos.map((link) => (
     <Card elevation={1} style={styles.cardStyle} key={link.id}>
-      <Card.Title title={link.title} subtitle ="Dies ist ein Video" left={() => (
-               <Avatar.Text
-               style={styles.avatarStyle}
-               size={responsiveFontSize(6)}
-               label="A"
-             />
-             )}/>
-      <Card.Content style={styles.cardContentStyle}>
+      <Card.Title
+        title={link.title}
+        subtitle="Dies ist ein Video"
+        left={() => (
+          <Avatar.Text
+            style={styles.avatarStyle}
+            size={responsiveFontSize(6)}
+            label="A"
+          />
+        )}
+        right={() => <IconButton icon="dots-vertical" onPress={() => {}} />}
+      />
+      {/*<Card.Content style={styles.cardContentStyle}>
         <Text> Dies ist ein Video! </Text>
-      </Card.Content>
+        </Card.Content>*/}
     </Card>
   ));
 }
@@ -39,7 +44,5 @@ const styles = StyleSheet.create({
   cardContentStyle: {
     flex: 1,
   },
-  avatarStyle:{
-
-  }
+  avatarStyle: {},
 });
