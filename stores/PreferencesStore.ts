@@ -15,6 +15,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
     }),
     {
       name: "preferences",
+      // @ts-ignore
       getStorage: () => AsyncStorage,
     },
   ),
