@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View} from "react-native";
-import { Button, Text} from "react-native-paper";
+import { StyleSheet, View } from "react-native";
+import { Button, Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -9,25 +9,22 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 
-export default function LearningProject({ navigation }) {
+export default function LearningRoom({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <LearningProjectCategory
-      path={require("../assets/cards_symbol.png")}
-      name={"Flashcards"}
+        path={require("../assets/completed_task_symbol.png")}
+        name={"Quiz game"}
       />
-            <LearningProjectCategory
-      path={require("../assets/completed_task_symbol.png")}
-      name={"Exercises"}
+      <LearningProjectCategory
+        path={require("../assets/cards_symbol.png")}
+        name={"Flashcard game"}
+        flexDirection="row-reverse"
       />
-            <LearningProjectCategory
-      path={require("../assets/camera_symbol.png")}
-      name={"Videos"}
-      />
-            <LearningProjectCategory
-      path={require("../assets/files_symbol.png")}
-      name={"Files"}
+      <LearningProjectCategory
+        path={require("../assets/camera_symbol.png")}
+        name={"Whiteboard"}
       />
       <Button
         icon="home"
@@ -46,10 +43,10 @@ export default function LearningProject({ navigation }) {
           //backgroundColor:"red"
         }}
         onPress={() => {
-          navigation.navigate("LearningRoom");
+          navigation.goBack();
         }}
       >
-        Create Room
+        Alex ist ein fellow KING
       </Button>
     </View>
   );
