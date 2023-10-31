@@ -1,30 +1,45 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { ImageBackground, StyleSheet, View, Image } from "react-native";
+import { Button, Text, Divider } from "react-native-paper";
+import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
 import {
-    responsiveHeight,
-    responsiveWidth,
-    responsiveFontSize,
-  } from "react-native-responsive-dimensions";
-  import Svg, {
-    Use,
-    Image,
-  } from 'react-native-svg';
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
 
 export default function ManageFriends({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.category}>
-      <Svg>
-        <Image href={require("../assets/undraw_playing_cards_cywn.svg")}/>
-     </Svg>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/cards_symbol.png")}
+        />
       </View>
       <View style={styles.category}>
-        
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/completed_task_symbol.png")}
+        />
       </View>
-      <View style={styles.category}></View>
-      <View style={styles.category}></View>
+      <View style={styles.category}>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/camera_symbol.png")}
+        />
+      </View>
+      <View style={styles.category}>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          source={require("../assets/files_symbol.png")}
+        />
+      </View>
       <StatusBar style="auto" />
       <Button
         icon="home"
@@ -42,15 +57,25 @@ export default function ManageFriends({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
+    width: responsiveWidth(100),
+    height: responsiveHeight(100),
     flex: 1,
-    flexDirection:"column",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
   },
   category: {
     width: responsiveWidth(100),
     height: responsiveHeight(12),
-    marginBottom:responsiveHeight(2),
+    marginBottom: responsiveHeight(2),
+    flexDirection: "row",
+    justifyContent: "flex-end",
     //backgroundColor: "red"
+  },
+  imageStyle: {
+    height: responsiveHeight(12),
+    width: responsiveWidth(40.5),
+    flex: 0,
+    //backgroundColor:"green"
   },
 });
