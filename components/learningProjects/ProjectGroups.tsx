@@ -15,13 +15,13 @@ const dummyProjects = [
   { name: "Spanish" },
 ];
 const dummyProjectGroups = [
-  { name: "WiSe21/22" },
-  { name: "SoSe22" },
-  { name: "WiSe22/23" },
+  { name: "WiSe21/22", id: 1 },
+  { name: "SoSe22", id: 2 },
+  { name: "WiSe22/23", id: 3 },
 ];
 export default function ProjectGroups() {
-  return dummyProjectGroups.map((projectGroup, i) => (
-    <Card elevation={5} style={styles.projectGroup} key={i}>
+  return dummyProjectGroups.map((projectGroup) => (
+    <Card elevation={5} style={styles.projectGroup} key={projectGroup.id}>
       <Card.Title
         title={projectGroup.name}
         right={() => (

@@ -8,16 +8,16 @@ import {
 } from "react-native-responsive-dimensions";
 
 const dummyProjects = [
-  { name: "Psycholgy" },
-  { name: "Biology" },
-  { name: "Sex Education" },
-  { name: "Kynology" },
-  { name: "Spanish" },
+  { name: "Psycholgy", id: 1 },
+  { name: "Biology", id: 2 },
+  { name: "Sex Education", id: 3 },
+  { name: "Kynology", id: 4 },
+  { name: "Spanish", id: 5 },
 ];
 
 export default function ProjectElements() {
   return dummyProjects.map((project) => (
-    <View style={styles.projectElement}>
+    <View style={styles.projectElement} key={project.id}>
       <TouchableOpacity
       onPress={
         ()=> {}
