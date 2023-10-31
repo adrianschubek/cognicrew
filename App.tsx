@@ -24,6 +24,7 @@ import Settings from "./screens/AccountSettings";
 import Login from "./screens/Login";
 import LearningRoom from "./screens/LearningRoom";
 import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
+import { usePreferencesStore } from "./stores/PreferencesStore";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -82,21 +83,22 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
-  const [isThemeDark, setIsThemeDark] = useState(false);
+  const { darkmode, setDarkmode } = usePreferencesStore();
+  // const [isThemeDark, setIsThemeDark] = useState(false);
 
-  let theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
+  let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
 
   const toggleTheme = useCallback(
-    () => setIsThemeDark(!isThemeDark),
-    [isThemeDark],
+    () => setDarkmode(!darkmode),
+    [darkmode],
   );
 
   const preferences = useMemo(
     () => ({
       toggleTheme,
-      isThemeDark,
+      darkmode,
     }),
-    [toggleTheme, isThemeDark],
+    [toggleTheme, darkmode],
   );
 
   return (

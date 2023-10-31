@@ -14,13 +14,21 @@ import { Pressable } from "react-native";
 export default function Login({navigation}) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
+  const [text3, setText3] = React.useState("");
+  const [text4, setText4] = React.useState("");
+  const [text5, setText5] = React.useState("");
+  const [text6, setText6] = React.useState("");
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const [isModal2Visible, setModal2Visible] = useState(false);
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
 
+  const toggleModal2 = () => {
+    setModal2Visible(!isModal2Visible);
+  };
 
     return (
       <View style={styles.container}>
@@ -29,10 +37,12 @@ export default function Login({navigation}) {
           source={require("../assets/icon.png")}
           style={{width: 100, height: 100}} />
           <IconButton
-              icon="setting"
+              icon="cog"
               iconColor={'#303F9F'}
               size={60}
-              onPress={() => console.log('Pressed')}
+              onPress={() => {
+                navigation.navigate("SettingsTab");
+                console.log('Pressed')}}
             />
         </View>
       <View style={styles.container}>
@@ -51,6 +61,7 @@ export default function Login({navigation}) {
           <TextInput 
             style={styles.dataInput}
             label="Username or E-mail address:"
+            placeholder="Max Mustermann"
             value={text}
             onChangeText={text => setText(text)}
           />
@@ -58,6 +69,7 @@ export default function Login({navigation}) {
       <View style={styles.container}>
           <TextInput style={styles.dataInput}
             label="Password"
+            placeholder="angola15"
             secureTextEntry={true}
             value={text2}
             onChangeText={text2 => setText2(text2)}
@@ -66,12 +78,12 @@ export default function Login({navigation}) {
       <View style={styles.container}>
 
           <Text>
-            Your first time? You can register <Pressable onPress={toggleModal} style={{color: '#303F9F'}}><Text> here </Text></Pressable>!
+            Your first time? You can register <Pressable onPress={toggleModal}><Text>here!</Text></Pressable>
           </Text>
 
           <Button style={styles.noHover}
-            onPress={() => {
-              navigation.goBack();
+              onPress={() => {
+              toggleModal2();
               console.log("Login screen pressed")
               }
             }
@@ -79,11 +91,94 @@ export default function Login({navigation}) {
             Password forgotten?
           </Button>
       
+          <Modal isVisible={isModal2Visible}>
+              <View style={styles.whiteModal}>
+                <Text>
+                  Please insert your e-mail address and a mail will be sent to your address with the option to change your password. 
+                </Text>
+                <TextInput 
+                        style={styles.dataInput}
+                        label="E-mail:"
+                        inputMode="email"
+                        keyboardType="email-address"
+                        placeholder="max-mustermann@gmail.com"
+                        value={text4}
+                        onChangeText={text4 => setText4(text4)}
+                  />
+                <Button style={styles.dataInput}
+                  onPress={toggleModal2} 
+                  mode="contained"
+                > Send new password
+                </Button>
+              </View>
+          </Modal>
+
           <Modal isVisible={isModalVisible}>
-            <Text>If you havent already got an account please fill in the form below:</Text>
-            <Button onPress={toggleModal} 
-            > Submit form
-            </Button>
+                <View style = {styles.whiteModal}>
+                 <View style={styles.container}>
+                    <Text style={styles.titleText}>
+                      If you havent already got an account please fill in the form below:
+                    </Text>
+                    </View>
+                  <View style={styles.leftSide}>
+                        <TextInput 
+                        style={styles.dataInput}
+                        label="Username:"
+                        value={text3}
+                        onChangeText={text3 => setText3(text3)}
+                        />
+                  </View>
+                  <View style={styles.leftSide}>
+                        <TextInput 
+                        style={styles.dataInput}
+                        label="E-mail:"
+                        inputMode="email"
+                        keyboardType="email-address"
+                        placeholder="max-mustermann@gmail.com"
+                        value={text4}
+                        onChangeText={text4 => setText4(text4)}
+                        />
+                        </View>
+                  <View style={styles.leftSide}>
+                        <TextInput 
+                        style={styles.dataInput}
+                        label="Password:"
+                        placeholder="angola15"
+                        value={text5}
+                        secureTextEntry={true}
+                        onChangeText={text5 => setText5(text5)}
+                        />
+                        </View>
+                  <View style={styles.leftSide}>
+                        <TextInput 
+                        style={styles.dataInput}
+                        label="Repeat password:"
+                        placeholder="angola15"
+                        value={text6}
+                        secureTextEntry={true}
+                        onChangeText={text6 => setText6(text6)}
+                        />
+                        </View>
+                  <View style={{...styles.leftSide, backgroundColor:'white'}}>
+                        <Text>
+                          Upload icon:
+                        </Text>
+                      <IconButton
+                          icon="file-png-box"
+                          iconColor={'#303F9F'}
+                          size={60}
+                          onPress={() => console.log('Pressed')}
+                        />
+                        </View>
+                  <View style={styles.container}>
+                        <Button 
+                        style={styles.dataInput}
+                         mode="contained"
+                        onPress={toggleModal} 
+                        > Submit form
+                        </Button>
+                    </View>
+                  </View>
           </Modal>
           <StatusBar style="auto" />
       </View>
@@ -119,21 +214,31 @@ const styles = StyleSheet.create({
     },
     baseText: {
       fontSize: 18,
-      fontFamily: 'Roboto',
+
     },
     titleText: {
       fontSize: 24,
       fontWeight: 'bold',
-      fontFamily: 'Roboto',
     },
     dataInput: {
       //backgroundColor: 'white',
       width: 300,
+      margin: 10
     },
     oneLine: {
       flexDirection: 'row',
     },
     noHover: {
         backgroundColor: "#FFF"
+    },
+    leftSide: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignContent: 'flex-start',
+        margin: 10
+    },
+    whiteModal: {
+
+      backgroundColor: 'white',
     }
   });
