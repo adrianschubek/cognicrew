@@ -23,6 +23,7 @@ import LearningProject from "./screens/LearningProject";
 import Settings from "./screens/AccountSettings";
 import Login from "./screens/Login";
 import LearningRoom from "./screens/LearningRoom";
+import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -41,6 +42,7 @@ function MainTab() {
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
+      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
     </Stack.Navigator>
   );
 }

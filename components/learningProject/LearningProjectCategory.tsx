@@ -15,11 +15,19 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 
+function doNothing() {
+  return;
+}
 export default function LearningProjectCategory(props) {
   return (
     <>
-      <TouchableOpacity>
-        <View style={[styles.category, {flexDirection: props.flexDirection || "row"}]}>
+      <TouchableOpacity onPress={props.function || doNothing()}>
+        <View
+          style={[
+            styles.category,
+            { flexDirection: props.flexDirection || "row" },
+          ]}
+        >
           <Text style={styles.textStyle}> {props.name} </Text>
           <Image
             style={styles.imageStyle}

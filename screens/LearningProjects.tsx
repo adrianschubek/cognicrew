@@ -8,33 +8,24 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import ProjectGroup from "../components/learningProjects/ProjectGroups";
+import TextWithPlusButton from "../components/common/TextWithPlusButton";
 
 export default function LearningProjects({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.upperContainerChild}>
-        <Button
-          icon="plus"
-          mode="text"
-          labelStyle={{
-            textAlignVertical: "center",
-            fontSize: responsiveFontSize(3.5),
-          }}
-          contentStyle={{ flexDirection: "row-reverse" }}
-          onPress={()=> {
+        <TextWithPlusButton
+        text="go to LearningProject"
+          function={() => {
             navigation.navigate("LearningProject");
           }}
-        >
-          <Text style={{ fontSize: responsiveFontSize(2.2) }}>
-            {/*create new category*/} go to learningProject
-          </Text>
-        </Button>
+        />
       </View>
-      <View  style={styles.bottomContainerChild}>
-      <ScrollView>
-        <ProjectGroup/>
-      </ScrollView>
+      <View style={styles.bottomContainerChild}>
+        <ScrollView>
+          <ProjectGroup />
+        </ScrollView>
       </View>
     </View>
   );

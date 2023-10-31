@@ -7,31 +7,24 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
+import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
+import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 
-export default function LearningProject({ navigation }) {
+export default function FlashcardManagement({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
+      <View style={styles.upperContainer}>
+      <TextWithPlusButton text="add new flash cards" function={() => {}} />
+      </View>
+      <View style={styles.contentSetStyle}>
+        
+      </View>
       <LearningProjectCategory
-        path={require("../assets/cards_symbol.png")}
-        name={"Flashcards"}
-        function={() => {
-          navigation.navigate("FlashcardManagement");
-        }}
+        path={require("../../assets/cards_symbol.png")}
+        name={"Flashcard Management"}
       />
-      <LearningProjectCategory
-        path={require("../assets/completed_task_symbol.png")}
-        name={"Exercises"}
-      />
-      <LearningProjectCategory
-        path={require("../assets/camera_symbol.png")}
-        name={"Videos"}
-      />
-      <LearningProjectCategory
-        path={require("../assets/files_symbol.png")}
-        name={"Files"}
-      />
+
       <Button
         icon="home"
         mode="contained"
@@ -66,5 +59,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  upperContainer:{
+    flex:0,
+    width:responsiveWidth(100),
+    //backgroundColor:"red",
+    flexDirection:"row",
+    justifyContent:"flex-end"
+  },
+  contentSetStyle:{
+
   },
 });
