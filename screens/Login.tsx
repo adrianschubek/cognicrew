@@ -85,44 +85,49 @@ export default function Login({navigation}) {
           </Button>
       
           <Modal isVisible={isModalVisible}>
-            <Text>If you havent already got an account please fill in the form below:</Text>
-            <TextInput 
-            style={styles.dataInput}
-            label="Username:"
-            value={text3}
-            onChangeText={text3 => setText3(text3)}
-            />
-            <TextInput 
-            style={styles.dataInput}
-            label="E-mail:"
-            inputMode="email"
-            keyboardType="email-address"
-            value={text4}
-            onChangeText={text4 => setText4(text4)}
-            />
-            <TextInput 
-            style={styles.dataInput}
-            label="Password:"
-            value={text5}
-            secureTextEntry={true}
-            onChangeText={text5 => setText5(text5)}
-            />
-            <TextInput 
-            style={styles.dataInput}
-            label="Confirm password:"
-            value={text6}
-            secureTextEntry={true}
-            onChangeText={text6 => setText6(text6)}
-            />
-            <TextInput 
-            style={styles.dataInput}
-            label="Icon:"
-            value={text7}
-            onChangeText={text7 => setText7(text7)}
-            />
-            <Button onPress={toggleModal} 
-            > Submit form
-            </Button>
+           <View style={styles.container}>
+                  <Text>If you havent already got an account please fill in the form below:</Text>
+                  <TextInput 
+                  style={styles.dataInput}
+                  label="Username:"
+                  value={text3}
+                  onChangeText={text3 => setText3(text3)}
+                  />
+                  <TextInput 
+                  style={styles.dataInput}
+                  label="E-mail:"
+                  inputMode="email"
+                  keyboardType="email-address"
+                  value={text4}
+                  onChangeText={text4 => setText4(text4)}
+                  />
+                  <TextInput 
+                  style={styles.dataInput}
+                  label="Password:"
+                  value={text5}
+                  secureTextEntry={true}
+                  onChangeText={text5 => setText5(text5)}
+                  />
+                  <TextInput 
+                  style={styles.dataInput}
+                  label="Confirm password:"
+                  value={text6}
+                  secureTextEntry={true}
+                  onChangeText={text6 => setText6(text6)}
+                  />
+                  <Text>
+                    Upload icon:
+                  </Text>
+                <IconButton
+                    icon="camera"
+                    iconColor={'#303F9F'}
+                    size={60}
+                    onPress={() => console.log('Pressed')}
+                  />
+                  <Button onPress={toggleModal} 
+                  > Submit form
+                  </Button>
+              </View>
           </Modal>
           <StatusBar style="auto" />
       </View>
