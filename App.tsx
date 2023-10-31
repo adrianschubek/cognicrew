@@ -24,6 +24,7 @@ import Settings from "./screens/AccountSettings";
 import { useCallback, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import Login from "./screens/Login";
+import { usePreferencesStore } from "./stores/PreferencesStore";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -80,31 +81,29 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
-  const [isThemeDark, setIsThemeDark] = useState(false);
+  const { darkmode, setDarkmode } = usePreferencesStore();
+  // const [isThemeDark, setIsThemeDark] = useState(false);
 
-  let theme = isThemeDark ? CombinedDarkTheme : CombinedDefaultTheme;
+  let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
 
   const toggleTheme = useCallback(
-    () => setIsThemeDark(!isThemeDark),
-    [isThemeDark],
+    () => setDarkmode(!darkmode),
+    [darkmode],
   );
 
   const preferences = useMemo(
     () => ({
       toggleTheme,
-      isThemeDark,
+      darkmode,
     }),
-    [toggleTheme, isThemeDark],
+    [toggleTheme, darkmode],
   );
 
   return (
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <Tab.Navigator
-            initialRouteName="Home"
-            shifting={true}
-          >
+          <Tab.Navigator initialRouteName="Home" shifting={true}>
             <Tab.Screen
               name="HomeTab"
               options={{ tabBarIcon: "home", title: "Home" }}
