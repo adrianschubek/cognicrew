@@ -26,7 +26,10 @@ export default function LearningProject({ navigation }) {
       />
       <LearningProjectCategory
         path={require("../assets/camera_symbol.png")}
-        name={"Videos"}
+        name={"Links"}
+        function={() => {
+          navigation.navigate("LinkManagement");
+        }}
       />
       <LearningProjectCategory
         path={require("../assets/files_symbol.png")}

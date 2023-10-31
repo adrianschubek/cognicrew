@@ -1,24 +1,23 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Text } from "react-native-paper";
+import { Text, Card } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import AccoridionSection from "../../components/learningProject/AccoridionSection";
-
-export default function FlashcardManagement() {
+import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
+export default function LinkManagement() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.upperContainer}>
-        <TextWithPlusButton text= "add new flash cards" function={() => {}} />
+        <TextWithPlusButton text="add new link" function={() => {}} />
       </View>
       <ScrollView>
-       <AccoridionSection/>
+      <VideoLinkCards/>
       </ScrollView>
     </View>
   );

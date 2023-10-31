@@ -16,6 +16,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useCallback, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
+import { usePreferencesStore } from "./stores/PreferencesStore";
 import HomeScreen from "./screens/Home";
 import ManageFriends from "./screens/ManageFriends";
 import LearningProjects from "./screens/LearningProjects";
@@ -24,8 +25,7 @@ import Settings from "./screens/AccountSettings";
 import Login from "./screens/Login";
 import LearningRoom from "./screens/LearningRoom";
 import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
-import { usePreferencesStore } from "./stores/PreferencesStore";
-
+import LinkManagement from "./screens/projectManagement/LinkManagement";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -44,6 +44,7 @@ function MainTab() {
       <Stack.Screen name="LearningProject" component={LearningProject} />
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
       <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
+      <Stack.Screen name="LinkManagement" component={LinkManagement} />
     </Stack.Navigator>
   );
 }
