@@ -23,7 +23,7 @@ export default function LearningRoom({ navigation }) {
         flexDirection="row-reverse"
       />
       <LearningProjectCategory
-        path={require("../assets/camera_symbol.png")}
+        path={require("../assets/teamwork_symbol.png")}
         name={"Whiteboard"}
       />
       <Button
