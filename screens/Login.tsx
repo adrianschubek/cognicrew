@@ -17,13 +17,14 @@ import {
 } from "react-native-responsive-dimensions";
 import PasswordForgotten from "../components/dialogues/PasswordForgotten";
 import Register from "../components/dialogues/Register";
+import { SafeAreaView } from "react-native-safe-area-context";
 export default function Login({ navigation }) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Register showRegister={showRegister} close={() => setShowRegister(false)}/>
       <PasswordForgotten
         showPasswordForgotten={showPasswordForgotten}
@@ -32,16 +33,7 @@ export default function Login({ navigation }) {
       <View style={styles.topIcons}>
         <Image
           source={require("../assets/icon.png")}
-          style={{ width: 100, height: 100 }}
-        />
-        <IconButton
-          icon="cog"
-          iconColor={"#303F9F"}
-          size={60}
-          onPress={() => {
-            navigation.navigate("SettingsTab");
-            console.log("Pressed");
-          }}
+          style={{ width: 100, height: 100, backgroundColor:"red" }}
         />
       </View>
       <View style={styles.container}>
@@ -101,10 +93,9 @@ export default function Login({ navigation }) {
       >
         Login
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
