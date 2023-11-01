@@ -13,10 +13,14 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
+import { useAuth } from "../providers/AuthProvider";
 
 export default function HomeScreen({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
   const [showErrorJoin, setShowErrorJoin] = useState(false);
+
+
+  const {user} = useAuth();
 
   return (
     <>
@@ -52,7 +56,7 @@ export default function HomeScreen({ navigation }) {
                 paddingRight: responsiveWidth(1),
               }}
             >
-              Hello, username
+              Hello, {user?.email}
             </Text>
             <Avatar.Text
           size={responsiveFontSize(6)}

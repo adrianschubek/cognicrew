@@ -18,6 +18,7 @@ import {
 import PasswordForgotten from "../components/dialogues/PasswordForgotten";
 import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { supabase } from "../supabase";
 export default function Login({ navigation }) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
@@ -86,9 +87,12 @@ export default function Login({ navigation }) {
       <Button
         style={styles.dataInput}
         mode="contained"
-        onPress={() => {
-          navigation.navigate("Home");
-          console.log("Login screen pressed");
+        onPress={async () => {
+          const {data} = await supabase.auth.signInWithPassword({
+            email: text,
+            password: text2,
+          });
+          // console.log(data);
         }}
       >
         Login

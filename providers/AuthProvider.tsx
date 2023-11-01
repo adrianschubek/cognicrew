@@ -28,8 +28,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+      setUser(session ? session.user : null);
+    })
+
     // Listen for changes to authentication state
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Supabase auth event:", event);
+      console.log("Supabase auth session:", session);
+      
       setSession(session);
       setUser(session ? session.user : null);
       setInitialized(true);
