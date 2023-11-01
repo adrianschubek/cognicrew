@@ -16,25 +16,15 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import PasswordForgotten from "../components/dialogues/PasswordForgotten";
+import Register from "../components/dialogues/Register";
 export default function Login({ navigation }) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
-  const [text3, setText3] = React.useState("");
-  const [emailInputPasswordForgotten, setEmailInputPasswordForgotten] =
-    React.useState("");
-  const [text5, setText5] = React.useState("");
-  const [text6, setText6] = React.useState("");
-
-  const [isModalVisible, setModalVisible] = useState(false);
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
-
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   return (
     <View style={styles.container}>
+      <Register showRegister={showRegister} close={() => setShowRegister(false)}/>
       <PasswordForgotten
         showPasswordForgotten={showPasswordForgotten}
         close={() => setShowPasswordForgotten(false)}
@@ -86,13 +76,12 @@ export default function Login({ navigation }) {
       <View style={styles.container}>
         <Text>
           Your first time? You can register{" "}
-          <Pressable onPress={toggleModal}>
+          <Pressable onPress={() => setShowRegister(true)}>
             <Text>here!</Text>
           </Pressable>
         </Text>
 
         <Button
-          style={styles.noHover}
           onPress={() => {
             setShowPasswordForgotten(true);
             console.log("Login screen pressed");
@@ -100,76 +89,6 @@ export default function Login({ navigation }) {
         >
           Password forgotten?
         </Button>
-        <Modal isVisible={isModalVisible}>
-          <View style={styles.whiteModal}>
-            <View style={styles.container}>
-              <Text style={styles.titleText}>
-                If you havent already got an account please fill in the form
-                below:
-              </Text>
-            </View>
-            <View style={styles.leftSide}>
-              <TextInput
-                style={styles.dataInput}
-                label="Username:"
-                value={text3}
-                onChangeText={(text3) => setText3(text3)}
-              />
-            </View>
-            <View style={styles.leftSide}>
-              <TextInput
-                style={styles.dataInput}
-                label="E-mail:"
-                inputMode="email"
-                keyboardType="email-address"
-                placeholder="max-mustermann@gmail.com"
-                value={emailInputPasswordForgotten}
-                onChangeText={(emailInputPasswordForgotten) =>
-                  setEmailInputPasswordForgotten(emailInputPasswordForgotten)
-                }
-              />
-            </View>
-            <View style={styles.leftSide}>
-              <TextInput
-                style={styles.dataInput}
-                label="Password:"
-                placeholder="angola15"
-                value={text5}
-                secureTextEntry={true}
-                onChangeText={(text5) => setText5(text5)}
-              />
-            </View>
-            <View style={styles.leftSide}>
-              <TextInput
-                style={styles.dataInput}
-                label="Repeat password:"
-                placeholder="angola15"
-                value={text6}
-                secureTextEntry={true}
-                onChangeText={(text6) => setText6(text6)}
-              />
-            </View>
-            <View style={{ ...styles.leftSide, backgroundColor: "white" }}>
-              <Text>Upload icon:</Text>
-              <IconButton
-                icon="file-png-box"
-                iconColor={"#303F9F"}
-                size={60}
-                onPress={() => console.log("Pressed")}
-              />
-            </View>
-            <View style={styles.container}>
-              <Button
-                style={styles.dataInput}
-                mode="contained"
-                onPress={toggleModal}
-              >
-                {" "}
-                Submit form
-              </Button>
-            </View>
-          </View>
-        </Modal>
         <StatusBar style="auto" />
       </View>
       <Button
