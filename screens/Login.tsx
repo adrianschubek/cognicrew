@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
       <View style={styles.topIcons}>
         <Image
           source={require("../assets/icon.png")}
-          style={{ width: 100, height: 100, backgroundColor:"red" }}
+          style={{ width: 100, height: 100 }}
         />
       </View>
       <View style={styles.container}>
