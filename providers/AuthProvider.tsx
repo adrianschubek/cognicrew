@@ -25,7 +25,7 @@ export function useAuth() {
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | null>();
   const [session, setSession] = useState<Session | null>(null);
-  const [initialized, setInitialized] = useState<boolean>(false);
+  // const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -40,23 +40,17 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       
       setSession(session);
       setUser(session ? session.user : null);
-      setInitialized(true);
+      // setInitialized(true);
     });
     return () => {
       data.subscription.unsubscribe();
     };
   }, []);
 
-  // Log out the user
-  const signOut = async () => {
-    await supabase.auth.signOut();
-  };
-
   const value = {
     user,
     session,
-    initialized,
-    signOut,
+    // initialized,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
