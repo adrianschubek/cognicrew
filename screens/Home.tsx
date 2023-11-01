@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  Dialog, Portal,
-  TextInput,
-  Text
-} from "react-native-paper";
+import { Dialog, Portal, TextInput, Text } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Avatar } from "react-native-paper";
@@ -12,15 +8,25 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
+import { supabase } from "../supabase";
 
 export default function HomeScreen({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
   const [showErrorJoin, setShowErrorJoin] = useState(false);
 
+  const { user } = useAuth();
 
-  const {user} = useAuth();
+  const [achievements, setAchievements] = useState([]);
+  useEffect(() => {
+    const getAllAchievements = async () =>
+      await supabase.from("achievements").select("*");
+
+    getAllAchievements().then((achievements) => {
+      setAchievements(achievements.data);
+    });
+  }, []);
 
   return (
     <>
@@ -58,10 +64,7 @@ export default function HomeScreen({ navigation }) {
             >
               Hello, {user?.email}
             </Text>
-            <Avatar.Text
-          size={responsiveFontSize(6)}
-          label={"Ti"}
-        />
+            <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
           </View>
         </View>
         <View style={styles.middleContainerChild}>
@@ -71,7 +74,7 @@ export default function HomeScreen({ navigation }) {
               paddingBottom: responsiveHeight(1),
             }}
           >
-            Join room via ID:
+            Join room via ID: {JSON.stringify(achievements)}
           </Text>
           <TextInput
             editable
@@ -134,21 +137,25 @@ export default function HomeScreen({ navigation }) {
           >
             Manage your friends!
           </Button>
-          <Button 
+          <Button
             style={styles.buttonStyle}
             onPress={() => {
               navigation.navigate("Login");
               console.log("Login screen pressed");
-              }}
-            > Test Login
+            }}
+          >
+            {" "}
+            Test Login
           </Button>
-          <Button 
+          <Button
             style={styles.buttonStyle}
             onPress={() => {
               navigation.navigate("Achievements");
               console.log("Achievement screen pressed");
-              }}
-            > Test Achievements
+            }}
+          >
+            {" "}
+            Test Achievements
           </Button>
         </View>
       </View>
