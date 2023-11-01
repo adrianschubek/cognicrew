@@ -70,14 +70,13 @@ export default function Register({ showRegister, close }) {
               style={{}}
               icon="file-png-box"
               size={responsiveFontSize(7)}
+              onPress={() => {}}
             />
           </View>
-        </Dialog.Content>
-        <Dialog.Actions style={{ alignSelf: "flex-end" }}>
           <Button mode="contained" onPress={() => close()}>
             Submit form
           </Button>
-        </Dialog.Actions>
+        </Dialog.Content>
       </Dialog>
     </Portal>
   );
