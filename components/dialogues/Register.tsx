@@ -65,7 +65,7 @@ export default function Register({ showRegister, close }) {
             onChangeText={(text6) => setText6(text6)}
           />
           <View style={{ alignItems: "center", alignSelf: "flex-start" }}>
-            <Text style={{ marginTop: responsiveHeight(2) }}>Upload icon:</Text>
+            <Text style={{ marginTop: responsiveHeight(1) }}>Upload icon:</Text>
             <IconButton
               style={{}}
               icon="file-png-box"
