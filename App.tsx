@@ -26,6 +26,7 @@ import Login from "./screens/Login";
 import LearningRoom from "./screens/LearningRoom";
 import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
 import LinkManagement from "./screens/projectManagement/LinkManagement";
+import Achievements from "./screens/Achievements";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -45,6 +46,7 @@ function MainTab() {
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
       <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
+      <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
   );
 }
