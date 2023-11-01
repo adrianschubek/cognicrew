@@ -24,7 +24,6 @@ export default function Achievements({navigation}) {
 const styles = StyleSheet.create({
   scrollContent: {
     width: responsiveWidth(100),
-    paddingLeft: responsiveWidth(13),
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
