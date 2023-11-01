@@ -1,8 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
 import {
-  Dialog,
-  Portal,
   TextInput,
   Text,
   Button,
@@ -191,7 +189,6 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white", //"#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -201,7 +198,6 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "white",
     width: "100%", // add width
   },
   baseText: {
@@ -218,7 +214,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   noHover: {
-    backgroundColor: "#FFF",
   },
   leftSide: {
     flexDirection: "row",
@@ -227,6 +222,5 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   whiteModal: {
-    backgroundColor: "white",
   },
 });
