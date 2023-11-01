@@ -1,14 +1,15 @@
 import * as React from "react";
 import { useState } from "react";
-import {
-  TextInput,
-  Text,
-  Button,
-  IconButton,
-} from "react-native-paper";
+import { TextInput, Text, Button, IconButton } from "react-native-paper";
 import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Image, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import Modal from "react-native-modal";
 import {
   responsiveHeight,
@@ -25,28 +26,33 @@ export default function Login({ navigation }) {
   const [showRegister, setShowRegister] = useState(false);
   return (
     <SafeAreaView style={styles.container}>
-      <Register showRegister={showRegister} close={() => setShowRegister(false)}/>
+      <StatusBar style="auto" />
+      <Register
+        showRegister={showRegister}
+        close={() => setShowRegister(false)}
+      />
       <PasswordForgotten
         showPasswordForgotten={showPasswordForgotten}
         close={() => setShowPasswordForgotten(false)}
       />
-      <View style={styles.topIcons}>
+      <View style={styles.upperContainer}>
         <Image
           source={require("../assets/icon.png")}
-          style={{ width: 100, height: 100 }}
+          style={{
+            width: responsiveFontSize(15),
+            height: responsiveFontSize(15),
+          }}
         />
       </View>
-      <View style={styles.container}>
+      <View style={styles.textContainer}>
         <Text style={styles.titleText}>Welcome to CogniCrew!</Text>
-      </View>
-      <View style={styles.container}>
         <Text style={styles.baseText}>
           Your favorite place to supercharge {"\n"}
           your learning, collaborate with peers, and {"\n"}
           unlock your full potential. {"\n"}
         </Text>
       </View>
-      <View style={styles.container}>
+      <View style={styles.loginContainer}>
         <TextInput
           style={styles.dataInput}
           label="Username or E-mail address:"
@@ -54,45 +60,38 @@ export default function Login({ navigation }) {
           value={text}
           onChangeText={(text) => setText(text)}
         />
-      </View>
-      <View style={styles.container}>
         <TextInput
-          style={styles.dataInput}
+          style={[styles.dataInput, { marginTop: responsiveHeight(1) }]}
           label="Password"
-          placeholder="angola15"
+          placeholder="your password"
           secureTextEntry={true}
           value={text2}
           onChangeText={(text2) => setText2(text2)}
         />
-      </View>
-      <View style={styles.container}>
-        <Text>
-          Your first time? You can register{" "}
-          <Pressable onPress={() => setShowRegister(true)}>
-            <Text>here!</Text>
-          </Pressable>
-        </Text>
-
-        <Button
+        <View style={{flexDirection:"row", marginTop:responsiveHeight(0.2)}}>
+          <Text>Your first time? You can register</Text> 
+          <TouchableOpacity onPress={() => setShowRegister(true)}>
+          <Text> here!</Text>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity
+          style={{ alignSelf: "flex-start", marginTop: responsiveHeight(0.5) }}
           onPress={() => {
             setShowPasswordForgotten(true);
-            console.log("Login screen pressed");
           }}
         >
-          Password forgotten?
+          <Text>Password forgotten?</Text>
+        </TouchableOpacity>
+        <Button
+          style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+          mode="contained"
+          onPress={() => {
+            navigation.navigate("Home");
+          }}
+        >
+          Login
         </Button>
-        <StatusBar style="auto" />
       </View>
-      <Button
-        style={styles.dataInput}
-        mode="contained"
-        onPress={() => {
-          navigation.navigate("Home");
-          console.log("Login screen pressed");
-        }}
-      >
-        Login
-      </Button>
     </SafeAreaView>
   );
 }
@@ -102,35 +101,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  topIcons: {
-    flex: 1,
-    bottom: 0,
+  upperContainer: {
+    flex: 0,
     alignItems: "flex-start",
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%", // add width
+    width: responsiveWidth(100),
+    marginLeft: responsiveWidth(5),
+  },
+  textContainer: {
+    flex: 1,
+    marginTop: responsiveHeight(10),
+  },
+  loginContainer: {
+    flex: 3,
   },
   baseText: {
-    fontSize: 18,
+    fontSize: responsiveFontSize(2.2),
   },
   titleText: {
-    fontSize: 24,
+    fontSize: responsiveFontSize(3),
     fontWeight: "bold",
   },
   dataInput: {
     width: responsiveWidth(80),
-  },
-  oneLine: {
-    flexDirection: "row",
-  },
-  noHover: {
-  },
-  leftSide: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignContent: "flex-start",
-    margin: 10,
-  },
-  whiteModal: {
   },
 });
