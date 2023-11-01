@@ -138,6 +138,14 @@ export default function HomeScreen({ navigation }) {
               }}
             > Test Login
           </Button>
+          <Button 
+            style={styles.buttonStyle}
+            onPress={() => {
+              navigation.navigate("Achievements");
+              console.log("Achievement screen pressed");
+              }}
+            > Test Achievements
+          </Button>
         </View>
       </View>
     </>
