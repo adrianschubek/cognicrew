@@ -27,6 +27,5 @@ export default function TextWithPlusButton(props) {
     </Button>
   );
 }
-/**/
 const styles = StyleSheet.create({});
  
