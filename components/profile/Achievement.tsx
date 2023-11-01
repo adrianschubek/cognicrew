@@ -5,7 +5,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { StyleSheet, View, Image } from "react-native"; // Import Image component
-import { Text, List } from "react-native-paper";
+import { Text, List, Divider } from "react-native-paper";
 
 const achievementItems = [
   { id: 1, title: 'Achievement 1', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
@@ -23,21 +23,25 @@ const achievementItems = [
 export default function Achievement() {
   return (
     <List.Section style={styles.achievementStyle}>
-      {achievementItems.map((achievement) => (
-        <List.Item
-          key={achievement.id}
-          title={achievement.title} titleStyle={styles.title}
-          description={achievement.description}
-          left={() => (
-            <View style={styles.achievementItem}>
-              <Image source={achievement.imageSource} style={styles.image} />
-            </View>
-          )}
-        />
+      {achievementItems.map((achievement, index) => (
+        <React.Fragment key={achievement.id}>
+          <List.Item
+            title={achievement.title}
+            titleStyle={styles.title}
+            description={achievement.description}
+            left={() => (
+              <View style={styles.achievementItem}>
+                <Image source={achievement.imageSource} style={styles.image} />
+              </View>
+            )}
+          />
+          {index < achievementItems.length - 1 && <View style={styles.divider} />}
+        </React.Fragment>
       ))}
     </List.Section>
   );
 }
+
 
 const styles = StyleSheet.create({
   achievementStyle: {
@@ -50,7 +54,12 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
   },
+  divider: {
+    height: 1, // You can adjust the height as needed
+    backgroundColor: 'grey', // Adjust the color if needed
+  },
   image: {
+    marginLeft: responsiveWidth(7),
     width: 70,
     height: 70,
     marginRight: 3,
