@@ -44,7 +44,10 @@ function MainTab() {
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
+      <Stack.Screen
+        name="FlashcardManagement"
+        component={FlashcardManagement}
+      />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
       <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
@@ -87,20 +90,10 @@ const CombinedDarkTheme = {
 
 export default function App() {
   const { darkmode, setDarkmode } = usePreferencesStore();
-  // const [isThemeDark, setIsThemeDark] = useState(false);
-
   let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
-
-  const toggleTheme = useCallback(
-    () => setDarkmode(!darkmode),
-    [darkmode],
-  );
-
+  const toggleTheme = useCallback(() => setDarkmode(!darkmode), [darkmode]);
   const preferences = useMemo(
-    () => ({
-      toggleTheme,
-      darkmode,
-    }),
+    () => ({ toggleTheme, darkmode }),
     [toggleTheme, darkmode],
   );
 
@@ -108,18 +101,27 @@ export default function App() {
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <Tab.Navigator initialRouteName="Home" shifting={true}>
-            <Tab.Screen
-              name="HomeTab"
-              options={{ tabBarIcon: "home", title: "Home" }}
-              component={MainTab}
-            />
-            <Tab.Screen
-              name="SettingsTab"
-              options={{ tabBarIcon: "cogs", title: "Settings" }}
-              component={SettingsTab}
-            />
-          </Tab.Navigator>
+          {true ? (
+            <Stack.Navigator
+              initialRouteName="Login"
+              screenOptions={{ headerShown: false }}
+            >
+              <Tab.Screen name="Login" component={Login} />
+            </Stack.Navigator>
+          ) : (
+            <Tab.Navigator initialRouteName="Home" shifting={true}>
+              <Tab.Screen
+                name="HomeTab"
+                options={{ tabBarIcon: "home", title: "Home" }}
+                component={MainTab}
+              />
+              <Tab.Screen
+                name="SettingsTab"
+                options={{ tabBarIcon: "cogs", title: "Settings" }}
+                component={SettingsTab}
+              />
+            </Tab.Navigator>
+          )}
         </NavigationContainer>
       </PaperProvider>
     </PreferencesContext.Provider>
