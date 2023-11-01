@@ -9,7 +9,7 @@ import { Text, List } from "react-native-paper";
 
 const achievementItems = [
   { id: 1, title: 'Achievement 1', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
-  { id: 2, title: 'Achievement 2', description: 'This is a short description.', imageSource: require('../../assets/camera_symbol.png') },
+  { id: 2, title: 'Achievement 2', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
   { id: 3, title: 'Achievement 3', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
   { id: 4, title: 'Achievement 4', description: 'This is a long description due to testing purposes.', imageSource: require('../../assets/des_bedarfs.png') },
   { id: 5, title: 'Achievement 5', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
