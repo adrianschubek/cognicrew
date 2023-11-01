@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Text, List } from "react-native-paper";
+import { Text, List, Divider } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -28,13 +28,16 @@ export default function AccoridionSection() {
   return (
     <List.Section style={styles.accordionStyle}>
       {accordionSectionItems.map((learningSet) => (
-        <List.Accordion
-          key={learningSet.id}
-          title={learningSet.title}
-          left={(props) => <List.Icon {...props} icon="folder" />}
-        >
-          <AccoridionListItems />
-        </List.Accordion>
+        <>
+          <List.Accordion
+            key={learningSet.id}
+            title={learningSet.title}
+            left={(props) => <List.Icon {...props} icon="folder" />}
+          >
+            <AccoridionListItems />
+          </List.Accordion>
+          <Divider/>
+        </>
       ))}
     </List.Section>
   );
