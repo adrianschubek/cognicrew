@@ -19,6 +19,7 @@ import {
 import PasswordForgotten from "../components/dialogues/PasswordForgotten";
 import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { supabase } from "../supabase";
 export default function Login({ navigation }) {
   const [text, setText] = React.useState("");
   const [text2, setText2] = React.useState("");
@@ -68,10 +69,12 @@ export default function Login({ navigation }) {
           value={text2}
           onChangeText={(text2) => setText2(text2)}
         />
-        <View style={{flexDirection:"row", marginTop:responsiveHeight(0.2)}}>
-          <Text>Your first time? You can register</Text> 
+        <View
+          style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
+        >
+          <Text>Your first time? You can register</Text>
           <TouchableOpacity onPress={() => setShowRegister(true)}>
-          <Text> here!</Text>
+            <Text> here!</Text>
           </TouchableOpacity>
         </View>
         <TouchableOpacity
@@ -85,8 +88,12 @@ export default function Login({ navigation }) {
         <Button
           style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
           mode="contained"
-          onPress={() => {
-            navigation.navigate("Home");
+          onPress={async () => {
+            const { data } = await supabase.auth.signInWithPassword({
+              email: text,
+              password: text2,
+            });
+            // console.log(data);
           }}
         >
           Login

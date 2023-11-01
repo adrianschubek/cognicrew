@@ -14,7 +14,7 @@ import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import HomeScreen from "./screens/Home";
@@ -27,6 +27,9 @@ import LearningRoom from "./screens/LearningRoom";
 import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
 import LinkManagement from "./screens/projectManagement/LinkManagement";
 import Achievements from "./screens/Achievements";
+import { AuthContext, AuthProvider, useAuth } from "./providers/AuthProvider";
+import { View, Text } from "react-native";
+import MainNav from "./components/MainNav";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -101,39 +104,11 @@ export default function App() {
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          {true ? (
-            <Stack.Navigator
-              initialRouteName="Login"
-              screenOptions={{ headerShown: false }}
-            >
-              <Tab.Screen name="Login" component={Login} />
-            </Stack.Navigator>
-          ) : (
-            <Tab.Navigator initialRouteName="Home" shifting={true}>
-              <Tab.Screen
-                name="HomeTab"
-                options={{ tabBarIcon: "home", title: "Home" }}
-                component={MainTab}
-              />
-              <Tab.Screen
-                name="SettingsTab"
-                options={{ tabBarIcon: "cogs", title: "Settings" }}
-                component={SettingsTab}
-              />
-            </Tab.Navigator>
-          )}
+          <AuthProvider>
+            <MainNav />
+          </AuthProvider>
         </NavigationContainer>
       </PaperProvider>
     </PreferencesContext.Provider>
   );
 }
-/*
-//we need global styles 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-}); */

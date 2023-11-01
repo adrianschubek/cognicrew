@@ -9,6 +9,7 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
+import { supabase } from "../../supabase";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -27,9 +28,9 @@ const LogoutButton = () => {
           <Dialog.Actions>
             <Button onPress={() => setShowConfirm(false)}>Cancel</Button>
             <Button
-              onPress={() => {
+              onPress={async () => {
                 setShowConfirm(false);
-                // TODO: supabase.auth.signOut();
+                await supabase.auth.signOut();
               }}
             >
               Logout
@@ -49,7 +50,9 @@ const LogoutButton = () => {
         onPress={() => {
           setShowConfirm(true);
         }}
-      >Logout</Button>
+      >
+        Logout
+      </Button>
     </>
   );
 };
