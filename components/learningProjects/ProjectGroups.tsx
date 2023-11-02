@@ -21,7 +21,7 @@ const dummyProjectGroups = [
 ];
 export default function ProjectGroups() {
   return dummyProjectGroups.map((projectGroup) => (
-    <Card elevation={5} style={styles.projectGroup} key={projectGroup.id}>
+    <Card elevation={1} style={styles.projectGroup} key={projectGroup.id}>
       <Card.Title
         title={projectGroup.name}
         right={() => (

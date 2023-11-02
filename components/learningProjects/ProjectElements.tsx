@@ -29,7 +29,7 @@ export default function ProjectElements() {
           label={project.name.substring(0, 2)}
         />
         <Text style={styles.textStyle}>
-          {project.name.length > 15
+          {project.name.length > 13
             ? project.name.substring(0, 13) + "..."
             : project.name.substring(0, 13)}
         </Text>
@@ -41,9 +41,9 @@ export default function ProjectElements() {
 
 const styles = StyleSheet.create({
   projectElement: {
-    width: responsiveWidth(27),
+    width: responsiveWidth(29),
     paddingBottom: responsiveFontSize(1),
-    //backgroundColor: "red",
+    //backgroundColor: "green",
   },
   textStyle: {
     fontSize: responsiveFontSize(2),
