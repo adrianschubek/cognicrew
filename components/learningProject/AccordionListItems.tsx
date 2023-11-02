@@ -66,7 +66,7 @@ export default function AccordionListItems() {
               ]}
               multiline={true}
               label="question:"
-              value={question}
+              value={/*hier muss dann listItem.question hin*/question}
               onChangeText={(question) => {
                 setQuestion(question);
                 console.log(question);
@@ -77,7 +77,7 @@ export default function AccordionListItems() {
               style={styles.textInputStyle}
               label="answer:"
               multiline={true}
-              value={answer}
+              value={/*hier muss dann listItem.answer hin*/ answer}
               onChangeText={(answer) => {
                 setAnswer(answer);
                 console.log(answer);
