@@ -8,9 +8,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/tudasplash1.jpg",
-      "resizeMode": "cover",
-      "backgroundColor": "#000000"
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1b1b1f"
     },
     "assetBundlePatterns": [
       "**/*"
