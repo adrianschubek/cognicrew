@@ -8,7 +8,7 @@ import {
 } from "react-native-responsive-dimensions";
 import AccoridionListItems from "./AccordionListItems";
 
-const accordionSectionItems = [
+export const accordionSectionItems = [
   { title: "Set A", id: 1 },
   { title: "Set B", id: 2 },
   { title: "Set C", id: 3 },
