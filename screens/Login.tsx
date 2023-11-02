@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { TextInput, Text, Button, IconButton } from "react-native-paper";
-import { expo } from ".././app.json";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -10,7 +9,6 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from "react-native";
-import Modal from "react-native-modal";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -78,10 +76,6 @@ export default function Login({ navigation }) {
           <View
             style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
           >
-            <Text>Your first time? You can register</Text>
-            <TouchableOpacity onPress={() => setShowRegister(true)}>
-              <Text> here!</Text>
-            </TouchableOpacity>
           </View>
           <TouchableOpacity
             style={{
@@ -105,6 +99,15 @@ export default function Login({ navigation }) {
             }}
           >
             Login
+          </Button>
+          <Button
+            style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+            mode="contained-tonal"
+            onPress={() => {
+              setShowRegister(true);
+            }}
+          >
+            Register
           </Button>
         </View>
     </SafeAreaView>

@@ -28,16 +28,15 @@ export default function AccordionSection(props) {
   return (
     <List.Section style={{width: props.width || responsiveWidth(100) }}>
       {accordionSectionItems.map((learningSet) => (
-        <>
+        <React.Fragment key={learningSet.id}>
           <List.Accordion
-            key={learningSet.id}
             title={learningSet.title}
             left={(props) => <List.Icon {...props} icon="folder" />}
           >
             <AccordionListItems />
           </List.Accordion>
           <Divider/>
-        </>
+        </React.Fragment>
       ))}
     </List.Section>
   );
