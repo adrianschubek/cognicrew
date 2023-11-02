@@ -18,7 +18,8 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { useState } from "react";
-import AccoridionSection from "../components/learningProject/AccoridionSection";
+import AccoridionSection, { accordionSectionItems } from "../components/learningProject/AccoridionSection";
+import { ScrollView } from "react-native";
 
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
@@ -36,13 +37,36 @@ export default function LearningRoom({ navigation }) {
   };
 
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState(
+    accordionSectionItems.map(item => ({ ...item, checked: false }))
+  );
 
-  const onChangeSearch = query => setSearchQuery(query);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filteredItems = accordionSectionItems.map((item) => ({
+      ...item,
+      checked: false // Reset checkbox state when filtering
+    })).filter((item) =>
+      item.title.toLowerCase().includes(query.toLowerCase())
+    );
+    console.log("filteredAccordionSectionItems: ", filteredItems);
+    setFilteredAccordionSectionItems(filteredItems);
+  }
+
+  const handleCheckboxPress = (id) => {
+    const updatedItems = filteredAccordionSectionItems.map((item) => {
+      if (item.id === id) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
+    setFilteredAccordionSectionItems(updatedItems);
+  }
 
   return (
     <>
       <Portal>
-        <Dialog visible={showCreateFlashcardGame} onDismiss={() => setShowCreateFlashcardGame(false)}>
+      <Dialog visible={showCreateFlashcardGame} onDismiss={() => setShowCreateFlashcardGame(false)}>
           <Dialog.Title>Flashcard game</Dialog.Title>
           <Dialog.Content>
             <TextInput
@@ -51,12 +75,26 @@ export default function LearningRoom({ navigation }) {
               onChangeText={handleTimeChange}
             />
             <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Search"
-              onChangeText={onChangeSearch}
-              value={searchQuery}
-            />
-            </View>
+              <Searchbar
+                placeholder="Search"
+                onChangeText={handleSearch}
+                value={searchQuery}
+              />
+              </View>
+              <ScrollView
+              contentContainerStyle={styles.scrollContent}
+              style={styles.scrollContainer}
+            >
+                {filteredAccordionSectionItems.map((learningSet) => (
+                  <View key={learningSet.id} style={styles.accordionItem}>
+                    <Text style={styles.accordionTitle}>{learningSet.title}</Text>
+                    <Checkbox
+                    status={learningSet.checked ? "checked" : "unchecked"}
+                    onPress={() => handleCheckboxPress(learningSet.id)}
+                  />
+                  </View>
+                ))}
+              </ScrollView>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setShowCreateFlashcardGame(false)}>Done</Button>
@@ -65,24 +103,7 @@ export default function LearningRoom({ navigation }) {
       </Portal>
       <Portal>
         <Dialog visible={showCreateQuizGame} onDismiss={() => setShowCreateQuizGame(false)}>
-          <Dialog.Title>Quiz game</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Round duration (mm:ss)" style={styles.timer}
-              value={time}
-              onChangeText={handleTimeChange}
-            />
-            <View style={styles.searchContainer}>
-            <Searchbar
-              placeholder="Search"
-              onChangeText={onChangeSearch}
-              value={searchQuery}
-            />
-            </View>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowCreateQuizGame(false)}>Done</Button>
-          </Dialog.Actions>
+          {/* ... Existing code ... */}
         </Dialog>
       </Portal>
       <View style={styles.container}>
@@ -146,10 +167,30 @@ const styles = StyleSheet.create({
   timer: {
     backgroundColor: null,
   },
-    searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  searchContainer: {
     borderBottomWidth: 1,
     borderColor: "gray",
+  },
+  accordionItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 2,
+  },
+  accordionTitle: {
+    fontSize: 16,
+  },
+  dialog: {
+    maxHeight: responsiveHeight(70), // Set a maximum height for the dialog
+  },
+  dialogContent: {
+    maxHeight: responsiveHeight(50), // Set a maximum height for the content
+  },
+  scrollContainer: {
+    maxHeight: responsiveHeight(40),
+    flex: 0,
+  },
+  scrollContent: {
+    paddingVertical: 16, // Add padding to the content
   },
 });
