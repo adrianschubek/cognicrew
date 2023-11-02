@@ -46,6 +46,7 @@ export default function AccordionListItems() {
     <>
       <List.Accordion
         title={listItem.question}
+        titleNumberOfLines={4}
         key={listItem.id}
         style={{
           width: responsiveWidth(100),
@@ -57,7 +58,7 @@ export default function AccordionListItems() {
         }}
       >
         <Card elevation={1} style={styles.cardStyle} key={listItem.id}>
-          <Card.Title title="edit here:" />
+          <Card.Title title="Edit here:" />
           <Card.Content style={styles.cardContentStyle}>
             <TextInput
               style={[
@@ -65,7 +66,7 @@ export default function AccordionListItems() {
                 { marginBottom: responsiveHeight(1) },
               ]}
               multiline={true}
-              label="question:"
+              label="Question:"
               value={/*hier muss dann listItem.question hin*/question}
               onChangeText={(question) => {
                 setQuestion(question);
@@ -75,7 +76,7 @@ export default function AccordionListItems() {
             />
             <TextInput
               style={styles.textInputStyle}
-              label="answer:"
+              label="Answer:"
               multiline={true}
               value={/*hier muss dann listItem.answer hin*/ answer}
               onChangeText={(answer) => {
