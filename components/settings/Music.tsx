@@ -1,13 +1,19 @@
 import { Slider } from "@miblanchard/react-native-slider";
 import { useState } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
+import { usePreferencesStore } from "../../stores/PreferencesStore";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
 export default function MusicSettings(props) {
-  const [masterVolume, setMasterVolume] = useState(0.5);
-  const [musicVolume, setMusicVolume] = useState(0.5);
-  const [soundsVolume, setSoundsVolume] = useState(0.5);
+  const {
+    musicVolume,
+    setMusicVolume,
+    effectsVolume,
+    setEffectsVolume,
+    masterVolume,
+    setMasterVolume,
+  } = usePreferencesStore();
 
   return (
     <Card {...props} mode="contained">
@@ -17,28 +23,28 @@ export default function MusicSettings(props) {
           Master ({(masterVolume * 100).toFixed(0) + "%"})
         </Text>
         <Slider
-          step={0.01}
+          step={0.05}
           value={masterVolume}
           // @ts-ignore
-          onValueChange={(v) => setMasterVolume(v)}
+          onSlidingComplete={(v) => setMasterVolume(v)}
         ></Slider>
         <Text variant="bodyMedium">
           Music ({(musicVolume * 100).toFixed(0) + "%"})
         </Text>
         <Slider
-          step={0.01}
+          step={0.05}
           value={musicVolume}
-           // @ts-ignore
-          onValueChange={(v) => setMusicVolume(v)}
+          // @ts-ignore
+          onSlidingComplete={(v) => setMusicVolume(v)}
         ></Slider>
         <Text variant="bodyMedium">
-          Sounds ({(soundsVolume * 100).toFixed(0) + "%"})
+          Effects ({(effectsVolume * 100).toFixed(0) + "%"})
         </Text>
         <Slider
-          step={0.01}
-          value={soundsVolume}
-           // @ts-ignore
-          onValueChange={(v) => setSoundsVolume(v)}
+          step={0.05}
+          value={effectsVolume}
+          // @ts-ignore
+          onSlidingComplete={(v) => setEffectsVolume(v)}
         ></Slider>
       </Card.Content>
     </Card>

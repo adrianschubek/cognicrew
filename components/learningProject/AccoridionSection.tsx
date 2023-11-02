@@ -24,9 +24,9 @@ const accordionSectionItems = [
   { title: "Set M", id: 14 },
   { title: "Set N", id: 15 },
 ];
-export default function AccoridionSection() {
+export default function AccoridionSection(props) {
   return (
-    <List.Section style={styles.accordionStyle}>
+    <List.Section style={{width: props.width || responsiveWidth(100) }}>
       {accordionSectionItems.map((learningSet) => (
         <>
           <List.Accordion
@@ -44,7 +44,4 @@ export default function AccoridionSection() {
 }
 
 const styles = StyleSheet.create({
-  accordionStyle: {
-    width: responsiveWidth(100),
-  },
 });

@@ -12,52 +12,11 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
-import HomeScreen from "./screens/Home";
-import ManageFriends from "./screens/ManageFriends";
-import LearningProjects from "./screens/LearningProjects";
-import LearningProject from "./screens/LearningProject";
-import Settings from "./screens/AccountSettings";
-import Login from "./screens/Login";
-import LearningRoom from "./screens/LearningRoom";
-import FlashcardManagement from "./screens/projectManagement/FlashcardManagement";
-import LinkManagement from "./screens/projectManagement/LinkManagement";
-import Achievements from "./screens/Achievements";
-const Tab = createMaterialBottomTabNavigator();
-
-const Stack = createNativeStackNavigator();
-
-function MainTab() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ title: "CogniCrew" }}
-      />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="ManageFriends" component={ManageFriends} />
-      <Stack.Screen name="LearningProjects" component={LearningProjects} />
-      <Stack.Screen name="LearningProject" component={LearningProject} />
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
-      <Stack.Screen name="LinkManagement" component={LinkManagement} />
-      <Stack.Screen name="Achievements" component={Achievements} />
-    </Stack.Navigator>
-  );
-}
-
-function SettingsTab() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="Settings" component={Settings} />
-    </Stack.Navigator>
-  );
-}
+import { AuthProvider } from "./providers/AuthProvider";
+import MainNav from "./components/MainNav";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -87,20 +46,10 @@ const CombinedDarkTheme = {
 
 export default function App() {
   const { darkmode, setDarkmode } = usePreferencesStore();
-  // const [isThemeDark, setIsThemeDark] = useState(false);
-
   let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
-
-  const toggleTheme = useCallback(
-    () => setDarkmode(!darkmode),
-    [darkmode],
-  );
-
+  const toggleTheme = useCallback(() => setDarkmode(!darkmode), [darkmode]);
   const preferences = useMemo(
-    () => ({
-      toggleTheme,
-      darkmode,
-    }),
+    () => ({ toggleTheme, darkmode }),
     [toggleTheme, darkmode],
   );
 
@@ -108,30 +57,11 @@ export default function App() {
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <Tab.Navigator initialRouteName="Home" shifting={true}>
-            <Tab.Screen
-              name="HomeTab"
-              options={{ tabBarIcon: "home", title: "Home" }}
-              component={MainTab}
-            />
-            <Tab.Screen
-              name="SettingsTab"
-              options={{ tabBarIcon: "cogs", title: "Settings" }}
-              component={SettingsTab}
-            />
-          </Tab.Navigator>
+          <AuthProvider>
+            <MainNav />
+          </AuthProvider>
         </NavigationContainer>
       </PaperProvider>
     </PreferencesContext.Provider>
   );
 }
-/*
-//we need global styles 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-}); */
