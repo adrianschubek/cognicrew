@@ -18,7 +18,7 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { useState } from "react";
-import AccoridionSection, { accordionSectionItems } from "../components/learningProject/AccoridionSection";
+import AccordionSection, { accordionSectionItems } from "../components/learningProject/AccordionSection";
 import { ScrollView } from "react-native";
 
 export default function LearningRoom({ navigation }) {

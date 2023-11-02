@@ -38,7 +38,7 @@ const accordionListItems = [
   },
 ];
 
-export default function AccoridionListItems() {
+export default function AccordionListItems() {
   const theme = useTheme();
   const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");

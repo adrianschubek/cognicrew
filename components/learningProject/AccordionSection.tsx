@@ -6,7 +6,7 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import AccoridionListItems from "./AccordionListItems";
+import AccordionListItems from "./AccordionListItems";
 
 export const accordionSectionItems = [
   { title: "Set A", id: 1 },
@@ -24,7 +24,7 @@ export const accordionSectionItems = [
   { title: "Set M", id: 14 },
   { title: "Set N", id: 15 },
 ];
-export default function AccoridionSection(props) {
+export default function AccordionSection(props) {
   return (
     <List.Section style={{width: props.width || responsiveWidth(100) }}>
       {accordionSectionItems.map((learningSet) => (
@@ -34,7 +34,7 @@ export default function AccoridionSection(props) {
             title={learningSet.title}
             left={(props) => <List.Icon {...props} icon="folder" />}
           >
-            <AccoridionListItems />
+            <AccordionListItems />
           </List.Accordion>
           <Divider/>
         </>

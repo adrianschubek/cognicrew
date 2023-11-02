@@ -8,7 +8,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import AccoridionSection from "../../components/learningProject/AccoridionSection";
+import AccordionSection from "../../components/learningProject/AccordionSection";
 
 export default function FlashcardManagement() {
   return (
@@ -18,7 +18,7 @@ export default function FlashcardManagement() {
         <TextWithPlusButton text= "add new flash cards" function={() => {}} />
       </View>
       <ScrollView>
-       <AccoridionSection/>
+       <AccordionSection/>
       </ScrollView>
     </View>
   );
