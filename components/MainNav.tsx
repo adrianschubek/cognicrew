@@ -12,6 +12,7 @@ import FlashcardManagement from "../screens/projectManagement/FlashcardManagemen
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import { useAuth } from "../providers/AuthProvider";
+import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -49,6 +50,10 @@ function LearningProjectsTab() {
         component={FlashcardManagement}
       />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
+      <Stack.Screen
+        name="ExerciseManagement"
+        component={ExerciseManagement}
+      />
     </Stack.Navigator>
   );
 }

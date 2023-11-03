@@ -10,6 +10,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useAuth } from "../providers/AuthProvider";
 import JoinRoom from "../components/learningRoom/JoinRoom";
+import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
 
 export default function HomeScreen({ navigation }) {
@@ -43,6 +44,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <View style={styles.middleContainerChild}>
           <JoinRoom navigation={navigation} />
+          <CreateRoom navigation={navigation}/>
         </View>
         <View style={[styles.bottomContainerChild]}>
           <Button
@@ -98,7 +100,7 @@ const styles = StyleSheet.create({
   },
   middleContainerChild: {
     flex: 2,
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     //backgroundColor: "red",
     alignItems: "center",
