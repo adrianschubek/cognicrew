@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { getUsername } from "./queries";
+import { useAlertsStore } from "../stores/AlertsStore";
 
 /**
  * Returns the username of the user with the given uid.
@@ -17,4 +18,16 @@ export function useUsername(uid?: string): string {
   }, [user.id]);
 
   return profilename;
+}
+
+export function useAlerts() {
+  const { setOpen, setIcon, setTitle, setMessage } = useAlertsStore();
+  return {
+    success: (message: string, title: string = "") => {
+      setOpen(true);
+      setIcon("check");
+      setTitle(title);
+      setMessage(message);
+    },
+  };
 }

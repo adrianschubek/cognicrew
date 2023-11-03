@@ -17,6 +17,7 @@ import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
+import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -58,6 +59,7 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
           <AuthProvider>
+            <AlertSyncZustand />
             <MainNav />
           </AuthProvider>
         </NavigationContainer>
