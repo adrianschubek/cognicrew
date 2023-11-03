@@ -70,16 +70,6 @@ export default function HomeScreen({ navigation }) {
           <Button
             style={styles.buttonStyle}
             onPress={() => {
-              navigation.navigate("Login");
-              console.log("Login screen pressed");
-            }}
-          >
-            {" "}
-            Test Login
-          </Button>
-          <Button
-            style={styles.buttonStyle}
-            onPress={() => {
               navigation.navigate("Achievements");
               console.log("Achievement screen pressed");
             }}

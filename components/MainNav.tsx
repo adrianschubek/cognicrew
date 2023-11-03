@@ -24,9 +24,7 @@ function MainTab() {
         component={HomeScreen}
         options={{ title: "CogniCrew" }}
       />
-      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
-
       <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
   );
