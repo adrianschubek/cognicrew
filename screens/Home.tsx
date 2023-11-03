@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   upperContainerChild: {
-    flex: 1,
+    flex: 2,
     justifyContent: "space-between",
     flexDirection: "row",
     //backgroundColor: "yellow",
@@ -108,14 +108,15 @@ const styles = StyleSheet.create({
     paddingRight: responsiveWidth(2),
   },
   middleContainerChild: {
-    flex: 2,
+    flex: 3,
     flexDirection: "row",
     justifyContent: "center",
     //backgroundColor: "red",
     alignItems: "center",
+    marginBottom: responsiveHeight(20),
   },
   bottomContainerChild: {
-    flex: 3,
+    flex: 2,
     //backgroundColor: "green",
     alignItems: "center",
   },

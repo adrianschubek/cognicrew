@@ -26,7 +26,7 @@ export const accordionSectionItems = [
 ];
 export default function AccordionSection(props) {
   return (
-    <List.Section style={{width: props.width || responsiveWidth(100) }}>
+    <List.Section style={{width: props.width || responsiveWidth(100)}}>
       {accordionSectionItems.map((learningSet) => (
         <React.Fragment key={learningSet.id}>
           <List.Accordion
