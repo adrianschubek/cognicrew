@@ -12,6 +12,7 @@ import {
   responsiveFontSize,
   responsiveHeight,
 } from "react-native-responsive-dimensions";
+import { supabase } from "../../supabase";
 
 export default function Register({ showRegister, close }) {
   const [username, setUsername] = useState("test1111");
@@ -19,6 +20,8 @@ export default function Register({ showRegister, close }) {
   const [password, setPassword] = useState("password");
   const [password2, setPassword2] = useState("password");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const validators: ((input: string) => boolean)[] = [
     (username) => username.length >= 4 && username.length <= 24,
@@ -28,7 +31,27 @@ export default function Register({ showRegister, close }) {
   ];
 
   const createAccount = async () => {
-    setError("Not implemented yet");
+    // setError("Not implemented yet");
+    setLoading(true);
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username,
+        },
+      },
+    });
+
+    if (error) setError(error.message);
+    else {
+      // set user session
+      // await supabase.auth.signInWithPassword({ email, password });
+      //supabase.auth.setSession(data.session);
+      // doesnt work...
+      setSuccess(true);
+    }
+    setLoading(false);
   };
 
   return (
@@ -114,6 +137,31 @@ export default function Register({ showRegister, close }) {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setError(null)}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+      <Portal>
+        <Dialog
+          visible={success}
+          onDismiss={() => {
+            setSuccess(false);
+            close();
+          }}
+        >
+          <Dialog.Icon icon="check" />
+          <Dialog.Title>Success</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">Account created successfully. You may login now.</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              onPress={() => {
+                setSuccess(false);
+                close();
+              }}
+            >
+              OK
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
