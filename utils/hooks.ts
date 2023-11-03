@@ -25,10 +25,12 @@ export function useUsername(uid?: string): string {
 }
 export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][] {
   const [achievements, setAchievements] = useState([]);
+  const { error: errorAlert } = useAlerts();
+
   useEffect(() => {
     getAchievements()
       .then((achievements) => setAchievements(achievements))
-      .catch((error) => console.error(error));
+      .catch((error) => errorAlert(error));
   });
   return achievements;
 }
