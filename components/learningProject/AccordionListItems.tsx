@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 const accordionListItems = [
   {
-    question: "What does Sigmund Freud base his main theory on?",
+    question: "What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? ",
     answer: "on case studies of his own patients and those of his colleagues",
     id: 1,
   },
@@ -43,11 +43,10 @@ export default function AccordionListItems() {
   const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");
   return accordionListItems.map((listItem) => (
-    <>
+    <View key={listItem.id}>
       <List.Accordion
         title={listItem.question}
         titleNumberOfLines={4}
-        key={listItem.id}
         style={{
           width: responsiveWidth(100),
           backgroundColor: theme.colors.secondaryContainer,
@@ -57,7 +56,7 @@ export default function AccordionListItems() {
           setAnswer(listItem.answer);
         }}
       >
-        <Card elevation={1} style={styles.cardStyle} key={listItem.id}>
+        <Card elevation={1} style={styles.cardStyle}>
           <Card.Title title="Edit here:" />
           <Card.Content style={styles.cardContentStyle}>
             <TextInput
@@ -89,7 +88,7 @@ export default function AccordionListItems() {
         </Card>
       </List.Accordion>
       <Divider />
-    </>
+      </View>
   ));
 }
 
