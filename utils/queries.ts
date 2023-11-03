@@ -12,9 +12,10 @@ export async function getUsername(uid: string): Promise<string> {
 export async function getAchievements(): Promise<
   Database["public"]["Tables"]["achievements"]["Row"][]
 > {
-  const { data: achievements } = await supabase
+  const { data: achievements, error } = await supabase
     .from("achievements")
     .select("*")
     .order("id");
+  if (error) throw error;
   return achievements;
 }
