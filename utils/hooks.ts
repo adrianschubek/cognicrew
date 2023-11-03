@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
-import { supabase } from "../supabase";
-
-async function getUsername(uid: string): Promise<string> {
-  const { data } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("id", uid);
-  return data[0].username;
-}
+import { getUsername } from "./queries";
 
 export function useUsername(uid?: string): string {
   const { user } = useAuth();
