@@ -120,7 +120,7 @@ export default function Login({ navigation }) {
               password: text2,
             });
             if (data || error) {
-              setError(error.message);
+              setError(error?.message ?? "Unknown error");
               setLoginDisabled(false);
             }
           }}

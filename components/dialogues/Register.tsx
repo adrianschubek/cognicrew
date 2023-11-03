@@ -43,7 +43,7 @@ export default function Register({ showRegister, close }) {
       },
     });
 
-    if (error) setError(error.message);
+    if (error) setError(error?.message ?? "Unknown error");
     else {
       // set user session
       // await supabase.auth.signInWithPassword({ email, password });
