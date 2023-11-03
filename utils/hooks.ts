@@ -29,13 +29,23 @@ export function useAchievements(): Database["public"]["Tables"]["achievements"][
 }
 
 export function useAlerts() {
-  const { setOpen, setIcon, setTitle, setMessage } = useAlertsStore();
+  const { setOpen, setIcon, setTitle, setMessage, setOkText, setCancelText } =
+    useAlertsStore();
   return {
     success: (message: string, title: string = "") => {
       setOpen(true);
       setIcon("check");
       setTitle(title);
       setMessage(message);
+      setCancelText("");
     },
+    error: (message: string, title: string = "") => {
+      setOpen(true);
+      setIcon("alert-circle");
+      setTitle(title);
+      setMessage(message);
+      setCancelText("");
+    },
+    
   };
 }

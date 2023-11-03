@@ -13,6 +13,7 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import { supabase } from "../../supabase";
+import { useAlerts } from "../../utils/hooks";
 
 export default function Register({ showRegister, close }) {
   const [username, setUsername] = useState("");
@@ -30,8 +31,9 @@ export default function Register({ showRegister, close }) {
     (password2) => password2 === password,
   ];
 
+  const { error: errorAlert, success: successAlert } = useAlerts();
+
   const createAccount = async () => {
-    // setError("Not implemented yet");
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -43,13 +45,13 @@ export default function Register({ showRegister, close }) {
       },
     });
 
-    if (error) setError(error?.message ?? "Unknown error");
-    else {
-      // set user session
-      // await supabase.auth.signInWithPassword({ email, password });
-      //supabase.auth.setSession(data.session);
-      // doesnt work...
-      setSuccess(true);
+    if (error) {
+      errorAlert(error?.message ?? "Unknown error", "Sign up failed");
+    } else {
+      successAlert(
+        "Account created successfully. You may login now.",
+        "Account created",
+      );
     }
     setLoading(false);
   };
@@ -151,7 +153,9 @@ export default function Register({ showRegister, close }) {
           <Dialog.Icon icon="check" />
           <Dialog.Title>Success</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">Account created successfully. You may login now.</Text>
+            <Text variant="bodyMedium">
+              Account created successfully. You may login now.
+            </Text>
           </Dialog.Content>
           <Dialog.Actions>
             <Button
