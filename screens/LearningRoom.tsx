@@ -19,6 +19,7 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { useState } from "react";
 import { accordionSectionItems } from "../components/learningProject/AccordionSection";
 import { ScrollView } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
@@ -29,6 +30,17 @@ export default function LearningRoom({ navigation }) {
   // Use separate states for minutes and seconds
   const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
+
+  const computeTimeInSeconds = () => {
+    // Convert the minutes and seconds to integers (default to 0 if empty)
+    const minutesInt = parseInt(minutes) || 0;
+    const secondsInt = parseInt(seconds) || 0;
+  
+    // Calculate the total time in seconds
+    const totalTimeInSeconds = minutesInt * 60 + secondsInt || 120;
+    
+    return totalTimeInSeconds;
+  }
 
   const handleTimeChange = (field, text) => {
     // Ensure that the input is in the format "00:00"
@@ -58,6 +70,9 @@ export default function LearningRoom({ navigation }) {
     setFilteredAccordionSectionItems(filteredItems);
   }
 
+  // Add a state for checked items in AccordionSection
+  const [checkedItems, setCheckedItems] = useState([]);
+
   const handleCheckboxPress = (id) => {
     const updatedItems = filteredAccordionSectionItems.map((item) => {
       if (item.id === id) {
@@ -66,6 +81,10 @@ export default function LearningRoom({ navigation }) {
       return item;
     });
     setFilteredAccordionSectionItems(updatedItems);
+  
+    // Update the checked items state
+    const newCheckedItems = updatedItems.filter((item) => item.checked);
+    setCheckedItems(newCheckedItems);
   };
 
   return (
@@ -87,6 +106,10 @@ export default function LearningRoom({ navigation }) {
                 }
               }}
               ref={minutesRef}
+              onSubmitEditing={() => {
+                secondsRef.current.focus();
+              }}
+              returnKeyType="next"
             />
             <Text style={styles.timerSeparator}>:</Text>
             <TextInput
@@ -120,7 +143,16 @@ export default function LearningRoom({ navigation }) {
             </ScrollView>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setShowCreateFlashcardGame(false)}>Done</Button>
+            <Button 
+              onPress={() => setShowCreateFlashcardGame(false)}
+              style={{ marginRight: 'auto' }}>Cancel</Button>
+            <Button 
+                  onPress={() => {
+                    const totalTimeInSeconds = computeTimeInSeconds();
+                    setShowCreateFlashcardGame(false);
+                    navigation.navigate("FlashcardGame", {totalTimeInSeconds, checkedItems});
+                  }}
+              >Done</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

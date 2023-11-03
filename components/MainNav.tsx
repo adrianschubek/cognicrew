@@ -12,6 +12,7 @@ import FlashcardManagement from "../screens/projectManagement/FlashcardManagemen
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import { useAuth } from "../providers/AuthProvider";
+import FlashcardGame from "../screens/FlashcardGame";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -26,7 +27,6 @@ function MainTab() {
       />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
-
       <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
   );
@@ -46,10 +46,8 @@ function LearningProjectsTab() {
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen
-        name="FlashcardManagement"
-        component={FlashcardManagement}
-      />
+      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
+      <Stack.Screen name="FlashcardGame" component={FlashcardGame} />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
     </Stack.Navigator>
   );
