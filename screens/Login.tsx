@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { TextInput, Text, Button, IconButton } from "react-native-paper";
+import {
+  TextInput,
+  Text,
+  Button,
+  IconButton,
+  Portal,
+  Dialog,
+} from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
@@ -23,9 +30,23 @@ export default function Login({ navigation }) {
   const [text2, setText2] = useState("");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [loginDisabled, setLoginDisabled] = useState(false);
+  const [error, setError] = useState(null);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
+      <Portal>
+        <Dialog visible={error} onDismiss={() => setError(null)}>
+          <Dialog.Icon icon="alert" />
+          <Dialog.Title>Error</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">{error}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setError(null)}>OK</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       <Register
         showRegister={showRegister}
         close={() => setShowRegister(false)}
@@ -43,73 +64,79 @@ export default function Login({ navigation }) {
           }}
         />
       </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.titleText}>Welcome to CogniCrew!</Text>
-          <Text style={styles.baseText}>
-            Your favorite place to supercharge {"\n"}
-            your learning, collaborate with peers, and {"\n"}
-            unlock your full potential. {"\n"}
-          </Text>
-        </View>
-        <View style={styles.loginContainer}>
-          <TextInput
-            style={styles.dataInput}
-            label="Username or E-mail address:"
-            placeholder="Max Mustermann"
-            value={text}
-            onChangeText={(text) => setText(text)}
-          />
-          <TextInput
-            style={[styles.dataInput, { marginTop: responsiveHeight(1) }]}
-            label="Password"
-            placeholder="your password"
-            onSubmitEditing={async () => {
-              const { data } = await supabase.auth.signInWithPassword({
-                email: text,
-                password: text2,
-              });
-            }}
-            secureTextEntry={true}
-            value={text2}
-            onChangeText={(text2) => setText2(text2)}
-          />
-          <View
-            style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
-          >
-          </View>
-          <TouchableOpacity
-            style={{
-              alignSelf: "flex-start",
-              marginTop: responsiveHeight(0.5),
-            }}
-            onPress={() => {
-              setShowPasswordForgotten(true);
-            }}
-          >
-            <Text>Password forgotten?</Text>
-          </TouchableOpacity>
-          <Button
-            style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
-            mode="contained"
-            onPress={async () => {
-              const { data } = await supabase.auth.signInWithPassword({
-                email: text,
-                password: text2,
-              });
-            }}
-          >
-            Login
-          </Button>
-          <Button
-            style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
-            mode="contained-tonal"
-            onPress={() => {
-              setShowRegister(true);
-            }}
-          >
-            Register
-          </Button>
-        </View>
+      <View style={styles.textContainer}>
+        <Text style={styles.titleText}>Welcome to CogniCrew!</Text>
+        <Text style={styles.baseText}>
+          Your favorite place to supercharge {"\n"}
+          your learning, collaborate with peers, and {"\n"}
+          unlock your full potential. {"\n"}
+        </Text>
+      </View>
+      <View style={styles.loginContainer}>
+        <TextInput
+          style={styles.dataInput}
+          label="Username or E-mail address:"
+          placeholder="Max Mustermann"
+          value={text}
+          onChangeText={(text) => setText(text)}
+        />
+        <TextInput
+          style={[styles.dataInput, { marginTop: responsiveHeight(1) }]}
+          label="Password"
+          placeholder="your password"
+          onSubmitEditing={async () => {
+            setLoginDisabled(true);
+            const { data } = await supabase.auth.signInWithPassword({
+              email: text,
+              password: text2,
+            });
+          }}
+          secureTextEntry={true}
+          value={text2}
+          onChangeText={(text2) => setText2(text2)}
+        />
+        <View
+          style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
+        ></View>
+        <TouchableOpacity
+          style={{
+            alignSelf: "flex-start",
+            marginTop: responsiveHeight(0.5),
+          }}
+          onPress={() => {
+            setShowPasswordForgotten(true);
+          }}
+        >
+          <Text>Forgot password?</Text>
+        </TouchableOpacity>
+        <Button
+          style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+          mode="contained"
+          disabled={loginDisabled}
+          onPress={async () => {
+            setLoginDisabled(true);
+            const { data, error } = await supabase.auth.signInWithPassword({
+              email: text,
+              password: text2,
+            });
+            if (data || error) {
+              setError(error.message);
+              setLoginDisabled(false);
+            }
+          }}
+        >
+          Login
+        </Button>
+        <Button
+          style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+          mode="contained-tonal"
+          onPress={() => {
+            setShowRegister(true);
+          }}
+        >
+          Register
+        </Button>
+      </View>
     </SafeAreaView>
   );
 }

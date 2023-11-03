@@ -18,7 +18,7 @@ export default function HomeScreen({ navigation }) {
   const [achievements, setAchievements] = useState([]);
   useEffect(() => {
     const getAllAchievements = async () =>
-      await supabase.from("achievements").select("*");
+      await supabase.from("profiles").select("*");
 
     getAllAchievements().then((achievements) => {
       setAchievements(achievements.data);

@@ -59,16 +59,12 @@ export default function MainNav() {
   // Auth
   const { initialized, session, user } = useAuth();
 
-  // if (!initialized || 0) return <View>
-  //   <Text>Test</Text>
-  // </View>
+  // if (!initialized ) console.log("Not initialized: ", initialized);
 
   // console.log("Initialized: ", initialized);
   // useEffect(() => {
   //   console.log("!!!Session: ", session);
   // }, [initialized])
-
-  console.log(">>>> " + session);
 
   return !session ? (
     <Stack.Navigator
@@ -96,7 +92,4 @@ export default function MainNav() {
       />
     </Tab.Navigator>
   );
-}
-{
-  /* // TODO: eigene tab seite für projects leraning */
 }

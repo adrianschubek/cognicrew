@@ -11,15 +11,25 @@ import { StyleSheet, View } from "react-native";
 import {
   responsiveFontSize,
   responsiveHeight,
-  responsiveWidth,
 } from "react-native-responsive-dimensions";
 
 export default function Register({ showRegister, close }) {
-  const [text3, setText3] = React.useState("");
-  const [emailInputPasswordForgotten, setEmailInputPasswordForgotten] =
-    React.useState("");
-  const [text5, setText5] = React.useState("");
-  const [text6, setText6] = React.useState("");
+  const [username, setUsername] = useState("test1111");
+  const [email, setEmail] = useState("a@b.c");
+  const [password, setPassword] = useState("password");
+  const [password2, setPassword2] = useState("password");
+
+  const validators: ((input: string) => boolean)[] = [
+    (username) => username.length >= 4 && username.length <= 24,
+    (email) => email.length > 0 && email.includes("@") && email.length <= 64,
+    (password) => password.length >= 8 && password.length <= 32,
+    (password2) => password2 === password,
+  ];
+
+  const createAccount = async () => {
+    alert("Not implemented yet");
+  };
+
   return (
     <Portal>
       <Dialog
@@ -33,48 +43,61 @@ export default function Register({ showRegister, close }) {
           </Text>
           <TextInput
             style={styles.textInputStyle}
-            label="Username:"
-            value={text3}
-            onChangeText={(text3) => setText3(text3)}
+            label="Username"
+            value={username}
+            error={username.length > 0 && !validators[0](username)}
+            onChangeText={(text3) => setUsername(text3)}
           />
           <TextInput
             style={styles.textInputStyle}
-            label="E-mail:"
+            label="E-Mail"
             inputMode="email"
             keyboardType="email-address"
-            placeholder="max-mustermann@gmail.com"
-            value={emailInputPasswordForgotten}
+            error={email.length > 0 && !validators[1](email)}
+            value={email}
             onChangeText={(emailInputPasswordForgotten) =>
-              setEmailInputPasswordForgotten(emailInputPasswordForgotten)
+              setEmail(emailInputPasswordForgotten)
             }
           />
           <TextInput
             style={styles.textInputStyle}
-            label="Password:"
-            placeholder="angola15"
-            value={text5}
+            label="Password"
+            value={password}
             secureTextEntry={true}
-            onChangeText={(text5) => setText5(text5)}
+            error={password.length > 0 && !validators[2](password)}
+            onChangeText={(text5) => setPassword(text5)}
           />
           <TextInput
             style={styles.textInputStyle}
-            label="Repeat password:"
-            placeholder="angola15"
-            value={text6}
+            label="Repeat Password"
+            value={password2}
             secureTextEntry={true}
-            onChangeText={(text6) => setText6(text6)}
+            error={password2.length > 0 && !validators[3](password2)}
+            onChangeText={(text6) => setPassword2(text6)}
           />
           <View style={{ alignItems: "center", alignSelf: "flex-start" }}>
-            <Text style={{ marginTop: responsiveHeight(1) }}>Upload icon:</Text>
+            <Text style={{ marginTop: responsiveHeight(1) }}>
+              Profile picture
+            </Text>
             <IconButton
               style={{}}
               icon="file-png-box"
               size={responsiveFontSize(7)}
+              disabled
               onPress={() => {}}
             />
           </View>
-          <Button mode="contained" onPress={() => close()}>
-            Submit form
+          <Button
+            mode="contained"
+            disabled={
+              !validators[0](username) ||
+              !validators[1](email) ||
+              !validators[2](password) ||
+              !validators[3](password2)
+            }
+            onPress={createAccount}
+          >
+            Sign up
           </Button>
         </Dialog.Content>
       </Dialog>

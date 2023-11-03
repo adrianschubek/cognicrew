@@ -35,8 +35,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
     // Listen for changes to authentication state
     const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Supabase auth event:", event);
-      console.log("Supabase auth session:", session);
+      // console.log("Supabase auth event:", event);
+      // console.log("Supabase auth session:", session);
       
       setSession(session);
       setUser(session ? session.user : null);
