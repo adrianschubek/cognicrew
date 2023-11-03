@@ -11,6 +11,7 @@ import {
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
+import { useUsername } from "../../utils/hooks";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -60,11 +61,12 @@ const LogoutButton = () => {
 
 export default function AccountInfo(props) {
   const { user } = useAuth();
+  const username = useUsername();
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Account" left={Account} right={LogoutButton} />
       <Card.Content>
-        <Text variant="bodyMedium">_username_</Text>
+        <Text variant="bodyMedium">{username}</Text>
         <Text variant="bodyMedium">{user.email}</Text>
         <Text variant="bodyMedium">
           Account created on {new Date(user.created_at).toLocaleDateString()}

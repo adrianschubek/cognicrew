@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dialog, Portal, TextInput, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Avatar } from "react-native-paper";
@@ -8,23 +8,13 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
-import { supabase } from "../supabase";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
+import { useUsername } from "../utils/hooks";
 
 export default function HomeScreen({ navigation }) {
-  const { user } = useAuth();
-  const [achievements, setAchievements] = useState([]);
-  useEffect(() => {
-    const getAllAchievements = async () =>
-      await supabase.from("profiles").select("*");
-
-    getAllAchievements().then((achievements) => {
-      setAchievements(achievements.data);
-    });
-  }, []);
+  const username = useUsername();
 
   return (
     <>
@@ -46,7 +36,7 @@ export default function HomeScreen({ navigation }) {
                 paddingRight: responsiveWidth(1),
               }}
             >
-              Hello, {user?.email}
+              Hello, {username}
             </Text>
             <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
           </View>

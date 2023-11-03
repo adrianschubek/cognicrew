@@ -18,7 +18,7 @@ export default function ExerciseManagement() {
         <TextWithPlusButton text= "add new flash cards" function={() => {}} />
       </View>
       <ScrollView>
-       <AccordionSection/>
+       <AccordionSection type="exercise"/>
       </ScrollView>
     </View>
   );

@@ -2,19 +2,13 @@ import { useState } from "react";
 import {
   TextInput,
   Text,
-  Button,
-  IconButton,
-  Portal,
-  Dialog,
+  Button
 } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   View,
-  Image,
-  Pressable,
-  TouchableOpacity,
-  KeyboardAvoidingView,
+  Image, TouchableOpacity
 } from "react-native";
 import {
   responsiveHeight,
@@ -25,28 +19,19 @@ import PasswordForgotten from "../components/dialogues/PasswordForgotten";
 import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
+import { useAlerts } from "../utils/hooks";
 export default function Login({ navigation }) {
   const [text, setText] = useState("foo@bar.de");
   const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
-  const [error, setError] = useState(null);
+
+  const { error: errorAlert } = useAlerts();
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Portal>
-        <Dialog visible={error} onDismiss={() => setError(null)}>
-          <Dialog.Icon icon="alert" />
-          <Dialog.Title>Error</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">{error}</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setError(null)}>OK</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <Register
         showRegister={showRegister}
         close={() => setShowRegister(false)}
@@ -86,10 +71,14 @@ export default function Login({ navigation }) {
           placeholder="your password"
           onSubmitEditing={async () => {
             setLoginDisabled(true);
-            const { data } = await supabase.auth.signInWithPassword({
+            const { error, data } = await supabase.auth.signInWithPassword({
               email: text,
               password: text2,
             });
+            if (error) errorAlert(error?.message ?? "Unknown error", "Error");
+            if (data || error) {
+              setLoginDisabled(false);
+            }
           }}
           secureTextEntry={true}
           value={text2}
@@ -119,8 +108,8 @@ export default function Login({ navigation }) {
               email: text,
               password: text2,
             });
+            if (error) errorAlert(error?.message ?? "Unknown error", "Error");
             if (data || error) {
-              setError(error?.message ?? "Unknown error");
               setLoginDisabled(false);
             }
           }}
