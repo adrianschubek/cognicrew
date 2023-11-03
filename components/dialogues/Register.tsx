@@ -15,10 +15,10 @@ import {
 import { supabase } from "../../supabase";
 
 export default function Register({ showRegister, close }) {
-  const [username, setUsername] = useState("test");
-  const [email, setEmail] = useState("a@b.c");
-  const [password, setPassword] = useState("password");
-  const [password2, setPassword2] = useState("password");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
