@@ -24,9 +24,7 @@ function MainTab() {
         component={HomeScreen}
         options={{ title: "CogniCrew" }}
       />
-      <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
-
       <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
   );
@@ -66,7 +64,7 @@ export default function MainNav() {
   //   console.log("!!!Session: ", session);
   // }, [initialized])
 
-  return !session ? (
+  return !session || !user ? (
     <Stack.Navigator
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}
