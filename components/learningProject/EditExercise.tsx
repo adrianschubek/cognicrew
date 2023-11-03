@@ -41,7 +41,10 @@ export default function EditExercise({ listItem }) {
             //update backend
           }}
         />
-        <TextInputWithCheckbox listItem={listItem}/>
+        <TextInputWithCheckbox listItemAnswer={listItem.answer1} number="1" />
+        <TextInputWithCheckbox listItemAnswer={listItem.answer2} number="2" />
+        <TextInputWithCheckbox listItemAnswer={listItem.answer3} number="3" />
+        <TextInputWithCheckbox listItemAnswer={listItem.answer4} number="4" />
       </Card.Content>
     </Card>
   );

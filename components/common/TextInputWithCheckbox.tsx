@@ -1,31 +1,40 @@
 import { useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
-export default function TextInputWithCheckbox({listItem}){
-    const [checked, setChecked] = useState(false);
-    const [answer2, setAnswer2] = useState(listItem.answer2);
-    return(
-        <TextInput
-        right={
-          <TextInput.Icon
-            icon={() => (
-              <Checkbox
-                status={checked ? "checked" : "unchecked"}
-                onPress={() => {
-                  setChecked(!checked);
-                }}
-              />
-            )}
-          />
-        }
-        label="Answer 1:"
-        multiline={true}
-        value={/*hier muss dann listItem.answer hin*/ answer2}
-        onChangeText={(answer2) => {
-          setAnswer2(answer2);
-          console.log(answer2);
-          //update backend
-        }}
-      />
-    )
+export default function TextInputWithCheckbox({
+  listItemAnswer,
+  number,
+}: {
+  listItemAnswer: string;
+  [name: string]: any;
+}) {
+  const [checked, setChecked] = useState(false);
+  const [answer, setAnswer] = useState(listItemAnswer);
+  return (
+    <TextInput
+      style={{ marginBottom: responsiveHeight(1) }}
+      right={
+        <TextInput.Icon
+          icon={() => (
+            <Checkbox
+              status={checked ? "checked" : "unchecked"}
+              onPress={() => {
+                setChecked(!checked);
+                //  listItem.isCorrect === checked
+              }}
+            />
+          )}
+        />
+      }
+      label={"Answer " + number}
+      multiline={true}
+      value={/*hier muss dann listItem.answer hin*/ listItemAnswer}
+      onChangeText={(listItemAnswer) => {
+        setAnswer(listItemAnswer);
+        console.log(listItemAnswer);
+        //update backend
+      }}
+    />
+  );
 }
