@@ -90,6 +90,10 @@ export default function Login({ navigation }) {
               email: text,
               password: text2,
             });
+            if (data || error) {
+              setError(error?.message ?? "Unknown error");
+              setLoginDisabled(false);
+            }
           }}
           secureTextEntry={true}
           value={text2}
