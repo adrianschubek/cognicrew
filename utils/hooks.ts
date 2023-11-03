@@ -13,18 +13,23 @@ import { Database } from "../types/supabase";
 export function useUsername(uid?: string): string {
   const { user } = useAuth();
   const [profilename, setProfilename] = useState("");
+  const { error: errorAlert } = useAlerts();
 
   useEffect(() => {
-    getUsername(uid ?? user.id).then((name) => setProfilename(name));
+    getUsername(uid ?? user.id)
+      .then((name) => setProfilename(name))
+      .catch((error) => errorAlert(error.message));
   }, [user.id]);
 
   return profilename;
 }
-export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][]{
+export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][] {
   const [achievements, setAchievements] = useState([]);
   useEffect(() => {
-    getAchievements().then((achievements) => setAchievements(achievements));
-  })
+    getAchievements()
+      .then((achievements) => setAchievements(achievements))
+      .catch((error) => console.error(error));
+  });
   return achievements;
 }
 
@@ -46,6 +51,5 @@ export function useAlerts() {
       setMessage(message);
       setCancelText("");
     },
-    
   };
 }

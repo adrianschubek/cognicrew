@@ -23,6 +23,7 @@ function MainTab() {
       <Stack.Screen name="Home" component={HomeScreen} options={{ title: "CogniCrew" }}/>
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="Achievements" component={Achievements} />
+      
       <Stack.Screen name="LearningRoom" component={LearningRoom} />
     </Stack.Navigator>
   );
@@ -44,6 +45,8 @@ function LearningProjectsTab() {
       <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
       <Stack.Screen name="ExerciseManagement" component={ExerciseManagement}/>
+
+      <Stack.Screen name="LearningRoom" component={LearningRoom} />
     </Stack.Navigator>
   );
 }
