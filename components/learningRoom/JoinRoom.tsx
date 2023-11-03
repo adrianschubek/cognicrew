@@ -30,6 +30,14 @@ export default function JoinRoom({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <Text
+            style={{
+              fontSize: responsiveFontSize(2.5),
+              paddingBottom: responsiveHeight(1),
+            }}
+          >
+            Join room via ID:
+          </Text>
       <TextInput
         editable
         placeholder="#"

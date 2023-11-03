@@ -51,14 +51,7 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.middleContainerChild}>
-          <Text
-            style={{
-              fontSize: responsiveFontSize(2.5),
-              paddingBottom: responsiveHeight(1),
-            }}
-          >
-            Join room via ID: {JSON.stringify(achievements)}
-          </Text>
+          <Text>{JSON.stringify(achievements)}</Text> 
           <JoinRoom navigation={navigation} />
         </View>
         <View style={[styles.bottomContainerChild]}>
