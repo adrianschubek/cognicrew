@@ -11,13 +11,10 @@ import {
 import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
+import JoinRoom from "../components/learningRoom/JoinRoom";
 
 export default function HomeScreen({ navigation }) {
-  const [joinCode, setJoinCode] = useState("#");
-  const [showErrorJoin, setShowErrorJoin] = useState(false);
-
   const { user } = useAuth();
-
   const [achievements, setAchievements] = useState([]);
   useEffect(() => {
     const getAllAchievements = async () =>
@@ -30,20 +27,6 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <>
-      <Portal>
-        <Dialog
-          visible={showErrorJoin}
-          onDismiss={() => setShowErrorJoin(false)}
-        >
-          <Dialog.Title>Invalid Code</Dialog.Title>
-          <Dialog.Content>
-            <Text>Please enter a valid code</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowErrorJoin(false)}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <View style={styles.container}>
         <StatusBar style="auto" />
 
@@ -76,41 +59,7 @@ export default function HomeScreen({ navigation }) {
           >
             Join room via ID: {JSON.stringify(achievements)}
           </Text>
-          <TextInput
-            editable
-            placeholder="#"
-            value={joinCode}
-            error={joinCode.length > 1 && joinCode.length !== 7}
-            onChangeText={(text) => {
-              if (text === "") {
-                text = "#";
-              }
-              // only allow numbers
-              text = text.replace(/[^0-9]/g, "");
-              // if the first character is not a #, add it.
-              if (!text.includes("#")) {
-                text = "#" + text;
-              }
-              setJoinCode(text);
-            }}
-            maxLength={7}
-            inputMode="numeric"
-            style={{ width: responsiveWidth(30), height: responsiveHeight(5) }}
-          />
-          <Button
-            labelStyle={{ textAlignVertical: "center" }}
-            style={[styles.buttonStyle, { width: responsiveWidth(40) }]}
-            mode="contained"
-            onPress={() => {
-              if (joinCode.length !== 7) {
-                setShowErrorJoin(true);
-              } else {
-                navigation.navigate("Room", { code: joinCode });
-              }
-            }}
-          >
-            Ask to join
-          </Button>
+          <JoinRoom navigation={navigation} />
         </View>
         <View style={[styles.bottomContainerChild]}>
           <Button
