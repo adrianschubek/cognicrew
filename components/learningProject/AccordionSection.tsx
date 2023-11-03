@@ -7,7 +7,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import AccordionListItems from "./AccordionListItems";
-import { ManagementType } from "../../types";
+import { ManagementType } from "../../types/commonTypes";
 
 export const accordionSectionItems = [
   { title: "Set A", id: 1, type: "flashcard" },

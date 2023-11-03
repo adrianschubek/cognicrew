@@ -4,8 +4,9 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { StyleSheet, View, Image } from "react-native"; // Import Image component
+import { StyleSheet, View, Image } from "react-native"; 
 import { Text, List, Divider } from "react-native-paper";
+import { useAchievements } from "../../utils/hooks";
 
 const achievementItems = [
   { id: 1, title: 'Achievement 1', description: 'This is a short description.', imageSource: require('../../assets/des_bedarfs.png') },
@@ -21,17 +22,18 @@ const achievementItems = [
 ];
 
 export default function Achievement() {
+  const achievements = useAchievements()
   return (
     <List.Section style={styles.achievementStyle}>
-      {achievementItems.map((achievement, index) => (
+      {achievements.map((achievement, index) => (
         <React.Fragment key={achievement.id}>
           <List.Item
-            title={achievement.title}
+            title={achievement.name}
             titleStyle={styles.title}
             description={achievement.description}
             left={() => (
               <View style={styles.achievementItem}>
-                <Image source={achievement.imageSource} style={styles.image} />
+                <Image source={{uri: 'https://iptk.w101.de/storage/v1/object/public/achievements/' + achievement.icon_name}} style={styles.image} />
               </View>
             )}
           />

@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
-import { getUsername } from "./queries";
+import { getAchievements, getUsername } from "./queries";
 import { useAlertsStore } from "../stores/AlertsStore";
+import { Database } from "../types/supabase";
 
 /**
  * Returns the username of the user with the given uid.
@@ -18,6 +19,13 @@ export function useUsername(uid?: string): string {
   }, [user.id]);
 
   return profilename;
+}
+export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][]{
+  const [achievements, setAchievements] = useState([]);
+  useEffect(() => {
+    getAchievements().then((achievements) => setAchievements(achievements));
+  })
+  return achievements;
 }
 
 export function useAlerts() {
