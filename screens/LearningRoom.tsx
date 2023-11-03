@@ -133,7 +133,7 @@ export default function LearningRoom({ navigation }) {
         <StatusBar style="auto" />
         <LearningProjectCategory
           path={require("../assets/completed_task_symbol.png")}
-          name={"Quiz game"}
+          name={"Cogniquiz"}
           function={() => {
             setShowCreateQuizGame(true);
             console.log("Quiz Game Pressed");
@@ -141,7 +141,7 @@ export default function LearningRoom({ navigation }) {
         />
         <LearningProjectCategory
           path={require("../assets/cards_symbol.png")}
-          name={"Flashcard game"}
+          name={"Cognicards"}
           flexDirection="row-reverse"
           mode="contained"
           function={() => {
@@ -151,7 +151,7 @@ export default function LearningRoom({ navigation }) {
         />
         <LearningProjectCategory
           path={require("../assets/teamwork_symbol.png")}
-          name={"Whiteboard"}
+          name={"Cogniboard"}
         />
         
       </View>
