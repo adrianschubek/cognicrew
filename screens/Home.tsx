@@ -14,8 +14,7 @@ import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
 
 export default function HomeScreen({ navigation }) {
-  const { user } = useAuth();
-  const username = useUsername(user?.id);
+  const username = useUsername();
 
   return (
     <>

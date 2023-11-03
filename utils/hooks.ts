@@ -10,12 +10,12 @@ async function getUsername(uid: string): Promise<string> {
   return data[0].username;
 }
 
-export function useUsername(uid: string): string {
+export function useUsername(uid?: string): string {
   const { user } = useAuth();
   const [profilename, setProfilename] = useState("");
 
   useEffect(() => {
-    getUsername(user.id).then((name) => setProfilename(name));
+    getUsername(uid ?? user.id).then((name) => setProfilename(name));
   }, [user.id]);
 
   return profilename;
