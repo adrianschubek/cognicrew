@@ -15,28 +15,28 @@ export default function LearningProject({ navigation }) {
       <StatusBar style="auto" />
       <LearningProjectCategory
         path={require("../assets/cards_symbol.png")}
-        name={"Flashcards"}
+        name={"Cognicards"}
         function={() => {
           navigation.navigate("FlashcardManagement");
         }}
       />
       <LearningProjectCategory
         path={require("../assets/completed_task_symbol.png")}
-        name={"Exercises"}
+        name={"Cognicises"}
         function={() => {
           navigation.navigate("ExerciseManagement");
         }}
       />
       <LearningProjectCategory
         path={require("../assets/camera_symbol.png")}
-        name={"Links"}
+        name={"Cognilinks"}
         function={() => {
           navigation.navigate("LinkManagement");
         }}
       />
       <LearningProjectCategory
         path={require("../assets/files_symbol.png")}
-        name={"Files"}
+        name={"Cognifiles"}
       />
     
     </View>
