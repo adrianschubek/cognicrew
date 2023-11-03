@@ -18,7 +18,7 @@ export default function FlashcardManagement() {
         <TextWithPlusButton text= "add new flash cards" function={() => {}} />
       </View>
       <ScrollView>
-       <AccordionSection/>
+       <AccordionSection type="flashcard"/>
       </ScrollView>
     </View>
   );
