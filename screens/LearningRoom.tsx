@@ -153,26 +153,7 @@ export default function LearningRoom({ navigation }) {
           path={require("../assets/teamwork_symbol.png")}
           name={"Whiteboard"}
         />
-        <Button
-          icon="home"
-          mode="contained"
-          style={{ marginTop: responsiveHeight(5) }}
-          contentStyle={{
-            height: responsiveHeight(10),
-          }}
-          labelStyle={{
-            lineHeight: responsiveFontSize(3.25),
-            fontSize: responsiveFontSize(3),
-            textAlignVertical: "center",
-            padding: 0,
-            height: responsiveFontSize(3),
-          }}
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          Alex ist ein fellow KING
-        </Button>
+        
       </View>
     </>
   );

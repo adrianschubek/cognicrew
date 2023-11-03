@@ -20,13 +20,10 @@ const Stack = createNativeStackNavigator();
 function MainTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ title: "CogniCrew" }}
-      />
+      <Stack.Screen name="Home" component={HomeScreen} options={{ title: "CogniCrew" }}/>
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="Achievements" component={Achievements} />
+      <Stack.Screen name="LearningRoom" component={LearningRoom} />
     </Stack.Navigator>
   );
 }
@@ -44,16 +41,9 @@ function LearningProjectsTab() {
     <Stack.Navigator>
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
       <Stack.Screen name="LearningProject" component={LearningProject} />
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen
-        name="FlashcardManagement"
-        component={FlashcardManagement}
-      />
+      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
-      <Stack.Screen
-        name="ExerciseManagement"
-        component={ExerciseManagement}
-      />
+      <Stack.Screen name="ExerciseManagement" component={ExerciseManagement}/>
     </Stack.Navigator>
   );
 }

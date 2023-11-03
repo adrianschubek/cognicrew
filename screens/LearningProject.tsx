@@ -24,7 +24,7 @@ export default function LearningProject({ navigation }) {
         path={require("../assets/completed_task_symbol.png")}
         name={"Exercises"}
         function={() => {
-          navigation.navigate("ExerciseManagement");
+          navigation.navigate("ExerciseManagemet");
         }}
       />
       <LearningProjectCategory
@@ -38,28 +38,7 @@ export default function LearningProject({ navigation }) {
         path={require("../assets/files_symbol.png")}
         name={"Files"}
       />
-      <Button
-        icon="home"
-        mode="contained"
-        style={{ marginTop: responsiveHeight(5) }}
-        contentStyle={{
-          height: responsiveHeight(10),
-          /*backgroundColor:"yellow",*/ alignItems: "center",
-        }}
-        labelStyle={{
-          lineHeight: responsiveFontSize(3.25),
-          fontSize: responsiveFontSize(3),
-          textAlignVertical: "center",
-          padding: 0,
-          height: responsiveFontSize(3),
-          //backgroundColor:"red"
-        }}
-        onPress={() => {
-          navigation.navigate("LearningRoom");
-        }}
-      >
-        Create Room
-      </Button>
+    
     </View>
   );
 }
