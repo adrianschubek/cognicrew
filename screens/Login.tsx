@@ -26,8 +26,8 @@ import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 export default function Login({ navigation }) {
-  const [text, setText] = useState("");
-  const [text2, setText2] = useState("");
+  const [text, setText] = useState("foo@bar.de");
+  const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
