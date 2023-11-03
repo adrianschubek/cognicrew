@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
 import JoinRoom from "../components/learningRoom/JoinRoom";
+import CreateRoom from "../components/learningRoom/CreateRoom";
 
 export default function HomeScreen({ navigation }) {
   const { user } = useAuth();
@@ -51,8 +52,8 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.middleContainerChild}>
-          <Text>{JSON.stringify(achievements)}</Text> 
           <JoinRoom navigation={navigation} />
+          <CreateRoom navigation={navigation}/>
         </View>
         <View style={[styles.bottomContainerChild]}>
           <Button
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
   },
   middleContainerChild: {
     flex: 2,
-    flexDirection: "column",
+    flexDirection: "row",
     justifyContent: "center",
     //backgroundColor: "red",
     alignItems: "center",
