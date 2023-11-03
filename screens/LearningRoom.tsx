@@ -1,7 +1,6 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons"; // Import an icon library
 import {
   Dialog,
   Portal,
@@ -18,22 +17,28 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { useState } from "react";
-import AccordionSection, { accordionSectionItems } from "../components/learningProject/AccordionSection";
+import { accordionSectionItems } from "../components/learningProject/AccordionSection";
 import { ScrollView } from "react-native";
 
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
   const [showCreateQuizGame, setShowCreateQuizGame] = useState(false);
-  const [time, setTime] = useState("00:00");
+  const minutesRef = React.useRef(null);
+  const secondsRef = React.useRef(null);
 
-  const handleTimeChange = (text) => {
+  // Use separate states for minutes and seconds
+  const [minutes, setMinutes] = useState("");
+  const [seconds, setSeconds] = useState("");
+
+  const handleTimeChange = (field, text) => {
     // Ensure that the input is in the format "00:00"
-    const formattedTime = text.replace(/[^0-9:]/g, ""); // Remove non-numeric and non-colon characters
-    const [minutes, seconds] = formattedTime.split(":");
-    const formattedMinutes = minutes ? String(Math.min(parseInt(minutes), 59)).padStart(2, "0") : "00";
-    const formattedSeconds = seconds ? String(Math.min(parseInt(seconds), 59)).padStart(2, "0") : "00";
-    const formattedTimeStr = `${formattedMinutes}:${formattedSeconds}`;
-    setTime(formattedTimeStr);
+    const formattedText = text.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+
+    if (field === "minutes") {
+      setMinutes(formattedText.slice(0, 2));
+    } else if (field === "seconds") {
+      setSeconds(formattedText.slice(0, 2));
+    }
   };
 
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -61,40 +66,58 @@ export default function LearningRoom({ navigation }) {
       return item;
     });
     setFilteredAccordionSectionItems(updatedItems);
-  }
+  };
 
   return (
     <>
       <Portal>
-      <Dialog visible={showCreateFlashcardGame} onDismiss={() => setShowCreateFlashcardGame(false)}>
+        <Dialog visible={showCreateFlashcardGame} onDismiss={() => setShowCreateFlashcardGame(false)}>
           <Dialog.Title>Flashcard game</Dialog.Title>
           <Dialog.Content>
+          <Text style={styles.roundDurationStyle}> Round duration</Text>
+            <View style={styles.timerContainer}>
             <TextInput
-              label="Round duration (mm:ss)" style={styles.timer}
-              value={time}
-              onChangeText={handleTimeChange}
+              label="Minutes"
+              style={styles.timerInput}
+              value={minutes}
+              onChangeText={(text) => {
+                handleTimeChange("minutes", text);
+                if (text.length === 2) {
+                  secondsRef.current.focus();
+                }
+              }}
+              ref={minutesRef}
             />
+            <Text style={styles.timerSeparator}>:</Text>
+            <TextInput
+              label="Seconds"
+              style={styles.timerInput}
+              value={seconds}
+              onChangeText={(text) => handleTimeChange("seconds", text)}
+              ref={secondsRef}
+            />
+            </View>
             <View style={styles.searchContainer}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={handleSearch}
                 value={searchQuery}
               />
-              </View>
-              <ScrollView
+            </View>
+            <ScrollView
               contentContainerStyle={styles.scrollContent}
               style={styles.scrollContainer}
             >
-                {filteredAccordionSectionItems.map((learningSet) => (
-                  <View key={learningSet.id} style={styles.accordionItem}>
-                    <Text style={styles.accordionTitle}>{learningSet.title}</Text>
-                    <Checkbox
+              {filteredAccordionSectionItems.map((learningSet) => (
+                <View key={learningSet.id} style={styles.accordionItem}>
+                  <Text style={styles.accordionTitle}>{learningSet.title}</Text>
+                  <Checkbox
                     status={learningSet.checked ? "checked" : "unchecked"}
                     onPress={() => handleCheckboxPress(learningSet.id)}
                   />
-                  </View>
-                ))}
-              </ScrollView>
+                </View>
+              ))}
+            </ScrollView>
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setShowCreateFlashcardGame(false)}>Done</Button>
@@ -103,7 +126,7 @@ export default function LearningRoom({ navigation }) {
       </Portal>
       <Portal>
         <Dialog visible={showCreateQuizGame} onDismiss={() => setShowCreateQuizGame(false)}>
-          {/* ... Existing code ... */}
+          {}
         </Dialog>
       </Portal>
       <View style={styles.container}>
@@ -164,8 +187,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
-  timer: {
+  roundDurationStyle: {
+    fontSize: 16,
+    marginBottom: -10,
+    fontWeight: "bold",
+  },
+  timerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timerInput: {
+    flex: 1,
     backgroundColor: null,
+    marginBottom: 2,
+  },
+  timerSeparator: {
+    fontSize: 20,
+    fontWeight: "bold",
   },
   searchContainer: {
     borderBottomWidth: 1,
@@ -181,16 +220,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   dialog: {
-    maxHeight: responsiveHeight(70), // Set a maximum height for the dialog
-  },
-  dialogContent: {
-    maxHeight: responsiveHeight(50), // Set a maximum height for the content
+    maxHeight: responsiveHeight(70),
   },
   scrollContainer: {
-    maxHeight: responsiveHeight(40),
+    maxHeight: responsiveHeight(30),
     flex: 0,
   },
   scrollContent: {
-    paddingVertical: 16, // Add padding to the content
+    paddingVertical: 16,
   },
 });
