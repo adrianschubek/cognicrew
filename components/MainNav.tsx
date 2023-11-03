@@ -64,7 +64,7 @@ export default function MainNav() {
   //   console.log("!!!Session: ", session);
   // }, [initialized])
 
-  return !session ? (
+  return !session || !user ? (
     <Stack.Navigator
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}
