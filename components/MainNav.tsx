@@ -26,14 +26,7 @@ function MainTab() {
       />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
-      <Stack.Screen name="LearningProjects" component={LearningProjects} />
-      <Stack.Screen name="LearningProject" component={LearningProject} />
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen
-        name="FlashcardManagement"
-        component={FlashcardManagement}
-      />
-      <Stack.Screen name="LinkManagement" component={LinkManagement} />
+
       <Stack.Screen name="Achievements" component={Achievements} />
     </Stack.Navigator>
   );
@@ -43,6 +36,21 @@ function SettingsTab() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Settings" component={Settings} />
+    </Stack.Navigator>
+  );
+}
+
+function LearningProjectsTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="LearningProjects" component={LearningProjects} />
+      <Stack.Screen name="LearningProject" component={LearningProject} />
+      <Stack.Screen name="LearningRoom" component={LearningRoom} />
+      <Stack.Screen
+        name="FlashcardManagement"
+        component={FlashcardManagement}
+      />
+      <Stack.Screen name="LinkManagement" component={LinkManagement} />
     </Stack.Navigator>
   );
 }
@@ -73,8 +81,13 @@ export default function MainNav() {
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen
         name="HomeTab"
-        options={{ tabBarIcon: "home", title: "Home" }}
+        options={{ tabBarIcon: "home", title: "Feed" }}
         component={MainTab}
+      />
+      <Tab.Screen
+        name="LearningProjectsTab"
+        options={{ tabBarIcon: "book", title: "Projects" }}
+        component={LearningProjectsTab}
       />
       <Tab.Screen
         name="SettingsTab"
@@ -83,4 +96,7 @@ export default function MainNav() {
       />
     </Tab.Navigator>
   );
+}
+{
+  /* // TODO: eigene tab seite für projects leraning */
 }

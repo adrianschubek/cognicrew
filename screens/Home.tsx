@@ -119,18 +119,6 @@ export default function HomeScreen({ navigation }) {
             icon="account-multiple"
             mode="contained"
             onPress={() => {
-              navigation.navigate("LearningProjects");
-              console.log("Home Screen Pressed");
-            }}
-          >
-            Learning Projects
-          </Button>
-          <Button
-            style={styles.buttonStyle}
-            labelStyle={styles.bigLabelStyle}
-            icon="account-multiple"
-            mode="contained"
-            onPress={() => {
               navigation.navigate("ManageFriends");
               console.log("Home Screen Pressed");
             }}

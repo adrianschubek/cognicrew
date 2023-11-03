@@ -59,19 +59,19 @@ const LogoutButton = () => {
 };
 
 export default function AccountInfo(props) {
-  const {user} = useAuth();
+  const { user } = useAuth();
   return (
     <Card {...props} mode="contained">
-      <Card.Title
-        title="Account"
-        left={Account}
-        right={LogoutButton}
-      />
+      <Card.Title title="Account" left={Account} right={LogoutButton} />
       <Card.Content>
         <Text variant="bodyMedium">_username_</Text>
         <Text variant="bodyMedium">{user.email}</Text>
-        <Text variant="bodyMedium">Account created on {(new Date(user.created_at)).toLocaleDateString()}</Text>
-        <Text variant="bodyMedium">Last login at {(new Date(user.last_sign_in_at)).toLocaleString()}</Text>
+        <Text variant="bodyMedium">
+          Account created on {new Date(user.created_at).toLocaleDateString()}
+        </Text>
+        <Text variant="bodyMedium">
+          Last login at {new Date(user.last_sign_in_at).toLocaleString()}
+        </Text>
       </Card.Content>
     </Card>
   );
