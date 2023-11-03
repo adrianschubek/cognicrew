@@ -24,7 +24,7 @@ export default function LearningProject({ navigation }) {
         path={require("../assets/completed_task_symbol.png")}
         name={"Exercises"}
         function={() => {
-          navigation.navigate("ExerciseManagemet");
+          navigation.navigate("ExerciseManagement");
         }}
       />
       <LearningProjectCategory
