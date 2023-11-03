@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Text, List, Divider } from "react-native-paper";
+import { Text, List, Divider, Card } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -36,7 +36,7 @@ export default function AccordionSection(props) {
                     </React.Fragment>
                     ))}
                 </List.Accordion>
-      </ScrollView>
+          </ScrollView>
     </List.Section>
   );
 }

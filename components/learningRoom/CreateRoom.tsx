@@ -19,7 +19,7 @@ export default function CreateRoom({ navigation }) {
       <Card>
         
       	 <Text
-          style={[styles.container, {}]}
+          style={[styles.container, {textAlign: 'center'}]}
           >
           Create room:
         </Text>
@@ -29,18 +29,7 @@ export default function CreateRoom({ navigation }) {
         <Button
         icon="home"
         mode="contained"
-        style={[styles.container, {marginTop: responsiveHeight(2.4)}]} 
-        contentStyle={{
-          //height: responsiveHeight(10),
-          /*backgroundColor:"yellow",*/ alignItems: "center",
-        }}
-        labelStyle={{
-          //lineHeight: responsiveFontSize(1),
-          //fontSize: responsiveFontSize(2),
-          //textAlignVertical: "center",
-          //height: responsiveFontSize(3),
-          //backgroundColor:"red"
-        }}
+        style={[styles.container, {marginTop: responsiveHeight(2.9)}]} 
         onPress={() => {
           navigation.navigate("LearningRoom");
         }}
@@ -56,9 +45,5 @@ const styles = StyleSheet.create({
     width: responsiveWidth(40),
     marginBottom: responsiveHeight(2.5),
     marginTop: responsiveHeight(1.5),
-  },
-  buttonStyle: {
-    //marginBottom: responsiveHeight(2.5),
-    //marginTop: responsiveHeight(1.5),
   },
 });

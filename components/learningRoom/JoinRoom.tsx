@@ -32,7 +32,7 @@ export default function JoinRoom({ navigation }) {
       </Portal>
       <Card>
         <Text
-          style={[styles.container]}
+          style={[styles.container, {textAlign: 'center'}]}
         >
           Join room via ID:
         </Text>
@@ -55,11 +55,11 @@ export default function JoinRoom({ navigation }) {
           }}
           maxLength={7}
           inputMode="numeric"
-          style={[styles.container, {height: responsiveHeight(8), }]}
+          style={[styles.container, {height: responsiveHeight(8)}]}
         />
         <Button
           labelStyle={{ textAlignVertical: "center" }}
-          style={[styles.buttonStyle, styles.container]}
+          style={[styles.container]}
           mode="contained"
           onPress={() => {
             if (joinCode.length !== 7) {
@@ -80,10 +80,6 @@ const styles = StyleSheet.create({
     width: responsiveWidth(40),
     marginBottom: responsiveHeight(2.5),
     marginTop: responsiveHeight(1.5),
-  },
-  buttonStyle: {
-    //marginBottom: responsiveHeight(2.5),
-    //marginTop: responsiveHeight(1.5),
   },
   
 });
