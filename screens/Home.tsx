@@ -42,8 +42,12 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.middleContainerChild}>
-          <JoinRoom navigation={navigation} />
-          <CreateRoom navigation={navigation}/>
+          <View style={{marginRight: responsiveWidth(4)}}>
+            <JoinRoom navigation={navigation}/>
+          </View>
+          <View style={{marginLeft: responsiveWidth(4)}}>
+            <CreateRoom navigation={navigation}/>
+          </View>
         </View>
         <View style={[styles.bottomContainerChild]}>
           <Button
