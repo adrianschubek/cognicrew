@@ -15,7 +15,7 @@ export default function ExerciseManagement() {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.upperContainer}>
-        <TextWithPlusButton text= "add new flash cards" function={() => {}} />
+        <TextWithPlusButton text= "add new Exercises" function={() => {}} />
       </View>
       <ScrollView>
        <AccordionSection type="exercise"/>

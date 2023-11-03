@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Text } from "react-native-paper";
+import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -9,16 +9,28 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
+import { useState } from "react";
+import AddingFlashcards from "../../components/dialogues/AddingFlashcards";
 
 export default function FlashcardManagement() {
+  const [showAddingFlashcards, setShowAddingFlashcards] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
+      <AddingFlashcards
+        showAddingFlashcards={showAddingFlashcards}
+        close={() => setShowAddingFlashcards(false)}
+      />
       <View style={styles.upperContainer}>
-        <TextWithPlusButton text= "add new flash cards" function={() => {}} />
+        <TextWithPlusButton
+          text="add new flash cards"
+          function={() => {
+            setShowAddingFlashcards(true);
+          }}
+        />
       </View>
       <ScrollView>
-       <AccordionSection type="flashcard"/>
+        <AccordionSection type="flashcard" />
       </ScrollView>
     </View>
   );
