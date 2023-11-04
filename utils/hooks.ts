@@ -1,8 +1,5 @@
-import { useState, useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
-import { getAchievements } from "./queries";
 import { useAlertsStore } from "../stores/AlertsStore";
-import { Database } from "../types/supabase";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 
