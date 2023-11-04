@@ -1,6 +1,14 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  List,
+  Portal,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -8,8 +16,10 @@ import {
 } from "react-native-responsive-dimensions";
 import EditFlashcard from "../learningProject/EditFlashcard";
 import { useState } from "react";
+import SearchAndSelect from "../common/SearchAndSelect";
 
 export default function AddingFlashcards({ showAddingFlashcards, close }) {
+  const theme = useTheme();
   const flashcard = {
     question: "",
     answer: "",
@@ -25,6 +35,7 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
         visible={showAddingFlashcards}
         onDismiss={() => close()}
       >
+        <SearchAndSelect type="flashcard"/>
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
@@ -67,5 +78,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   cardContentStyle: {},
-  textInputStyle: { marginBottom: responsiveHeight(1), width:responsiveWidth(70) },
+  textInputStyle: {
+    marginBottom: responsiveHeight(1),
+    width: responsiveWidth(70),
+  },
 });
