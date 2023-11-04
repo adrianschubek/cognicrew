@@ -23,7 +23,7 @@ export default function PasswordChange(props) {
   const update = async () => {
     const { data, error } = await supabase.auth.updateUser({ password: pw1 });
 
-    if (error) errorAlert(error?.message);
+    if (error) errorAlert(error?.message, "Error");
     else success("Password updated.", "Success");
   };
 
