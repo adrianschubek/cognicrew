@@ -63,8 +63,8 @@ export default function App() {
           <AuthProvider>
             <SWRConfig
               value={{
-                revalidateIfStale: false,
-                revalidateOnFocus: false,
+              /*   revalidateIfStale: false,
+                revalidateOnFocus: false, */
                 provider: () => new Map(),
                 isVisible: () => true,
                 isOnline: () => true,
