@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import {
   Dialog,
   Portal,
-  TextInput,
   Text,
   Button,
   Checkbox,
@@ -17,31 +16,13 @@ import {
 import { useState } from "react";
 import { accordionSectionItems } from "../learningProject/AccordionSection";
 import { ScrollView } from "react-native";
+import TimeSelection from "../common/TimeSelection";
 
 export default function CreateFlashCardGame({showCreateFlashcardGame, close}) {
-  const minutesRef = React.useRef(null);
-  const secondsRef = React.useRef(null);
-
-  // Use separate states for minutes and seconds
-  const [minutes, setMinutes] = useState("");
-  const [seconds, setSeconds] = useState("");
-
-  const handleTimeChange = (field, text) => {
-    // Ensure that the input is in the format "00:00"
-    const formattedText = text.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-
-    if (field === "minutes") {
-      setMinutes(formattedText.slice(0, 2));
-    } else if (field === "seconds") {
-      setSeconds(formattedText.slice(0, 2));
-    }
-  };
-
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState(
     accordionSectionItems.map(item => ({ ...item, checked: false }))
   );
-
   const handleSearch = (query) => {
     setSearchQuery(query);
     const filteredItems = accordionSectionItems.map((item) => ({
@@ -68,29 +49,7 @@ export default function CreateFlashCardGame({showCreateFlashcardGame, close}) {
         <Dialog visible={showCreateFlashcardGame} onDismiss={close}>
           <Dialog.Title>Flashcard game</Dialog.Title>
           <Dialog.Content>
-          <Text style={styles.roundDurationStyle}> Round duration</Text>
-            <View style={styles.timerContainer}>
-            <TextInput
-              label="Minutes"
-              style={styles.timerInput}
-              value={minutes}
-              onChangeText={(text) => {
-                handleTimeChange("minutes", text);
-                if (text.length === 2) {
-                  secondsRef.current.focus();
-                }
-              }}
-              ref={minutesRef}
-            />
-            <Text style={styles.timerSeparator}>:</Text>
-            <TextInput
-              label="Seconds"
-              style={styles.timerInput}
-              value={seconds}
-              onChangeText={(text) => handleTimeChange("seconds", text)}
-              ref={secondsRef}
-            />
-            </View>
+            <TimeSelection/>
             <View style={styles.searchContainer}>
               <Searchbar
                 placeholder="Search"
@@ -122,25 +81,6 @@ export default function CreateFlashCardGame({showCreateFlashcardGame, close}) {
 }
 
 const styles = StyleSheet.create({
-  roundDurationStyle: {
-    fontSize: 16,
-    marginBottom: -10,
-    fontWeight: "bold",
-  },
-  timerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  timerInput: {
-    flex: 1,
-    backgroundColor: null,
-    marginBottom: 2,
-  },
-  timerSeparator: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
   searchContainer: {
     borderBottomWidth: 1,
     borderColor: "gray",
