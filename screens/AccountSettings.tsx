@@ -52,16 +52,20 @@ export default function AccountSettings({ nav }) {
       />
       <Divider />
       <EmailChange
-        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+        style={{
+          marginBottom: 10,
+          marginTop: 10,
+          backgroundColor: theme.colors.surface,
+        }}
       />
-      <Divider />
+      {/* <Divider />
       <DangerZone
         style={{
           marginTop: 10,
           marginBottom: 10,
           backgroundColor: theme.colors.errorContainer,
         }}
-      />
+      /> */}
     </ScrollView>
   );
 }
