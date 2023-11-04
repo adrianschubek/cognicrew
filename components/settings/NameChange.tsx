@@ -8,7 +8,7 @@ const Icon = (props) => <Avatar.Icon {...props} icon="account-edit" />;
 
 export default function NameChange(props) {
   const theme = useTheme();
-  const { success } = useAlerts();
+  const { success, error: errorAlert } = useAlerts();
   const [name, setName] = useState("");
 
   const validator = name.length > 4 && name.length < 32;
@@ -20,7 +20,7 @@ export default function NameChange(props) {
       .update({ username: name })
       .eq("id", user.id);
 
-    if (error) alert(error?.message);
+    if (error) errorAlert(error?.message);
     else success("Username updated. You may need to login again to see changes.");
   };
 
