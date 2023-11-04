@@ -9,6 +9,7 @@ import { Database } from "../types/supabase";
  * If no uid is given, the username of the current user is returned.
  * @param uid The uid of the user whose username to get.
  * @returns The username of the user with the given uid.
+ * @deprecated Use useQuery with getUsername instead.
  */
 export function useUsername(uid?: string): string {
   const { user } = useAuth();
@@ -23,6 +24,10 @@ export function useUsername(uid?: string): string {
 
   return profilename;
 }
+
+/**
+ * @deprecated Use useQuery with getAchievements instead.
+ */
 export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][] {
   const [achievements, setAchievements] = useState([]);
   const { error: errorAlert } = useAlerts();
