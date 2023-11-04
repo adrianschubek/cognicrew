@@ -22,13 +22,6 @@ export default function HomeScreen({ navigation }) {
         <StatusBar style="auto" />
 
         <View style={styles.upperContainerChild}>
-          <Image
-            source={require("../assets/icon.png")}
-            style={{
-              height: responsiveFontSize(13),
-              width: responsiveFontSize(13),
-            }}
-          />
           <View style={styles.rightUpperContainerChild}>
             <Text
               style={{

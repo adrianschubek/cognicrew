@@ -14,6 +14,7 @@ import Achievements from "../screens/Achievements";
 import { useAuth } from "../providers/AuthProvider";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
+import { Image } from "react-native";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -24,7 +25,18 @@ function MainTab() {
       <Stack.Screen
         name={NAVIGATION.HOME}
         component={HomeScreen}
-        options={{ title: "CogniCrew" }}
+        options={{
+          title: "CogniCrew",
+          headerRight: () => (
+            <Image
+              source={require("../assets/icon.png")}
+              style={{
+                height: 40,
+                width: 40,
+              }}
+            />
+          ),
+        }}
       />
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
