@@ -8,13 +8,12 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useAuth } from "../providers/AuthProvider";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
 
 export default function HomeScreen({ navigation }) {
-  const username = useUsername();
+  const { data, isLoading } = useUsername();
 
   return (
     <>
@@ -36,17 +35,17 @@ export default function HomeScreen({ navigation }) {
                 paddingRight: responsiveWidth(1),
               }}
             >
-              Hello, {username}
+              Hello, {isLoading ? "...." : data[0].username}
             </Text>
             <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
           </View>
         </View>
         <View style={styles.middleContainerChild}>
-          <View style={{marginRight: responsiveWidth(4)}}>
-            <JoinRoom navigation={navigation}/>
+          <View style={{ marginRight: responsiveWidth(4) }}>
+            <JoinRoom navigation={navigation} />
           </View>
-          <View style={{marginLeft: responsiveWidth(4)}}>
-            <CreateRoom navigation={navigation}/>
+          <View style={{ marginLeft: responsiveWidth(4) }}>
+            <CreateRoom navigation={navigation} />
           </View>
         </View>
         <View style={[styles.bottomContainerChild]}>

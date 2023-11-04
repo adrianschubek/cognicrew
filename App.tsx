@@ -18,6 +18,8 @@ import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
 import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
+import { SWRConfig } from "swr";
+import { AppState } from "react-native";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -59,8 +61,40 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
           <AuthProvider>
-            <AlertSyncZustand />
-            <MainNav />
+            <SWRConfig
+              value={{
+                revalidateIfStale: false,
+                revalidateOnFocus: false,
+                provider: () => new Map(),
+                isVisible: () => true,
+                isOnline: () => true,
+                initFocus: (callback) => {
+                  let appState = AppState.currentState;
+
+                  const onAppStateChange = (nextAppState) => {
+                    /* If it's resuming from background or inactive mode to active one */
+                    if (
+                      appState.match(/inactive|background/) &&
+                      nextAppState === "active"
+                    ) {
+                      callback();
+                    }
+                    appState = nextAppState;
+                  };
+
+                  // Subscribe to the app state change events
+                  const subscription = AppState.addEventListener(
+                    "change",
+                    onAppStateChange,
+                  );
+
+                  return () => subscription.remove();
+                },
+              }}
+            >
+              <AlertSyncZustand />
+              <MainNav />
+            </SWRConfig>
           </AuthProvider>
         </NavigationContainer>
       </PaperProvider>

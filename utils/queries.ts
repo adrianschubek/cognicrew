@@ -1,6 +1,9 @@
 import { supabase } from "../supabase";
 import { Database } from "../types/supabase";
 
+/**
+ * @deprecated Use hook useUsername instead.
+ */
 export async function getUsername(uid: string): Promise<string> {
   const { data, error } = await supabase
     .from("profiles")
@@ -9,6 +12,10 @@ export async function getUsername(uid: string): Promise<string> {
   if (error) throw error;
   return data[0].username;
 }
+
+/**
+ * @deprecated Use hook useAchievements instead.
+ */
 export async function getAchievements(): Promise<
   Database["public"]["Tables"]["achievements"]["Row"][]
 > {
