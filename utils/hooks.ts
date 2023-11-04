@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
-import { getAchievements, getUsername } from "./queries";
+import { getAchievements } from "./queries";
 import { useAlertsStore } from "../stores/AlertsStore";
 import { Database } from "../types/supabase";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -39,18 +39,12 @@ export function useUsername(uid?: string) {
 }
 
 /**
- * @deprecated Use useQuery directly instead.
+ * Returns all achievements.
  */
-export function useAchievements(): Database["public"]["Tables"]["achievements"]["Row"][] {
-  const [achievements, setAchievements] = useState([]);
-  const { error: errorAlert } = useAlerts();
-
-  useEffect(() => {
-    getAchievements()
-      .then((achievements) => setAchievements(achievements))
-      .catch((error) => errorAlert(error));
-  }, []);
-  return achievements;
+export function useAchievements() {
+  return handleErrors(
+    useQuery(supabase.from("achievements").select("id,name,icon_name,description").order("id")),
+  );
 }
 
 /**

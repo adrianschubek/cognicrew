@@ -9,7 +9,12 @@ import { Text, List, Divider } from "react-native-paper";
 import { useAchievements } from "../../utils/hooks";
 
 export default function Achievement() {
-  const achievements = useAchievements();
+  const { data: achievements, isLoading } = useAchievements();
+
+  if (isLoading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <List.Section style={styles.achievementStyle}>
       {achievements.map((achievement, index) => (
