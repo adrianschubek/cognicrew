@@ -1,1 +1,0 @@
-export type ManagementType = "exercise" | "flashcard" | "file" | "link"

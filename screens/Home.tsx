@@ -11,6 +11,7 @@ import {
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
+import { NAVIGATION } from "../types/common";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
@@ -55,7 +56,7 @@ export default function HomeScreen({ navigation }) {
             icon="account-multiple"
             mode="contained"
             onPress={() => {
-              navigation.navigate("ManageFriends");
+              navigation.navigate(NAVIGATION.MANAGE_FRIENDS);
               console.log("Home Screen Pressed");
             }}
           >
@@ -64,7 +65,7 @@ export default function HomeScreen({ navigation }) {
           <Button
             style={styles.buttonStyle}
             onPress={() => {
-              navigation.navigate("Achievements");
+              navigation.navigate(NAVIGATION.ACHIEVEMENTS);
               console.log("Achievement screen pressed");
             }}
           >

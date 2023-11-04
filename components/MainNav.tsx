@@ -13,6 +13,7 @@ import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import { useAuth } from "../providers/AuthProvider";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
+import { NAVIGATION } from "../types/common";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -20,11 +21,18 @@ const Stack = createNativeStackNavigator();
 function MainTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} options={{ title: "CogniCrew" }}/>
-      <Stack.Screen name="ManageFriends" component={ManageFriends} />
-      <Stack.Screen name="Achievements" component={Achievements} />
-      
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
+      <Stack.Screen
+        name={NAVIGATION.HOME}
+        component={HomeScreen}
+        options={{ title: "CogniCrew" }}
+      />
+      <Stack.Screen
+        name={NAVIGATION.MANAGE_FRIENDS}
+        component={ManageFriends}
+      />
+      <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
+
+      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
     </Stack.Navigator>
   );
 }
@@ -32,7 +40,7 @@ function MainTab() {
 function SettingsTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name={NAVIGATION.SETTINGS} component={Settings} />
     </Stack.Navigator>
   );
 }
@@ -40,13 +48,28 @@ function SettingsTab() {
 function LearningProjectsTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="LearningProjects" component={LearningProjects} />
-      <Stack.Screen name="LearningProject" component={LearningProject} />
-      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
-      <Stack.Screen name="LinkManagement" component={LinkManagement} />
-      <Stack.Screen name="ExerciseManagement" component={ExerciseManagement}/>
+      <Stack.Screen
+        name={NAVIGATION.LEARNING_PROJECTS}
+        component={LearningProjects}
+      />
+      <Stack.Screen
+        name={NAVIGATION.LEARNING_PROJECT}
+        component={LearningProject}
+      />
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_MANAGEMENT}
+        component={FlashcardManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.LINK_MANAGEMENT}
+        component={LinkManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.EXERCISE_MANAGEMENT}
+        component={ExerciseManagement}
+      />
 
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
+      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
     </Stack.Navigator>
   );
 }
