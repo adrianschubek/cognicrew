@@ -22,6 +22,7 @@ import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 
 export default function ManageFriends({ navigation }) {
+  const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
   const [friends, setFriends] = useState([
@@ -38,7 +39,6 @@ export default function ManageFriends({ navigation }) {
   const [pendingFriends, setPendingFriends] = useState([]);
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const theme = useTheme();
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={40} />
   );
@@ -153,7 +153,6 @@ export default function ManageFriends({ navigation }) {
           <Text style={styles.sectionTitle}>All friends</Text>
 
           <TextInput
-            style={styles.searchInput}
             onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
             placeholder="Search friends"
@@ -207,7 +206,6 @@ export default function ManageFriends({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Projects</Text>
           <TextInput
-            style={styles.searchInput}
             onChangeText={(query) => handleSearch(query, "projects")}
             value={projectQuery}
             placeholder="Search Projects"
@@ -237,7 +235,6 @@ export default function ManageFriends({ navigation }) {
           </Dialog.Title>
           <Dialog.Content>
             <TextInput
-              style={styles.searchInput}
               onChangeText={handleNewFriendNameChange}
               value={newFriendName}
               placeholder="Enter user's nickname"
@@ -319,15 +316,6 @@ const styles = StyleSheet.create({
   },
   acceptButtonText: {
     //color: 'green',
-  },
-  searchInput: {
-    height: 50,
-    padding: 10,
-    marginBottom: 10,
-    //backgroundColor: '#fff',
-    //borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
   },
   dropdownItemText: {
     fontSize: 18,
