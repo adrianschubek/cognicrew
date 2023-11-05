@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
 import {
   Button,
   Dialog,
@@ -33,9 +33,15 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
       <Dialog
         style={{ alignItems: "center" }}
         visible={showAddingFlashcards}
-        onDismiss={() => close()}
+        onDismiss={() => {
+          close();
+          Keyboard.dismiss();
+        }}
       >
-        <SearchAndSelect type="flashcard" searchPlaceholder="choose flashcard set"/>
+        <SearchAndSelect
+          type="flashcard"
+          searchPlaceholder="Search for flashcard set"
+        />
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
@@ -59,7 +65,9 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
-            onPress={() => close()}
+            onPress={() => {
+              close(), Keyboard.dismiss();
+            }}
             mode="contained"
           >
             add new flashcard
