@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { useState } from "react";
 import {
   Dialog,
@@ -18,6 +14,7 @@ import {
 import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
+import AddFriend from "../components/dialogues/AddFriend";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -42,7 +39,6 @@ export default function ManageFriends({ navigation }) {
   );
 
   const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
-  const [newFriendName, setNewFriendName] = useState("");
 
   const filteredFriends = searchQuery
     ? friends.filter((friend) =>
@@ -52,16 +48,6 @@ export default function ManageFriends({ navigation }) {
 
   const toggleAddFriendPopup = () => {
     setShowAddFriendPopup(!showAddFriendPopup);
-  };
-
-  const handleNewFriendNameChange = (name) => {
-    setNewFriendName(name);
-  };
-
-  const handleAddNewFriend = () => {
-    addFriend(newFriendName);
-    setShowAddFriendPopup(false);
-    setNewFriendName("");
   };
 
   /**
@@ -151,7 +137,7 @@ export default function ManageFriends({ navigation }) {
                 id={index}
                 icon="close-circle"
                 friend={friend}
-                onIconPress={() => confirmDelete(friend)}
+                onIconPress={() =>confirmDelete(friend)}
               />
             ))}
           </ScrollView>
@@ -200,30 +186,11 @@ export default function ManageFriends({ navigation }) {
       </Portal>
 
       {/* Friend popup dialog */}
-      <Portal>
-        <Dialog visible={showAddFriendPopup} onDismiss={toggleAddFriendPopup}>
-          <Dialog.Title>
-            Get in touch with your colleagues - Add New Friend
-          </Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              onChangeText={handleNewFriendNameChange}
-              value={newFriendName}
-              placeholder="Enter user's nickname"
-            />
-            <Button
-              mode="contained"
-              onPress={() => handleAddNewFriend()}
-              style={styles.button}
-            >
-              Add Friend
-            </Button>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={toggleAddFriendPopup}>Cancel</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
+      <AddFriend
+        showAddFriendPopup={showAddFriendPopup}
+        addFriend={addFriend}
+        close={() => toggleAddFriendPopup()}
+      />
 
       {/* Snackbar - providing feedback to the user */}
       <Snackbar
@@ -269,9 +236,6 @@ const styles = StyleSheet.create({
   dropdownItemText: {
     fontSize: 18,
     paddingVertical: 10,
-  },
-  button: {
-    marginTop: 10,
   },
   divider: {
     height: 1,
