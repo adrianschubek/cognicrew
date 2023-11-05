@@ -42,24 +42,6 @@ export default function SearchAndSelect(props: {
   };
   return (
     <React.Fragment>
-      {/* 
-      <List.Section>
-        <List.Accordion
-          title="add to learning Set:"
-          titleNumberOfLines={4}
-          style={{
-            width: responsiveWidth(70),
-            backgroundColor: theme.colors.secondaryContainer,
-          }}
-        >
-          {Items
-            .filter((learningSet) => learningSet.type === props.type)
-            .map((learningSet) => (
-              <List.Item title={learningSet.title} />
-            ))}
-        </List.Accordion>
-      </List.Section>
-      */}
       <Searchbar
         value={searchQuery}
         style={{ elevation: 1, width: responsiveWidth(70) }}
