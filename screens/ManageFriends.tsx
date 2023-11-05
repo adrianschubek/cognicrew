@@ -2,9 +2,7 @@ import * as React from "react";
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   ScrollView,
-  Image,
 } from "react-native";
 import { useState } from "react";
 import {
@@ -13,13 +11,13 @@ import {
   Button,
   Divider,
   Avatar,
-  IconButton,
   Text,
   TextInput,
   useTheme,
 } from "react-native-paper";
 import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
+import FriendItem from "../components/manageFriends/FriendItem";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -65,16 +63,6 @@ export default function ManageFriends({ navigation }) {
     setShowAddFriendPopup(false);
     setNewFriendName("");
   };
-
-  /**
-   * `getFriendIconUrl` - Returns a URL for a friend's icon.
-   * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
-   * @param {string} friendName - The name of the friend whose icon URL is requested.
-   * @returns {string} The URL of the friend's profile icon.
-   */
-  // use once database is ready: const getFriendIconUrl = (friendName) => `path_to_user's profile icons/${friendName}.png`;
-  const getFriendIconUrl = (friendName) =>
-    `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
 
   /**
    * `confirmDelete` - Opens a dialog to confirm deletion of a friend.
@@ -159,24 +147,12 @@ export default function ManageFriends({ navigation }) {
           />
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends.map((friend, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.item,
-                  { backgroundColor: theme.colors.background },
-                ]}
-              >
-                <Image
-                  source={{ uri: getFriendIconUrl(friend) }}
-                  style={styles.profileIcon}
-                />
-                <Text style={styles.itemText}>{friend}</Text>
-                <IconButton
-                  icon="close-circle"
-                  size={28}
-                  onPress={() => confirmDelete(friend)}
-                />
-              </View>
+              <FriendItem
+                id={index}
+                icon="close-circle"
+                friend={friend}
+                onIconPress={() => confirmDelete(friend)}
+              />
             ))}
           </ScrollView>
           <Divider style={styles.divider} />
@@ -187,16 +163,12 @@ export default function ManageFriends({ navigation }) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Pending friend requests</Text>
             {pendingFriends.map((friend, index) => (
-              <View key={index} style={styles.item}>
-                <Image
-                  source={{ uri: getFriendIconUrl(friend) }}
-                  style={styles.profileIcon}
-                />
-                <Text style={styles.itemText}>{friend} (Pending)</Text>
-                <TouchableOpacity onPress={() => acceptFriend(friend)}>
-                  <Text style={styles.acceptButtonText}>Accept</Text>
-                </TouchableOpacity>
-              </View>
+              <FriendItem
+                id={index}
+                icon="check"
+                friend={friend}
+                onIconPress={() => acceptFriend(friend)}
+              />
             ))}
             <Divider style={styles.divider} />
           </View>
@@ -287,29 +259,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     //color: '#333',
     paddingBottom: 10,
-  },
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    borderRadius: 5,
-    //shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
-  },
-  profileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 8,
-  },
-  itemText: {
-    flex: 1,
-    fontSize: 17,
   },
   deleteButtonText: {
     //color: 'red',
