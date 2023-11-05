@@ -21,17 +21,20 @@ import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
-  const flashcard = {
+  const exercise = {
     question: "",
-    answer: "",
+    answer1: "",
+    answer2: "",
+    answer3: "",
+    answer4: "",
     id: 0,
     groupId: 0,
   };
-  const [question, setQuestion] = useState(flashcard.question);
-  const [answer1, setAnswer1] = useState(flashcard.answer);
-  const [answer2, setAnswer2] = useState(flashcard.answer);
-  const [answer3, setAnswer3] = useState(flashcard.answer);
-  const [answer4, setAnswer4] = useState(flashcard.answer);
+  const [question, setQuestion] = useState(exercise.question);
+  const [answer1, setAnswer1] = useState(exercise.answer1);
+  const [answer2, setAnswer2] = useState(exercise.answer2);
+  const [answer3, setAnswer3] = useState(exercise.answer3);
+  const [answer4, setAnswer4] = useState(exercise.answer4);
   return (
     <Portal>
       <Dialog
