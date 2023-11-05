@@ -27,10 +27,9 @@ export function useUsername(uid?: string) {
 
   return handleErrors(
     useQuery(
-      supabase
-        .from("public_profiles")
-        .select("username")
-        .eq("id", uid ?? user.id),
+      supabase.rpc("getUsername", {
+        user_id: uid ?? user?.id,
+      }),
     ),
   );
 }
@@ -40,7 +39,12 @@ export function useUsername(uid?: string) {
  */
 export function useAchievements() {
   return handleErrors(
-    useQuery(supabase.from("achievements").select("id,name,icon_name,description").order("id")),
+    useQuery(
+      supabase
+        .from("achievements")
+        .select("id,name,icon_name,description")
+        .order("id"),
+    ),
   );
 }
 
