@@ -18,6 +18,13 @@ Cypress.Commands.add("openApp", () => {
   cy.viewport("samsung-s10");
   cy.visit("http://localhost:19006");
 });
+
+Cypress.Commands.add("login", () => {
+  cy.get('[data-testid="text-input-flat"]').first().type("foo@bar.de");
+  cy.get('[data-testid="text-input-flat"]').last().type("foobar");
+  cy.get('[data-testid="login-button"]').click();
+});
+
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
@@ -37,6 +44,7 @@ Cypress.Commands.add("openApp", () => {
 declare namespace Cypress {
   interface Chainable<Subject> {
     openApp(): Chainable<Subject>;
+    login(): Chainable<Subject>;
     // login(email: string, password: string): Chainable<void>
     // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
     // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>

@@ -21,7 +21,7 @@ export default function AlertSyncZustand() {
 
   return (
     <Portal>
-      <Dialog visible={open} onDismiss={() => setOpen(false)}>
+      <Dialog visible={open} onDismiss={() => setOpen(false)} testID={icon + "_alert"}>
         {icon && (
           <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
         )}

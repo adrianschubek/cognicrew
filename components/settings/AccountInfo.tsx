@@ -35,6 +35,7 @@ const LogoutButton = () => {
                 setShowConfirm(false);
                 await supabase.auth.signOut();
               }}
+              testID="logout-confirm-button"
             >
               Logout
             </Button>
@@ -53,6 +54,7 @@ const LogoutButton = () => {
         onPress={() => {
           setShowConfirm(true);
         }}
+        testID="logout-button"
       >
         Logout
       </Button>
