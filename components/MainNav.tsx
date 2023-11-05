@@ -15,6 +15,7 @@ import { useAuth } from "../providers/AuthProvider";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import { Image } from "react-native";
+import { IconButton } from "react-native-paper";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -63,6 +64,11 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
+        options={{
+          headerRight: () => (
+            <IconButton icon="plus" onPress={() => alert("xxx")}></IconButton>
+          )
+        }}
       />
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECT}

@@ -1,11 +1,18 @@
+import { useNavigation } from "@react-navigation/native";
 import * as React from "react";
-import { StyleSheet, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Avatar, Button, Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import { NAVIGATION } from "../../types/common";
 
 const dummyProjects = [
   { name: "Psycholgy", id: 1 },
@@ -16,23 +23,26 @@ const dummyProjects = [
 ];
 
 export default function ProjectElements() {
+  const navigation = useNavigation();
   return dummyProjects.map((project) => (
     <View style={styles.projectElement} key={project.id}>
       <TouchableOpacity
-      onPress={
-        ()=> {}
-      }>
+        onPress={() => {
+          // @ts-ignore
+          navigation.navigate(NAVIGATION.LEARNING_PROJECT);
+        }}
+      >
         <>
-        <Avatar.Text
-          style={styles.avatar}
-          size={responsiveFontSize(10)}
-          label={project.name.substring(0, 2)}
-        />
-        <Text style={styles.textStyle}>
-          {project.name.length > 13
-            ? project.name.substring(0, 13) + "..."
-            : project.name.substring(0, 13)}
-        </Text>
+          <Avatar.Text
+            style={styles.avatar}
+            size={responsiveFontSize(10)}
+            label={project.name.substring(0, 2)}
+          />
+          <Text style={styles.textStyle}>
+            {project.name.length > 13
+              ? project.name.substring(0, 13) + "..."
+              : project.name.substring(0, 13)}
+          </Text>
         </>
       </TouchableOpacity>
     </View>
