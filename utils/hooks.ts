@@ -27,10 +27,9 @@ export function useUsername(uid?: string) {
 
   return handleErrors(
     useQuery(
-      supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", uid ?? user.id),
+      supabase.rpc("getUsername", {
+        user_id: uid ?? user?.id,
+      }),
     ),
   );
 }
@@ -40,7 +39,12 @@ export function useUsername(uid?: string) {
  */
 export function useAchievements() {
   return handleErrors(
-    useQuery(supabase.from("achievements").select("id,name,icon_name,description").order("id")),
+    useQuery(
+      supabase
+        .from("achievements")
+        .select("id,name,icon_name,description")
+        .order("id"),
+    ),
   );
 }
 
@@ -49,22 +53,34 @@ export function useAchievements() {
  * @returns An object with functions to display alerts.
  */
 export function useAlerts() {
-  const { setOpen, setIcon, setTitle, setMessage, setOkText, setCancelText } =
-    useAlertsStore();
+  const {
+    open: oldOpen,
+    icon: oldIcon,
+    title: oldTitle,
+    message: oldMessage,
+    cancelText: oldCancelText,
+    setOpen,
+    setIcon,
+    setTitle,
+    setMessage,
+    setOkText,
+    setCancelText,
+  } = useAlertsStore();
   return {
     success: (message: string, title: string = "") => {
-      setOpen(true);
-      setIcon("check");
-      setTitle(title);
-      setMessage(message);
-      setCancelText("");
+      if (oldOpen !== true) setOpen(true);
+      if (oldIcon !== "check") setIcon("check");
+      if (oldTitle !== title) setTitle(title);
+      if (oldMessage !== message) setMessage(message);
+      if (oldCancelText !== "") setCancelText("");
     },
     error: (message: string, title: string = "") => {
-      setOpen(true);
-      setIcon("alert-circle");
-      setTitle(title);
-      setMessage(message);
-      setCancelText("");
+      if (oldOpen !== true) setOpen(true);
+      if (oldIcon !== "alert-circle") setIcon("alert-circle");
+      if (oldTitle !== title) setTitle(title);
+      if (oldMessage !== message) setMessage(message);
+      if (oldCancelText !== "") setCancelText("");
+      // fixes too deep update depth
     },
   };
 }

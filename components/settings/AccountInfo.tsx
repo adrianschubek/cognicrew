@@ -70,7 +70,7 @@ export default function AccountInfo(props) {
     <Card {...props} mode="contained">
       <Card.Title title="Account" left={Account} right={LogoutButton} />
       <Card.Content>
-        <Text variant="bodyMedium">{isLoading ? "..." : data[0].username}</Text>
+        <Text variant="bodyMedium">{isLoading ? "..." : data}</Text>
         <Text variant="bodyMedium">{user.email}</Text>
         <Text variant="bodyMedium">
           Account created on {new Date(user.created_at).toLocaleDateString()}

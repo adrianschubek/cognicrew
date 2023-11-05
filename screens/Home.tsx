@@ -29,7 +29,7 @@ export default function HomeScreen({ navigation }) {
                 paddingRight: responsiveWidth(1),
               }}
             >
-              Hello, {isLoading ? "...." : data[0].username}
+              Hello, {isLoading ? "...." : data}
             </Text>
             <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
           </View>

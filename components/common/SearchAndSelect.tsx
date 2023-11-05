@@ -1,10 +1,15 @@
-import { List, Searchbar, useTheme } from "react-native-paper";
+import { Button, Divider, List, Searchbar, useTheme } from "react-native-paper";
+import { Keyboard } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
-import SearchDropDown from "./SearchDropDown";
+import RadioButtonList from "./RadioButtonList";
 
-export default function SearchAndSelect(props: { type: ManagementType }) {
+export default function SearchAndSelect(props: {
+  type: ManagementType;
+  searchPlaceholder?: string;
+  [name: string]: any;
+}) {
   const Items = [
     { title: "Set A", id: 1, type: "flashcard" },
     { title: "Set B", id: 2, type: "flashcard" },
@@ -23,60 +28,36 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
   ];
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-  const [dataSource] = useState(Items);
+  const [dataSource] = useState(
+    Items.filter((item) => item.type === props.type),
+  );
   const [filtered, setFiltered] = useState(dataSource);
-
-  const [isSearching, setIsSearching] = useState(false);
+  //const [isSearching, setIsSearching] = useState(false);
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredItems = Items.filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase()),
+    const filteredItems = dataSource.filter((item) =>
+      item.title.toLowerCase().match(query.toLowerCase()),
     );
     setFiltered(filteredItems);
   };
-  /* 
-  const onSearch = (text) => {
-    if (text) {
-      setIsSearching(true);
-      const temp = text.toLowerCase();
-      const tempList = dataSource.filter((item) => {
-        if (item.title.match(temp)) return item;
-      });
-      setFiltered(tempList);
-    } else setIsSearching(false);
-    setFiltered(dataSource);
-  };
-*/
   return (
     <React.Fragment>
-      {/* 
-      <List.Section>
-        <List.Accordion
-          title="add to learning Set:"
-          titleNumberOfLines={4}
-          style={{
-            width: responsiveWidth(70),
-            backgroundColor: theme.colors.secondaryContainer,
-          }}
-        >
-          {Items
-            .filter((learningSet) => learningSet.type === props.type)
-            .map((learningSet) => (
-              <List.Item title={learningSet.title} />
-            ))}
-        </List.Accordion>
-      </List.Section>
-      */}
       <Searchbar
         value={searchQuery}
-        style={{ elevation: 1 }}
-        placeholder="Search"
-        onFocus={() => setIsSearching(true)}
-        onBlur={() => setIsSearching(false)}
+        style={{ elevation: 1, width: responsiveWidth(70) }}
+        placeholder={props.searchPlaceholder || "Search"}
+        //onTouchStart={() => setIsSearching(true)}
+        //onBlur={() => setIsSearching(false)}
         onChangeText={handleSearch}
-        icon="folder"
       />
-      {isSearching && <SearchDropDown dataSource={filtered} />}
+      {/*isSearching && (*/}
+      <RadioButtonList
+        dataSource={filtered}
+        close={() => {
+          /*setIsSearching(false);*/ Keyboard.dismiss();
+        }}
+      />
+      {/*)}*/}
     </React.Fragment>
   );
 }
