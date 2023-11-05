@@ -14,7 +14,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 
-export default function SearchDropDown({ dataSource, close }) {
+export default function RadioButtonList({ dataSource, close }) {
   const [value, setValue] = useState("");
   return (
     <React.Fragment>

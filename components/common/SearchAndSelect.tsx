@@ -3,7 +3,7 @@ import { Keyboard } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
-import SearchDropDown from "./SearchDropDown";
+import RadioButtonList from "./RadioButtonList";
 
 export default function SearchAndSelect(props: {
   type: ManagementType;
@@ -51,7 +51,7 @@ export default function SearchAndSelect(props: {
         onChangeText={handleSearch}
       />
       {/*isSearching && (*/}
-      <SearchDropDown
+      <RadioButtonList
         dataSource={filtered}
         close={() => {
           /*setIsSearching(false);*/ Keyboard.dismiss();
