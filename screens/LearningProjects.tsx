@@ -15,14 +15,14 @@ export default function LearningProjects({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <View style={styles.upperContainerChild}>
+      {/* <View style={styles.upperContainerChild}>
         <TextWithPlusButton
-        text="go to LearningProject"
+        text="create new project"
           function={() => {
             navigation.navigate(NAVIGATION.LEARNING_PROJECT);
           }}
         />
-      </View>
+      </View> */}
       <View style={styles.bottomContainerChild}>
         <ScrollView>
           <ProjectGroup />
