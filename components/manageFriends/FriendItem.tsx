@@ -42,7 +42,7 @@ export default function FriendItem(props: {
         <IconButton
           icon={props.icon}
           size={responsiveFontSize(3)}
-          onPress={() => props.onIconPress}
+          onPress={props.onIconPress}
         />
       </View>
     </React.Fragment>
