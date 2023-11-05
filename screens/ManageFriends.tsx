@@ -1,30 +1,53 @@
 import * as React from "react";
-import { StyleSheet, View, TouchableOpacity, Text, TextInput, ScrollView, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
 import { useState } from "react";
-import { Dialog, Portal, Button, Divider, Avatar, IconButton } from 'react-native-paper';
-import { Snackbar } from 'react-native-paper';
+import {
+  Dialog,
+  Portal,
+  Button,
+  Divider,
+  Avatar,
+  IconButton,
+  Text,
+  TextInput,
+} from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
-
 
 export default function ManageFriends({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friends, setFriends] = useState(["Cognimo", "Cognick", "Cognidrian", "Cognian", "CogniLex", "Yoojin"]);
+  const [friends, setFriends] = useState([
+    "Cognimo",
+    "Cognick",
+    "Cognidrian",
+    "Cognian",
+    "CogniLex",
+    "Yoojin",
+  ]);
   // const projects = ["Biology", "Psychology", "Computer Science"];
   const [visible, setVisible] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [pendingFriends, setPendingFriends] = useState([]);
-  const [snackbarText, setSnackbarText] = useState('');
+  const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const icon = (props) => <Avatar.Icon {...props} icon="account-group" size={40} />;
+  const icon = (props) => (
+    <Avatar.Icon {...props} icon="account-group" size={40} />
+  );
 
   const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
-  const [newFriendName, setNewFriendName] = useState('');
+  const [newFriendName, setNewFriendName] = useState("");
 
   const filteredFriends = searchQuery
     ? friends.filter((friend) =>
-      friend.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+        friend.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
     : friends;
 
   const toggleAddFriendPopup = () => {
@@ -38,7 +61,7 @@ export default function ManageFriends({ navigation }) {
   const handleAddNewFriend = () => {
     addFriend(newFriendName);
     setShowAddFriendPopup(false);
-    setNewFriendName('');
+    setNewFriendName("");
   };
 
   /**
@@ -48,21 +71,22 @@ export default function ManageFriends({ navigation }) {
    * @returns {string} The URL of the friend's profile icon.
    */
   // use once database is ready: const getFriendIconUrl = (friendName) => `path_to_user's profile icons/${friendName}.png`;
-  const getFriendIconUrl = (friendName) => `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
+  const getFriendIconUrl = (friendName) =>
+    `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
 
   /**
-  * `confirmDelete` - Opens a dialog to confirm deletion of a friend.
-  * @param {string} friend - The name of the friend to potentially delete.
-  */
+   * `confirmDelete` - Opens a dialog to confirm deletion of a friend.
+   * @param {string} friend - The name of the friend to potentially delete.
+   */
   const confirmDelete = (friend) => {
     setSelectedFriend(friend);
     setVisible(true);
   };
 
   /**
-  * `deleteFriend` - Deletes a friend from the friends list and shows a snackbar confirmation.
-  * @param {string} friend - The name of the friend to delete.
-  */
+   * `deleteFriend` - Deletes a friend from the friends list and shows a snackbar confirmation.
+   * @param {string} friend - The name of the friend to delete.
+   */
   const deleteFriend = (friend) => {
     setFriends((currentFriends) => currentFriends.filter((f) => f !== friend));
     setSnackbarText(`${friend} has been deleted from your friends list`);
@@ -71,12 +95,12 @@ export default function ManageFriends({ navigation }) {
   };
 
   /**
-  * `handleSearch` - Updates the search query state based on user input.
-  * @param {string} query - The current text in the search input field.
-  * @param {string} list - The list type being searched ('friends' or 'projects').
-  */
+   * `handleSearch` - Updates the search query state based on user input.
+   * @param {string} query - The current text in the search input field.
+   * @param {string} list - The list type being searched ('friends' or 'projects').
+   */
   const handleSearch = (query, list) => {
-    if (list === 'friends') {
+    if (list === "friends") {
       setSearchQuery(query);
     } else {
       setProjectQuery(query);
@@ -84,22 +108,26 @@ export default function ManageFriends({ navigation }) {
   };
 
   /**
-  * `addFriend` - Attempts to add a friend to the pending friends list and gives feedback via snackbar.
-  * @param {string} friend - The name of the friend to add.
-  */
+   * `addFriend` - Attempts to add a friend to the pending friends list and gives feedback via snackbar.
+   * @param {string} friend - The name of the friend to add.
+   */
   const addFriend = (friend) => {
-    if (friend && !friends.includes(friend) && !pendingFriends.includes(friend)) {
+    if (
+      friend &&
+      !friends.includes(friend) &&
+      !pendingFriends.includes(friend)
+    ) {
       setPendingFriends([...pendingFriends, friend]);
       setSnackbarText(`Friend request sent to ${friend}`);
       setSnackbarVisible(true);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
   /**
-  * `acceptFriend` - Moves a friend from the pending list to the confirmed friends list.
-  * @param {string} friend - The name of the friend to accept.
-  */
+   * `acceptFriend` - Moves a friend from the pending list to the confirmed friends list.
+   * @param {string} friend - The name of the friend to accept.
+   */
   const acceptFriend = (friend) => {
     setFriends([...friends, friend]);
     setPendingFriends(pendingFriends.filter((f) => f !== friend));
@@ -109,19 +137,14 @@ export default function ManageFriends({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
-
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Manage Friends</Text>
           <View style={styles.iconsContainer}>
-            <TextWithPlusButton
-              text=""
-              function={(toggleAddFriendPopup)}
-            />
+            <TextWithPlusButton text="" function={toggleAddFriendPopup} />
             {icon({ style: styles.iconStyle })}
           </View>
         </View>
-
 
         {/* Friends list */}
         <View style={styles.section}>
@@ -129,14 +152,17 @@ export default function ManageFriends({ navigation }) {
 
           <TextInput
             style={styles.searchInput}
-            onChangeText={(query) => handleSearch(query, 'friends')}
+            onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
             placeholder="Search friends"
           />
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends.map((friend, index) => (
               <View key={index} style={styles.item}>
-                <Image source={{ uri: getFriendIconUrl(friend) }} style={styles.profileIcon} />
+                <Image
+                  source={{ uri: getFriendIconUrl(friend) }}
+                  style={styles.profileIcon}
+                />
                 <Text style={styles.itemText}>{friend}</Text>
                 <IconButton
                   icon="close-circle"
@@ -155,7 +181,10 @@ export default function ManageFriends({ navigation }) {
             <Text style={styles.sectionTitle}>Pending friend requests</Text>
             {pendingFriends.map((friend, index) => (
               <View key={index} style={styles.item}>
-                <Image source={{ uri: getFriendIconUrl(friend) }} style={styles.profileIcon} />
+                <Image
+                  source={{ uri: getFriendIconUrl(friend) }}
+                  style={styles.profileIcon}
+                />
                 <Text style={styles.itemText}>{friend} (Pending)</Text>
                 <TouchableOpacity onPress={() => acceptFriend(friend)}>
                   <Text style={styles.acceptButtonText}>Accept</Text>
@@ -171,11 +200,10 @@ export default function ManageFriends({ navigation }) {
           <Text style={styles.sectionTitle}>Projects</Text>
           <TextInput
             style={styles.searchInput}
-            onChangeText={(query) => handleSearch(query, 'projects')}
+            onChangeText={(query) => handleSearch(query, "projects")}
             value={projectQuery}
             placeholder="Search Projects"
           />
-
         </View>
       </View>
 
@@ -195,10 +223,10 @@ export default function ManageFriends({ navigation }) {
 
       {/* Friend popup dialog */}
       <Portal>
-        <Dialog
-          visible={showAddFriendPopup}
-          onDismiss={toggleAddFriendPopup}>
-          <Dialog.Title>Get in touch with your colleagues - Add New Friend</Dialog.Title>
+        <Dialog visible={showAddFriendPopup} onDismiss={toggleAddFriendPopup}>
+          <Dialog.Title>
+            Get in touch with your colleagues - Add New Friend
+          </Dialog.Title>
           <Dialog.Content>
             <TextInput
               style={styles.searchInput}
@@ -216,11 +244,9 @@ export default function ManageFriends({ navigation }) {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={toggleAddFriendPopup}>Cancel</Button>
-
           </Dialog.Actions>
         </Dialog>
       </Portal>
-
 
       {/* Snackbar - providing feedback to the user */}
       <Snackbar
@@ -237,7 +263,7 @@ export default function ManageFriends({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
+    //backgroundColor: '#f8f8f8',
   },
   innerContainer: {
     padding: 20,
@@ -245,7 +271,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 28,
     fontWeight: "bold",
-    color: '#333',
+    //color: '#333',
     paddingBottom: 10,
   },
   section: {
@@ -254,22 +280,22 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: "bold",
-    color: '#333',
+    //color: '#333',
     paddingBottom: 10,
   },
   item: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 6,
     paddingHorizontal: 8,
     paddingVertical: 6,
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.22,
-    shadowRadius: 2.22,
-    elevation: 3,
+    //shadowColor: '#000',
+    //shadowOffset: { width: 0, height: 1 },
+    //shadowOpacity: 0.22,
+    //shadowRadius: 2.22,
+    //elevation: 3,
   },
   profileIcon: {
     width: 40,
@@ -282,17 +308,17 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
   deleteButtonText: {
-    color: 'red',
+    //color: 'red',
   },
   acceptButtonText: {
-    color: 'green',
+    //color: 'green',
   },
   searchInput: {
     height: 50,
     padding: 10,
     marginBottom: 10,
-    backgroundColor: '#fff',
-    borderColor: '#ddd',
+    //backgroundColor: '#fff',
+    //borderColor: '#ddd',
     borderWidth: 1,
     borderRadius: 5,
   },
@@ -305,21 +331,21 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: "#e0e0e0",
+    //backgroundColor: "#e0e0e0",
     marginVertical: 8,
   },
   titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingBottom: 10,
   },
   iconStyle: {
     // can style the icon later if we want to
   },
   iconsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   plusIcon: {
     marginRight: 8,
