@@ -28,7 +28,7 @@ export function useUsername(uid?: string) {
   return handleErrors(
     useQuery(
       supabase
-        .from("profiles")
+        .from("public_profiles")
         .select("username")
         .eq("id", uid ?? user.id),
     ),
