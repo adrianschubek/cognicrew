@@ -7,16 +7,23 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 
-export default function SearchDropDown({ dataSource }) {
-  return dataSource.map((item) => {
+export default function SearchDropDown(props) {
+  const { dataSource } = props;
+  return (
     <View style={styles.container}>
-      <Text>{item.title}</Text>
-    </View>;
-  });
+      {dataSource.map((item) => {
+        return <Text style={styles.itemStyle}>{item.title}</Text>;
+      })}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "gray",
+    width: responsiveWidth(60),
+  },
+  itemStyle: {
+    flexWrap: "wrap",
+    marginBottom: responsiveHeight(1),
   },
 });

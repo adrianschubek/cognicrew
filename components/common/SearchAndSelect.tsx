@@ -1,4 +1,4 @@
-import { List, Searchbar, useTheme } from "react-native-paper";
+import { Button, Divider, List, Searchbar, useTheme } from "react-native-paper";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
@@ -25,28 +25,14 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [dataSource] = useState(Items);
   const [filtered, setFiltered] = useState(dataSource);
-
   const [isSearching, setIsSearching] = useState(false);
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredItems = Items.filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase()),
+    const filteredItems = dataSource.filter((item) =>
+      item.title.toLowerCase().match(query.toLowerCase()),
     );
     setFiltered(filteredItems);
   };
-  /* 
-  const onSearch = (text) => {
-    if (text) {
-      setIsSearching(true);
-      const temp = text.toLowerCase();
-      const tempList = dataSource.filter((item) => {
-        if (item.title.match(temp)) return item;
-      });
-      setFiltered(tempList);
-    } else setIsSearching(false);
-    setFiltered(dataSource);
-  };
-*/
   return (
     <React.Fragment>
       {/* 
@@ -76,7 +62,7 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
         onChangeText={handleSearch}
         icon="folder"
       />
-      {isSearching && <SearchDropDown dataSource={filtered} />}
+      {isSearching && <SearchDropDown dataSource={filtered} />} 
     </React.Fragment>
   );
 }
