@@ -10,22 +10,22 @@ import {
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
-import AddingFlashcards from "../../components/dialogues/AddingFlashcards";
+import AddFlashcards from "../../components/dialogues/AddFlashcards";
 
 export default function FlashcardManagement() {
-  const [showAddingFlashcards, setShowAddingFlashcards] = useState(false);
+  const [showAddFlashcards, setShowAddFlashcards] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <AddingFlashcards
-        showAddingFlashcards={showAddingFlashcards}
-        close={() => setShowAddingFlashcards(false)}
+      <AddFlashcards
+        showAddingFlashcards={showAddFlashcards}
+        close={() => setShowAddFlashcards(false)}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="add new flash cards"
           function={() => {
-            setShowAddingFlashcards(true);
+            setShowAddFlashcards(true);
           }}
         />
       </View>

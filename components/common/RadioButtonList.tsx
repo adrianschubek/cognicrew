@@ -20,7 +20,7 @@ export default function RadioButtonList({ dataSource, close }) {
     <React.Fragment>
       <View style={styles.container}>
         <ScrollView
-          style={{ height: responsiveHeight(20) }}
+          style={{ maxHeight: responsiveHeight(20), marginBottom:responsiveHeight(1) }}
           keyboardShouldPersistTaps="handled"
         >
           <RadioButton.Group
@@ -42,9 +42,5 @@ export default function RadioButtonList({ dataSource, close }) {
 const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(70),
-  },
-  itemStyle: {
-    flexWrap: "wrap",
-    fontSize: responsiveFontSize(2),
   },
 });

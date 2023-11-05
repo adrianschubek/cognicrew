@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
-import { responsiveHeight } from "react-native-responsive-dimensions";
+import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 
-export default function TextInputWithCheckbox({
-  listItemAnswer,
-  number,
-}: {
+export default function TextInputWithCheckbox(props:{
+  width? : any
   listItemAnswer: string;
   [name: string]: any;
 }) {
   const [checked, setChecked] = useState(false);
-  const [answer, setAnswer] = useState(listItemAnswer);
+  const [answer, setAnswer] = useState(props.listItemAnswer);
   return (
     <TextInput
-      style={{ marginBottom: responsiveHeight(1) }}
+      style={{ marginBottom: responsiveHeight(1), width:props.width || "auto" }}
       right={
         <TextInput.Icon
           icon={() => (
@@ -27,12 +25,12 @@ export default function TextInputWithCheckbox({
           )}
         />
       }
-      label={"Answer " + number}
+      label={"Answer " + props.number}
       multiline={true}
-      value={/*hier muss dann listItem.answer hin*/ listItemAnswer}
-      onChangeText={(listItemAnswer) => {
-        setAnswer(listItemAnswer);
-        console.log(listItemAnswer);
+      value={/*hier muss dann listItem.answer hin*/ answer}
+      onChangeText={(answer) => {
+        setAnswer(answer);
+        console.log(answer);
         //update backend
       }}
     />

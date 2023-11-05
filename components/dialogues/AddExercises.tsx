@@ -17,8 +17,9 @@ import {
 import EditFlashcard from "../learningProject/EditFlashcard";
 import { useState } from "react";
 import SearchAndSelect from "../common/SearchAndSelect";
+import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 
-export default function AddingFlashcards({ showAddingFlashcards, close }) {
+export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
   const flashcard = {
     question: "",
@@ -27,20 +28,23 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
     groupId: 0,
   };
   const [question, setQuestion] = useState(flashcard.question);
-  const [answer, setAnswer] = useState(flashcard.answer);
+  const [answer1, setAnswer1] = useState(flashcard.answer);
+  const [answer2, setAnswer2] = useState(flashcard.answer);
+  const [answer3, setAnswer3] = useState(flashcard.answer);
+  const [answer4, setAnswer4] = useState(flashcard.answer);
   return (
     <Portal>
       <Dialog
         style={{ alignItems: "center" }}
-        visible={showAddingFlashcards}
+        visible={showAddExercises}
         onDismiss={() => {
           close();
           Keyboard.dismiss();
         }}
       >
         <SearchAndSelect
-          type="flashcard"
-          searchPlaceholder="Search for flashcard set"
+          type="exercise"
+          searchPlaceholder="Search for exercise set"
         />
         <TextInput
           style={[styles.textInputStyle]}
@@ -52,16 +56,10 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
             //update backend
           }}
         />
-        <TextInput
-          style={styles.textInputStyle}
-          label="Answer:"
-          multiline={true}
-          onChangeText={(answer) => {
-            setAnswer(answer);
-            console.log(answer);
-            //update backend
-          }}
-        />
+        <TextInputWithCheckbox number="1" listItemAnswer={answer1} width={responsiveWidth(70)}/>
+        <TextInputWithCheckbox number="2" listItemAnswer={answer2} width={responsiveWidth(70)} />
+        <TextInputWithCheckbox number="3" listItemAnswer={answer3} width={responsiveWidth(70)} />
+        <TextInputWithCheckbox number="4" listItemAnswer={answer4} width={responsiveWidth(70)} />
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
@@ -70,7 +68,7 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
             }}
             mode="contained"
           >
-            add new flashcard
+            add new exercise
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -79,13 +77,6 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
 }
 
 const styles = StyleSheet.create({
-  cardStyle: {
-    width: responsiveWidth(100) - responsiveHeight(2),
-    marginTop: responsiveHeight(1),
-    marginBottom: responsiveHeight(1),
-    alignSelf: "center",
-  },
-  cardContentStyle: {},
   textInputStyle: {
     marginBottom: responsiveHeight(1),
     width: responsiveWidth(70),

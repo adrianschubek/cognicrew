@@ -15,6 +15,7 @@ import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
 import AddFriend from "../components/dialogues/AddFriend";
+import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -35,7 +36,7 @@ export default function ManageFriends({ navigation }) {
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const icon = (props) => (
-    <Avatar.Icon {...props} icon="account-group" size={40} />
+    <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
 
   const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
@@ -137,7 +138,7 @@ export default function ManageFriends({ navigation }) {
                 id={index}
                 icon="close-circle"
                 friend={friend}
-                onIconPress={() =>confirmDelete(friend)}
+                onIconPress={() => confirmDelete(friend)}
               />
             ))}
           </ScrollView>
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   titleText: {
-    fontSize: 28,
+    fontSize: responsiveFontSize(3.5),
     fontWeight: "bold",
     //color: '#333',
     paddingBottom: 10,
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 22,
+    fontSize: responsiveFontSize(2.75),
     fontWeight: "bold",
     //color: '#333',
     paddingBottom: 10,
@@ -234,7 +235,7 @@ const styles = StyleSheet.create({
     //color: 'green',
   },
   dropdownItemText: {
-    fontSize: 18,
+    fontSize: responsiveFontSize(2.25),
     paddingVertical: 10,
   },
   divider: {
@@ -255,10 +256,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  plusIcon: {
-    marginRight: 8,
-  },
   friendsListContainer: {
-    maxHeight: 300,
+    maxHeight: responsiveHeight(37.5), 
   },
 });

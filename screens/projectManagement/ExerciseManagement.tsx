@@ -9,16 +9,28 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
+import AddExercises from "../../components/dialogues/AddExercises";
+import { useState } from "react";
 
 export default function ExerciseManagement() {
+  const [showAddExercises, setShowAddExercises] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
+      <AddExercises
+        showAddExercises={showAddExercises}
+        close={() => setShowAddExercises(false)}
+      />
       <View style={styles.upperContainer}>
-        <TextWithPlusButton text= "add new Exercises" function={() => {}} />
+        <TextWithPlusButton
+          text="add new Exercises"
+          function={() => {
+            setShowAddExercises(true);
+          }}
+        />
       </View>
       <ScrollView>
-       <AccordionSection type="exercise"/>
+        <AccordionSection type="exercise" />
       </ScrollView>
     </View>
   );
