@@ -11,9 +11,12 @@ import { useState } from "react";
 import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
 import CreateQuizGame from "../components/dialogues/CreateQuizGame";
 
+import { NAVIGATION } from "../types/common";
+
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
   const [showCreateQuizGame, setShowCreateQuizGame] = useState(false);
+
   return (
     <>
       <CreateFlashCardGame
@@ -24,6 +27,7 @@ export default function LearningRoom({ navigation }) {
         showCreateQuizGame={showCreateQuizGame}
         close={() => setShowCreateQuizGame(false)}
       />
+
       <View style={styles.container}>
         <StatusBar style="auto" />
         <LearningProjectCategory
@@ -44,10 +48,16 @@ export default function LearningRoom({ navigation }) {
             console.log("Flashcard Game Pressed");
           }}
         />
+        
         <LearningProjectCategory
           path={require("../assets/teamwork_symbol.png")}
           name={"Cogniboard"}
+          function={() => {
+            navigation.navigate(NAVIGATION.WHITEBOARD);
+            console.log("Whiteboard pressed");
+          }}
         />
+        
       </View>
     </>
   );
