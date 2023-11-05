@@ -3,12 +3,13 @@ import { StyleSheet, View, TouchableOpacity, Text, TextInput, ScrollView, Image 
 import { useState } from "react";
 import { Dialog, Portal, Button, Divider, Avatar, IconButton } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
+import TextWithPlusButton from "../components/common/TextWithPlusButton";
 
 
 export default function ManageFriends({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friends, setFriends] = useState(["Timo", "Alex", "Markus Rühl"]);
+  const [friends, setFriends] = useState(["Cognimo", "Cognick", "Cognidrian", "Cognian", "CogniLex", "Yoojin"]);
   // const projects = ["Biology", "Psychology", "Computer Science"];
   const [visible, setVisible] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -16,6 +17,29 @@ export default function ManageFriends({ navigation }) {
   const [snackbarText, setSnackbarText] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const icon = (props) => <Avatar.Icon {...props} icon="account-group" size={40} />;
+
+  const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
+  const [newFriendName, setNewFriendName] = useState('');
+
+  const filteredFriends = searchQuery
+    ? friends.filter((friend) =>
+      friend.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    : friends;
+
+  const toggleAddFriendPopup = () => {
+    setShowAddFriendPopup(!showAddFriendPopup);
+  };
+
+  const handleNewFriendNameChange = (name) => {
+    setNewFriendName(name);
+  };
+
+  const handleAddNewFriend = () => {
+    addFriend(newFriendName);
+    setShowAddFriendPopup(false);
+    setNewFriendName('');
+  };
 
   /**
    * `getFriendIconUrl` - Returns a URL for a friend's icon.
@@ -89,23 +113,39 @@ export default function ManageFriends({ navigation }) {
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Manage Friends</Text>
-          {icon({ style: styles.iconStyle })}
+          <View style={styles.iconsContainer}>
+            <TextWithPlusButton
+              text=""
+              function={(toggleAddFriendPopup)}
+            />
+            {icon({ style: styles.iconStyle })}
+          </View>
         </View>
+
 
         {/* Friends list */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>All friends</Text>
-          {friends.map((friend, index) => (
-            <View key={index} style={styles.item}>
-              <Image source={{ uri: getFriendIconUrl(friend) }} style={styles.profileIcon} />
-              <Text style={styles.itemText}>{friend}</Text>
-              <IconButton
-                icon="close-circle"
-                size={30}
-                onPress={() => confirmDelete(friend)}
-              />
-            </View>
-          ))}
+
+          <TextInput
+            style={styles.searchInput}
+            onChangeText={(query) => handleSearch(query, 'friends')}
+            value={searchQuery}
+            placeholder="Search friends"
+          />
+          <ScrollView style={styles.friendsListContainer}>
+            {filteredFriends.map((friend, index) => (
+              <View key={index} style={styles.item}>
+                <Image source={{ uri: getFriendIconUrl(friend) }} style={styles.profileIcon} />
+                <Text style={styles.itemText}>{friend}</Text>
+                <IconButton
+                  icon="close-circle"
+                  size={28}
+                  onPress={() => confirmDelete(friend)}
+                />
+              </View>
+            ))}
+          </ScrollView>
           <Divider style={styles.divider} />
         </View>
 
@@ -125,26 +165,6 @@ export default function ManageFriends({ navigation }) {
             <Divider style={styles.divider} />
           </View>
         )}
-
-        {/* Friend search */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Find friends</Text>
-          <TextInput
-            style={styles.searchInput}
-            onChangeText={(query) => handleSearch(query, 'friends')}
-            value={searchQuery}
-            placeholder="Search Friends"
-          />
-
-          <Button
-            mode="contained"
-            onPress={() => addFriend(searchQuery)}
-            style={styles.button}
-          >
-            Add Friend
-          </Button>
-          <Divider style={styles.divider} />
-        </View>
 
         {/* Project search */}
         <View style={styles.section}>
@@ -172,6 +192,35 @@ export default function ManageFriends({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      {/* Friend popup dialog */}
+      <Portal>
+        <Dialog
+          visible={showAddFriendPopup}
+          onDismiss={toggleAddFriendPopup}>
+          <Dialog.Title>Get in touch with your colleagues - Add New Friend</Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              style={styles.searchInput}
+              onChangeText={handleNewFriendNameChange}
+              value={newFriendName}
+              placeholder="Enter user's nickname"
+            />
+            <Button
+              mode="contained"
+              onPress={() => handleAddNewFriend()}
+              style={styles.button}
+            >
+              Add Friend
+            </Button>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={toggleAddFriendPopup}>Cancel</Button>
+
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+
 
       {/* Snackbar - providing feedback to the user */}
       <Snackbar
@@ -211,9 +260,9 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    marginBottom: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     backgroundColor: '#fff',
     borderRadius: 5,
     shadowColor: '#000',
@@ -223,14 +272,14 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   profileIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 8,
   },
   itemText: {
     flex: 1,
-    fontSize: 18,
+    fontSize: 17,
   },
   deleteButtonText: {
     color: 'red',
@@ -267,5 +316,15 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     // can style the icon later if we want to
+  },
+  iconsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  plusIcon: {
+    marginRight: 8,
+  },
+  friendsListContainer: {
+    maxHeight: 300,
   },
 });
