@@ -48,12 +48,26 @@ describe("Logout", () => {
 });
 
 describe("Register", () => {
-  const newUsername = "test_" + Math.random().toString(36).substring(7);
+  const userID = Math.random().toString(36).substring(7);
   it("can register with valid credentials", () => {
     cy.get('[data-testid="register-button"]').click();
+    cy.get('[data-testid="username-input-register"]').type(`test_${userID}`);
+    cy.get('[data-testid="email-input-register"]').type(`${userID}@test.de`);
+    cy.get('[data-testid="password-input-register"]').type("password");
+    cy.get('[data-testid="password2-input-register"]').type("password");
+    cy.get('[data-testid="register-button-modal"]').click();
+    cy.get('[data-testid="check_alert-surface"]').should("be.visible");
   });
 
-  it("cannot register with duplicate username", () => {});
+  it("cannot register with duplicate username", () => {
+    cy.get('[data-testid="register-button"]').click();
+    cy.get('[data-testid="username-input-register"]').type(`test_${userID}`);
+    cy.get('[data-testid="email-input-register"]').type(`${userID}@test.de`);
+    cy.get('[data-testid="password-input-register"]').type("password");
+    cy.get('[data-testid="password2-input-register"]').type("password");
+    cy.get('[data-testid="register-button-modal"]').click();
+    cy.get('[data-testid="alert-circle_alert-surface"]').should("be.visible");
+  });
 
-  it("cannot register with invalid email", () => {});
+  // it("cannot register with invalid email", () => {});
 });
