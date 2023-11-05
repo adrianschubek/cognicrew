@@ -21,8 +21,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
 export default function Login({ navigation }) {
-  const [text, setText] = useState("");
-  const [text2, setText2] = useState("");
+  const [text, setText] = useState("foo@bar.de");
+  const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);

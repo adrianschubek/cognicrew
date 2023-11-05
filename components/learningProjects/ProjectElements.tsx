@@ -31,6 +31,12 @@ export default function ProjectElements() {
           // @ts-ignore
           navigation.navigate(NAVIGATION.LEARNING_PROJECT);
         }}
+        onLongPress={() => {
+          // @ts-ignore
+          navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+            edit: project.id,
+          });
+        }}
       >
         <>
           <Avatar.Text
