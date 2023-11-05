@@ -1,6 +1,6 @@
 import { List, Searchbar, useTheme } from "react-native-paper";
 import { responsiveWidth } from "react-native-responsive-dimensions";
-import { ManagementType } from "../../types/commonTypes";
+import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
 import SearchDropDown from "./SearchDropDown";
 

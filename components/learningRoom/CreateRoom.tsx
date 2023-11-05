@@ -12,6 +12,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 
 import AccordionSection from "../../components/learningRoom/AccordionCreateRoom";
+import { NAVIGATION } from "../../types/common";
 
 export default function CreateRoom({ navigation }) {
   return (
@@ -31,7 +32,7 @@ export default function CreateRoom({ navigation }) {
         mode="contained"
         style={[styles.container, {marginTop: responsiveHeight(2.9)}]} 
         onPress={() => {
-          navigation.navigate("LearningRoom");
+          navigation.navigate(NAVIGATION.LEARNING_ROOM);
         }}
       >
         Create Room

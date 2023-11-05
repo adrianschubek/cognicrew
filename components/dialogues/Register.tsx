@@ -75,6 +75,7 @@ export default function Register({ showRegister, close }) {
               value={username}
               error={username.length > 0 && !validators[0](username)}
               onChangeText={(text3) => setUsername(text3)}
+              testID="username-input-register"
             />
             <TextInput
               style={styles.textInputStyle}
@@ -86,6 +87,7 @@ export default function Register({ showRegister, close }) {
               onChangeText={(emailInputPasswordForgotten) =>
                 setEmail(emailInputPasswordForgotten)
               }
+              testID="email-input-register"
             />
             <TextInput
               style={styles.textInputStyle}
@@ -94,6 +96,7 @@ export default function Register({ showRegister, close }) {
               secureTextEntry={true}
               error={password.length > 0 && !validators[2](password)}
               onChangeText={(text5) => setPassword(text5)}
+              testID="password-input-register"
             />
             <TextInput
               style={styles.textInputStyle}
@@ -102,6 +105,7 @@ export default function Register({ showRegister, close }) {
               secureTextEntry={true}
               error={password2.length > 0 && !validators[3](password2)}
               onChangeText={(text6) => setPassword2(text6)}
+              testID="password2-input-register"
             />
             <View style={{ alignItems: "center", alignSelf: "flex-start" }}>
               <Text style={{ marginTop: responsiveHeight(1) }}>
@@ -124,6 +128,7 @@ export default function Register({ showRegister, close }) {
                 !validators[3](password2)
               }
               onPress={createAccount}
+              testID="register-button-modal"
             >
               Sign up
             </Button>

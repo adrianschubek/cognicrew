@@ -8,6 +8,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
+import { NAVIGATION } from "../types/common";
 
 export default function LearningProject({ navigation }) {
   return (
@@ -17,21 +18,21 @@ export default function LearningProject({ navigation }) {
         path={require("../assets/cards_symbol.png")}
         name={"Cognicards"}
         function={() => {
-          navigation.navigate("FlashcardManagement");
+          navigation.navigate(NAVIGATION.FLASHCARD_MANAGEMENT);
         }}
       />
       <LearningProjectCategory
         path={require("../assets/completed_task_symbol.png")}
         name={"Cognicises"}
         function={() => {
-          navigation.navigate("ExerciseManagement");
+          navigation.navigate(NAVIGATION.EXERCISE_MANAGEMENT);
         }}
       />
       <LearningProjectCategory
         path={require("../assets/camera_symbol.png")}
         name={"Cognilinks"}
         function={() => {
-          navigation.navigate("LinkManagement");
+          navigation.navigate(NAVIGATION.LINK_MANAGEMENT);
         }}
       />
       <LearningProjectCategory

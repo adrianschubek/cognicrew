@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
-import { ManagementType } from "../../types/commonTypes";
+import { ManagementType } from "../../types/common";
 
 export default function AccordionListItems({accordionListItems, type}:{type: ManagementType, [name: string]: any} ) {
   const theme = useTheme();
