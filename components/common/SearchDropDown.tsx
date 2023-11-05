@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
 import {
   Button,
   Card,
@@ -19,22 +19,22 @@ export default function SearchDropDown({ dataSource, close }) {
   return (
     <React.Fragment>
       <View style={styles.container}>
-    <ScrollView style={{ height: responsiveHeight(20) }}>
-      
-        <RadioButton.Group
-          onValueChange={(value) => {setValue(value)}}
-          value={value}
+        <ScrollView
+          style={{ height: responsiveHeight(20) }}
+          keyboardShouldPersistTaps="handled"
         >
-          {dataSource.map((item) => (
-            <RadioButton.Item label={item.title} value={item.title}  />
-          ))}
-        </RadioButton.Group>
-      
-    </ScrollView>
-    <Button style={{alignSelf:"flex-end"}} onPress={close}>
-      Done
-    </Button>
-    </View>
+          <RadioButton.Group
+            onValueChange={(value) => {
+              setValue(value);
+            }}
+            value={value}
+          >
+            {dataSource.map((item) => (
+              <RadioButton.Item label={item.title} value={item.title} />
+            ))}
+          </RadioButton.Group>
+        </ScrollView>
+      </View>
     </React.Fragment>
   );
 }
