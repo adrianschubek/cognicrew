@@ -16,6 +16,7 @@ import {
   IconButton,
   Text,
   TextInput,
+  useTheme,
 } from "react-native-paper";
 import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
@@ -37,6 +38,7 @@ export default function ManageFriends({ navigation }) {
   const [pendingFriends, setPendingFriends] = useState([]);
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const theme = useTheme();
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={40} />
   );
@@ -158,7 +160,13 @@ export default function ManageFriends({ navigation }) {
           />
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends.map((friend, index) => (
-              <View key={index} style={styles.item}>
+              <View
+                key={index}
+                style={[
+                  styles.item,
+                  { backgroundColor: theme.colors.background },
+                ]}
+              >
                 <Image
                   source={{ uri: getFriendIconUrl(friend) }}
                   style={styles.profileIcon}
@@ -289,13 +297,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
     paddingHorizontal: 8,
     paddingVertical: 6,
-    // backgroundColor: '#fff',
     borderRadius: 5,
     //shadowColor: '#000',
-    //shadowOffset: { width: 0, height: 1 },
-    //shadowOpacity: 0.22,
-    //shadowRadius: 2.22,
-    //elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
   },
   profileIcon: {
     width: 40,
