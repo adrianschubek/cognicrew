@@ -4,7 +4,7 @@ import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
 import SearchDropDown from "./SearchDropDown";
 
-export default function SearchAndSelect(props: { type: ManagementType }) {
+export default function SearchAndSelect(props: { type: ManagementType, searchPlaceholder?: string, [name: string]: any}) {
   const Items = [
     { title: "Set A", id: 1, type: "flashcard" },
     { title: "Set B", id: 2, type: "flashcard" },
@@ -56,13 +56,18 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
       <Searchbar
         value={searchQuery}
         style={{ elevation: 1 }}
-        placeholder="Search"
+        placeholder={props.searchPlaceholder || "Search..."}
         onFocus={() => setIsSearching(true)}
-        onBlur={() => setIsSearching(false)}
+        //onBlur={() => setIsSearching(false)}
         onChangeText={handleSearch}
         icon="folder"
       />
-      {isSearching && <SearchDropDown dataSource={filtered} />} 
+      {isSearching && (
+        <SearchDropDown
+          dataSource={filtered}
+          close={() => setIsSearching(false)}
+        />
+      )}
     </React.Fragment>
   );
 }
