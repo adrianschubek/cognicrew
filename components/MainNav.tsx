@@ -11,6 +11,7 @@ import LearningRoom from "../screens/LearningRoom";
 import FlashcardManagement from "../screens/projectManagement/FlashcardManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
+import Whiteboard from "../screens/Whiteboard";
 import { useAuth } from "../providers/AuthProvider";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
@@ -44,6 +45,8 @@ function MainTab() {
       />
       <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
 
+      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
     </Stack.Navigator>
   );
@@ -56,6 +59,14 @@ function SettingsTab() {
     </Stack.Navigator>
   );
 }
+
+function LearningRoomsTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+    </Stack.Navigator>
+  );
+ }
 
 function LearningProjectsTab() {
   return (
