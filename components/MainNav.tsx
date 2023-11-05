@@ -16,6 +16,8 @@ import ExerciseManagement from "../screens/projectManagement/ExerciseManagement"
 import { NAVIGATION } from "../types/common";
 import { Image } from "react-native";
 import { IconButton } from "react-native-paper";
+import CreateProject from "../screens/projectManagement/CreateProject";
+import { useNavigation } from "@react-navigation/native";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -59,6 +61,7 @@ function SettingsTab() {
 }
 
 function LearningProjectsTab() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -66,8 +69,16 @@ function LearningProjectsTab() {
         component={LearningProjects}
         options={{
           headerRight: () => (
-            <IconButton icon="plus" onPress={() => alert("xxx")}></IconButton>
-          )
+            <IconButton
+              icon="plus"
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                  edit: null,
+                });
+              }}
+            ></IconButton>
+          ),
         }}
       />
       <Stack.Screen
@@ -86,8 +97,11 @@ function LearningProjectsTab() {
         name={NAVIGATION.EXERCISE_MANAGEMENT}
         component={ExerciseManagement}
       />
-
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+      <Stack.Screen
+        name={NAVIGATION.CREATEEDIT_PROJECT}
+        component={CreateProject}
+      />
     </Stack.Navigator>
   );
 }

@@ -11,4 +11,5 @@ export const enum NAVIGATION {
   FLASHCARD_MANAGEMENT = "FlashcardManagement",
   EXERCISE_MANAGEMENT = "ExerciseManagement",
   LINK_MANAGEMENT = "LinkManagement",
+  CREATEEDIT_PROJECT = "CreateEditProject",
 }
