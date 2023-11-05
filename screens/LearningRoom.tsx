@@ -1,7 +1,6 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Dialog, Portal } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,

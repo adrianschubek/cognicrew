@@ -22,10 +22,19 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
     { title: "Set N", id: 15, type: "exercise" },
   ];
   const theme = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
   const [dataSource] = useState(Items);
   const [filtered, setFiltered] = useState(dataSource);
-  const [searchQuery, setSearchQuery] = React.useState("");
+
   const [isSearching, setIsSearching] = useState(false);
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filteredItems = Items.filter((item) =>
+      item.title.toLowerCase().includes(query.toLowerCase()),
+    );
+    setFiltered(filteredItems);
+  };
+  /* 
   const onSearch = (text) => {
     if (text) {
       setIsSearching(true);
@@ -37,7 +46,7 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
     } else setIsSearching(false);
     setFiltered(dataSource);
   };
-
+*/
   return (
     <React.Fragment>
       {/* 
@@ -62,10 +71,9 @@ export default function SearchAndSelect(props: { type: ManagementType }) {
         value={searchQuery}
         style={{ elevation: 1 }}
         placeholder="Search"
-        onChangeText={() => {
-          onSearch;
-          setSearchQuery(searchQuery);
-        }}
+        onFocus={() => setIsSearching(true)}
+        onBlur={() => setIsSearching(false)}
+        onChangeText={handleSearch}
         icon="folder"
       />
       {isSearching && <SearchDropDown dataSource={filtered} />}
