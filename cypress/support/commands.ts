@@ -25,6 +25,12 @@ Cypress.Commands.add("login", () => {
   cy.get('[data-testid="login-button"]').click();
 });
 
+Cypress.Commands.add("logout", () => {
+  cy.get('[href="/SettingsTab"]').click();
+  cy.get('[data-testid="logout-button-icon-container"]').click();
+  cy.get('[data-testid="logout-confirm-button-text"]').click();
+});
+
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
@@ -45,6 +51,7 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     openApp(): Chainable<Subject>;
     login(): Chainable<Subject>;
+    logout(): Chainable<Subject>;
     // login(email: string, password: string): Chainable<void>
     // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
     // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
