@@ -35,7 +35,7 @@ export default function AddingFlashcards({ showAddingFlashcards, close }) {
         visible={showAddingFlashcards}
         onDismiss={() => close()}
       >
-        <SearchAndSelect type="flashcard"/>
+        <SearchAndSelect type="flashcard" searchPlaceholder="choose flashcard set"/>
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
