@@ -13,6 +13,7 @@ import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import Whiteboard from "../screens/Whiteboard";
 import { useAuth } from "../providers/AuthProvider";
+import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import { Image } from "react-native";
@@ -42,6 +43,10 @@ function MainTab() {
           ),
         }}
       />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="ManageFriends" component={ManageFriends} />
+      <Stack.Screen name="Achievements" component={Achievements} />
+
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
         component={ManageFriends}
@@ -51,6 +56,7 @@ function MainTab() {
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
 
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+>>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
@@ -75,6 +81,12 @@ function LearningProjectsTab() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator>
+      <Stack.Screen name="LearningProjects" component={LearningProjects} />
+      <Stack.Screen name="LearningProject" component={LearningProject} />
+      <Stack.Screen name="LearningRoom" component={LearningRoom} />
+      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
+      <Stack.Screen name="FlashcardGame" component={FlashcardGame} />
+      <Stack.Screen name="LinkManagement" component={LinkManagement} />
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
@@ -113,6 +125,7 @@ function LearningProjectsTab() {
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
+>>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
