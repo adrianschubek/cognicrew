@@ -1,3 +1,4 @@
+import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
 import React, { useMemo, useState } from "react";
 import { ScrollView, Text } from "react-native";
@@ -9,6 +10,8 @@ import {
   SegmentedButtons,
   TextInput,
 } from "react-native-paper";
+import { supabase } from "../../supabase";
+import { useAlerts } from "../../utils/hooks";
 
 export default function CreateProject({ navigation, route }) {
   /**
@@ -72,6 +75,35 @@ export default function CreateProject({ navigation, route }) {
     return labels;
   }, []);
 
+  const { success, error: errorAlert } = useAlerts();
+
+  const {
+    isMutating,
+    data,
+    trigger: upsert,
+  } = useUpsertMutation(
+    supabase.from("learning_projects"),
+    ["id"],
+    "name,description,group",
+    {
+      onSuccess: () => {
+        success(`Project ${edit === null ? "created" : "saved"}.`, "Success");
+      },
+      onError: (error) => {
+        errorAlert(error.message, "Error");
+      },
+    },
+  );
+
+  const save = () => {
+    upsert({
+      // @ts-ignore
+      name: title,
+      description,
+      group,
+    });
+  };
+
   return (
     <>
       <ScrollView
@@ -123,7 +155,8 @@ export default function CreateProject({ navigation, route }) {
           bottom: 0,
         }}
         label={edit === null ? "Create" : "Save"}
-        onPress={() => console.log("Pressed")}
+        onPress={save}
+        disabled={isMutating}
       />
     </>
   );
