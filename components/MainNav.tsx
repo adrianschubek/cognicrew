@@ -11,8 +11,15 @@ import LearningRoom from "../screens/LearningRoom";
 import FlashcardManagement from "../screens/projectManagement/FlashcardManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
+import Whiteboard from "../screens/Whiteboard";
 import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
+import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
+import { NAVIGATION } from "../types/common";
+import { Image } from "react-native";
+import { IconButton } from "react-native-paper";
+import CreateProject from "../screens/projectManagement/CreateProject";
+import { useNavigation } from "@react-navigation/native";
 const Tab = createMaterialBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
@@ -21,13 +28,35 @@ function MainTab() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Home"
+        name={NAVIGATION.HOME}
         component={HomeScreen}
-        options={{ title: "CogniCrew" }}
+        options={{
+          title: "CogniCrew",
+          headerRight: () => (
+            <Image
+              source={require("../assets/icon.png")}
+              style={{
+                height: 40,
+                width: 40,
+              }}
+            />
+          ),
+        }}
       />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="ManageFriends" component={ManageFriends} />
       <Stack.Screen name="Achievements" component={Achievements} />
+
+      <Stack.Screen
+        name={NAVIGATION.MANAGE_FRIENDS}
+        component={ManageFriends}
+      />
+      <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
+
+      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+
+      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+>>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
@@ -35,12 +64,21 @@ function MainTab() {
 function SettingsTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name={NAVIGATION.SETTINGS} component={Settings} />
     </Stack.Navigator>
   );
 }
 
+function LearningRoomsTab() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+    </Stack.Navigator>
+  );
+ }
+
 function LearningProjectsTab() {
+  const navigation = useNavigation();
   return (
     <Stack.Navigator>
       <Stack.Screen name="LearningProjects" component={LearningProjects} />
@@ -49,6 +87,45 @@ function LearningProjectsTab() {
       <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
       <Stack.Screen name="FlashcardGame" component={FlashcardGame} />
       <Stack.Screen name="LinkManagement" component={LinkManagement} />
+      <Stack.Screen
+        name={NAVIGATION.LEARNING_PROJECTS}
+        component={LearningProjects}
+        options={{
+          headerRight: () => (
+            <IconButton
+              icon="plus"
+              onPress={() => {
+                // @ts-ignore
+                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                  edit: null,
+                });
+              }}
+            ></IconButton>
+          ),
+        }}
+      />
+      <Stack.Screen
+        name={NAVIGATION.LEARNING_PROJECT}
+        component={LearningProject}
+      />
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_MANAGEMENT}
+        component={FlashcardManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.LINK_MANAGEMENT}
+        component={LinkManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.EXERCISE_MANAGEMENT}
+        component={ExerciseManagement}
+      />
+      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+      <Stack.Screen
+        name={NAVIGATION.CREATEEDIT_PROJECT}
+        component={CreateProject}
+      />
+>>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
@@ -64,7 +141,7 @@ export default function MainNav() {
   //   console.log("!!!Session: ", session);
   // }, [initialized])
 
-  return !session ? (
+  return !session || !user ? (
     <Stack.Navigator
       initialRouteName="Login"
       screenOptions={{ headerShown: false }}

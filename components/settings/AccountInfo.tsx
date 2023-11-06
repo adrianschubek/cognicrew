@@ -11,6 +11,8 @@ import {
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
+import { useUsername } from "../../utils/hooks";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -33,6 +35,7 @@ const LogoutButton = () => {
                 setShowConfirm(false);
                 await supabase.auth.signOut();
               }}
+              testID="logout-confirm-button"
             >
               Logout
             </Button>
@@ -51,6 +54,7 @@ const LogoutButton = () => {
         onPress={() => {
           setShowConfirm(true);
         }}
+        testID="logout-button"
       >
         Logout
       </Button>
@@ -60,11 +64,13 @@ const LogoutButton = () => {
 
 export default function AccountInfo(props) {
   const { user } = useAuth();
+  const { data, isLoading } = useUsername();
+
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Account" left={Account} right={LogoutButton} />
       <Card.Content>
-        <Text variant="bodyMedium">_username_</Text>
+        <Text variant="bodyMedium">{isLoading ? "..." : data}</Text>
         <Text variant="bodyMedium">{user.email}</Text>
         <Text variant="bodyMedium">
           Account created on {new Date(user.created_at).toLocaleDateString()}

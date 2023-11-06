@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dialog, Portal, TextInput, Text } from "react-native-paper";
+import { Dialog, Portal, TextInput, Text, Card } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import {
@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
+import { NAVIGATION } from "../../types/common";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
@@ -30,55 +31,56 @@ export default function JoinRoom({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <Text
-            style={{
-              fontSize: responsiveFontSize(2.5),
-              paddingBottom: responsiveHeight(1),
-            }}
-          >
-            Join room via ID:
-          </Text>
-      <TextInput
-        editable
-        placeholder="#"
-        value={joinCode}
-        error={joinCode.length > 1 && joinCode.length !== 7}
-        onChangeText={(text) => {
-          if (text === "") {
-            text = "#";
-          }
-          // only allow numbers
-          text = text.replace(/[^0-9]/g, "");
-          // if the first character is not a #, add it.
-          if (!text.includes("#")) {
-            text = "#" + text;
-          }
-          setJoinCode(text);
-        }}
-        maxLength={7}
-        inputMode="numeric"
-        style={{ width: responsiveWidth(30), height: responsiveHeight(5) }}
-      />
-      <Button
-        labelStyle={{ textAlignVertical: "center" }}
-        style={[styles.buttonStyle, { width: responsiveWidth(40) }]}
-        mode="contained"
-        onPress={() => {
-          if (joinCode.length !== 7) {
-            setShowErrorJoin(true);
-          } else {
-            navigation.navigate("Room", { code: joinCode });
-          }
-        }}
-      >
-        Ask to join
-      </Button>
+      <Card>
+        <Text
+          style={[styles.container, {textAlign: 'center'}]}
+        >
+          Join room via ID:
+        </Text>
+        <TextInput
+          editable
+          placeholder="#"
+          value={joinCode}
+          error={joinCode.length > 1 && joinCode.length !== 7}
+          onChangeText={(text) => {
+            if (text === "") {
+              text = "#";
+            }
+            // only allow numbers
+            text = text.replace(/[^0-9]/g, "");
+            // if the first character is not a #, add it.
+            if (!text.includes("#")) {
+              text = "#" + text;
+            }
+            setJoinCode(text);
+          }}
+          maxLength={7}
+          inputMode="numeric"
+          style={[styles.container, {height: responsiveHeight(8)}]}
+        />
+        <Button
+          labelStyle={{ textAlignVertical: "center" }}
+          style={[styles.container]}
+          mode="contained"
+          onPress={() => {
+            if (joinCode.length !== 7) {
+              setShowErrorJoin(true);
+            } else {
+              navigation.navigate(NAVIGATION.LEARNING_ROOM, { code: joinCode });
+            }
+          }}
+        >
+          Ask to join
+        </Button>
+      </Card>
     </React.Fragment>
   );
 }
 const styles = StyleSheet.create({
-  buttonStyle: {
+  container: {
+    width: responsiveWidth(40),
     marginBottom: responsiveHeight(2.5),
     marginTop: responsiveHeight(1.5),
   },
+  
 });

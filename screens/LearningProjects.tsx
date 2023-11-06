@@ -9,19 +9,20 @@ import {
 } from "react-native-responsive-dimensions";
 import ProjectGroup from "../components/learningProjects/ProjectGroups";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
+import { NAVIGATION } from "../types/common";
 
 export default function LearningProjects({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <View style={styles.upperContainerChild}>
+      {/* <View style={styles.upperContainerChild}>
         <TextWithPlusButton
-        text="go to LearningProject"
+        text="create new project"
           function={() => {
-            navigation.navigate("LearningProject");
+            navigation.navigate(NAVIGATION.LEARNING_PROJECT);
           }}
         />
-      </View>
+      </View> */}
       <View style={styles.bottomContainerChild}>
         <ScrollView>
           <ProjectGroup />

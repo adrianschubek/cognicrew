@@ -19,6 +19,7 @@ import EmailChange from "../components/settings/EmailChange";
 import AccountInfo from "../components/settings/AccountInfo";
 import DangerZone from "../components/settings/DangerZone";
 import Visual from "../components/settings/Visual";
+import NameChange from "../components/settings/NameChange";
 
 export default function AccountSettings({ nav }) {
   const theme = useTheme();
@@ -42,21 +43,29 @@ export default function AccountSettings({ nav }) {
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
       <Divider />
+      <NameChange
+        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+      />
+      <Divider />
       <PasswordChange
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
       <Divider />
       <EmailChange
-        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+        style={{
+          marginBottom: 10,
+          marginTop: 10,
+          backgroundColor: theme.colors.surface,
+        }}
       />
-      <Divider />
+      {/* <Divider />
       <DangerZone
         style={{
           marginTop: 10,
           marginBottom: 10,
           backgroundColor: theme.colors.errorContainer,
         }}
-      />
+      /> */}
     </ScrollView>
   );
 }

@@ -8,6 +8,8 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
+import { supabase } from "../../supabase";
+import { useAlerts } from "../../utils/hooks";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="email" />;
 
@@ -16,6 +18,14 @@ export default function EmailChange(props) {
   const [mail, setMail] = useState("");
 
   const validator = mail.length > 0 && mail.includes("@");
+
+  const { success, error: errorAlert } = useAlerts();
+  const update = async () => {
+    const { data, error } = await supabase.auth.updateUser({ email: mail });
+
+    if (error) errorAlert(error?.message,"Error");
+    else success("E-Mail updated.", "Success");
+  };
 
   return (
     <Card {...props} mode="contained">
@@ -30,7 +40,7 @@ export default function EmailChange(props) {
         ></TextInput>
       </Card.Content>
       <Card.Actions>
-        <Button disabled={!validator} mode="contained-tonal">
+        <Button disabled={!validator} mode="contained-tonal" onPress={update}>
           Update E-Mail
         </Button>
       </Card.Actions>

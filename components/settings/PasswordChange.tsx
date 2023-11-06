@@ -1,13 +1,13 @@
-import { Slider } from "@miblanchard/react-native-slider";
 import { useState } from "react";
 import {
   Avatar,
   Button,
-  Card,
-  Text,
-  TextInput,
-  useTheme,
+  Card, TextInput,
+  useTheme
 } from "react-native-paper";
+import { useAuth } from "../../providers/AuthProvider";
+import { supabase } from "../../supabase";
+import { useAlerts } from "../../utils/hooks";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="key" />;
 
@@ -17,6 +17,15 @@ export default function PasswordChange(props) {
   const [pw2, setPw2] = useState("");
 
   const validator = pw1 === pw2 && pw1.length > 8 && pw1.length < 64;
+
+  const { user } = useAuth();
+  const { success, error: errorAlert } = useAlerts();
+  const update = async () => {
+    const { data, error } = await supabase.auth.updateUser({ password: pw1 });
+
+    if (error) errorAlert(error?.message, "Error");
+    else success("Password updated.", "Success");
+  };
 
   return (
     <Card {...props} mode="contained">
@@ -37,11 +46,11 @@ export default function PasswordChange(props) {
           onChangeText={(t) => setPw2(t)}
           label={"Confirm New Password"}
           secureTextEntry={true}
-          error={pw1.length > 0 && !validator}
+          error={pw2.length > 0 && !validator}
         ></TextInput>
       </Card.Content>
       <Card.Actions>
-        <Button disabled={!validator} mode="contained-tonal">
+        <Button disabled={!validator} mode="contained-tonal" onPress={update}>
           Update Password
         </Button>
       </Card.Actions>

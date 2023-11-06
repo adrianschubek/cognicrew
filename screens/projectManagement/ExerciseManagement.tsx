@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
+import { Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -9,28 +9,28 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
+import AddExercises from "../../components/dialogues/AddExercises";
 import { useState } from "react";
-import AddFlashcards from "../../components/dialogues/AddFlashcards";
 
-export default function FlashcardManagement() {
-  const [showAddFlashcards, setShowAddFlashcards] = useState(false);
+export default function ExerciseManagement() {
+  const [showAddExercises, setShowAddExercises] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <AddFlashcards
-        showAddingFlashcards={showAddFlashcards}
-        close={() => setShowAddFlashcards(false)}
+      <AddExercises
+        showAddExercises={showAddExercises}
+        close={() => setShowAddExercises(false)}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
-          text="add new flash cards"
+          text="add new Exercises"
           function={() => {
-            setShowAddFlashcards(true);
+            setShowAddExercises(true);
           }}
         />
       </View>
       <ScrollView>
-        <AccordionSection type="flashcard" />
+        <AccordionSection type="exercise" />
       </ScrollView>
     </View>
   );

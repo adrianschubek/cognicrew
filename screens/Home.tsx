@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Dialog, Portal, TextInput, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image } from "react-native";
 import { Button, Avatar } from "react-native-paper";
@@ -8,22 +8,13 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
-import { useAuth } from "../providers/AuthProvider";
-import { supabase } from "../supabase";
 import JoinRoom from "../components/learningRoom/JoinRoom";
+import CreateRoom from "../components/learningRoom/CreateRoom";
+import { useUsername } from "../utils/hooks";
+import { NAVIGATION } from "../types/common";
 
 export default function HomeScreen({ navigation }) {
-  const { user } = useAuth();
-  const [achievements, setAchievements] = useState([]);
-  useEffect(() => {
-    const getAllAchievements = async () =>
-      await supabase.from("profiles").select("*");
-
-    getAllAchievements().then((achievements) => {
-      setAchievements(achievements.data);
-    });
-  }, []);
+  const { data, isLoading } = useUsername();
 
   return (
     <>
@@ -31,13 +22,6 @@ export default function HomeScreen({ navigation }) {
         <StatusBar style="auto" />
 
         <View style={styles.upperContainerChild}>
-          <Image
-            source={require("../assets/icon.png")}
-            style={{
-              height: responsiveFontSize(13),
-              width: responsiveFontSize(13),
-            }}
-          />
           <View style={styles.rightUpperContainerChild}>
             <Text
               style={{
@@ -45,14 +29,18 @@ export default function HomeScreen({ navigation }) {
                 paddingRight: responsiveWidth(1),
               }}
             >
-              Hello, {user?.email}
+              Hello, {isLoading ? "...." : data}
             </Text>
             <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
           </View>
         </View>
         <View style={styles.middleContainerChild}>
-          <Text>{JSON.stringify(achievements)}</Text> 
-          <JoinRoom navigation={navigation} />
+          <View style={{ marginRight: responsiveWidth(4) }}>
+            <JoinRoom navigation={navigation} />
+          </View>
+          <View style={{ marginLeft: responsiveWidth(4) }}>
+            <CreateRoom navigation={navigation} />
+          </View>
         </View>
         <View style={[styles.bottomContainerChild]}>
           <Button
@@ -61,7 +49,7 @@ export default function HomeScreen({ navigation }) {
             icon="account-multiple"
             mode="contained"
             onPress={() => {
-              navigation.navigate("ManageFriends");
+              navigation.navigate(NAVIGATION.MANAGE_FRIENDS);
               console.log("Home Screen Pressed");
             }}
           >
@@ -70,17 +58,7 @@ export default function HomeScreen({ navigation }) {
           <Button
             style={styles.buttonStyle}
             onPress={() => {
-              navigation.navigate("Login");
-              console.log("Login screen pressed");
-            }}
-          >
-            {" "}
-            Test Login
-          </Button>
-          <Button
-            style={styles.buttonStyle}
-            onPress={() => {
-              navigation.navigate("Achievements");
+              navigation.navigate(NAVIGATION.ACHIEVEMENTS);
               console.log("Achievement screen pressed");
             }}
           >
@@ -104,7 +82,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   upperContainerChild: {
-    flex: 1,
+    flex: 2,
     justifyContent: "space-between",
     flexDirection: "row",
     //backgroundColor: "yellow",
@@ -117,14 +95,15 @@ const styles = StyleSheet.create({
     paddingRight: responsiveWidth(2),
   },
   middleContainerChild: {
-    flex: 2,
-    flexDirection: "column",
+    flex: 3,
+    flexDirection: "row",
     justifyContent: "center",
     //backgroundColor: "red",
     alignItems: "center",
+    marginBottom: responsiveHeight(20),
   },
   bottomContainerChild: {
-    flex: 3,
+    flex: 2,
     //backgroundColor: "green",
     alignItems: "center",
   },
