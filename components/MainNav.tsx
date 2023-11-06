@@ -44,8 +44,6 @@ function MainTab() {
         }}
       />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="ManageFriends" component={ManageFriends} />
-      <Stack.Screen name="Achievements" component={Achievements} />
 
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
@@ -56,7 +54,6 @@ function MainTab() {
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
 
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
->>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
@@ -125,7 +122,6 @@ function LearningProjectsTab() {
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
->>>>>>> components/MainNav.tsx
     </Stack.Navigator>
   );
 }
