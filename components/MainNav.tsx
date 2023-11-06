@@ -43,8 +43,6 @@ function MainTab() {
           ),
         }}
       />
-      <Stack.Screen name="Login" component={Login} />
-
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
         component={ManageFriends}
@@ -75,18 +73,12 @@ function LearningRoomsTab() {
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
     </Stack.Navigator>
   );
- }
+}
 
 function LearningProjectsTab() {
   const navigation = useNavigation();
   return (
     <Stack.Navigator>
-      <Stack.Screen name="LearningProjects" component={LearningProjects} />
-      <Stack.Screen name="LearningProject" component={LearningProject} />
-      <Stack.Screen name="LearningRoom" component={LearningRoom} />
-      <Stack.Screen name="FlashcardManagement" component={FlashcardManagement} />
-      <Stack.Screen name="FlashcardGame" component={FlashcardGame} />
-      <Stack.Screen name="LinkManagement" component={LinkManagement} />
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
@@ -111,6 +103,10 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_MANAGEMENT}
         component={FlashcardManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_GAME}
+        component={FlashcardGame}
       />
       <Stack.Screen
         name={NAVIGATION.LINK_MANAGEMENT}
