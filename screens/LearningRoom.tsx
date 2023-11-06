@@ -22,6 +22,7 @@ export default function LearningRoom({ navigation }) {
       <CreateFlashCardGame
         showCreateFlashcardGame={showCreateFlashcardGame}
         close={() => setShowCreateFlashcardGame(false)}
+        
       />
       <CreateQuizGame
         showCreateQuizGame={showCreateQuizGame}
