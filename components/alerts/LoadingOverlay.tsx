@@ -6,12 +6,13 @@ import {
   Text,
   useTheme,
 } from "react-native-paper";
+import { View } from "react-native";
 
 export default function LoadingOverlay({ visible }: { visible: boolean }) {
   const theme = useTheme();
 
   return (
-    <SafeAreaView
+    <View
       style={{
         position: "absolute",
         zIndex: 9999,
@@ -26,6 +27,6 @@ export default function LoadingOverlay({ visible }: { visible: boolean }) {
       }}
     >
       <ActivityIndicator size={"large"} animating={true} color={theme.colors.onBackground} />
-    </SafeAreaView>
+    </View>
   );
 }

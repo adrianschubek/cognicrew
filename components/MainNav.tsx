@@ -83,6 +83,7 @@ function LearningProjectsTab() {
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
         options={{
+          title: "Projects",
           headerRight: () => (
             <IconButton
               icon="plus"

@@ -86,7 +86,6 @@ export default function CreateProject({ navigation, route }) {
 
   const {
     isMutating,
-    data,
     trigger: upsert,
   } = useUpsertMutation(
     supabase.from("learning_projects"),
@@ -109,6 +108,7 @@ export default function CreateProject({ navigation, route }) {
       description,
       group,
       is_published: isPublished,
+      tags,
     });
   };
 
