@@ -1,17 +1,18 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
 import React, { useMemo, useState } from "react";
-import { ScrollView, View, Pressable } from "react-native";
+import { ScrollView } from "react-native";
 import {
+  Divider,
   FAB,
+  HelperText,
   SegmentedButtons,
   Switch,
-  TextInput,
   Text,
-  useTheme,
+  TextInput,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts, useUsername } from "../../utils/hooks";
 
 export default function CreateProject({ navigation, route }) {
   /**
@@ -21,6 +22,8 @@ export default function CreateProject({ navigation, route }) {
    */
   const { edit } = route.params;
 
+  const username = useUsername();
+
   navigation.setOptions({
     title: edit === null ? "Create Project" : "Edit Project",
   });
@@ -29,7 +32,7 @@ export default function CreateProject({ navigation, route }) {
   const [description, setDescription] = useState("");
   const [group, setGroup] = useState("");
   const [isPublished, setIsPublished] = useState(false);
-  const [owner, setOwner] = useState("You");
+  const [owner, setOwner] = useState(username.data ?? "???");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
@@ -122,6 +125,10 @@ export default function CreateProject({ navigation, route }) {
           onChangeText={(text) => setTitle(text)}
           left={<TextInput.Icon icon="format-text" />}
         />
+        <HelperText type="info">
+          Title should include your course name.
+        </HelperText>
+        <Divider />
         <TextInput
           style={{ marginTop: 10 }}
           label="Description"
@@ -131,9 +138,10 @@ export default function CreateProject({ navigation, route }) {
           onChangeText={(text) => setDescription(text)}
           left={<TextInput.Icon icon="text-box-outline" />}
         />
+        <Divider />
         <TextInput
           style={{ marginTop: 10 }}
-          label="Semester (e.g. 'Wintertem 23/24')"
+          label="Semester"
           value={group}
           onChangeText={(text) => setGroup(text)}
           left={<TextInput.Icon icon="tag" />}
@@ -147,11 +155,25 @@ export default function CreateProject({ navigation, route }) {
             value: semester,
           }))}
         />
+        <Divider />
+        <TextInput
+          style={{ marginTop: 10 }}
+          label="Tags"
+          value={group}
+          onChangeText={(text) => setGroup(text)}
+          left={<TextInput.Icon icon="tag" />}
+        />
+        <HelperText type="info">
+          Tags can be used to filter projects on the feed and make it
+          discoverable for other users.
+        </HelperText>
+        <Divider />
         <TextInput
           style={{ marginTop: 10 }}
           theme={{ roundness: 10 }}
-          mode="outlined"
-          value={"Project is " + (isPublished ? "public" : "private")}
+          // mode="outlined"
+          label="Visibility"
+          value={isPublished ? "Public" : "Private"}
           editable={false}
           left={
             <TextInput.Icon icon={isPublished ? "lock-open-outline" : "lock"} />
@@ -167,23 +189,26 @@ export default function CreateProject({ navigation, route }) {
             />
           }
         />
-        {/* https://github.com/facebook/react-native/issues/33649#issuecomment-1698604562 */}
-        <Pressable
-          onPress={() =>
-            info("You can't change the owner of a project.", "Info")
+        <TextInput
+          style={{ marginTop: 10 }}
+          // mode="outlined"
+          label="Owner"
+          value={owner}
+          editable={false}
+          left={<TextInput.Icon icon="account" />}
+          right={
+            <TextInput.Icon
+              /* TODO */
+              onPress={() =>
+                info(
+                  "You cannot change the owner of a project yet.",
+                  "Transfer project",
+                )
+              }
+              icon="pencil"
+            />
           }
-        >
-          <TextInput
-            style={{ marginTop: 10 }}
-            label="Owner"
-            value={owner}
-            onPressIn={() =>
-              info("You can't change the owner of a project.", "Info")
-            }
-            editable={false}
-            left={<TextInput.Icon icon="account" />}
-          />
-        </Pressable>
+        />
       </ScrollView>
       <FAB
         icon={edit === null ? "plus" : "check"}

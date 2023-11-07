@@ -29,7 +29,7 @@ const { LightTheme, DarkTheme } = adaptNavigationTheme({
 const CombinedDefaultTheme = {
   ...MD3LightTheme,
   ...LightTheme,
-  roundness: 2,
+  roundness: 5,
   colors: {
     ...MD3LightTheme.colors,
     ...LightTheme.colors,
@@ -39,7 +39,7 @@ const CombinedDefaultTheme = {
 const CombinedDarkTheme = {
   ...MD3DarkTheme,
   ...DarkTheme,
-  roundness: 2,
+  roundness: 5,
   colors: {
     ...MD3DarkTheme.colors,
     ...DarkTheme.colors,
