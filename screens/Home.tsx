@@ -1,121 +1,77 @@
 import * as React from "react";
-import { Text } from "react-native-paper";
+import { Text, View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Image } from "react-native";
-import { Button, Avatar } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
+import { Avatar, Button } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
-import { NAVIGATION } from "../types/common";
 
+
+import { NAVIGATION } from "../types/common";
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
 
   return (
-    <>
-      <View style={styles.container}>
-        <StatusBar style="auto" />
-
-        <View style={styles.upperContainerChild}>
-          <View style={styles.rightUpperContainerChild}>
-            <Text
-              style={{
-                paddingTop: responsiveHeight(1.8),
-                paddingRight: responsiveWidth(1),
-              }}
-            >
-              Hello, {isLoading ? "...." : data}
-            </Text>
-            <Avatar.Text size={responsiveFontSize(6)} label={"Ti"} />
-          </View>
-        </View>
-        <View style={styles.middleContainerChild}>
-          <View style={{ marginRight: responsiveWidth(4) }}>
-            <JoinRoom navigation={navigation} />
-          </View>
-          <View style={{ marginLeft: responsiveWidth(4) }}>
-            <CreateRoom navigation={navigation} />
-          </View>
-        </View>
-        <View style={[styles.bottomContainerChild]}>
-          <Button
-            style={styles.buttonStyle}
-            labelStyle={styles.bigLabelStyle}
-            icon="account-multiple"
-            mode="contained"
-            onPress={() => {
-              navigation.navigate(NAVIGATION.MANAGE_FRIENDS);
-              console.log("Home Screen Pressed");
-            }}
-          >
-            Manage your friends!
-          </Button>
-          <Button
-            style={styles.buttonStyle}
-            onPress={() => {
-              navigation.navigate(NAVIGATION.ACHIEVEMENTS);
-              console.log("Achievement screen pressed");
-            }}
-          >
-            {" "}
-            Test Achievements
-          </Button>
-        </View>
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      <View style={styles.header}>
+        <Text>Hello, {isLoading ? "...." : data}</Text>
+        <Avatar.Text size={48} label={"Ti"} />
       </View>
-    </>
+      <View style={styles.body}>
+        <JoinRoom navigation={navigation} />
+        <CreateRoom navigation={navigation} />
+      </View>
+      <View style={styles.footer}>
+        <Button
+          icon="account-group"
+          mode="contained"
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate(NAVIGATION.MANAGE_FRIENDS)
+          }}
+        >
+          Manage Your Friends
+        </Button>
+
+        <Button
+          icon="trophy"
+          mode="contained"
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate(NAVIGATION.ACHIEVEMENTS);
+          }}
+        >
+          Test Achievements
+        </Button>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "stretch",
-  },
-  containerChild: {
-    flex: 1,
-  },
-  upperContainerChild: {
-    flex: 2,
     justifyContent: "space-between",
-    flexDirection: "row",
-    //backgroundColor: "yellow",
   },
-  rightUpperContainerChild: {
-    flex: 0,
-    //backgroundColor: "blue",
-    flexDirection: "row",
-    paddingTop: responsiveHeight(2),
-    paddingRight: responsiveWidth(2),
+  header: {
+    width: '100%',
+    height: 100,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    padding: 10,
+    position: 'relative',
   },
-  middleContainerChild: {
-    flex: 3,
-    flexDirection: "row",
-    justifyContent: "center",
-    //backgroundColor: "red",
-    alignItems: "center",
-    marginBottom: responsiveHeight(20),
+  body: {
+    justifyContent: "space-around",
   },
-  bottomContainerChild: {
-    flex: 2,
-    //backgroundColor: "green",
-    alignItems: "center",
+  footer: {
+    height: 150,
+    alignItems: 'center',
+    justifyContent: "space-around",
+    paddingBottom: 20,
   },
-  buttonStyle: {
-    marginBottom: responsiveHeight(2.5),
-    marginTop: responsiveHeight(1.5),
-  },
-  bigLabelStyle: {
-    fontSize: responsiveFontSize(2.5),
-    paddingBottom: responsiveHeight(0.5),
-    paddingTop: responsiveHeight(0.5),
-    height: responsiveHeight(5),
-    textAlignVertical: "center",
+  button: {
+    width: '100%',
   },
 });
