@@ -17,22 +17,26 @@ export const accordionSectionItems = [
 
 export default function AccordionSection(props) {
   const [expanded, setExpanded] = React.useState(true);
-  const [getLearningProject, setLearningProject] = React.useState("Choose");
+  const [getLearningProject, setLearningProject] = React.useState("Search project for room creation");
 
   return (
-    <List.Section >
+    <List.Section>
         <ScrollView>
                 <List.Accordion
                     title={getLearningProject}
-                    style={{}}
-                    titleStyle={{fontSize: responsiveFontSize(1)}}
-                    left={props => <List.Icon {...props} icon="folder" />}>
+                    style={styles.accordion}
+                    titleStyle={styles.accordionTitle}
+                    left={props => <List.Icon {...props} icon="folder" />}
+                >
                     {accordionSectionItems.map((learningProject) => (
                     <React.Fragment key={learningProject.id}>
-                    <List.Item title={learningProject.title}
-                        onPress={ () => {
-                            setLearningProject(learningProject.title);
-                        }} />
+                        <List.Item
+                            title={learningProject.title}
+                            onPress={() => {
+                                setLearningProject(learningProject.title);
+                            }}
+                            titleStyle={styles.listTitle}
+                        />
                     </React.Fragment>
                     ))}
                 </List.Accordion>
@@ -40,6 +44,14 @@ export default function AccordionSection(props) {
     </List.Section>
   );
 }
-
 const styles = StyleSheet.create({
+  accordionTitle: {
+    fontSize: responsiveFontSize(2), 
+  },
+  listTitle: {
+
+  },
+  accordion: {
+
+  }
 });

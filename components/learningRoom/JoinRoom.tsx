@@ -69,16 +69,15 @@ export default function JoinRoom({ navigation }) {
             }
           }}
         >
-          Ask to join
+          Join
         </Button>
     </React.Fragment>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    width: responsiveWidth(40),
-    marginBottom: responsiveHeight(2.5),
-    marginTop: responsiveHeight(1.5),
+    width: '100%', 
+    alignItems: 'center',
+    marginVertical: 10, 
   },
-  
 });

@@ -17,31 +17,31 @@ import { NAVIGATION } from "../../types/common";
 export default function CreateRoom({ navigation }) {
   return (
     <React.Fragment>
-      	 <Text
-          style={[styles.container, {textAlign: 'center'}]}
-          >
-          Create room:
-        </Text>
-        
-        <AccordionSection/>
+      <Text
+        style={[styles.container, { textAlign: 'center' }]}
+      >
+        Create room:
+      </Text>
 
-        <Button
+      <AccordionSection />
+
+      <Button
         icon="home"
         mode="contained"
-        style={[styles.container, {marginTop: responsiveHeight(2.9)}]} 
+        style={[styles.container, { marginTop: responsiveHeight(2.9) }]}
         onPress={() => {
           navigation.navigate(NAVIGATION.LEARNING_ROOM);
         }}
       >
         Create Room
-        </Button>
+      </Button>
     </React.Fragment>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    width: responsiveWidth(40),
-    marginBottom: responsiveHeight(2.5),
-    marginTop: responsiveHeight(1.5),
+    width: '100%',
+    alignItems: 'center',
+    marginVertical: 10,
   },
 });
