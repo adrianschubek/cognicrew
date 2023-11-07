@@ -162,7 +162,8 @@ export default function CreateProject({ navigation, route }) {
           }))}
         />
         <HelperText type="info">
-          Choose the semester this project is for. Use "All" if it is not bound to a specific semester.
+          Choose the semester this project is for. Use "All" if it is not bound
+          to a specific semester. You can change the years.
         </HelperText>
         <Divider />
         <TextInput
@@ -224,6 +225,14 @@ export default function CreateProject({ navigation, route }) {
             />
           }
         />
+        <HelperText type="info">
+          Only the owner can edit this project.
+        </HelperText>
+        <Divider />
+        <HelperText type="info" style={{ marginBottom: 5 }}>
+          You may invite other users to join your project on the learning
+          project page.
+        </HelperText>
       </ScrollView>
       <FAB
         icon={edit === null ? "plus" : "check"}
