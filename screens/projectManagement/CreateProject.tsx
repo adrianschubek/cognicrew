@@ -33,6 +33,7 @@ export default function CreateProject({ navigation, route }) {
   const [group, setGroup] = useState("");
   const [isPublished, setIsPublished] = useState(false);
   const [owner, setOwner] = useState(username.data ?? "???");
+  const [tags, setTags] = useState("");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
@@ -106,6 +107,7 @@ export default function CreateProject({ navigation, route }) {
       name: title,
       description,
       group,
+      is_published: isPublished,
     });
   };
 
@@ -144,28 +146,35 @@ export default function CreateProject({ navigation, route }) {
           label="Semester"
           value={group}
           onChangeText={(text) => setGroup(text)}
-          left={<TextInput.Icon icon="tag" />}
+          left={<TextInput.Icon icon="calendar-range" />}
         />
         <SegmentedButtons
           style={{ marginTop: 10 }}
           value={group}
           onValueChange={setGroup}
-          buttons={currentSemesters.map((semester: string) => ({
-            label: semester.replace("Summer", "S").replace("Winter", "W"),
+          buttons={[...currentSemesters, "All"].map((semester: string) => ({
+            /* This will break in year 21XX but i don't care tbh. */
+            label: semester
+              .replace("Summer", "S")
+              .replace("Winter", "W")
+              .replace("20", ""),
             value: semester,
           }))}
         />
+        <HelperText type="info">
+          Choose the semester this project is for. Use "All" if it is not bound to a specific semester.
+        </HelperText>
         <Divider />
         <TextInput
           style={{ marginTop: 10 }}
           label="Tags"
-          value={group}
-          onChangeText={(text) => setGroup(text)}
+          value={tags}
+          onChangeText={(text) => setTags(text)}
           left={<TextInput.Icon icon="tag" />}
         />
         <HelperText type="info">
-          Tags can be used to filter projects on the feed and make it
-          discoverable for other users.
+          Tags will make your project easier to find. Use commas to seperate
+          tags.
         </HelperText>
         <Divider />
         <TextInput
@@ -189,6 +198,12 @@ export default function CreateProject({ navigation, route }) {
             />
           }
         />
+        <HelperText type={isPublished ? "info" : "info"}>
+          {isPublished
+            ? "Other users can find and clone this project. They will NOT be able to edit THIS project."
+            : "Project is hidden and only project members can see and edit."}
+        </HelperText>
+        <Divider />
         <TextInput
           style={{ marginTop: 10 }}
           // mode="outlined"
