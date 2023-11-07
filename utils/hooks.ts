@@ -2,6 +2,8 @@ import { useAuth } from "../providers/AuthProvider";
 import { useAlertsStore } from "../stores/AlertsStore";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
+import { ifMod } from "./common";
+import { useCallback, useMemo } from "react";
 
 /**
  * Handles errors thrown by the given supabase query.
@@ -53,34 +55,67 @@ export function useAchievements() {
  * @returns An object with functions to display alerts.
  */
 export function useAlerts() {
+  const resetActions = useCallback(() => {
+    ifMod(oldOkText, "OK", setOkText);
+    ifMod(oldCancelText, "", setCancelText);
+    ifMod(oldOkAction, () => {}, setOkAction);
+    ifMod(oldCancelAction, () => {}, setCancelAction);
+  }, []);
+
   const {
     open: oldOpen,
     icon: oldIcon,
     title: oldTitle,
     message: oldMessage,
+    okText: oldOkText,
     cancelText: oldCancelText,
+    okAction: oldOkAction,
+    cancelAction: oldCancelAction,
     setOpen,
     setIcon,
     setTitle,
     setMessage,
     setOkText,
     setCancelText,
+    setOkAction,
+    setCancelAction,
   } = useAlertsStore();
   return {
     success: (message: string, title: string = "") => {
-      if (oldOpen !== true) setOpen(true);
-      if (oldIcon !== "check") setIcon("check");
-      if (oldTitle !== title) setTitle(title);
-      if (oldMessage !== message) setMessage(message);
-      if (oldCancelText !== "") setCancelText("");
+      ifMod(oldOpen, true, setOpen);
+      ifMod(oldIcon, "check", setIcon);
+      ifMod(oldTitle, title, setTitle);
+      ifMod(oldMessage, message, setMessage);
+      resetActions();
     },
     error: (message: string, title: string = "") => {
-      if (oldOpen !== true) setOpen(true);
-      if (oldIcon !== "alert-circle") setIcon("alert-circle");
-      if (oldTitle !== title) setTitle(title);
-      if (oldMessage !== message) setMessage(message);
-      if (oldCancelText !== "") setCancelText("");
-      // fixes too deep update depth
+      ifMod(oldOpen, true, setOpen);
+      ifMod(oldIcon, "alert-circle", setIcon);
+      ifMod(oldTitle, title, setTitle);
+      ifMod(oldMessage, message, setMessage);
+      resetActions();
+    },
+    info: (message: string, title: string = "") => {
+      ifMod(oldOpen, true, setOpen);
+      ifMod(oldIcon, "information", setIcon);
+      ifMod(oldTitle, title, setTitle);
+      ifMod(oldMessage, message, setMessage);
+      resetActions();
+    },
+    okcancel: (
+      message: string,
+      title: string = "",
+      okAction: () => void = () => {},
+      cancelAction: () => void = () => {},
+      okText: string = "OK",
+      cancelText: string = "Cancel",
+    ) => {
+      ifMod(oldOpen, true, setOpen);
+      ifMod(oldIcon, "information", setIcon);
+      ifMod(oldTitle, title, setTitle);
+      ifMod(oldMessage, message, setMessage);
+      ifMod(oldOkText, okText, setOkText);
+      ifMod(oldCancelText, cancelText, setCancelText);
     },
   };
 }
