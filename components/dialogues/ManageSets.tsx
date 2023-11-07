@@ -1,0 +1,58 @@
+import * as React from "react";
+import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
+import {
+  Button,
+  Dialog,
+  List,
+  Portal,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
+import { useState } from "react";
+import SearchAndSelect from "../common/SearchAndSelect";
+
+export default function ManageSets({ showManageSets, close, type }) {
+  const theme = useTheme();
+  return (
+    <Portal>
+      <Dialog
+        style={{ alignItems: "center" }}
+        visible={showManageSets}
+        onDismiss={() => {
+          close();
+          Keyboard.dismiss();
+        }}
+      >
+        <SearchAndSelect
+          type="flashcard"
+          searchPlaceholder={"Search for " + type + " set"}
+          creationOption={true}
+        />
+        <Dialog.Actions>
+          <Button
+            style={{ width: responsiveWidth(70) }}
+            onPress={() => {
+              close(), Keyboard.dismiss();
+            }}
+            mode="contained"
+          >
+            Done
+          </Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+}
+
+const styles = StyleSheet.create({
+  textInputStyle: {
+    marginBottom: responsiveHeight(1),
+    width: responsiveWidth(70),
+  },
+});

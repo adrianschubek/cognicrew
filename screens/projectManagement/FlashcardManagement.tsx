@@ -11,9 +11,11 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
+import ManageFlashcardSets from "../../components/dialogues/ManageSets";
 
 export default function FlashcardManagement() {
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
+  const [showManageFlashcardSets, setShowManageFlashcardSets] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -21,11 +23,22 @@ export default function FlashcardManagement() {
         showAddingFlashcards={showAddFlashcards}
         close={() => setShowAddFlashcards(false)}
       />
+      <ManageFlashcardSets
+      showManageSets={showManageFlashcardSets}
+      close={() => setShowManageFlashcardSets(false)}
+      type="flashcard"
+      />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="add new flash cards"
           function={() => {
             setShowAddFlashcards(true);
+          }}
+        />
+        <TextWithPlusButton
+          text={"Manage flashcard sets"}  
+          function={() => {
+            setShowManageFlashcardSets(true)
           }}
         />
       </View>
@@ -49,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 0,
     width: responsiveWidth(100),
     //backgroundColor:"red",
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: "column",
+    alignItems:"flex-end"
   },
 });
