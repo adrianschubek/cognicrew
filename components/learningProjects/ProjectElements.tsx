@@ -13,6 +13,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { NAVIGATION } from "../../types/common";
+import { getRandomColor } from "../../utils/common";
 
 const dummyProjects = [
   { name: "Psycholgy", id: 1 },
@@ -43,6 +44,7 @@ export default function ProjectElements() {
             style={styles.avatar}
             size={responsiveFontSize(10)}
             label={project.name.substring(0, 2)}
+            theme={{ colors: { primary: getRandomColor() } }}
           />
           <Text style={styles.textStyle}>
             {project.name.length > 13
@@ -59,10 +61,8 @@ const styles = StyleSheet.create({
   projectElement: {
     width: responsiveWidth(29),
     paddingBottom: responsiveFontSize(1),
-    //backgroundColor: "green",
   },
   textStyle: {
-    fontSize: responsiveFontSize(2),
     fontWeight: "bold",
     textAlign: "center",
   },

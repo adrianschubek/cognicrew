@@ -140,7 +140,7 @@ export default function CreateProject({ navigation, route }) {
           onChangeText={(text) => setDescription(text)}
           left={<TextInput.Icon icon="text-box-outline" />}
         />
-        <Divider />
+        <Divider style={{ marginTop: 8 }} />
         <TextInput
           style={{ marginTop: 10 }}
           label="Semester"
