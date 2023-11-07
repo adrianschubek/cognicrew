@@ -13,6 +13,7 @@ import {
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts, useUsername } from "../../utils/hooks";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function CreateProject({ navigation, route }) {
   /**
@@ -113,6 +114,7 @@ export default function CreateProject({ navigation, route }) {
 
   return (
     <>
+      <LoadingOverlay visible={isMutating} />
       <ScrollView
         style={{
           flex: 1,
