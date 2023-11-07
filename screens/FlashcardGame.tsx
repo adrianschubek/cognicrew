@@ -1,5 +1,5 @@
 import * as React from "react";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View, Image } from "react-native";
 import {
   TextInput,
   Text,
@@ -101,11 +101,12 @@ function getRandomFlashcard(flashcards) {
 
   return (
     <>
-      <KeyboardAvoidingView
+              <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}>
         <View style={styles.container}>
-          <CountDown
+        <View style ={styles.topRow}>
+          <CountDown style={styles.countDownStyle}
             until={totalTimeInSeconds}
             size={30}
             onFinish={() => alert('Finished')}
@@ -115,13 +116,33 @@ function getRandomFlashcard(flashcards) {
             timeLabels={{m: null, s: null}}
             showSeparator
           />
+                    <View style={[styles.topRightContainer, { alignSelf: "flex-end" }]}>
+                    <Image
+                    source={{
+                    uri:
+                        "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
+                    
+                    }}
+                    style={[styles.image, { alignSelf: "flex-end" }]}
+                    />
+                    <Text>User 1</Text>
+                    <Image
+                    source={{
+                    uri:
+                        "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
+                    
+                    }}
+                    style={[styles.image, { alignSelf: "flex-end" }]}
+                    />
+                    <Text>User 2</Text>
+                </View>
+                </View>
           <ScrollView
             contentContainerStyle={styles.scrollContent}>
-            <View style={styles.container}>
               <Button onPress={showRandomFlashcard}>Next</Button>
-              <Text style={styles.answerStyle}>{currentFlashcard ? currentFlashcard.question : ''}</Text>
-            </View>
+              <Text style={styles.questionStyle}>{currentFlashcard ? currentFlashcard.question : ''}</Text>
           </ScrollView>
+          </View>
           <View style={styles.answerViewStyle}>
             <Text style={styles.answerStyle}> Answer</Text>
               <TextInput
@@ -138,7 +159,6 @@ function getRandomFlashcard(flashcards) {
                 <Button onPress={checkAnswer}>Submit</Button>
               )}
             </View>
-        </View>
       </KeyboardAvoidingView>
     </>
   );
@@ -151,6 +171,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  countDownStyle: {
+    marginLeft: responsiveWidth(27.5), 
+    marginRight: responsiveWidth(15),
+  },
+  topRightContainer: {
+    marginTop: 3,
+    flexDirection: "column",
+    alignItems: "flex-end",
+  },
+topRow: {
+  flexDirection: "row",
+  alignItems: "center",
+},
+image: {
+  width: responsiveWidth(10),
+  height: responsiveHeight(5),
+  marginRight: 3,
+  borderRadius: 20,
+  overflow: "hidden",
+  alignItems: "flex-end",
+},
+questionStyle: {
+  fontSize: 18,
+},
   answerStyle: {
     fontSize: 18,
     marginLeft: responsiveWidth(5),
@@ -175,4 +219,5 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingVertical: 16,
   },
+
 });
