@@ -31,7 +31,6 @@ export default function JoinRoom({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <Card>
         <Text
           style={[styles.container, {textAlign: 'center'}]}
         >
@@ -72,7 +71,6 @@ export default function JoinRoom({ navigation }) {
         >
           Ask to join
         </Button>
-      </Card>
     </React.Fragment>
   );
 }
