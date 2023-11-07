@@ -24,16 +24,16 @@ export default function ProjectGroups() {
     <Card elevation={1} style={styles.projectGroup} key={projectGroup.id}>
       <Card.Title
         title={projectGroup.name}
-        right={() => (
-          <IconButton
+        /*right={() => (
+           <IconButton
             icon="plus"
-            size={responsiveFontSize(3.5)}
             onPress={() => {
               dummyProjects.push({ name: "German" });
             }}
-          />
-        )}
-      />
+          /> 
+          
+        )}*/
+            />
       <Card.Content style={styles.projectGroupContent}>
         <ProjectElement />
       </Card.Content>
@@ -44,7 +44,6 @@ export default function ProjectGroups() {
 const styles = StyleSheet.create({
   projectGroup: {
     marginTop: responsiveFontSize(1),
-    fontSize: responsiveFontSize(2.2),
   },
   projectGroupContent: {
     flexDirection: "row",

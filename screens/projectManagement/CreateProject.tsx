@@ -1,14 +1,14 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
 import React, { useMemo, useState } from "react";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, View, Pressable } from "react-native";
 import {
-  Card,
   FAB,
-  HelperText,
-  Icon,
   SegmentedButtons,
+  Switch,
   TextInput,
+  Text,
+  useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts } from "../../utils/hooks";
@@ -28,6 +28,8 @@ export default function CreateProject({ navigation, route }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [group, setGroup] = useState("");
+  const [isPublished, setIsPublished] = useState(false);
+  const [owner, setOwner] = useState("You");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
@@ -75,7 +77,7 @@ export default function CreateProject({ navigation, route }) {
     return labels;
   }, []);
 
-  const { success, error: errorAlert } = useAlerts();
+  const { success, error: errorAlert, info, okcancel } = useAlerts();
 
   const {
     isMutating,
@@ -145,6 +147,43 @@ export default function CreateProject({ navigation, route }) {
             value: semester,
           }))}
         />
+        <TextInput
+          style={{ marginTop: 10 }}
+          theme={{ roundness: 10 }}
+          mode="outlined"
+          value={"Project is " + (isPublished ? "public" : "private")}
+          editable={false}
+          left={
+            <TextInput.Icon icon={isPublished ? "lock-open-outline" : "lock"} />
+          }
+          right={
+            <TextInput.Icon
+              icon={() => (
+                <Switch
+                  value={isPublished}
+                  onValueChange={() => setIsPublished((old) => !old)}
+                />
+              )}
+            />
+          }
+        />
+        {/* https://github.com/facebook/react-native/issues/33649#issuecomment-1698604562 */}
+        <Pressable
+          onPress={() =>
+            info("You can't change the owner of a project.", "Info")
+          }
+        >
+          <TextInput
+            style={{ marginTop: 10 }}
+            label="Owner"
+            value={owner}
+            onPressIn={() =>
+              info("You can't change the owner of a project.", "Info")
+            }
+            editable={false}
+            left={<TextInput.Icon icon="account" />}
+          />
+        </Pressable>
       </ScrollView>
       <FAB
         icon={edit === null ? "plus" : "check"}
