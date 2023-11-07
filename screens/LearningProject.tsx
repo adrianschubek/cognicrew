@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Button, IconButton, Text } from "react-native-paper";
+import { Button, IconButton, Text, Tooltip } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -15,24 +15,28 @@ export default function LearningProject({ navigation }) {
     title: "Learning Projects",
     headerRight: () => (
       <>
-        <IconButton
-          icon="cog"
-          onPress={() => {
-            // @ts-ignore
-            navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-              edit: null,
-            });
-          }}
-        ></IconButton>
-        <IconButton
-          icon="account-plus"
-          onPress={() => {
-            // @ts-ignore
-            navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-              edit: null,
-            });
-          }}
-        ></IconButton>
+        <Tooltip title="Project settings">
+          <IconButton
+            icon="cog"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                edit: null,
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
+        <Tooltip title="Invite users">
+          <IconButton
+            icon="account-plus"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                edit: null,
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
       </>
     ),
   });
