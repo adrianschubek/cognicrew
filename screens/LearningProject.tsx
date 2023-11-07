@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Button, IconButton, Text, Tooltip } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -11,6 +11,36 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { NAVIGATION } from "../types/common";
 
 export default function LearningProject({ navigation }) {
+  navigation.setOptions({
+    title: "Learning Projects",
+    headerRight: () => (
+      <>
+        <Tooltip title="Project settings">
+          <IconButton
+            icon="cog"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                edit: null,
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
+        <Tooltip title="Invite users">
+          <IconButton
+            icon="account-plus"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                edit: null,
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
+      </>
+    ),
+  });
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -39,7 +69,6 @@ export default function LearningProject({ navigation }) {
         path={require("../assets/files_symbol.png")}
         name={"Cognifiles"}
       />
-    
     </View>
   );
 }

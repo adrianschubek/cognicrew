@@ -13,6 +13,7 @@ import {
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts, useUsername } from "../../utils/hooks";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function CreateProject({ navigation, route }) {
   /**
@@ -83,11 +84,7 @@ export default function CreateProject({ navigation, route }) {
 
   const { success, error: errorAlert, info, okcancel } = useAlerts();
 
-  const {
-    isMutating,
-    data,
-    trigger: upsert,
-  } = useUpsertMutation(
+  const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "name,description,group",
@@ -108,11 +105,13 @@ export default function CreateProject({ navigation, route }) {
       description,
       group,
       is_published: isPublished,
+      tags,
     });
   };
 
   return (
     <>
+      <LoadingOverlay visible={isMutating} />
       <ScrollView
         style={{
           flex: 1,
@@ -140,7 +139,7 @@ export default function CreateProject({ navigation, route }) {
           onChangeText={(text) => setDescription(text)}
           left={<TextInput.Icon icon="text-box-outline" />}
         />
-        <Divider />
+        <Divider style={{ marginTop: 8 }} />
         <TextInput
           style={{ marginTop: 10 }}
           label="Semester"
@@ -162,7 +161,8 @@ export default function CreateProject({ navigation, route }) {
           }))}
         />
         <HelperText type="info">
-          Choose the semester this project is for. Use "All" if it is not bound to a specific semester.
+          Choose the semester this project is for. Use "All" if it is not bound
+          to a specific semester. You can change the years.
         </HelperText>
         <Divider />
         <TextInput
@@ -224,6 +224,14 @@ export default function CreateProject({ navigation, route }) {
             />
           }
         />
+        <HelperText type="info">
+          Only the owner can edit the project settings.
+        </HelperText>
+        <Divider />
+        <HelperText type="info" style={{ marginBottom: 5 }}>
+          You may invite other users to join your project on the learning
+          project page.
+        </HelperText>
       </ScrollView>
       <FAB
         icon={edit === null ? "plus" : "check"}
