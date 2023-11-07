@@ -15,17 +15,9 @@ import {
 import { NAVIGATION } from "../../types/common";
 import { getRandomColor } from "../../utils/common";
 
-const dummyProjects = [
-  { name: "Psycholgy", id: 1 },
-  { name: "Biology", id: 2 },
-  { name: "Sex Education", id: 3 },
-  { name: "Kynology", id: 4 },
-  { name: "Spanish", id: 5 },
-];
-
-export default function ProjectElements() {
+export default function ProjectElements({ projects }) {
   const navigation = useNavigation();
-  return dummyProjects.map((project) => (
+  return projects.map((project) => (
     <View style={styles.projectElement} key={project.id}>
       <TouchableOpacity
         onPress={() => {

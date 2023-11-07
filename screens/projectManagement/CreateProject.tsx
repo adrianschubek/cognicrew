@@ -84,10 +84,7 @@ export default function CreateProject({ navigation, route }) {
 
   const { success, error: errorAlert, info, okcancel } = useAlerts();
 
-  const {
-    isMutating,
-    trigger: upsert,
-  } = useUpsertMutation(
+  const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "name,description,group",
