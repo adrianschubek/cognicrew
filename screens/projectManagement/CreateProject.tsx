@@ -226,7 +226,7 @@ export default function CreateProject({ navigation, route }) {
           }
         />
         <HelperText type="info">
-          Only the owner can edit this project.
+          Only the owner can edit the project settings.
         </HelperText>
         <Divider />
         <HelperText type="info" style={{ marginBottom: 5 }}>
