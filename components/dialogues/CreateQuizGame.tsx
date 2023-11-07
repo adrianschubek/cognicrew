@@ -82,11 +82,6 @@ export default function CreateQuizGame({ showCreateQuizGame, close }) {
       setChecked(null);
     } else {
       setQuizComplete(true);
-      Alert.alert("Quiz Completed", ``, [
-        { text: "Review", onPress: () => { } },
-        { text: "Reset quiz", onPress: () => { resetQuiz() } }
-      ]);
-      close();
     }
   };
 
