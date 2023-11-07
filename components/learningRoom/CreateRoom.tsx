@@ -17,8 +17,6 @@ import { NAVIGATION } from "../../types/common";
 export default function CreateRoom({ navigation }) {
   return (
     <React.Fragment>
-      <Card>
-        
       	 <Text
           style={[styles.container, {textAlign: 'center'}]}
           >
@@ -37,7 +35,6 @@ export default function CreateRoom({ navigation }) {
       >
         Create Room
         </Button>
-      </Card>
     </React.Fragment>
   );
 }
