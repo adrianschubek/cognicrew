@@ -40,7 +40,7 @@ export default function ProjectGroups() {
     ): -1 | 0 | 1 => {
       const [season1, year1] = seasonA.group.split(" ");
       const [season2, year2] = seasonB.group.split(" ");
-      
+
       const compareYears = (year1: string, year2: string): -1 | 0 | 1 => {
         const [year1Start, year1End] = year1.split("/");
         const [year2Start, year2End] = year2.split("/");
@@ -58,8 +58,10 @@ export default function ProjectGroups() {
 
       // Same year
       if (season1 === season2) return compareYears(year1, year2);
-      if (season1 === "Winter" && season2 === "Summer") return compareYears(year2, year1);
-      if (season1 === "Summer" && season2 === "Winter") return compareYears(year1, year2);
+      if (season1 === "Winter" && season2 === "Summer")
+        return compareYears(year2, year1);
+      if (season1 === "Summer" && season2 === "Winter")
+        return compareYears(year1, year2);
     },
     [],
   );
@@ -92,7 +94,8 @@ export default function ProjectGroups() {
           key={semester}
         >
           <Card.Title title={semester} />
-          <Card.Title title="Hide"></Card.Title>
+          {/* TODO: filter projects. hide */}
+          {/* <Card.Title title="Hide"></Card.Title>  */}
           <Card.Content style={styles.projectGroupContent}>
             {projectGroups[semester].map((project) => (
               <View style={styles.projectElement} key={project.id}>
