@@ -53,8 +53,10 @@ function MainTab() {
 
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
-      <Stack.Screen name={NAVIGATION.FLASHCARD_GAME} component={FlashcardGame} />
-      
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_GAME}
+        component={FlashcardGame}
+      />
     </Stack.Navigator>
   );
 }
@@ -82,20 +84,6 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
-        options={{
-          title: "Projects",
-          headerRight: () => (
-            <IconButton
-              icon="plus"
-              onPress={() => {
-                // @ts-ignore
-                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                  edit: null,
-                });
-              }}
-            ></IconButton>
-          ),
-        }}
       />
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECT}
