@@ -9,6 +9,8 @@ import {
 import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 
+import { Canvas } from "../components/learningRoom/Canvas";
+
 export default function Whiteboard({ navigation }) {
     const [showDrawing, setDrawing] = useState(false);
     const theme = useTheme();
@@ -54,6 +56,9 @@ export default function Whiteboard({ navigation }) {
                     />
                     <Text>User 2</Text>
                 </View>
+            </View>
+            <View>
+               
             </View>
             <View style={styles.bottomLeft}>
                 <IconButton
