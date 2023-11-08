@@ -32,48 +32,37 @@ export default function ProjectGroups() {
     },
   );
 
-  // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023"
-  const sortBySemester = useCallback(
-    (
-      seasonA: (typeof data)[number],
-      seasonB: (typeof data)[number],
-    ): -1 | 0 | 1 => {
-      const [season1, year1] = seasonA.group.split(" ");
-      const [season2, year2] = seasonB.group.split(" ");
-
-      const compareYears = (year1: string, year2: string): -1 | 0 | 1 => {
-        const [year1Start, year1End] = year1.split("/");
-        const [year2Start, year2End] = year2.split("/");
-
-        if (year1Start === year2Start) {
-          if (year1End === year2End) return 0;
-          return year1End > year2End ? -1 : 1;
-        }
-        return year1Start > year2Start ? -1 : 1;
-      };
-
-      // make sure "All" stays at the top
-      if (season1 === "All") return -1;
-      if (season2 === "All") return 1;
-
-      // Same season, compare years
-      if (season1 === season2) return compareYears(year1, year2);
-      if (season1 === "Winter" && season2 === "Summer")
-        return compareYears(year1, year2); 
-      if (season1 === "Summer" && season2 === "Winter")
-        return compareYears(year2, year1);
-    },
-    [],
-  );
-
+  // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
   useEffect(() => {
     if (!data) return;
 
-    const groups = data.sort(sortBySemester).reduce((acc, project) => {
-      if (!acc[project.group]) acc[project.group] = [];
-      acc[project.group].push(project);
-      return acc;
-    }, {});
+    const groups = data
+      .sort((a: (typeof data)[number], b: (typeof data)[number]) => {
+        // Sort by year
+        if (a.group === "All") return -1;
+        const first = parseInt(a.group.split(" ")[1]?.split("/")[0]);
+        const second = parseInt(b.group.split(" ")[1]?.split("/")[0]);
+        return first > second ? -1 : 1;
+      })
+      .sort((a: (typeof data)[number], b: (typeof data)[number]) => {
+        // Sort by semester (Winter > Summer)
+
+        const firstYear = parseInt(a.group.split(" ")[1]?.split("/")[0]);
+        const secondYear = parseInt(b.group.split(" ")[1]?.split("/")[0]);
+        // Only sort if same year.
+        if (firstYear !== secondYear) return 0;
+
+        // All is always first
+        if (a.group === "All") return -1;
+        const first = a.group.split(" ")[0];
+        const second = b.group.split(" ")[0];
+        return first === "Winter" && second === "Summer" ? -1 : 1;
+      })
+      .reduce((acc, project) => {
+        if (!acc[project.group]) acc[project.group] = [];
+        acc[project.group].push(project);
+        return acc;
+      }, {});
 
     setProjectGroups(groups);
   }, [data]);
