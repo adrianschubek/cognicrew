@@ -39,9 +39,9 @@ export default function ProjectElements({ projects }) {
             theme={{ colors: { primary: getRandomColor() } }}
           />
           <Text style={styles.textStyle}>
-            {project.name.length > 13
-              ? project.name.substring(0, 13) + "..."
-              : project.name.substring(0, 13)}
+            {project.name.length > 25
+              ? project.name.substring(0, 25) + "..."
+              : project.name.substring(0, 25)}
           </Text>
         </>
       </TouchableOpacity>

@@ -87,7 +87,7 @@ export default function CreateProject({ navigation, route }) {
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
-    "name,description,group",
+    "name,description,group,is_published,tags",
     {
       onSuccess: () => {
         success(`Project ${edit === null ? "created" : "saved"}.`, "Success");
