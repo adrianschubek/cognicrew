@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -32,10 +32,37 @@ export default function ProjectGroups() {
     },
   );
 
+  const sortBySemester = useCallback((season1, season2) => {
+    const season1Parts = season1.split(" ");
+    const season2Parts = season2.split(" ");
+
+    // Extract years and seasons from the strings
+    const year1 = parseInt(season1Parts[1]);
+    const season1Name = season1Parts[0];
+    const year2 = parseInt(season2Parts[1]);
+    const season2Name = season2Parts[0];
+
+    // Compare years
+    if (year1 < year2) {
+      return -1;
+    } else if (year1 > year2) {
+      return 1;
+    } else {
+      // If years are the same, compare seasons
+      if (season1Name < season2Name) {
+        return -1;
+      } else if (season1Name > season2Name) {
+        return 1;
+      } else {
+        return 0; // Seasons are the same
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (!data) return;
 
-    const groups = data.reduce((acc, project) => {
+    const groups = data.sort(sortBySemester).reduce((acc, project) => {
       if (!acc[project.group]) acc[project.group] = [];
       acc[project.group].push(project);
       return acc;
@@ -67,7 +94,7 @@ export default function ProjectGroups() {
                   onPress={() => {
                     // @ts-expect-error idk why
                     navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
-                      project
+                      project,
                     });
                   }}
                   onLongPress={() => {
