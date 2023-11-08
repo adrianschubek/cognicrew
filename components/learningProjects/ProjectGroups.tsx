@@ -32,32 +32,35 @@ export default function ProjectGroups() {
     },
   );
 
-  const sortBySemester = useCallback((season1, season2) => {
-    const season1Parts = season1.split(" ");
-    const season2Parts = season2.split(" ");
+  const sortBySemester = useCallback(
+    (season1: (typeof data)[number], season2: (typeof data)[number]) => {
+      const season1Parts = season1.group.split(" ");
+      const season2Parts = season2.group.split(" ");
 
-    // Extract years and seasons from the strings
-    const year1 = parseInt(season1Parts[1]);
-    const season1Name = season1Parts[0];
-    const year2 = parseInt(season2Parts[1]);
-    const season2Name = season2Parts[0];
+      // Extract years and seasons from the strings
+      const year1 = parseInt(season1Parts[1]);
+      const season1Name = season1Parts[0];
+      const year2 = parseInt(season2Parts[1]);
+      const season2Name = season2Parts[0];
 
-    // Compare years
-    if (year1 < year2) {
-      return -1;
-    } else if (year1 > year2) {
-      return 1;
-    } else {
-      // If years are the same, compare seasons
-      if (season1Name < season2Name) {
+      // Compare years
+      if (year1 < year2) {
         return -1;
-      } else if (season1Name > season2Name) {
+      } else if (year1 > year2) {
         return 1;
       } else {
-        return 0; // Seasons are the same
+        // If years are the same, compare seasons
+        if (season1Name < season2Name) {
+          return 1;
+        } else if (season1Name > season2Name) {
+          return -1;
+        } else {
+          return 0; // Seasons are the same
+        }
       }
-    }
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (!data) return;
