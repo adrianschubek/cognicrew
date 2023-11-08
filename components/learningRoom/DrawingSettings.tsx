@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Animated, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
+import Animated from 'react-native-reanimated';
 import { useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { COLORS, STROKE_SIZE, WIDTH } from "./Constants";
 
