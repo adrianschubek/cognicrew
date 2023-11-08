@@ -16,7 +16,7 @@ export default function HomeScreen({ navigation }) {
       <StatusBar style="auto" />
       <View style={styles.header}>
         <Text>Hello, {isLoading ? "...." : data}</Text>
-        <Avatar.Text size={48} label={"Ti"} />
+        <Avatar.Text size={48} label={data.substring(0,2)} />
       </View>
       <View style={styles.body}>
         <JoinRoom navigation={navigation} />
