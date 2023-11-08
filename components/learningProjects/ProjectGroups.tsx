@@ -66,7 +66,9 @@ export default function ProjectGroups() {
                 <TouchableOpacity
                   onPress={() => {
                     // @ts-expect-error idk why
-                    navigation.navigate(NAVIGATION.LEARNING_PROJECT);
+                    navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
+                      project
+                    });
                   }}
                   onLongPress={() => {
                     // @ts-expect-error
@@ -83,9 +85,9 @@ export default function ProjectGroups() {
                       theme={{ colors: { primary: getRandomColor() } }}
                     />
                     <Text style={styles.textStyle}>
-                      {project.name.length > 25
-                        ? project.name.substring(0, 25) + "..."
-                        : project.name.substring(0, 25)}
+                      {project.name.length > 32
+                        ? project.name.substring(0, 32) + "..."
+                        : project.name.substring(0, 32)}
                     </Text>
                   </>
                 </TouchableOpacity>
@@ -109,8 +111,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   textStyle: {
-    fontWeight: "bold",
     textAlign: "center",
+    marginTop: 5,
   },
   avatar: {
     alignSelf: "center",

@@ -32,20 +32,20 @@ export default function CreateProject({
    * edit == number => edit project
    * besser: edit = project objekt
    */
-  const { edit } = route.params;
+  const { edit: project } = route.params;
 
-  const username = useUsername();
+  const username = useUsername(project?.owner_id ?? null);
 
   navigation.setOptions({
-    title: edit === null ? "Create Project" : "Edit Project",
+    title: project === null ? "Create Project" : "Edit Project",
   });
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [group, setGroup] = useState("");
-  const [isPublished, setIsPublished] = useState(false);
-  const [owner, setOwner] = useState(username.data ?? "???");
-  const [tags, setTags] = useState("");
+  const [title, setTitle] = useState(project.name ?? "");
+  const [description, setDescription] = useState(project.description ?? "");
+  const [group, setGroup] = useState(project.group ?? "");
+  const [isPublished, setIsPublished] = useState(project.is_published ?? false);
+  const [owner, setOwner] = useState(username.data);
+  const [tags, setTags] = useState(project.tags ?? "");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
@@ -101,7 +101,7 @@ export default function CreateProject({
     "name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        success(`Project ${edit === null ? "created" : "saved"}.`, "Success");
+        success(`Project ${project === null ? "created" : "saved"}.`, "Success");
       },
       onError: (error) => {
         errorAlert(error.message, "Error");
@@ -245,14 +245,14 @@ export default function CreateProject({
         </HelperText>
       </ScrollView>
       <FAB
-        icon={edit === null ? "plus" : "check"}
+        icon={project === null ? "plus" : "check"}
         style={{
           position: "absolute",
           margin: 16,
           right: 0,
           bottom: 0,
         }}
-        label={edit === null ? "Create" : "Save"}
+        label={project === null ? "Create" : "Save"}
         onPress={save}
         disabled={isMutating}
       />
