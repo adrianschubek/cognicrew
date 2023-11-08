@@ -1,6 +1,6 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   Divider,
@@ -36,14 +36,18 @@ export default function CreateProject({
 
   const username = useUsername(project?.owner_id ?? null);
 
-  navigation.setOptions({
-    title: project === null ? "Create Project" : "Edit Project",
-  });
+  useEffect(() => {
+    navigation.setOptions({
+      title: project === null ? "Create Project" : "Edit Project",
+    });
+  }, []);
 
   const [title, setTitle] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [group, setGroup] = useState(project?.group ?? "");
-  const [isPublished, setIsPublished] = useState(project?.is_published ?? false);
+  const [isPublished, setIsPublished] = useState(
+    project?.is_published ?? false,
+  );
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
@@ -101,7 +105,10 @@ export default function CreateProject({
     "name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        success(`Project ${project === null ? "created" : "saved"}.`, "Success");
+        success(
+          `Project ${project === null ? "created" : "saved"}.`,
+          "Success",
+        );
       },
       onError: (error) => {
         errorAlert(error.message, "Error");
