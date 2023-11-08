@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import EditFlashcard from "../learningProject/EditFlashcard";
 import { useState } from "react";
-import SearchAndSelect from "../common/SearchAndSelect";
+import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 
 export default function AddExercises({ showAddExercises, close }) {
@@ -45,7 +45,8 @@ export default function AddExercises({ showAddExercises, close }) {
           Keyboard.dismiss();
         }}
       >
-        <SearchAndSelect
+        <SearchWithList
+          mode="select"
           type="exercise"
           searchPlaceholder="Search for exercise set"
         />
@@ -59,10 +60,26 @@ export default function AddExercises({ showAddExercises, close }) {
             //update backend
           }}
         />
-        <TextInputWithCheckbox number="1" listItemAnswer={answer1} width={responsiveWidth(70)}/>
-        <TextInputWithCheckbox number="2" listItemAnswer={answer2} width={responsiveWidth(70)} />
-        <TextInputWithCheckbox number="3" listItemAnswer={answer3} width={responsiveWidth(70)} />
-        <TextInputWithCheckbox number="4" listItemAnswer={answer4} width={responsiveWidth(70)} />
+        <TextInputWithCheckbox
+          number="1"
+          listItemAnswer={answer1}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="2"
+          listItemAnswer={answer2}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="3"
+          listItemAnswer={answer3}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="4"
+          listItemAnswer={answer4}
+          width={responsiveWidth(70)}
+        />
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}

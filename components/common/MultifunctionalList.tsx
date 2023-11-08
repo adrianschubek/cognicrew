@@ -54,8 +54,10 @@ export default function MultifunctionalList(props: {
               //left={<TextInput.Icon icon="plus" />}
               right={
                 <TextInput.Icon
+                  forceTextInputFocus={false}
                   icon="check"
                   onPress={() => {
+                    Keyboard.dismiss();
                     // gleiche Funktion wie bei onSubmitEditing
                   }}
                 />
@@ -74,7 +76,7 @@ export default function MultifunctionalList(props: {
                 style={{ backgroundColor: "" }}
                 right={
                   <TextInput.Icon
-                  forceTextInputFocus={false}
+                    forceTextInputFocus={false}
                     icon="close"
                     onPress={() => {
                       // delete set
@@ -85,6 +87,7 @@ export default function MultifunctionalList(props: {
                   () => {} /*just update set directly on change? "Will dataSource and with that text within TextInput also be updated? It should be, right?*/
                 }
                 onSubmitEditing={() => {
+                  Keyboard.dismiss();
                   /*update set  */
                 }}
               />

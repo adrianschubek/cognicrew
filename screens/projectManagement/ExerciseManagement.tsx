@@ -11,9 +11,11 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import AddExercises from "../../components/dialogues/AddExercises";
 import { useState } from "react";
+import ManageSets from "../../components/dialogues/ManageSets";
 
 export default function ExerciseManagement() {
   const [showAddExercises, setShowAddExercises] = useState(false);
+  const [showManageSets, setShowManageSets] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -21,11 +23,22 @@ export default function ExerciseManagement() {
         showAddExercises={showAddExercises}
         close={() => setShowAddExercises(false)}
       />
+      <ManageSets
+        showManageSets={showManageSets}
+        close={() => setShowManageSets(false)}
+        type="exercise"
+      />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="add new Exercises"
           function={() => {
             setShowAddExercises(true);
+          }}
+        />
+        <TextWithPlusButton
+          text={"Manage exercise sets"}
+          function={() => {
+            setShowManageSets(true);
           }}
         />
       </View>
@@ -49,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 0,
     width: responsiveWidth(100),
     //backgroundColor:"red",
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: "column",
+    alignItems: "flex-end",
   },
 });

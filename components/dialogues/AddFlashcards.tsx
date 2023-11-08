@@ -15,7 +15,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
-import SearchAndSelect from "../common/SearchAndSelect";
+import SearchWithList from "../common/SearchWithList";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
@@ -37,7 +37,8 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           Keyboard.dismiss();
         }}
       >
-        <SearchAndSelect
+        <SearchWithList
+          mode="select"
           type="flashcard"
           searchPlaceholder="Search for flashcard set"
         />

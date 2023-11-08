@@ -1,15 +1,16 @@
 import { Button, Divider, List, Searchbar, useTheme } from "react-native-paper";
 import { Keyboard } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
-import { ManagementType } from "../../types/common";
+import { ManagementType, Mode } from "../../types/common";
 import React, { useState } from "react";
 import MultifunctionalList from "./MultifunctionalList";
 
-export default function SearchAndSelect(props: {
+export default function SearchWithList(props: {
   type: ManagementType;
   searchPlaceholder?: string;
   //creationOption decides wether a new entry can be created within the set selection
   creationOption?: boolean;
+  mode?: Mode;
   [name: string]: any;
 }) {
   const Items = [
@@ -54,7 +55,7 @@ export default function SearchAndSelect(props: {
       />
       {/*isSearching && (*/}
       <MultifunctionalList
-        mode="select"
+        mode={props.mode}
         dataSource={filtered}
         creationOption={props.creationOption}
         type={props.type}
