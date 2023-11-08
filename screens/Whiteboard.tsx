@@ -58,7 +58,7 @@ export default function Whiteboard({ navigation }) {
                 </View>
             </View>
             <View>
-               
+               <Canvas />
             </View>
             <View style={styles.bottomLeft}>
                 <IconButton
