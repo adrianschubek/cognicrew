@@ -50,6 +50,10 @@ export function useAchievements() {
   );
 }
 
+//Returns all Sets
+export function useSets() {
+  return handleErrors(useQuery(supabase.from("sets").select("*")));
+}
 /**
  * Display alerts.
  * @returns An object with functions to display alerts.

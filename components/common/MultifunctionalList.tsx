@@ -19,7 +19,9 @@ import {
 } from "react-native-responsive-dimensions";
 import { SearchBar } from "react-native-screens";
 import { ManagementType, Mode } from "../../types/common";
-
+import { supabase } from "../../supabase";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useAlerts } from "../../utils/hooks";
 
 export default function MultifunctionalList(props: {
   dataSource;
@@ -30,11 +32,21 @@ export default function MultifunctionalList(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const { error: errorAlert } = useAlerts();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
-  const Item = 
-    { title: "Set A", id: 1, type: props.type}
-  ;
+  const Item = { title: "Set A", id: 1, type: props.type };
+  const { data, isLoading, error } = useQuery(
+    supabase.from("sets").select("*"),
+    {
+      onSuccess(data, key, config) {
+        // errorAlert(JSON.stringify(data));
+      },
+      onError(err, key, config) {
+        errorAlert(err.message);
+      },
+    },
+  );
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -75,6 +87,7 @@ export default function MultifunctionalList(props: {
           {props.mode == "edit" ? (
             props.dataSource.map((item) => (
               <TextInput
+                key={item.id}
                 value={item.title}
                 mode="flat"
                 style={{ backgroundColor: "" }}
@@ -104,7 +117,7 @@ export default function MultifunctionalList(props: {
               value={value}
             >
               {props.dataSource.map((item) => (
-                <RadioButton.Item label={item.title} value={item.id} />
+                <RadioButton.Item key={item.id} label={item.title} value={item.id} />
               ))}
             </RadioButton.Group>
           )}
