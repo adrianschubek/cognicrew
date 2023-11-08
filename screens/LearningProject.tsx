@@ -10,9 +10,10 @@ import {
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
 
-export default function LearningProject({ navigation }) {
+export default function LearningProject({ navigation, route }) {
+  const { project } = route.params;
   navigation.setOptions({
-    title: "Learning Projects",
+    title: project.name,
     headerRight: () => (
       <>
         <Tooltip title="Project settings">
@@ -21,7 +22,7 @@ export default function LearningProject({ navigation }) {
             onPress={() => {
               // @ts-ignore
               navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                edit: -1, // TODO
+                edit: project,
               });
             }}
           ></IconButton>
