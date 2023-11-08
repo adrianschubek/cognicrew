@@ -6,9 +6,11 @@ import { Tooltip, IconButton } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import { useAlerts } from "../utils/hooks";
 import { useEffect } from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 export default function LearningProjects({ navigation }) {
   const { info } = useAlerts();
+  const Tab = createMaterialTopTabNavigator();
 
   useEffect(() => {
     navigation.setOptions({
@@ -38,12 +40,16 @@ export default function LearningProjects({ navigation }) {
     });
   }, []);
   
+  // <View style={styles.container}>
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <ProjectGroups />
-    </View>
-  );
+      <Tab.Navigator>
+        <Tab.Screen name="Discover" component={ProjectGroups} />
+        <Tab.Screen name="My Projects" component={ProjectGroups} />
+      </Tab.Navigator>
+      // <StatusBar style="auto" />
+      // <ProjectGroups />
+      );
+      // </View>
 }
 
 const styles = StyleSheet.create({

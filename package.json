@@ -15,6 +15,7 @@
     "@react-native-async-storage/async-storage": "1.18.2",
     "@react-native-community/progress-view": "^1.4.2",
     "@react-navigation/material-bottom-tabs": "^6.2.19",
+    "@react-navigation/material-top-tabs": "^6.6.5",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
     "@supabase-cache-helpers/postgrest-swr": "^1.1.13",
