@@ -11,11 +11,11 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
-import ManageFlashcardSets from "../../components/dialogues/ManageSets";
+import ManageSets from "../../components/dialogues/ManageSets";
 
 export default function FlashcardManagement() {
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
-  const [showManageFlashcardSets, setShowManageFlashcardSets] = useState(false);
+  const [showManageSets, setShowManageSets] = useState(false);
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -23,9 +23,9 @@ export default function FlashcardManagement() {
         showAddingFlashcards={showAddFlashcards}
         close={() => setShowAddFlashcards(false)}
       />
-      <ManageFlashcardSets
-      showManageSets={showManageFlashcardSets}
-      close={() => setShowManageFlashcardSets(false)}
+      <ManageSets
+      showManageSets={showManageSets}
+      close={() => setShowManageSets(false)}
       type="flashcard"
       />
       <View style={styles.upperContainer}>
@@ -38,7 +38,7 @@ export default function FlashcardManagement() {
         <TextWithPlusButton
           text={"Manage flashcard sets"}  
           function={() => {
-            setShowManageFlashcardSets(true)
+            setShowManageSets(true)
           }}
         />
       </View>

@@ -1,4 +1,5 @@
 export type ManagementType = "exercise" | "flashcard" | "file" | "link";
+export type Mode = "edit" | "select";
 
 export const enum NAVIGATION {
   HOME = "Home",

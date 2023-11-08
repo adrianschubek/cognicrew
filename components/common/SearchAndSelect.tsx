@@ -3,12 +3,12 @@ import { Keyboard } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType } from "../../types/common";
 import React, { useState } from "react";
-import RadioButtonList from "./RadioButtonList";
+import MultifunctionalList from "./MultifunctionalList";
 
 export default function SearchAndSelect(props: {
   type: ManagementType;
   searchPlaceholder?: string;
-  //creationOption decides wether a new entry can be created within the set selection 
+  //creationOption decides wether a new entry can be created within the set selection
   creationOption?: boolean;
   [name: string]: any;
 }) {
@@ -53,9 +53,10 @@ export default function SearchAndSelect(props: {
         onChangeText={handleSearch}
       />
       {/*isSearching && (*/}
-      <RadioButtonList
+      <MultifunctionalList
+        mode="select"
         dataSource={filtered}
-        creationOption = {props.creationOption}
+        creationOption={props.creationOption}
         type={props.type}
         close={() => {
           /*setIsSearching(false);*/ Keyboard.dismiss();

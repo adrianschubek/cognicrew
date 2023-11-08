@@ -15,7 +15,7 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
-import SearchAndSelect from "../common/SearchAndSelect";
+import SearchAndManage from "../common/SearchAndManage";
 
 export default function ManageSets({ showManageSets, close, type }) {
   const theme = useTheme();
@@ -29,7 +29,7 @@ export default function ManageSets({ showManageSets, close, type }) {
           Keyboard.dismiss();
         }}
       >
-        <SearchAndSelect
+        <SearchAndManage
           type="flashcard"
           searchPlaceholder={"Search for " + type + " set"}
           creationOption={true}
