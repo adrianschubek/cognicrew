@@ -56,12 +56,12 @@ export default function ProjectGroups() {
       if (season1 === "All") return -1;
       if (season2 === "All") return 1;
 
-      // Same year
+      // Same season, compare years
       if (season1 === season2) return compareYears(year1, year2);
       if (season1 === "Winter" && season2 === "Summer")
-        return compareYears(year2, year1);
+        return compareYears(year1, year2); 
       if (season1 === "Summer" && season2 === "Winter")
-        return compareYears(year1, year2);
+        return compareYears(year2, year1);
     },
     [],
   );
