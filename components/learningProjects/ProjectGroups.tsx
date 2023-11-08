@@ -32,17 +32,34 @@ export default function ProjectGroups() {
     },
   );
 
+  // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023"
   const sortBySemester = useCallback(
-    (season1: (typeof data)[number], season2: (typeof data)[number]) => {
-      const [seasion1, year1] = season1.group.split(" ");
-      const [seasion2, year2] = season2.group.split(" ");
+    (
+      seasonA: (typeof data)[number],
+      seasonB: (typeof data)[number],
+    ): -1 | 0 | 1 => {
+      const [season1, year1] = seasonA.group.split(" ");
+      const [season2, year2] = seasonB.group.split(" ");
+      
+      const compareYears = (year1: string, year2: string): -1 | 0 | 1 => {
+        const [year1Start, year1End] = year1.split("/");
+        const [year2Start, year2End] = year2.split("/");
+
+        if (year1Start === year2Start) {
+          if (year1End === year2End) return 0;
+          return year1End > year2End ? -1 : 1;
+        }
+        return year1Start > year2Start ? -1 : 1;
+      };
 
       // make sure "All" stays at the top
-      if (seasion1 === "All") return -1;
-      if (seasion2 === "All") return 1;
+      if (season1 === "All") return -1;
+      if (season2 === "All") return 1;
 
-
-      if (seasion1 === seasion2) return year1 - year2;
+      // Same year
+      if (season1 === season2) return compareYears(year1, year2);
+      if (season1 === "Winter" && season2 === "Summer") return compareYears(year2, year1);
+      if (season1 === "Summer" && season2 === "Winter") return compareYears(year1, year2);
     },
     [],
   );
