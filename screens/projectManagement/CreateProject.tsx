@@ -14,8 +14,19 @@ import {
 import { supabase } from "../../supabase";
 import { useAlerts, useUsername } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
+import { Database } from "../../types/supabase";
 
-export default function CreateProject({ navigation, route }) {
+export default function CreateProject({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: {
+    params: {
+      edit: Database["public"]["Tables"]["learning_projects"]["Row"] | null;
+    };
+  };
+}) {
   /**
    * edit == null => create new project
    * edit == number => edit project

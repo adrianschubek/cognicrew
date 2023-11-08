@@ -85,25 +85,22 @@ export interface Database {
       }
       answers_exercises: {
         Row: {
-          answer: string | null
-          correct_answer: boolean | null
+          answer: string
           created_at: string
-          exercise: number | null
-          id: number
+          exercise: number
+          is_correct: boolean
         }
         Insert: {
-          answer?: string | null
-          correct_answer?: boolean | null
+          answer: string
           created_at?: string
-          exercise?: number | null
-          id?: number
+          exercise: number
+          is_correct: boolean
         }
         Update: {
-          answer?: string | null
-          correct_answer?: boolean | null
+          answer?: string
           created_at?: string
-          exercise?: number | null
-          id?: number
+          exercise?: number
+          is_correct?: boolean
         }
         Relationships: [
           {
@@ -117,27 +114,27 @@ export interface Database {
       exercises: {
         Row: {
           created_at: string
-          group: string | null
           id: number
-          learning_project: number | null
+          learning_project: number
           priority: number | null
-          question: string | null
+          question: string
+          set_id: number
         }
         Insert: {
           created_at?: string
-          group?: string | null
           id?: number
-          learning_project?: number | null
+          learning_project: number
           priority?: number | null
-          question?: string | null
+          question?: string
+          set_id: number
         }
         Update: {
           created_at?: string
-          group?: string | null
           id?: number
-          learning_project?: number | null
+          learning_project?: number
           priority?: number | null
-          question?: string | null
+          question?: string
+          set_id?: number
         }
         Relationships: [
           {
@@ -145,36 +142,11 @@ export interface Database {
             columns: ["learning_project"]
             referencedRelation: "learning_projects"
             referencedColumns: ["id"]
-          }
-        ]
-      }
-      files: {
-        Row: {
-          created_at: string
-          data: Json | null
-          id: number
-          learning_project: number | null
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          data?: Json | null
-          id?: number
-          learning_project?: number | null
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          data?: Json | null
-          id?: number
-          learning_project?: number | null
-          name?: string | null
-        }
-        Relationships: [
+          },
           {
-            foreignKeyName: "files_learning_project_fkey"
-            columns: ["learning_project"]
-            referencedRelation: "learning_projects"
+            foreignKeyName: "exercises_set_id_fkey"
+            columns: ["set_id"]
+            referencedRelation: "sets"
             referencedColumns: ["id"]
           }
         ]
@@ -183,35 +155,41 @@ export interface Database {
         Row: {
           answer: string | null
           created_at: string
-          group: string | null
           id: number
           learning_project: number | null
           priority: number | null
           question: string | null
+          set_id: number
         }
         Insert: {
           answer?: string | null
           created_at?: string
-          group?: string | null
           id?: number
           learning_project?: number | null
           priority?: number | null
           question?: string | null
+          set_id: number
         }
         Update: {
           answer?: string | null
           created_at?: string
-          group?: string | null
           id?: number
           learning_project?: number | null
           priority?: number | null
           question?: string | null
+          set_id?: number
         }
         Relationships: [
           {
             foreignKeyName: "flashcards_learning_project_fkey"
             columns: ["learning_project"]
             referencedRelation: "learning_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flashcards_set_id_fkey"
+            columns: ["set_id"]
+            referencedRelation: "sets"
             referencedColumns: ["id"]
           }
         ]
@@ -250,47 +228,45 @@ export interface Database {
           }
         ]
       }
-      groups_learning_projects: {
-        Row: {
-          created_at: string
-          id: number
-          name: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: string | null
-        }
-        Relationships: []
-      }
       learning_projects: {
         Row: {
           created_at: string
-          description: string | null
+          description: string
+          group: string
           id: number
-          name: string | null
-          rating: number | null
+          is_published: boolean
+          name: string
+          owner_id: string | null
+          tags: string | null
         }
         Insert: {
           created_at?: string
-          description?: string | null
+          description: string
+          group: string
           id?: number
-          name?: string | null
-          rating?: number | null
+          is_published: boolean
+          name: string
+          owner_id?: string | null
+          tags?: string | null
         }
         Update: {
           created_at?: string
-          description?: string | null
+          description?: string
+          group?: string
           id?: number
-          name?: string | null
-          rating?: number | null
+          is_published?: boolean
+          name?: string
+          owner_id?: string | null
+          tags?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "learning_projects_owner_id_fkey"
+            columns: ["owner_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       links: {
         Row: {
@@ -323,18 +299,18 @@ export interface Database {
       profiles: {
         Row: {
           id: string
-          room: number | null
-          username: string | null
+          room_id: string | null
+          username: string
         }
         Insert: {
           id: string
-          room?: number | null
-          username?: string | null
+          room_id?: string | null
+          username: string
         }
         Update: {
           id?: string
-          room?: number | null
-          username?: string | null
+          room_id?: string | null
+          username?: string
         }
         Relationships: [
           {
@@ -344,9 +320,43 @@ export interface Database {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "profiles_room_fkey"
-            columns: ["room"]
+            foreignKeyName: "profiles_room_id_fkey"
+            columns: ["room_id"]
             referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      project_ratings: {
+        Row: {
+          created_at: string
+          project_id: number
+          rating: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          project_id?: number
+          rating: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          project_id?: number
+          rating?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_ratings_project_id_fkey"
+            columns: ["project_id"]
+            referencedRelation: "learning_projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_ratings_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
@@ -354,36 +364,73 @@ export interface Database {
       rooms: {
         Row: {
           created_at: string
-          id: number
+          id: string
           name: string | null
         }
         Insert: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string | null
         }
         Update: {
           created_at?: string
-          id?: number
+          id?: string
           name?: string | null
         }
         Relationships: []
+      }
+      sets: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          project_id: number
+          type: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name: string
+          project_id: number
+          type: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          project_id?: number
+          type?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sets_id_fkey"
+            columns: ["id"]
+            referencedRelation: "flashcards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sets_project_id_fkey"
+            columns: ["project_id"]
+            referencedRelation: "learning_projects"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       user_achievements: {
         Row: {
           achievement_id: number
           created_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           achievement_id: number
           created_at?: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           achievement_id?: number
           created_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
@@ -400,41 +447,66 @@ export interface Database {
           }
         ]
       }
-      user_has_learning_projects: {
+      user_content: {
         Row: {
           created_at: string
-          group: string | null
+          data: Json | null
           id: number
-          is_owner: boolean | null
-          learning_project: number | null
-          user: string | null
+          learning_project_id: number | null
+          name: string | null
+          type: string | null
         }
         Insert: {
           created_at?: string
-          group?: string | null
+          data?: Json | null
           id?: number
-          is_owner?: boolean | null
-          learning_project?: number | null
-          user?: string | null
+          learning_project_id?: number | null
+          name?: string | null
+          type?: string | null
         }
         Update: {
           created_at?: string
-          group?: string | null
+          data?: Json | null
           id?: number
-          is_owner?: boolean | null
-          learning_project?: number | null
-          user?: string | null
+          learning_project_id?: number | null
+          name?: string | null
+          type?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_has_learning_projects_learning_project_fkey"
-            columns: ["learning_project"]
+            foreignKeyName: "user_content_learning_project_id_fkey"
+            columns: ["learning_project_id"]
+            referencedRelation: "learning_projects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_learning_projects: {
+        Row: {
+          created_at: string
+          learning_project_id: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          learning_project_id: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          learning_project_id?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_learning_projects_learning_project_id_fkey"
+            columns: ["learning_project_id"]
             referencedRelation: "learning_projects"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_has_learning_projects_user_fkey"
-            columns: ["user"]
+            foreignKeyName: "user_learning_projects_user_id_fkey"
+            columns: ["user_id"]
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -445,7 +517,32 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      getUsername: {
+        Args: {
+          user_id: string
+        }
+        Returns: string
+      }
+      memberOfProject: {
+        Args: {
+          p_user_id: string
+          p_project_id: number
+        }
+        Returns: boolean
+      }
+      myJoinedProjects: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: Record<string, unknown>
+      }
+      project_member: {
+        Args: {
+          p_user_id: string
+          p_project_id: number
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
