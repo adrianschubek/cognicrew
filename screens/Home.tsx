@@ -1,11 +1,10 @@
 import * as React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Avatar, Button } from "react-native-paper";
+import { Avatar, Button, Text } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
-
 
 import { NAVIGATION } from "../types/common";
 export default function HomeScreen({ navigation }) {
@@ -16,7 +15,10 @@ export default function HomeScreen({ navigation }) {
       <StatusBar style="auto" />
       <View style={styles.header}>
         <Text>Hello, {isLoading ? "...." : data}</Text>
-        <Avatar.Text size={48} label={data.substring(0,2)} />
+        <Avatar.Text
+          size={48}
+          label={(isLoading ? "" : data).substring(0, 2)}
+        />
       </View>
       <View style={styles.body}>
         <JoinRoom navigation={navigation} />
@@ -28,7 +30,7 @@ export default function HomeScreen({ navigation }) {
           mode="contained"
           style={styles.button}
           onPress={() => {
-            navigation.navigate(NAVIGATION.MANAGE_FRIENDS)
+            navigation.navigate(NAVIGATION.MANAGE_FRIENDS);
           }}
         >
           Manage Your Friends
@@ -55,23 +57,23 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   header: {
-    width: '100%',
+    width: "100%",
     height: 100,
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+    alignItems: "flex-end",
+    justifyContent: "center",
     padding: 10,
-    position: 'relative',
+    position: "relative",
   },
   body: {
     justifyContent: "space-around",
   },
   footer: {
     height: 150,
-    alignItems: 'center',
+    alignItems: "center",
     justifyContent: "space-around",
     paddingBottom: 20,
   },
   button: {
-    width: '100%',
+    width: "100%",
   },
 });

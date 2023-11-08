@@ -21,7 +21,7 @@ export default function LearningProject({ navigation }) {
             onPress={() => {
               // @ts-ignore
               navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                edit: null,
+                edit: -1, // TODO
               });
             }}
           ></IconButton>
@@ -32,7 +32,7 @@ export default function LearningProject({ navigation }) {
             onPress={() => {
               // @ts-ignore
               navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                edit: null,
+                edit: null, // TODO
               });
             }}
           ></IconButton>
