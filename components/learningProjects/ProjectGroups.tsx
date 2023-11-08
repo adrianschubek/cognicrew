@@ -34,30 +34,15 @@ export default function ProjectGroups() {
 
   const sortBySemester = useCallback(
     (season1: (typeof data)[number], season2: (typeof data)[number]) => {
-      const season1Parts = season1.group.split(" ");
-      const season2Parts = season2.group.split(" ");
+      const [seasion1, year1] = season1.group.split(" ");
+      const [seasion2, year2] = season2.group.split(" ");
 
-      // Extract years and seasons from the strings
-      const year1 = parseInt(season1Parts[1]);
-      const season1Name = season1Parts[0];
-      const year2 = parseInt(season2Parts[1]);
-      const season2Name = season2Parts[0];
+      // make sure "All" stays at the top
+      if (seasion1 === "All") return -1;
+      if (seasion2 === "All") return 1;
 
-      // Compare years
-      if (year1 < year2) {
-        return -1;
-      } else if (year1 > year2) {
-        return 1;
-      } else {
-        // If years are the same, compare seasons
-        if (season1Name < season2Name) {
-          return 1;
-        } else if (season1Name > season2Name) {
-          return -1;
-        } else {
-          return 0; // Seasons are the same
-        }
-      }
+
+      if (seasion1 === seasion2) return year1 - year2;
     },
     [],
   );
@@ -90,6 +75,7 @@ export default function ProjectGroups() {
           key={semester}
         >
           <Card.Title title={semester} />
+          <Card.Title title="Hide"></Card.Title>
           <Card.Content style={styles.projectGroupContent}>
             {projectGroups[semester].map((project) => (
               <View style={styles.projectElement} key={project.id}>

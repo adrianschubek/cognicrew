@@ -40,12 +40,12 @@ export default function CreateProject({
     title: project === null ? "Create Project" : "Edit Project",
   });
 
-  const [title, setTitle] = useState(project.name ?? "");
-  const [description, setDescription] = useState(project.description ?? "");
-  const [group, setGroup] = useState(project.group ?? "");
-  const [isPublished, setIsPublished] = useState(project.is_published ?? false);
+  const [title, setTitle] = useState(project?.name ?? "");
+  const [description, setDescription] = useState(project?.description ?? "");
+  const [group, setGroup] = useState(project?.group ?? "");
+  const [isPublished, setIsPublished] = useState(project?.is_published ?? false);
   const [owner, setOwner] = useState(username.data);
-  const [tags, setTags] = useState(project.tags ?? "");
+  const [tags, setTags] = useState(project?.tags ?? "");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
