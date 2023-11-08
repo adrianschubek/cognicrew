@@ -15,7 +15,11 @@ import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
 import AddFriend from "../components/dialogues/AddFriend";
-import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -135,7 +139,7 @@ export default function ManageFriends({ navigation }) {
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends.map((friend, index) => (
               <FriendItem
-                id={index}
+                key={index}
                 icon="close-circle"
                 friend={friend}
                 onIconPress={() => confirmDelete(friend)}
@@ -151,7 +155,7 @@ export default function ManageFriends({ navigation }) {
             <Text style={styles.sectionTitle}>Pending friend requests</Text>
             {pendingFriends.map((friend, index) => (
               <FriendItem
-                id={index}
+                key={index}
                 icon="check"
                 friend={friend}
                 onIconPress={() => acceptFriend(friend)}
@@ -257,6 +261,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   friendsListContainer: {
-    maxHeight: responsiveHeight(37.5), 
+    maxHeight: responsiveHeight(37.5),
   },
 });

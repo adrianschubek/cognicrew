@@ -27,7 +27,11 @@ export default function SearchWithList(props: {
     { title: "Set K", id: 12, type: "flashcard" },
     { title: "Set L", id: 13, type: "flashcard" },
     { title: "Set M", id: 14, type: "exercise" },
-    { title: "Set N", id: 15, type: "exercise" },
+    { title: "Set N", id: 16, type: "exercise" },
+    { title: "Set O", id: 17, type: "exercise" },
+    { title: "Set P", id: 18, type: "exercise" },
+    { title: "Set Q", id: 19, type: "exercise" },
+    { title: "Set R", id: 20, type: "exercise" },
   ];
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");

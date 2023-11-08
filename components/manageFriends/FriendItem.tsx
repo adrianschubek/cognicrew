@@ -21,7 +21,6 @@ const getFriendIconUrl = (friendName) =>
   `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
 
 export default function FriendItem(props: {
-  id: number;
   icon: string,
   friend: string;
   onIconPress;
@@ -29,9 +28,7 @@ export default function FriendItem(props: {
 }) {
   const theme = useTheme();
   return (
-    <React.Fragment>
       <View
-        key={props.id}
         style={[styles.item, { backgroundColor: theme.colors.background, shadowColor: theme.colors.shadow }]}
       >
         <Image
@@ -45,7 +42,6 @@ export default function FriendItem(props: {
           onPress={props.onIconPress}
         />
       </View>
-    </React.Fragment>
   );
 }
 const styles = StyleSheet.create({

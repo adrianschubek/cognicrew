@@ -20,6 +20,7 @@ import {
 import { SearchBar } from "react-native-screens";
 import { ManagementType, Mode } from "../../types/common";
 
+
 export default function MultifunctionalList(props: {
   dataSource;
   close;
@@ -31,6 +32,9 @@ export default function MultifunctionalList(props: {
   const theme = useTheme();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
+  const Item = 
+    { title: "Set A", id: 1, type: props.type}
+  ;
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -44,7 +48,7 @@ export default function MultifunctionalList(props: {
           }}
           keyboardShouldPersistTaps="handled"
         >
-          {/*Als mögliche Option im Code lassen? Option bei der Set Auswahl ein neues Set zu erstellen */}
+          {/* Option ein neues Set zu erstellen */}
           {props.creationOption === true && (
             <TextInput
               label="create new Set"
