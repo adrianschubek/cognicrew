@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 type PreferencesStore = {
   darkmode: boolean;
@@ -27,8 +27,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
     }),
     {
       name: "preferences",
-      // @ts-ignore
-      getStorage: () => AsyncStorage,
+      storage: createJSONStorage(() => AsyncStorage),
     },
   ),
 );
