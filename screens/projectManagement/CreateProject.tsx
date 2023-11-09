@@ -36,9 +36,23 @@ export default function CreateProject({
 
   const username = useUsername(project?.owner_id ?? null);
 
+  const { success, error: errorAlert, info, okcancel } = useAlerts();
+
   useEffect(() => {
     navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
+    });
+
+    navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+  
+      // Prompt the user before leaving the screen
+      okcancel(
+        "You have unsaved changes. Are you sure to discard them and leave the screen?",
+        "Discard changes?",
+        () => navigation.dispatch(e.data.action),
+      );
     });
   }, []);
 
@@ -97,7 +111,6 @@ export default function CreateProject({
     return labels;
   }, []);
 
-  const { success, error: errorAlert, info, okcancel } = useAlerts();
 
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
