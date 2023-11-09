@@ -31,7 +31,7 @@ export default function LearningProject({ navigation }) {
             icon="account-plus"
             onPress={() => {
               // @ts-ignore
-              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+              navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
                 edit: null, // TODO
               });
             }}

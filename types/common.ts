@@ -15,4 +15,5 @@ export const enum NAVIGATION {
   EXERCISE_MANAGEMENT = "ExerciseManagement",
   LINK_MANAGEMENT = "LinkManagement",
   CREATEEDIT_PROJECT = "CreateEditProject",
+  INVITE_FRIENDS = "InviteFriends",
 }
