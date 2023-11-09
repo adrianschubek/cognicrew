@@ -6,12 +6,18 @@ import {
     responsiveWidth,
     responsiveFontSize,
   } from "react-native-responsive-dimensions";
-
+import { useState } from "react";
+import CreateDrawing from "../components/dialogues/CreateDrawing";
 
 export default function Whiteboard({ navigation }) {
+    const [showDrawing, setDrawing] = useState(false);
     const theme = useTheme();
   return (
     <React.Fragment>
+        <CreateDrawing
+        showDrawing={showDrawing}
+        close={() => setDrawing(false)}
+         />
         <View style={{flexDirection: "column", justifyContent: "space-between", flex: 1}}>
             <View style={styles.top}>
                 <View style= {styles.topleft}>
@@ -60,7 +66,10 @@ export default function Whiteboard({ navigation }) {
                 icon="pencil"
                 iconColor={theme.colors.primary}
                 size={40}
-                onPress={() => console.log('Pressed')}
+                onPress={() => {
+                    setDrawing(true);
+                    console.log('Pressed');
+                }}
                 />
             </View>
         </View>

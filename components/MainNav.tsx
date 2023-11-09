@@ -17,8 +17,7 @@ import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import CreateProject from "../screens/projectManagement/CreateProject";
-import { useNavigation } from "@react-navigation/native";
-import InviteFriends from "./dialogues/InviteFriends";
+
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -60,10 +59,6 @@ function LearningProjectsTab() {
         component={LearningProjects}
       />
       <Stack.Screen
-        name={NAVIGATION.INVITE_FRIENDS}
-        component={InviteFriends}
-      />
-      <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECT}
         component={LearningProject}
       />
@@ -88,7 +83,6 @@ function LearningProjectsTab() {
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
-
     </Stack.Navigator>
   );
 }
