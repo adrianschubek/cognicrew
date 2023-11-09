@@ -6,12 +6,11 @@ import { Tooltip, IconButton } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import { useAlerts } from "../utils/hooks";
 import { useEffect } from "react";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import Discover from "./Discover";
+
 
 export default function LearningProjects({ navigation }) {
   const { info } = useAlerts();
-  const Tab = createMaterialTopTabNavigator();
 
   useEffect(() => {
     navigation.setOptions({
@@ -38,20 +37,29 @@ export default function LearningProjects({ navigation }) {
           </Tooltip>
         </>
       ),
-    });
+    }); 
   }, []);
 
   return (
-    <Tab.Navigator initialRouteName={"default_my_projects"}>
-      <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
-      <Tab.Screen
-        name={"default_my_projects"}
-        component={ProjectGroups}
-        options={{ title: "My projects" }}
-      />
-    </Tab.Navigator>
+    <View style={styles.container}>
+      <StatusBar style="auto" />
+      <ProjectGroups/>
+    </View>
+    // <Tab.Navigator initialRouteName={"default_my_projects"}>
+    //   <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
+    //   <Tab.Screen
+    //     name={"default_my_projects"}
+    //     component={ProjectGroups}
+    //     options={{ title: "My projects" }}
+    //   />
+    // </Tab.Navigator>
   );
 }
+
+// FIXED use other package instead of material top tabs
+// apk crashes on pojects tab!! 
+// problem, is tob tab navigator, not animated
+// @react-navigation/material-top-tabs package is broken!
 
 const styles = StyleSheet.create({
   container: {
