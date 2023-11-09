@@ -52,7 +52,6 @@ function SettingsTab() {
 }
 
 function LearningProjectsTab() {
- 
   return (
     <Stack.Navigator>
       <Stack.Screen

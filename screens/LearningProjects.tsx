@@ -7,6 +7,7 @@ import { NAVIGATION } from "../types/common";
 import { useAlerts } from "../utils/hooks";
 import { useEffect } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import Discover from "./Discover";
 
 export default function LearningProjects({ navigation }) {
   const { info } = useAlerts();
@@ -43,7 +44,7 @@ export default function LearningProjects({ navigation }) {
   // <View style={styles.container}>
   return (
       <Tab.Navigator>
-        <Tab.Screen name="Discover" component={ProjectGroups} />
+        <Tab.Screen name="Discover" component={Discover} />
         <Tab.Screen name="My Projects" component={ProjectGroups} />
       </Tab.Navigator>
       // <StatusBar style="auto" />
