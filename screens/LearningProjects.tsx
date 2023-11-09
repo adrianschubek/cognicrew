@@ -48,22 +48,22 @@ export default function LearningProjects({ navigation }) {
     //   <StatusBar style="auto" />
     //   <ProjectGroups/>
     // </View>
-    // <Tab.Navigator initialRouteName={"default_my_projects"}>
-    //   <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
-    //   <Tab.Screen
-    //     name={"default_my_projects"}
-    //     component={ProjectGroups}
-    //     options={{ title: "My projects" }}
-    //   />
-    // </Tab.Navigator>
-    <PagerView style={styles.pagerView} initialPage={0}>
-    <View key="1">
-      <Text>First page</Text>
-    </View>
-    <View key="2">
-      <Text>Second page</Text>
-    </View>
-  </PagerView>
+    <Tab.Navigator initialRouteName={"default_my_projects"}>
+      <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
+      <Tab.Screen
+        name={"default_my_projects"}
+        component={ProjectGroups}
+        options={{ title: "My projects" }}
+      />
+    </Tab.Navigator>
+  //   <PagerView style={styles.pagerView} initialPage={0}>
+  //   <View key="1">
+  //     <Text>First page</Text>
+  //   </View>
+  //   <View key="2">
+  //     <Text>Second page</Text>
+  //   </View>
+  // </PagerView>
   );
 }
 
