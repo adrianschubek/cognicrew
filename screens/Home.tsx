@@ -5,27 +5,10 @@ import { Avatar, Button, Text } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
-import { Image } from "react-native";
-import { NAVIGATION } from "../types/common";
-import { useEffect } from "react";
 
+import { NAVIGATION } from "../types/common";
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: "CogniCrew",
-      headerRight: () => (
-        <Image
-          source={require("../assets/icon.png")}
-          style={{
-            height: 40,
-            width: 40,
-          }}
-        />
-      ),
-    });
-  }, []);
 
   return (
     <View style={styles.container}>

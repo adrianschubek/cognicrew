@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -32,37 +32,14 @@ export default function ProjectGroups() {
     },
   );
 
-  // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
   useEffect(() => {
     if (!data) return;
 
-    const groups = data
-      .sort((a: (typeof data)[number], b: (typeof data)[number]) => {
-        // Sort by year
-        if (a.group === "All") return -1;
-        const first = parseInt(a.group.split(" ")[1]?.split("/")[0]);
-        const second = parseInt(b.group.split(" ")[1]?.split("/")[0]);
-        return first > second ? -1 : 1;
-      })
-      .sort((a: (typeof data)[number], b: (typeof data)[number]) => {
-        // Sort by semester (Winter > Summer)
-
-        const firstYear = parseInt(a.group.split(" ")[1]?.split("/")[0]);
-        const secondYear = parseInt(b.group.split(" ")[1]?.split("/")[0]);
-        // Only sort if same year.
-        if (firstYear !== secondYear) return 0;
-
-        // All is always first
-        if (a.group === "All") return -1;
-        const first = a.group.split(" ")[0];
-        const second = b.group.split(" ")[0];
-        return first === "Winter" && second === "Summer" ? -1 : 1;
-      })
-      .reduce((acc, project) => {
-        if (!acc[project.group]) acc[project.group] = [];
-        acc[project.group].push(project);
-        return acc;
-      }, {});
+    const groups = data.reduce((acc, project) => {
+      if (!acc[project.group]) acc[project.group] = [];
+      acc[project.group].push(project);
+      return acc;
+    }, {});
 
     setProjectGroups(groups);
   }, [data]);
@@ -83,17 +60,13 @@ export default function ProjectGroups() {
           key={semester}
         >
           <Card.Title title={semester} />
-          {/* TODO: filter projects. hide */}
-          {/* <Card.Title title="Hide"></Card.Title>  */}
           <Card.Content style={styles.projectGroupContent}>
             {projectGroups[semester].map((project) => (
               <View style={styles.projectElement} key={project.id}>
                 <TouchableOpacity
                   onPress={() => {
                     // @ts-expect-error idk why
-                    navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
-                      project,
-                    });
+                    navigation.navigate(NAVIGATION.LEARNING_PROJECT);
                   }}
                   onLongPress={() => {
                     // @ts-expect-error
@@ -110,9 +83,9 @@ export default function ProjectGroups() {
                       theme={{ colors: { primary: getRandomColor() } }}
                     />
                     <Text style={styles.textStyle}>
-                      {project.name.length > 32
-                        ? project.name.substring(0, 32) + "..."
-                        : project.name.substring(0, 32)}
+                      {project.name.length > 25
+                        ? project.name.substring(0, 25) + "..."
+                        : project.name.substring(0, 25)}
                     </Text>
                   </>
                 </TouchableOpacity>
@@ -136,8 +109,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   textStyle: {
+    fontWeight: "bold",
     textAlign: "center",
-    marginTop: 5,
   },
   avatar: {
     alignSelf: "center",

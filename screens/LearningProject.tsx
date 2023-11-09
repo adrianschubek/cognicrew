@@ -9,42 +9,37 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
-import { useEffect } from "react";
 
-export default function LearningProject({ navigation, route }) {
-  const { project } = route.params;
-
-  useEffect(() => {
-    navigation.setOptions({
-      title: project.name,
-      headerRight: () => (
-        <>
-          <Tooltip title="Project settings">
-            <IconButton
-              icon="cog"
-              onPress={() => {
-                // @ts-ignore
-                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                  edit: project,
-                });
-              }}
-            ></IconButton>
-          </Tooltip>
-          <Tooltip title="Invite users">
-            <IconButton
-              icon="account-plus"
-              onPress={() => {
-                // @ts-ignore
-                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                  edit: null, // TODO
-                });
-              }}
-            ></IconButton>
-          </Tooltip>
-        </>
-      ),
-    });
-  }, []);
+export default function LearningProject({ navigation }) {
+  navigation.setOptions({
+    title: "Learning Projects",
+    headerRight: () => (
+      <>
+        <Tooltip title="Project settings">
+          <IconButton
+            icon="cog"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                edit: -1, // TODO
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
+        <Tooltip title="Invite users">
+          <IconButton
+            icon="account-plus"
+            onPress={() => {
+              // @ts-ignore
+              navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
+                edit: null, // TODO
+              });
+            }}
+          ></IconButton>
+        </Tooltip>
+      </>
+    ),
+  });
 
   return (
     <View style={styles.container}>

@@ -1,6 +1,6 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   Divider,
@@ -32,38 +32,20 @@ export default function CreateProject({
    * edit == number => edit project
    * besser: edit = project objekt
    */
-  const { edit: project } = route.params;
+  const { edit } = route.params;
 
-  const username = useUsername(project?.owner_id ?? null);
+  const username = useUsername();
 
-  const { success, error: errorAlert, info, okcancel } = useAlerts();
+  navigation.setOptions({
+    title: edit === null ? "Create Project" : "Edit Project",
+  });
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: project === null ? "Create Project" : "Edit Project",
-    });
-
-    navigation.addListener('beforeRemove', (e) => {
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-  
-      // Prompt the user before leaving the screen
-      okcancel(
-        "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        "Discard changes?",
-        () => navigation.dispatch(e.data.action),
-      );
-    });
-  }, []);
-
-  const [title, setTitle] = useState(project?.name ?? "");
-  const [description, setDescription] = useState(project?.description ?? "");
-  const [group, setGroup] = useState(project?.group ?? "");
-  const [isPublished, setIsPublished] = useState(
-    project?.is_published ?? false,
-  );
-  const [owner, setOwner] = useState(username.data);
-  const [tags, setTags] = useState(project?.tags ?? "");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [group, setGroup] = useState("");
+  const [isPublished, setIsPublished] = useState(false);
+  const [owner, setOwner] = useState(username.data ?? "???");
+  const [tags, setTags] = useState("");
 
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
@@ -111,6 +93,7 @@ export default function CreateProject({
     return labels;
   }, []);
 
+  const { success, error: errorAlert, info, okcancel } = useAlerts();
 
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
@@ -118,10 +101,7 @@ export default function CreateProject({
     "name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        success(
-          `Project ${project === null ? "created" : "saved"}.`,
-          "Success",
-        );
+        success(`Project ${edit === null ? "created" : "saved"}.`, "Success");
       },
       onError: (error) => {
         errorAlert(error.message, "Error");
@@ -265,14 +245,14 @@ export default function CreateProject({
         </HelperText>
       </ScrollView>
       <FAB
-        icon={project === null ? "plus" : "check"}
+        icon={edit === null ? "plus" : "check"}
         style={{
           position: "absolute",
           margin: 16,
           right: 0,
           bottom: 0,
         }}
-        label={project === null ? "Create" : "Save"}
+        label={edit === null ? "Create" : "Save"}
         onPress={save}
         disabled={isMutating}
       />

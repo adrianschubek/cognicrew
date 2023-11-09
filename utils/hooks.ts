@@ -60,7 +60,7 @@ export function useSets() {
  */
 export function useAlerts() {
   const resetActions = useCallback(() => {
-    ifMod(oldOkText, "OK", setOkText); // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.
+    ifMod(oldOkText, "OK", setOkText);
     ifMod(oldCancelText, "", setCancelText);
     ifMod(oldOkAction, () => {}, setOkAction);
     ifMod(oldCancelAction, () => {}, setCancelAction);
@@ -120,8 +120,6 @@ export function useAlerts() {
       ifMod(oldMessage, message, setMessage);
       ifMod(oldOkText, okText, setOkText);
       ifMod(oldCancelText, cancelText, setCancelText);
-      ifMod(oldOkAction, okAction, setOkAction);
-      ifMod(oldCancelAction, cancelAction, setCancelAction);
     },
   };
 }
