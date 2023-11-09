@@ -67,6 +67,7 @@ export default function LearningProjects({ navigation }) {
   );
 }
 
+// vllt: Expo go likmjitatiobn kein custom native code
 // package:  react-native-pager-view
 // crash: Invariant Violation: requireNativeComponent: "RNCViewPager" was not found in the UIManager.
 // apk crashes on projects tab
