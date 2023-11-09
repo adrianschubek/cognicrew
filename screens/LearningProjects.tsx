@@ -44,27 +44,16 @@ export default function LearningProjects({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <ProjectGroups/>
-    </View>
-    // <Tab.Navigator initialRouteName={"default_my_projects"}>
-    //   <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
-    //   <Tab.Screen
-    //     name={"default_my_projects"}
-    //     component={ProjectGroups}
-    //     options={{ title: "My projects" }}
-    //   />
-    // </Tab.Navigator>
+    <Tab.Navigator initialRouteName={"default_my_projects"}>
+      <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
+      <Tab.Screen
+        name={"default_my_projects"}
+        component={ProjectGroups}
+        options={{ title: "My projects" }}
+      />
+    </Tab.Navigator>
   );
 }
-
-// vllt: Expo go likmjitatiobn kein custom native code
-// package:  react-native-pager-view
-// crash: Invariant Violation: requireNativeComponent: "RNCViewPager" was not found in the UIManager.
-// apk crashes on projects tab
-// problem, is top tab navigator, not reanimated
-// @react-navigation/material-top-tabs package is broken
 
 const styles = StyleSheet.create({
   container: {
