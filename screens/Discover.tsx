@@ -54,5 +54,5 @@ import { Text } from "react-native-paper";
 // }
 
 export default function Discover() {
-  return <Text>Discover</Text>;
+  return <Text>chupapi muñaño</Text>;
 }
