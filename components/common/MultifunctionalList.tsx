@@ -36,7 +36,6 @@ export default function MultifunctionalList(props: {
   const theme = useTheme();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
-  const Item = { name: "Set A", id: 1, type: props.type };
   const { isMutating, trigger: deleteSet } = useDeleteSet();
   const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
   const createSet = () => {
@@ -44,7 +43,7 @@ export default function MultifunctionalList(props: {
       // @ts-ignore
       name: creationQuery,
       type: props.type,
-      project_id: 1,
+      project_id: 3,
     });
   };
   return (
@@ -73,15 +72,16 @@ export default function MultifunctionalList(props: {
                   forceTextInputFocus={false}
                   icon="check"
                   onPress={() => {
+                    createSet();
                     Keyboard.dismiss();
                     console.log(props.dataSource);
-                    createSet
+
                   }}
                 />
               }
               onChangeText={(query) => setCreationQuery(query)}
               onSubmitEditing={() => {
-               createSet
+               createSet();
               }}
             />
           )}

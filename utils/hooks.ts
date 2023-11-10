@@ -68,7 +68,18 @@ export function useDeleteSet() {
   return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id")); 
 }
 export function useUpsertSet() {
-  return useUpsertMutation(supabase.from("sets"), ["id"], "id"); 
+  const { success, error: errorAlert, info, okcancel } = useAlerts();
+  return useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type, project_id",    {
+    onSuccess: () => {
+      success(
+        "Set saved successfully.",
+        "Success",
+      );
+    },
+    onError: (error) => {
+      errorAlert(error.message, "Error");
+    },
+  },); 
 }
 /**
  * // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.

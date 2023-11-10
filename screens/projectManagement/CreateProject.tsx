@@ -29,8 +29,7 @@ export default function CreateProject({
 }) {
   /**
    * edit == null => create new project
-   * edit == number => edit project
-   * besser: edit = project objekt
+   * edit = project objekt
    */
   const { edit: project } = route.params;
 
