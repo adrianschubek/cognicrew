@@ -1,38 +1,30 @@
-import React, { useState } from "react";
-import { COLORS, STROKE_SIZE } from "./Constants";
+import React from "react";
 import { ColorValue, TouchableOpacity, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
-import { styles } from "./DrawingStyle";
-import { StrokeSettings } from "./DrawingSettings";
 import { useWhitebardStore } from "../../stores/WhiteboardStore";
 
 
 
 export const Canvas = () => {
-  const { color, setColor, setStroke, stroke, setPaths, paths } = useWhitebardStore();
+  const { color, stroke, setPaths, paths } = useWhitebardStore();
 
   const setNewPath = (x: number, y: number) => {
     console.log("call setNewPath")
-    setPaths((prev) => { // !!!! kein useState. manuell (prev) => newarray
+    setPaths((prev) => { 
       const result = [...prev, { path: [`M${x} ${y}`], color, stroke }];
-      console.log("add path " + JSON.stringify(result));
-
       return result;
     });
   };
 
   const updatePath = (x: number, y: number) => {
     setPaths((prev) => {
-      const currentPath = paths[paths.length - 1];// path[-1]-> undefined
+      const currentPath = paths[paths.length - 1];
       currentPath && currentPath.path.push(`L${x} ${y}`);
-
       return currentPath ? [...prev.slice(0, -1), currentPath] : prev;
     });
   };
 
-
-  console.log("XXX " + JSON.stringify(paths) );
   return (
     <>
       <View 

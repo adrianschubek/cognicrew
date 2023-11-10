@@ -4,17 +4,14 @@ import { Text, IconButton, useTheme, Divider } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
-
 import { Canvas} from "../components/learningRoom/Canvas";
-import { StrokeView } from "../components/learningRoom/StrokeView";
 import { useWhitebardStore } from "../stores/WhiteboardStore";
 
 export default function Whiteboard({ navigation }) {
-  const { resetPath } = useWhitebardStore();
+  const { resetPath} = useWhitebardStore();
   const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
@@ -87,11 +84,21 @@ export default function Whiteboard({ navigation }) {
               console.log("Pressed");
             }}
           />
+          <IconButton
+            icon="triangle-outline"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={() => {
+              console.log("Pressed");
+            }}
+          />
            <IconButton
             icon="keyboard"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={() => console.log("Pressed")}
+            onPress={() => {
+              console.log("Pressed");
+            }}
           />
         </View>
       </View>
@@ -121,12 +128,11 @@ const styles = StyleSheet.create({
     width: responsiveWidth(14),
     height: responsiveHeight(7),
     marginRight: 3,
-    borderRadius: 35, // Half of the width and height to make it round
+    borderRadius: 35, 
     overflow: "hidden",
   },
 
   bottomLeft: {
-    //flex: 1,
     flexDirection: "row",
   },
 });

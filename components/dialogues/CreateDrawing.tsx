@@ -32,8 +32,9 @@ export default function CreateDrawing({ showDrawing, close }) {
   return (
     <>
       <Portal>
-        <Dialog visible={showDrawing} onDismiss={close}>
-          <Dialog.Title>Drawing</Dialog.Title>
+        <Dialog visible={showDrawing} onDismiss={close} style={styles.all}>
+          <Dialog.Icon icon="pencil"/>
+          <Dialog.Title style={styles.title}>Drawing</Dialog.Title>
           <Dialog.Content style ={styles.container}>
             <StrokeSettings
               strokeWidth={stroke}
@@ -41,19 +42,16 @@ export default function CreateDrawing({ showDrawing, close }) {
               onChangeColor={setColor}
               onChangeStroke={setStroke}
             />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={close} style={{ marginRight: "auto" }}>
-              Cancel
-            </Button>
-            <Button
+            <View style={styles.container}>
+            <Button style={styles.done}
               onPress={() => {
                 close();
               }}
             >
               Done
             </Button>
-          </Dialog.Actions>
+            </View>
+          </Dialog.Content>
         </Dialog>
       </Portal>
     </>
@@ -61,6 +59,16 @@ export default function CreateDrawing({ showDrawing, close }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  title: {
+    textAlign: 'center',
   },
+  container: {
+    flexDirection: "column",
+  },
+  all: {
+    flexDirection: "column",
+  },
+  done: {
+    marginTop: 50
+  }
 });
