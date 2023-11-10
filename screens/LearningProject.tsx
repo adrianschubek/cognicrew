@@ -10,9 +10,15 @@ import {
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
 import { useEffect } from "react";
+import { useProjectStore } from "../stores/ProjectStore";
 
 export default function LearningProject({ navigation, route }) {
   const { project } = route.params;
+
+  const reset = useProjectStore((state) => state.reset);
+  useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
+  const setProjectId = useProjectStore((state) => state.setProjectId);
+  useEffect(() => setProjectId(project?.id), [project]);
 
   useEffect(() => {
     navigation.setOptions({
