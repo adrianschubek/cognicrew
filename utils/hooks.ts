@@ -1,9 +1,15 @@
 import { useAuth } from "../providers/AuthProvider";
-import { useAlertsStore } from "../stores/AlertsStore";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { Alert, useAlertsStore } from "../stores/AlertsStore";
+import {
+  useDeleteItem,
+  useDeleteMutation,
+  useQuery,
+  useUpsertMutation,
+} from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { ifMod } from "./common";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { ManagementType } from "../types/common";
 
 /**
  * Handles errors thrown by the given supabase query.
@@ -14,7 +20,7 @@ function handleErrors<T>(fn: T): T {
   // @ts-ignore fn.error always exists
   if (fn.error) {
     // @ts-ignore
-    errorAlert(fn.error.message);
+    errorAlert({ title: "Error", message: fn.error.message });
   }
   return fn;
 }
@@ -51,75 +57,81 @@ export function useAchievements() {
 }
 
 //Returns all Sets
-export function useSets() {
-  return handleErrors(useQuery(supabase.from("sets").select("*")));
+export function useSets(type: ManagementType) {
+  return handleErrors(
+    useQuery(
+      supabase.from("sets").select("id,name,type,project_id").eq("type", type),
+    ),
+  );
+}
+export function useDeleteSet() {
+  return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id"));
+}
+export function useUpsertSet() {
+  return handleErrors(
+    useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type,project_id"),
+  );
+}
+export function useUpsertFlashcard() {
+  return handleErrors(
+    useUpsertMutation(
+      supabase.from("flashcards"),
+      ["id"],
+      "id,question,answer,priority,set_id",
+    ),
+  );
 }
 /**
+ *  dont show duplicate alerts with same message.
  * Display alerts.
  * @returns An object with functions to display alerts.
  */
 export function useAlerts() {
-  const resetActions = useCallback(() => {
-    ifMod(oldOkText, "OK", setOkText);
-    ifMod(oldCancelText, "", setCancelText);
-    ifMod(oldOkAction, () => {}, setOkAction);
-    ifMod(oldCancelAction, () => {}, setCancelAction);
-  }, []);
+  const dispatch = useAlertsStore((state) => state.dispatch);
 
-  const {
-    open: oldOpen,
-    icon: oldIcon,
-    title: oldTitle,
-    message: oldMessage,
-    okText: oldOkText,
-    cancelText: oldCancelText,
-    okAction: oldOkAction,
-    cancelAction: oldCancelAction,
-    setOpen,
-    setIcon,
-    setTitle,
-    setMessage,
-    setOkText,
-    setCancelText,
-    setOkAction,
-    setCancelAction,
-  } = useAlertsStore();
   return {
-    success: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "check", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    alert: (config: Partial<Alert>) => {
+      dispatch(config);
     },
-    error: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "alert-circle", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    /**
+     * Creates a success alert using the given config.
+     */
+    success: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "check",
+        title: "Success",
+        ...config,
+      });
     },
-    info: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "information", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    error: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert-decagram",
+        title: "Error",
+        ...config,
+      });
     },
-    okcancel: (
-      message: string,
-      title: string = "",
-      okAction: () => void = () => {},
-      cancelAction: () => void = () => {},
-      okText: string = "OK",
-      cancelText: string = "Cancel",
-    ) => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "information", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      ifMod(oldOkText, okText, setOkText);
-      ifMod(oldCancelText, cancelText, setCancelText);
+    warning: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert",
+        title: "Warning",
+        ...config,
+      });
+    },
+    info: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "information",
+        title: "Info",
+        ...config,
+      });
+    },
+    confirm: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "help-box",
+        title: "Confirm",
+        cancelText: "Cancel",
+        okText: "OK",
+        ...config,
+      });
     },
   };
 }

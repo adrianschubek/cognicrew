@@ -37,7 +37,7 @@ export default function EditExercise({ listItem }) {
           value={/*hier muss dann listItem.question hin*/ question}
           onChangeText={(question) => {
             setQuestion(question);
-            console.log(question);
+            //console.log(question);
             //update backend
           }}
         />

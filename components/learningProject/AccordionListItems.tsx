@@ -31,10 +31,10 @@ export default function AccordionListItems({accordionListItems, type}:{type: Man
         }}
       >
         {
-          type === "flashcard" && <EditFlashcard listItem={listItem}/> //if type === flashcard then render <EditFlashcard/> component 
+          type === ManagementType.FLASHCARD && <EditFlashcard listItem={listItem}/> //if type === flashcard then render <EditFlashcard/> component 
         }
         {
-          type === "exercise" && <EditExercise listItem={listItem}/> //if type === exercise then render <EditExercise/> component 
+          type === ManagementType.EXERCISE && <EditExercise listItem={listItem}/> //if type === exercise then render <EditExercise/> component 
         }
       </List.Accordion>
       <Divider />

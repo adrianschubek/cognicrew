@@ -23,8 +23,14 @@ export default function EmailChange(props) {
   const update = async () => {
     const { data, error } = await supabase.auth.updateUser({ email: mail });
 
-    if (error) errorAlert(error?.message,"Error");
-    else success("E-Mail updated.", "Success");
+    if (error)
+      errorAlert({
+        message: error.message,
+      });
+    else
+      success({
+        message: "E-Mail updated successfully",
+      });
   };
 
   return (

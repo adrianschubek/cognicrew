@@ -1,17 +1,16 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Button, Dialog, Portal, Text, TextInput } from "react-native-paper";
 import {
   responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
+  responsiveWidth
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
+import { ManagementType } from "../../types/common";
 
 export default function FlashcardManagement() {
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
@@ -24,9 +23,9 @@ export default function FlashcardManagement() {
         close={() => setShowAddFlashcards(false)}
       />
       <ManageSets
-      showManageSets={showManageSets}
-      close={() => setShowManageSets(false)}
-      type="flashcard"
+        showManageSets={showManageSets}
+        close={() => setShowManageSets(false)}
+        type={ManagementType.FLASHCARD}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
@@ -36,14 +35,14 @@ export default function FlashcardManagement() {
           }}
         />
         <TextWithPlusButton
-          text={"Manage flashcard sets"}  
+          text={"Manage flashcard sets"}
           function={() => {
-            setShowManageSets(true)
+            setShowManageSets(true);
           }}
         />
       </View>
       <ScrollView>
-        <AccordionSection type="flashcard" />
+        <AccordionSection type={ManagementType.FLASHCARD} />
       </ScrollView>
     </View>
   );
@@ -63,6 +62,6 @@ const styles = StyleSheet.create({
     width: responsiveWidth(100),
     //backgroundColor:"red",
     flexDirection: "column",
-    alignItems:"flex-end"
+    alignItems: "flex-end",
   },
 });

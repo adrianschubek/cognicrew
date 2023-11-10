@@ -16,6 +16,9 @@ import {
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
+import { useSets } from "../../utils/hooks";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import { ManagementType } from "../../types/common";
 
 export default function ManageSets({ showManageSets, close, type }) {
   const theme = useTheme();
@@ -32,7 +35,7 @@ export default function ManageSets({ showManageSets, close, type }) {
         <SearchWithList
           type={type}
           mode="edit"
-          searchPlaceholder={"Search for " + type + " set"}
+          searchPlaceholder={"Search for " + (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") + " set"}
           creationOption={true}
         />
         <Dialog.Actions>

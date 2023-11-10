@@ -1,4 +1,3 @@
-export type ManagementType = "exercise" | "flashcard" | "file" | "link";
 export type Mode = "edit" | "select";
 
 export const enum NAVIGATION {
@@ -15,4 +14,12 @@ export const enum NAVIGATION {
   EXERCISE_MANAGEMENT = "ExerciseManagement",
   LINK_MANAGEMENT = "LinkManagement",
   CREATEEDIT_PROJECT = "CreateEditProject",
+  INVITE_FRIENDS = "InviteFriends",
+  DISCOVER = "Discover",
+}
+export const enum ManagementType {
+  FLASHCARD = 0,
+  EXERCISE = 1,
+  FILE = 2,
+  LINK = 3,
 }

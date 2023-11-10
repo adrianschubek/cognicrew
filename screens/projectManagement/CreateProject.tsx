@@ -1,6 +1,6 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   Divider,
@@ -29,21 +29,39 @@ export default function CreateProject({
 }) {
   /**
    * edit == null => create new project
-   * edit == number => edit project
-   * besser: edit = project objekt
+   * edit = project objekt
    */
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
 
-  navigation.setOptions({
-    title: project === null ? "Create Project" : "Edit Project",
-  });
+  const { success, error: errorAlert, info, confirm } = useAlerts();
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: project === null ? "Create Project" : "Edit Project",
+    });
+
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        title: "Discard changes?",
+        message:
+          "You have unsaved changes. Are you sure to discard them and leave the screen?",
+        okText: "Discard",
+        okAction: () => navigation.dispatch(e.data.action),
+      });
+    });
+  }, []);
 
   const [title, setTitle] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [group, setGroup] = useState(project?.group ?? "");
-  const [isPublished, setIsPublished] = useState(project?.is_published ?? false);
+  const [isPublished, setIsPublished] = useState(
+    project?.is_published ?? false,
+  );
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
@@ -93,31 +111,39 @@ export default function CreateProject({
     return labels;
   }, []);
 
-  const { success, error: errorAlert, info, okcancel } = useAlerts();
-
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
-    "name,description,group,is_published,tags",
+    "id,name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        success(`Project ${project === null ? "created" : "saved"}.`, "Success");
+        // success(
+        //   `Project ${project === null ? "created" : "saved"}.`,
+        //   "Success",
+        // );
+        success({
+          title: `Project ${project === null ? "created" : "saved"}.`,
+          message: "You can now invite other users to join your project.",
+          okAction: () => navigation.goBack(),
+        });
       },
       onError: (error) => {
-        errorAlert(error.message, "Error");
+        errorAlert({
+          message: error.message,
+        });
       },
     },
   );
 
   const save = () => {
-    upsert({
-      // @ts-ignore
+    upsert([{
+      id: project?.id,
       name: title,
       description,
       group,
       is_published: isPublished,
       tags,
-    });
+    }]);
   };
 
   return (
@@ -226,10 +252,10 @@ export default function CreateProject({
             <TextInput.Icon
               /* TODO */
               onPress={() =>
-                info(
-                  "You cannot change the owner of a project yet.",
-                  "Transfer project",
-                )
+                info({
+                  title: "Transfer project",
+                  message: "This feature will be added soon.",
+                })
               }
               icon="pencil"
             />

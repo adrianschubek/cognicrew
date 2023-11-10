@@ -30,7 +30,6 @@ export default function TextInputWithCheckbox(props:{
       value={/*hier muss dann listItem.answer hin*/ answer}
       onChangeText={(answer) => {
         setAnswer(answer);
-        console.log(answer);
         //update backend
       }}
     />

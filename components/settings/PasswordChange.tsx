@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card, TextInput,
-  useTheme
-} from "react-native-paper";
+import { Avatar, Button, Card, TextInput, useTheme } from "react-native-paper";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { useAlerts } from "../../utils/hooks";
@@ -23,8 +18,8 @@ export default function PasswordChange(props) {
   const update = async () => {
     const { data, error } = await supabase.auth.updateUser({ password: pw1 });
 
-    if (error) errorAlert(error?.message, "Error");
-    else success("Password updated.", "Success");
+    if (error) errorAlert({ message: error.message });
+    else success({ message: "Password updated successfully" });
   };
 
   return (

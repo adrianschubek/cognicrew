@@ -16,33 +16,16 @@ import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
-import { Image } from "react-native";
-import { IconButton } from "react-native-paper";
 import CreateProject from "../screens/projectManagement/CreateProject";
 import { useNavigation } from "@react-navigation/native";
+import InviteFriends from "./dialogues/InviteFriends";
 const Tab = createMaterialBottomTabNavigator();
-
 const Stack = createNativeStackNavigator();
 
 function MainTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name={NAVIGATION.HOME}
-        component={HomeScreen}
-        options={{
-          title: "CogniCrew",
-          headerRight: () => (
-            <Image
-              source={require("../assets/icon.png")}
-              style={{
-                height: 40,
-                width: 40,
-              }}
-            />
-          ),
-        }}
-      />
+      <Stack.Screen name={NAVIGATION.HOME} component={HomeScreen} />
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
         component={ManageFriends}
@@ -69,21 +52,16 @@ function SettingsTab() {
   );
 }
 
-function LearningRoomsTab() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
-    </Stack.Navigator>
-  );
-}
-
 function LearningProjectsTab() {
-  const navigation = useNavigation();
   return (
     <Stack.Navigator>
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECTS}
         component={LearningProjects}
+      />
+      <Stack.Screen
+        name={NAVIGATION.INVITE_FRIENDS}
+        component={InviteFriends}
       />
       <Stack.Screen
         name={NAVIGATION.LEARNING_PROJECT}
@@ -110,20 +88,13 @@ function LearningProjectsTab() {
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
+
     </Stack.Navigator>
   );
 }
 
 export default function MainNav() {
-  // Auth
-  const { initialized, session, user } = useAuth();
-
-  // if (!initialized ) console.log("Not initialized: ", initialized);
-
-  // console.log("Initialized: ", initialized);
-  // useEffect(() => {
-  //   console.log("!!!Session: ", session);
-  // }, [initialized])
+  const { session, user } = useAuth();
 
   return !session || !user ? (
     <Stack.Navigator

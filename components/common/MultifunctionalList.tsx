@@ -21,7 +21,9 @@ import { SearchBar } from "react-native-screens";
 import { ManagementType, Mode } from "../../types/common";
 import { supabase } from "../../supabase";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts, useDeleteSet, useUpsertSet } from "../../utils/hooks";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import TextInputListItem from "./ListItems/TextInputListItem";
 
 export default function MultifunctionalList(props: {
   dataSource;
@@ -29,24 +31,23 @@ export default function MultifunctionalList(props: {
   mode?: Mode;
   creationOption?: boolean;
   type?: ManagementType;
+  sendSetId?: any;
   [name: string]: any;
 }) {
   const theme = useTheme();
-  const { error: errorAlert } = useAlerts();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
-  const Item = { title: "Set A", id: 1, type: props.type };
-  const { data, isLoading, error } = useQuery(
-    supabase.from("sets").select("*"),
-    {
-      onSuccess(data, key, config) {
-        // errorAlert(JSON.stringify(data));
+  const { isMutating, trigger: upsertSet } = useUpsertSet();
+  const createSet = () => {
+    upsertSet([
+      {
+        name: creationQuery,
+        type: props.type,
+        project_id: 1,
       },
-      onError(err, key, config) {
-        errorAlert(err.message);
-      },
-    },
-  );
+    ]);
+    setCreationQuery("");
+  };
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -66,58 +67,45 @@ export default function MultifunctionalList(props: {
               label="create new Set"
               value={creationQuery}
               mode="flat"
+              disabled={isMutating}
               style={{ backgroundColor: "" }}
               //left={<TextInput.Icon icon="plus" />}
               right={
                 <TextInput.Icon
                   forceTextInputFocus={false}
                   icon="check"
+                  disabled={isMutating}
                   onPress={() => {
+                    createSet();
                     Keyboard.dismiss();
-                    // gleiche Funktion wie bei onSubmitEditing
+                    //console.log(props.dataSource);
                   }}
                 />
               }
               onChangeText={(query) => setCreationQuery(query)}
               onSubmitEditing={() => {
-                /*set mit namen creationquery und mit props.type muss erstellt werden  */
+                createSet();
               }}
             />
           )}
           {props.mode == "edit" ? (
             props.dataSource.map((item) => (
-              <TextInput
-                key={item.id}
-                value={item.title}
-                mode="flat"
-                style={{ backgroundColor: "" }}
-                right={
-                  <TextInput.Icon
-                    forceTextInputFocus={false}
-                    icon="close"
-                    onPress={() => {
-                      // delete set
-                    }}
-                  />
-                }
-                onChangeText={
-                  () => {} /*just update set directly on change? "Will dataSource and with that text within TextInput also be updated? It should be, right?*/
-                }
-                onSubmitEditing={() => {
-                  Keyboard.dismiss();
-                  /*update set  */
-                }}
-              />
+              <TextInputListItem item={item} key={item.id} />
             ))
           ) : (
             <RadioButton.Group
               onValueChange={(value) => {
                 setValue(value);
+                props.sendSetId(value);
               }}
               value={value}
             >
               {props.dataSource.map((item) => (
-                <RadioButton.Item key={item.id} label={item.title} value={item.id} />
+                <RadioButton.Item
+                  key={item.id}
+                  label={item.name}
+                  value={item.id}
+                />
               ))}
             </RadioButton.Group>
           )}
