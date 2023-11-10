@@ -1,9 +1,9 @@
-import { TextInput } from "react-native-paper";
+import { Portal, TextInput } from "react-native-paper";
 import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
 import { useState } from "react";
-import { Keyboard } from "react-native/Libraries/Components/Keyboard/Keyboard";
 import LoadingOverlay from "../../alerts/LoadingOverlay";
 import React from "react";
+import { Keyboard } from "react-native";
 
 export default function TextInputListItem({ item }) {
   const { isMutating, trigger: deleteSet } = useDeleteSet();
@@ -19,7 +19,6 @@ export default function TextInputListItem({ item }) {
     });
   };
   return (
-    
     <React.Fragment>
       <LoadingOverlay visible={isMutating || isMutating2} />
       <TextInput
@@ -37,12 +36,12 @@ export default function TextInputListItem({ item }) {
         }
         onChangeText={(text) => {
           setTitle(text);
-          console.log(item.name);
         }}
-        onEndEditing={() => {save}}
+        onEndEditing={save}
         onSubmitEditing={() => {
+          save();
           Keyboard.dismiss();
-          save;
+          console.log(item.name);
         }}
       />
     </React.Fragment>

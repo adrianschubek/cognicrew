@@ -65,21 +65,23 @@ export function useSets(type: ManagementType) {
   );
 }
 export function useDeleteSet() {
-  return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id")); 
+  return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id"));
 }
 export function useUpsertSet() {
   const { success, error: errorAlert, info, okcancel } = useAlerts();
-  return useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type, project_id",    {
-    onSuccess: () => {
-      success(
-        "Set saved successfully.",
-        "Success",
-      );
+  return useUpsertMutation(
+    supabase.from("sets"),
+    ["id"],
+    "id,name,type,project_id",
+    {
+      onSuccess: () => {
+        success("Set saved successfully.", "Success");
+      },
+      onError: (error) => {
+        errorAlert(error.message, "Error");
+      },
     },
-    onError: (error) => {
-      errorAlert(error.message, "Error");
-    },
-  },); 
+  );
 }
 /**
  * // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.
@@ -90,7 +92,7 @@ export function useUpsertSet() {
  */
 export function useAlerts() {
   const resetActions = useCallback(() => {
-    ifMod(oldOkText, "OK", setOkText); 
+    ifMod(oldOkText, "OK", setOkText);
     ifMod(oldCancelText, "", setCancelText);
     ifMod(oldOkAction, () => {}, setOkAction);
     ifMod(oldCancelAction, () => {}, setCancelAction);

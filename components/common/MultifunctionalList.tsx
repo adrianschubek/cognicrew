@@ -43,7 +43,7 @@ export default function MultifunctionalList(props: {
       // @ts-ignore
       name: creationQuery,
       type: props.type,
-      project_id: 3,
+      project_id: 1,
     });
   };
   return (
