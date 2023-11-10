@@ -72,6 +72,11 @@ export function useUpsertSet() {
     useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type,project_id"),
   );
 }
+export function useUpsertFlashcard() {
+  return handleErrors(
+    useUpsertMutation(supabase.from("flashcards"), ["id"], "id,question,answer,priority,set_id"),
+  );
+}
 /**
  *  dont show duplicate alerts with same message.
  * Display alerts.

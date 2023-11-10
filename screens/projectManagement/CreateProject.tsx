@@ -136,16 +136,14 @@ export default function CreateProject({
   );
 
   const save = () => {
-    upsert({
-      // @ts-ignore
-
+    upsert([{
       id: project?.id,
       name: title,
       description,
       group,
       is_published: isPublished,
       tags,
-    });
+    }]);
   };
 
   return (
