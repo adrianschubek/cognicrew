@@ -56,12 +56,15 @@ export function useSets(type: ManagementType) {
   return handleErrors(useQuery(supabase.from("sets").select("id,name,type,project_id").eq("type", type)));
 }
 /**
+ * // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.
+ * // use a satckj for alerts.
+ *  dont show duplicate alerts with same message.
  * Display alerts.
  * @returns An object with functions to display alerts.
  */
 export function useAlerts() {
   const resetActions = useCallback(() => {
-    ifMod(oldOkText, "OK", setOkText); // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.
+    ifMod(oldOkText, "OK", setOkText); 
     ifMod(oldCancelText, "", setCancelText);
     ifMod(oldOkAction, () => {}, setOkAction);
     ifMod(oldCancelAction, () => {}, setCancelAction);
