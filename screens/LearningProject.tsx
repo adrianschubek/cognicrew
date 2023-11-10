@@ -29,7 +29,6 @@ export default function LearningProject({ navigation, route }) {
             <IconButton
               icon="cog"
               onPress={() => {
-                // @ts-ignore
                 navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
                   edit: project,
                 });
@@ -40,7 +39,6 @@ export default function LearningProject({ navigation, route }) {
             <IconButton
               icon="account-plus"
               onPress={() => {
-                // @ts-ignore
                 navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
                   edit: null, // TODO
                 });

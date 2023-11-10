@@ -17,17 +17,23 @@ import {
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import { ManagementType } from "../../types/common";
+import { useUpsertFlashcard } from "../../utils/hooks";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
-  const flashcard = {
-    question: "",
-    answer: "",
-    id: 0,
-    groupId: 0,
+  const { isMutating, trigger: upsertFlashcard} = useUpsertFlashcard();
+  const save =  () =>{
+    upsertFlashcard([{
+      question: question,
+      answer: answer,
+      id: 0,
+      groupId: 0,
+    }]);
+    setQuestion("");
+    setAnswer("");
   };
-  const [question, setQuestion] = useState(flashcard.question);
-  const [answer, setAnswer] = useState(flashcard.answer);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
   return (
     <Portal>
       <Dialog

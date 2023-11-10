@@ -10,13 +10,12 @@ export default function TextInputListItem({ item }) {
   const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
   const [title, setTitle] = useState(item.name);
   const save = () => {
-    upsertSet({
-      // @ts-ignore
+    upsertSet([{
       id: item.id,
       name: title,
       type: item.type,
       project_id: 1,
-    });
+    }]);
   };
   return (
     <React.Fragment>
