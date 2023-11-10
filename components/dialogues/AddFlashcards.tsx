@@ -18,19 +18,21 @@ import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import { ManagementType } from "../../types/common";
 import { useUpsertFlashcard } from "../../utils/hooks";
+import ts from "typescript";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
   const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
   const addFlashcard = () => {
-    upsertFlashcard([
+    upsertFlashcard(
       {
+        //@ts-expect-error
         question: question,
         answer: answer,
         priority: 5,
         set_id: selectedSetId,
       },
-    ]);
+    );
     setQuestion("");
     setAnswer("");
   };
@@ -40,7 +42,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
     console.log(setId);
-  }
+  };
   return (
     <Portal>
       <Dialog
@@ -60,6 +62,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
+          disabled={isMutating}
           label="Question:"
           onChangeText={(question) => {
             setQuestion(question);
@@ -69,6 +72,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           style={styles.textInputStyle}
           label="Answer:"
           multiline={true}
+          disabled={isMutating}
           onChangeText={(answer) => {
             setAnswer(answer);
             //console.log(answer);
@@ -78,6 +82,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
+            disabled={isMutating}
             onPress={() => {
               addFlashcard(), close(), Keyboard.dismiss();
             }}

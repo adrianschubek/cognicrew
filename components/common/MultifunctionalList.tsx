@@ -39,13 +39,14 @@ export default function MultifunctionalList(props: {
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
   const createSet = () => {
-    upsertSet([
+    upsertSet(
       {
+        //@ts-expect-error
         name: creationQuery,
         type: props.type,
         project_id: 1,
       },
-    ]);
+    );
     setCreationQuery("");
   };
   return (
