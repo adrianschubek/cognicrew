@@ -8,7 +8,7 @@ import {
   Text,
   Button,
   Checkbox,
-  Searchbar
+  Searchbar,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -18,43 +18,57 @@ import {
 import { useState } from "react";
 import { accordionSectionItems } from "../learningProject/AccordionSection";
 import { ScrollView } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
 
-export default function CreateDrawing({showDrawing, close}) {
-    
+import { Canvas } from "../learningRoom/Canvas";
+import { StrokeSettings } from "../learningRoom/DrawingSettings";
+import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
+import { useWhitebardStore } from "../../stores/WhiteboardStore";
+
+export default function CreateDrawing({ showDrawing, close }) {
+  const { color, setColor, setStroke, stroke } = useWhitebardStore();
   return (
     <>
-        <Portal>
-            <Dialog visible={showDrawing} onDismiss={close}>
-                <Dialog.Title>Drawing</Dialog.Title>
-                     <Dialog.Content>
-                            <Text> Round duration</Text>
-                                <View style={styles.container}>
-                                    <TextInput
-                                        
-                                    />
-                                </View>
-                    </Dialog.Content>
-                <Dialog.Actions>
-                    <Button 
-                    onPress={close}
-                    style={{ marginRight: 'auto' }}>Cancel</Button>
-                    <Button 
-                        onPress={() => {
-                            close();
-                        }}
-                    >Done</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
+      <Portal>
+        <Dialog visible={showDrawing} onDismiss={close} style={styles.all}>
+          <Dialog.Icon icon="pencil"/>
+          <Dialog.Title style={styles.title}>Drawing</Dialog.Title>
+          <Dialog.Content style ={styles.container}>
+            <StrokeSettings
+              strokeWidth={stroke}
+              currentColor={color}
+              onChangeColor={setColor}
+              onChangeStroke={setStroke}
+            />
+            <View style={styles.container}>
+            <Button style={styles.done}
+              onPress={() => {
+                close();
+              }}
+            >
+              Done
+            </Button>
+            </View>
+          </Dialog.Content>
+        </Dialog>
+      </Portal>
     </>
-     );
+  );
 }
 
 const styles = StyleSheet.create({
-   container: {
-
-   }
+  title: {
+    textAlign: 'center',
+  },
+  container: {
+    flexDirection: "column",
+  },
+  all: {
+    flexDirection: "column",
+  },
+  done: {
+    marginTop: 50
+  }
 });
