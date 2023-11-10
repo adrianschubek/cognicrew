@@ -31,6 +31,7 @@ export default function MultifunctionalList(props: {
   mode?: Mode;
   creationOption?: boolean;
   type?: ManagementType;
+  sendSetId?: any;
   [name: string]: any;
 }) {
   const theme = useTheme();
@@ -38,11 +39,13 @@ export default function MultifunctionalList(props: {
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
   const createSet = () => {
-    upsertSet([{
-      name: creationQuery,
-      type: props.type,
-      project_id: 1,
-    }]);
+    upsertSet([
+      {
+        name: creationQuery,
+        type: props.type,
+        project_id: 1,
+      },
+    ]);
     setCreationQuery("");
   };
   return (
@@ -76,13 +79,12 @@ export default function MultifunctionalList(props: {
                     createSet();
                     Keyboard.dismiss();
                     //console.log(props.dataSource);
-
                   }}
                 />
               }
               onChangeText={(query) => setCreationQuery(query)}
               onSubmitEditing={() => {
-               createSet();
+                createSet();
               }}
             />
           )}
@@ -94,6 +96,7 @@ export default function MultifunctionalList(props: {
             <RadioButton.Group
               onValueChange={(value) => {
                 setValue(value);
+                props.sendSetId(value);
               }}
               value={value}
             >

@@ -21,19 +21,26 @@ import { useUpsertFlashcard } from "../../utils/hooks";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
-  const { isMutating, trigger: upsertFlashcard} = useUpsertFlashcard();
-  const save =  () =>{
-    upsertFlashcard([{
-      question: question,
-      answer: answer,
-      id: 0,
-      groupId: 0,
-    }]);
+  const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
+  const addFlashcard = () => {
+    upsertFlashcard([
+      {
+        question: question,
+        answer: answer,
+        priority: 5,
+        set_id: selectedSetId,
+      },
+    ]);
     setQuestion("");
     setAnswer("");
   };
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [selectedSetId, setSelectedSetId] = useState();
+  const getSelectedSetId = (setId) => {
+    setSelectedSetId(setId);
+    console.log(setId);
+  }
   return (
     <Portal>
       <Dialog
@@ -48,6 +55,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           mode="select"
           type={ManagementType.FLASHCARD}
           searchPlaceholder="Search for flashcard set"
+          sendSetId={getSelectedSetId}
         />
         <TextInput
           style={[styles.textInputStyle]}
@@ -55,8 +63,6 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           label="Question:"
           onChangeText={(question) => {
             setQuestion(question);
-            //console.log(question);
-            //update backend
           }}
         />
         <TextInput
@@ -73,7 +79,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           <Button
             style={{ width: responsiveWidth(70) }}
             onPress={() => {
-              close(), Keyboard.dismiss();
+              addFlashcard(), close(), Keyboard.dismiss();
             }}
             mode="contained"
           >
