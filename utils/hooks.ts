@@ -69,18 +69,8 @@ export function useDeleteSet() {
 }
 export function useUpsertSet() {
   const { success, error: errorAlert, info, okcancel } = useAlerts();
-  return useUpsertMutation(
-    supabase.from("sets"),
-    ["id"],
-    "id,name,type,project_id",
-    {
-      onSuccess: () => {
-        success("Set saved successfully.", "Success");
-      },
-      onError: (error) => {
-        errorAlert(error.message, "Error");
-      },
-    },
+  return handleErrors(
+    useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type,project_id"),
   );
 }
 /**
