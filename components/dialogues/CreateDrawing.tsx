@@ -8,7 +8,7 @@ import {
   Text,
   Button,
   Checkbox,
-  Searchbar
+  Searchbar,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -18,8 +18,8 @@ import {
 import { useState } from "react";
 import { accordionSectionItems } from "../learningProject/AccordionSection";
 import { ScrollView } from "react-native";
-import { useNavigation } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
 
 import { Canvas } from "../learningRoom/Canvas";
@@ -27,51 +27,48 @@ import { StrokeSettings } from "../learningRoom/DrawingSettings";
 import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
 import { useWhitebardStore } from "../../stores/WhiteboardStore";
 
-
-export default function CreateDrawing({showDrawing, close}) {
-    //const [paths, setPaths] = useState([]);"
-    //const [color, setColor] = useState(COLORS[0]);"
-    //const [stroke, setStroke] = useState(STROKE_SIZE[0]);
-    const{color,setColor,setStroke,stroke} = useWhitebardStore()
+export default function CreateDrawing({ showDrawing, close }) {
+  //const [paths, setPaths] = useState([]);"
+  //const [color, setColor] = useState(COLORS[0]);"
+  //const [stroke, setStroke] = useState(STROKE_SIZE[0]);
+  const { color, setColor, setStroke, stroke } = useWhitebardStore();
   return (
     <>
-        <Portal>
-            <Dialog visible={showDrawing} onDismiss={close}>
-                <Dialog.Title>Drawing</Dialog.Title>
-                     <Dialog.Content>
-                            <Text> Round duration</Text>
-                                <View style={styles.container}>
-                                    <TextInput
-                                        
-                                    />
-                                </View>
-                    </Dialog.Content>
-                    <Dialog.Content>
-                        <StrokeSettings
-                        strokeWidth={stroke}
-                        currentColor={color}
-                        onChangeColor={setColor}
-                        onChangeStroke={setStroke}
-                        />
-                    </Dialog.Content>
-                <Dialog.Actions>
-                    <Button 
-                    onPress={close}
-                    style={{ marginRight: 'auto' }}>Cancel</Button>
-                    <Button 
-                        onPress={() => {
-                            close();
-                        }}
-                    >Done</Button>
-                </Dialog.Actions>
-            </Dialog>
-        </Portal>
+      <Portal>
+        <Dialog visible={showDrawing} onDismiss={close}>
+          <Dialog.Title>Drawing</Dialog.Title>
+          <Dialog.Content>
+            <Text> Round duration</Text>
+            <View style={styles.container}>
+              <TextInput />
+            </View>
+          </Dialog.Content>
+          <Dialog.Content>
+            <StrokeSettings
+              strokeWidth={stroke}
+              currentColor={color}
+              onChangeColor={setColor}
+              onChangeStroke={setStroke}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={close} style={{ marginRight: "auto" }}>
+              Cancel
+            </Button>
+            <Button
+              onPress={() => {
+                close();
+              }}
+            >
+              Done
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </>
-     );
+  );
 }
 
 const styles = StyleSheet.create({
-   container: {
-
-   }
+  container: {},
 });
