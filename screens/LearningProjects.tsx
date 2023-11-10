@@ -2,7 +2,7 @@ import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
-import { Tooltip, IconButton,Text } from "react-native-paper";
+import { Tooltip, IconButton, Text } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import { useAlerts } from "../utils/hooks";
 import { useEffect } from "react";
@@ -34,13 +34,16 @@ export default function LearningProjects({ navigation }) {
             <IconButton
               icon="filter"
               onPress={() => {
-                info("Coming soon!", "Not implemented");
+                info({
+                  title: "Not implemented",
+                  message: "This feature is not implemented yet.",
+                });
               }}
             ></IconButton>
           </Tooltip>
         </>
       ),
-    }); 
+    });
   }, []);
 
   return (
@@ -60,7 +63,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-  }, pagerView: {
+  },
+  pagerView: {
     flex: 1,
   },
 });

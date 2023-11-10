@@ -20,8 +20,15 @@ export default function NameChange(props) {
       .update({ username: name })
       .eq("id", user.id);
 
-    if (error) errorAlert(error?.message,"Error");
-    else success("Username updated. You may need to restart the app to see changes.");
+    if (error)
+      errorAlert({
+        message: error.message,
+      });
+    else
+      success({
+        message:
+          "Username updated successfully. You may need to re-login to see changes.",
+      });
   };
 
   return (

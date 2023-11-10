@@ -1,15 +1,7 @@
 import { useState } from "react";
-import {
-  TextInput,
-  Text,
-  Button
-} from "react-native-paper";
+import { TextInput, Text, Button } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  View,
-  Image, TouchableOpacity
-} from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -75,7 +67,10 @@ export default function Login({ navigation }) {
               email: text,
               password: text2,
             });
-            if (error) errorAlert(error?.message ?? "Unknown error", "Error");
+            if (error)
+              errorAlert({
+                message: error?.message ?? "Unknown error",
+              });
             if (data || error) {
               setLoginDisabled(false);
             }
@@ -108,7 +103,7 @@ export default function Login({ navigation }) {
               email: text,
               password: text2,
             });
-            if (error) errorAlert(error?.message ?? "Unknown error", "Error");
+            if (error) errorAlert({ message: error.message });
             if (data || error) {
               setLoginDisabled(false);
             }

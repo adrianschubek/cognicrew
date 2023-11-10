@@ -23,7 +23,7 @@ export default function AlertSyncZustand() {
   const next = useAlertsStore((state) => state.next);
 
   useEffect(() => {
-   if (!activeAlert && alerts.length > 0) {
+    if (!activeAlert && alerts.length > 0) {
       next();
     }
   }, [activeAlert, alerts]);
@@ -49,6 +49,7 @@ export default function AlertSyncZustand() {
         visible={true}
         onDismiss={() => dismissable && next()}
         testID={icon + "_alert"}
+        style={{ zIndex: 999999 }}
       >
         {icon && (
           <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
