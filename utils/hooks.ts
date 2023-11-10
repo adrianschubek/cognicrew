@@ -8,7 +8,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { ifMod } from "./common";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { ManagementType } from "../types/common";
 
 /**
@@ -20,7 +20,7 @@ function handleErrors<T>(fn: T): T {
   // @ts-ignore fn.error always exists
   if (fn.error) {
     // @ts-ignore
-    errorAlert(fn.error.message);
+    errorAlert({ title: "Error", message: fn.error.message });
   }
   return fn;
 }
@@ -74,7 +74,11 @@ export function useUpsertSet() {
 }
 export function useUpsertFlashcard() {
   return handleErrors(
-    useUpsertMutation(supabase.from("flashcards"), ["id"], "id,question,answer,priority,set_id"),
+    useUpsertMutation(
+      supabase.from("flashcards"),
+      ["id"],
+      "id,question,answer,priority,set_id",
+    ),
   );
 }
 /**
