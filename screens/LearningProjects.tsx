@@ -1,15 +1,13 @@
 import * as React from "react";
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
-import { Tooltip, IconButton, Text } from "react-native-paper";
+import { Tooltip, IconButton } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import { useAlerts } from "../utils/hooks";
 import { useEffect } from "react";
 import Discover from "./Discover";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import PagerView from "react-native-pager-view";
 const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
