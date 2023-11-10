@@ -115,7 +115,7 @@ export default function CreateProject({
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
-    "name,description,group,is_published,tags",
+    "id,name,description,group,is_published,tags",
     {
       onSuccess: () => {
         success(
@@ -132,6 +132,8 @@ export default function CreateProject({
   const save = () => {
     upsert({
       // @ts-ignore
+
+      id: project?.id,
       name: title,
       description,
       group,
