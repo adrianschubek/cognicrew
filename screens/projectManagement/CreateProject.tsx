@@ -35,23 +35,24 @@ export default function CreateProject({
 
   const username = useUsername(project?.owner_id ?? null);
 
-  const { success, error: errorAlert, info, okcancel } = useAlerts();
+  const { success, error: errorAlert, info, confirm } = useAlerts();
 
   useEffect(() => {
     navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
     });
 
-    navigation.addListener('beforeRemove', (e) => {
+    navigation.addListener("beforeRemove", (e) => {
       // Prevent default behavior of leaving the screen
       e.preventDefault();
-  
-      // Prompt the user before leaving the screen
-      okcancel(
-        "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        "Discard changes?",
-        () => navigation.dispatch(e.data.action),
-      );
+
+      confirm({
+        title: "Discard changes?",
+        message:
+          "You have unsaved changes. Are you sure to discard them and leave the screen?",
+        okText: "Discard",
+        okAction: () => navigation.dispatch(e.data.action),
+      });
     });
   }, []);
 
@@ -110,20 +111,26 @@ export default function CreateProject({
     return labels;
   }, []);
 
-
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "id,name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        success(
-          `Project ${project === null ? "created" : "saved"}.`,
-          "Success",
-        );
+        // success(
+        //   `Project ${project === null ? "created" : "saved"}.`,
+        //   "Success",
+        // );
+        success({
+          title: `Project ${project === null ? "created" : "saved"}.`,
+          message: "You can now invite other users to join your project.",
+          okAction: () => navigation.goBack(),
+        });
       },
       onError: (error) => {
-        errorAlert(error.message, "Error");
+        errorAlert({
+          message: error.message,
+        });
       },
     },
   );
@@ -247,10 +254,10 @@ export default function CreateProject({
             <TextInput.Icon
               /* TODO */
               onPress={() =>
-                info(
-                  "You cannot change the owner of a project yet.",
-                  "Transfer project",
-                )
+                info({
+                  title: "Transfer project",
+                  message: "This feature will be added soon.",
+                })
               }
               icon="pencil"
             />

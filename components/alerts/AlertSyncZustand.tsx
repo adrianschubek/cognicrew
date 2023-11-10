@@ -1,11 +1,12 @@
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
+import { useEffect } from "react";
 
 /**
  * controlled by zustand
  */
 export default function AlertSyncZustand() {
-  const {
+  /* const {
     open,
     icon,
     title,
@@ -14,25 +15,57 @@ export default function AlertSyncZustand() {
     okAction,
     cancelAction,
     okText,
-    cancelText,
-  } = useAlertsStore();
+    cancelText, 
+  }*/
+
+  const activeAlert = useAlertsStore((state) => state.activeAlert);
+  const alerts = useAlertsStore((state) => state.alerts);
+  const next = useAlertsStore((state) => state.next);
+
+  useEffect(() => {
+    if (!activeAlert && alerts.length > 0) {
+      next();
+    }
+  }, [activeAlert, alerts]);
 
   const theme = useTheme();
 
+  if (!activeAlert) return null;
+
+  const {
+    icon,
+    title,
+    message,
+    okAction,
+    cancelAction,
+    okText,
+    cancelText,
+    dismissable,
+  } = activeAlert;
+
   return (
     <Portal>
-      <Dialog visible={open} onDismiss={() => setOpen(false)} testID={icon + "_alert"}>
+      <Dialog
+        visible={true}
+        onDismiss={() => dismissable && next()}
+        testID={icon + "_alert"}
+        style={{ zIndex: 999999 }}
+      >
         {icon && (
           <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
         )}
         {title && (
-          <Dialog.Title style={{ textAlign: "center", marginTop: 8}}>
-            <Text style={{color: theme.colors.primary}} variant="titleLarge">{title}</Text>
+          <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
+            <Text style={{ color: theme.colors.primary }} variant="titleLarge">
+              {title}
+            </Text>
           </Dialog.Title>
         )}
         {message && (
-          <Dialog.Content style={{  marginTop: !title ? 15 : undefined }}>
-            <Text style={{textAlign: "center",}} variant="bodyMedium">{message}</Text>
+          <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
+            <Text style={{ textAlign: "center" }} variant="bodyMedium">
+              {message}
+            </Text>
           </Dialog.Content>
         )}
         {(okText !== "" || cancelText !== "") && (
@@ -40,8 +73,8 @@ export default function AlertSyncZustand() {
             {cancelText !== "" && (
               <Button
                 onPress={() => {
-                  setOpen(false);
                   cancelAction();
+                  next();
                 }}
               >
                 {cancelText}
@@ -50,8 +83,8 @@ export default function AlertSyncZustand() {
             {okText !== "" && (
               <Button
                 onPress={() => {
-                  setOpen(false);
                   okAction();
+                  next();
                 }}
               >
                 {okText}

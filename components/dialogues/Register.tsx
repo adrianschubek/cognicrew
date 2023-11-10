@@ -46,12 +46,15 @@ export default function Register({ showRegister, close }) {
     });
 
     if (error) {
-      errorAlert(error?.message ?? "Unknown error", "Sign up failed");
+      errorAlert({
+        title: "Sign up failed",
+        message: error?.message ?? "Unknown error",
+      });
     } else {
-      successAlert(
-        "Account created successfully. You may login now.",
-        "Account created",
-      );
+      successAlert({
+        title: "Account created",
+        message: "Account created successfully. You may login now.",
+      });
     }
     setLoading(false);
   };

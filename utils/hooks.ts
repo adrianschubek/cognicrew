@@ -1,5 +1,5 @@
 import { useAuth } from "../providers/AuthProvider";
-import { useAlertsStore } from "../stores/AlertsStore";
+import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
   useDeleteItem,
   useDeleteMutation,
@@ -74,76 +74,56 @@ export function useUpsertSet() {
   );
 }
 /**
- * // TODO: refactor this. use single object for all state. allow multiple alerts/objects. stack them.
- * // use a satckj for alerts.
  *  dont show duplicate alerts with same message.
  * Display alerts.
  * @returns An object with functions to display alerts.
  */
 export function useAlerts() {
-  const resetActions = useCallback(() => {
-    ifMod(oldOkText, "OK", setOkText);
-    ifMod(oldCancelText, "", setCancelText);
-    ifMod(oldOkAction, () => {}, setOkAction);
-    ifMod(oldCancelAction, () => {}, setCancelAction);
-  }, []);
+  const dispatch = useAlertsStore((state) => state.dispatch);
 
-  const {
-    open: oldOpen,
-    icon: oldIcon,
-    title: oldTitle,
-    message: oldMessage,
-    okText: oldOkText,
-    cancelText: oldCancelText,
-    okAction: oldOkAction,
-    cancelAction: oldCancelAction,
-    setOpen,
-    setIcon,
-    setTitle,
-    setMessage,
-    setOkText,
-    setCancelText,
-    setOkAction,
-    setCancelAction,
-  } = useAlertsStore();
   return {
-    success: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "check", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    alert: (config: Partial<Alert>) => {
+      dispatch(config);
     },
-    error: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "alert-circle", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    /**
+     * Creates a success alert using the given config.
+     */
+    success: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "check",
+        title: "Success",
+        ...config,
+      });
     },
-    info: (message: string, title: string = "") => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "information", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      resetActions();
+    error: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert-decagram",
+        title: "Error",
+        ...config,
+      });
     },
-    okcancel: (
-      message: string,
-      title: string = "",
-      okAction: () => void = () => {},
-      cancelAction: () => void = () => {},
-      okText: string = "OK",
-      cancelText: string = "Cancel",
-    ) => {
-      ifMod(oldOpen, true, setOpen);
-      ifMod(oldIcon, "information", setIcon);
-      ifMod(oldTitle, title, setTitle);
-      ifMod(oldMessage, message, setMessage);
-      ifMod(oldOkText, okText, setOkText);
-      ifMod(oldCancelText, cancelText, setCancelText);
-      ifMod(oldOkAction, okAction, setOkAction);
-      ifMod(oldCancelAction, cancelAction, setCancelAction);
+    warning: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert",
+        title: "Warning",
+        ...config,
+      });
+    },
+    info: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "information",
+        title: "Info",
+        ...config,
+      });
+    },
+    confirm: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "help-box",
+        title: "Confirm",
+        cancelText: "Cancel",
+        okText: "OK",
+        ...config,
+      });
     },
   };
 }

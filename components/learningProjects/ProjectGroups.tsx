@@ -27,7 +27,9 @@ export default function ProjectGroups() {
         // errorAlert(JSON.stringify(data));
       },
       onError(err, key, config) {
-        errorAlert(err.message);
+        errorAlert({
+          message: err.message,
+        });
       },
     },
   );
