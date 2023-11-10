@@ -24,6 +24,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { useAlerts, useDeleteSet, useUpsertSet } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import TextInputListItem from "./ListItems/TextInputListItem";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function MultifunctionalList(props: {
   dataSource;
@@ -38,13 +39,14 @@ export default function MultifunctionalList(props: {
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
+  const projectId = useProjectStore(state => state.projectId)
   const createSet = () => {
     upsertSet(
       {
         //@ts-expect-error
         name: creationQuery,
         type: props.type,
-        project_id: 1,
+        project_id: projectId,
       },
     );
     setCreationQuery("");
