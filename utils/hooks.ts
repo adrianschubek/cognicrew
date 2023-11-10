@@ -1,6 +1,11 @@
 import { useAuth } from "../providers/AuthProvider";
 import { useAlertsStore } from "../stores/AlertsStore";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import {
+  useDeleteItem,
+  useDeleteMutation,
+  useQuery,
+  useUpsertMutation,
+} from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { ifMod } from "./common";
 import { useCallback, useMemo } from "react";
@@ -53,7 +58,17 @@ export function useAchievements() {
 
 //Returns all Sets
 export function useSets(type: ManagementType) {
-  return handleErrors(useQuery(supabase.from("sets").select("id,name,type,project_id").eq("type", type)));
+  return handleErrors(
+    useQuery(
+      supabase.from("sets").select("id,name,type,project_id").eq("type", type),
+    ),
+  );
+}
+export function useDeleteSet() {
+  return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id")); 
+}
+export function useUpsertSet() {
+  return useUpsertMutation(supabase.from("sets"), ["id"], "id"); 
 }
 /**
  * Display alerts.

@@ -21,7 +21,9 @@ import { SearchBar } from "react-native-screens";
 import { ManagementType, Mode } from "../../types/common";
 import { supabase } from "../../supabase";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts, useDeleteSet, useUpsertSet } from "../../utils/hooks";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import TextInputListItem from "./ListItems/TextInputListItem";
 
 export default function MultifunctionalList(props: {
   dataSource;
@@ -32,10 +34,19 @@ export default function MultifunctionalList(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
-  const { error: errorAlert } = useAlerts();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
   const Item = { name: "Set A", id: 1, type: props.type };
+  const { isMutating, trigger: deleteSet } = useDeleteSet();
+  const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
+  const createSet = () => {
+    upsertSet({
+      // @ts-ignore
+      name: creationQuery,
+      type: props.type,
+      project_id: 1,
+    });
+  };
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -63,41 +74,20 @@ export default function MultifunctionalList(props: {
                   icon="check"
                   onPress={() => {
                     Keyboard.dismiss();
-                    console.log(props.dataSource)
-                    // gleiche Funktion wie bei onSubmitEditing
+                    console.log(props.dataSource);
+                    createSet
                   }}
                 />
               }
               onChangeText={(query) => setCreationQuery(query)}
               onSubmitEditing={() => {
-                /*set mit namen creationquery und mit props.type muss erstellt werden  */
+               createSet
               }}
             />
           )}
           {props.mode == "edit" ? (
             props.dataSource.map((item) => (
-              <TextInput
-                key={item.id}
-                value={item.name}
-                mode="flat"
-                style={{ backgroundColor: "" }}
-                right={
-                  <TextInput.Icon
-                    forceTextInputFocus={false}
-                    icon="close"
-                    onPress={() => {
-                      // delete set
-                    }}
-                  />
-                }
-                onChangeText={
-                  () => {} /*just update set directly on change? "Will dataSource and with that text within TextInput also be updated? It should be, right?*/
-                }
-                onSubmitEditing={() => {
-                  Keyboard.dismiss();
-                  /*update set  */
-                }}
-              />
+              <TextInputListItem item={item} key={item.id} />
             ))
           ) : (
             <RadioButton.Group
@@ -107,7 +97,11 @@ export default function MultifunctionalList(props: {
               value={value}
             >
               {props.dataSource.map((item) => (
-                <RadioButton.Item key={item.id} label={item.name} value={item.id} />
+                <RadioButton.Item
+                  key={item.id}
+                  label={item.name}
+                  value={item.id}
+                />
               ))}
             </RadioButton.Group>
           )}
