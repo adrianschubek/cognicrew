@@ -16,7 +16,7 @@ export const DEFAULT_ALERT: Alert = {
   title: "",
   message: "",
   okText: "OK",
-  cancelText: "Cancel",
+  cancelText: "",
   dismissable: true,
   okAction: () => {},
   cancelAction: () => {},
