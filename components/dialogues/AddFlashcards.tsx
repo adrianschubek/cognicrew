@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
+import { ManagementType } from "../../types/common";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
@@ -39,7 +40,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
       >
         <SearchWithList
           mode="select"
-          type="flashcard"
+          type={ManagementType.FLASHCARD}
           searchPlaceholder="Search for flashcard set"
         />
         <TextInput

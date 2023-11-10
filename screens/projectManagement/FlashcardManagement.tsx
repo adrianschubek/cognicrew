@@ -12,6 +12,7 @@ import AccordionSection from "../../components/learningProject/AccordionSection"
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
+import { ManagementType } from "../../types/common";
 
 export default function FlashcardManagement() {
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
@@ -26,7 +27,7 @@ export default function FlashcardManagement() {
       <ManageSets
       showManageSets={showManageSets}
       close={() => setShowManageSets(false)}
-      type="flashcard"
+      type={ManagementType.FLASHCARD}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
@@ -43,7 +44,7 @@ export default function FlashcardManagement() {
         />
       </View>
       <ScrollView>
-        <AccordionSection type="flashcard" />
+        <AccordionSection type={ManagementType.FLASHCARD} />
       </ScrollView>
     </View>
   );

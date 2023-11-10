@@ -18,6 +18,7 @@ import EditFlashcard from "../learningProject/EditFlashcard";
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
+import { ManagementType } from "../../types/common";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
@@ -47,7 +48,7 @@ export default function AddExercises({ showAddExercises, close }) {
       >
         <SearchWithList
           mode="select"
-          type="exercise"
+          type={ManagementType.EXERCISE}
           searchPlaceholder="Search for exercise set"
         />
         <TextInput

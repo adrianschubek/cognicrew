@@ -2,8 +2,10 @@ import { Button, Divider, List, Searchbar, useTheme } from "react-native-paper";
 import { Keyboard } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, Mode } from "../../types/common";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MultifunctionalList from "./MultifunctionalList";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useSets } from "../../utils/hooks";
 
 export default function SearchWithList(props: {
   type: ManagementType;
@@ -35,9 +37,13 @@ export default function SearchWithList(props: {
   ];
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
-  const [dataSource] = useState(
-    Items.filter((item) => item.type === props.type),
-  );
+  const { data, isLoading, error } = useSets(props.type);
+   const [dataSource, setDataSource] = useState([]); 
+  useEffect(() => {
+    if (!data) return;
+    console.log(data);
+    setDataSource(data);
+  }, [data])
   const [filtered, setFiltered] = useState(dataSource);
   //const [isSearching, setIsSearching] = useState(false);
   const handleSearch = (query) => {
@@ -47,6 +53,7 @@ export default function SearchWithList(props: {
     );
     setFiltered(filteredItems);
   };
+  if(isLoading || error) return <LoadingOverlay visible={isLoading}/>
   return (
     <React.Fragment>
       <Searchbar

@@ -4,6 +4,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { ifMod } from "./common";
 import { useCallback, useMemo } from "react";
+import { ManagementType } from "../types/common";
 
 /**
  * Handles errors thrown by the given supabase query.
@@ -51,8 +52,8 @@ export function useAchievements() {
 }
 
 //Returns all Sets
-export function useSets() {
-  return handleErrors(useQuery(supabase.from("sets").select("*")));
+export function useSets(type: ManagementType) {
+  return handleErrors(useQuery(supabase.from("sets").select("id,name,type,project_id").eq("type", type)));
 }
 /**
  * Display alerts.

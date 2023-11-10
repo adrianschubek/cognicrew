@@ -12,6 +12,7 @@ import AccordionSection from "../../components/learningProject/AccordionSection"
 import AddExercises from "../../components/dialogues/AddExercises";
 import { useState } from "react";
 import ManageSets from "../../components/dialogues/ManageSets";
+import { ManagementType } from "../../types/common";
 
 export default function ExerciseManagement() {
   const [showAddExercises, setShowAddExercises] = useState(false);
@@ -26,7 +27,7 @@ export default function ExerciseManagement() {
       <ManageSets
         showManageSets={showManageSets}
         close={() => setShowManageSets(false)}
-        type="exercise"
+        type={ManagementType.EXERCISE}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
@@ -43,7 +44,7 @@ export default function ExerciseManagement() {
         />
       </View>
       <ScrollView>
-        <AccordionSection type="exercise" />
+        <AccordionSection type={ManagementType.EXERCISE} />
       </ScrollView>
     </View>
   );

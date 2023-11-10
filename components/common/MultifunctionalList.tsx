@@ -36,17 +36,6 @@ export default function MultifunctionalList(props: {
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
   const Item = { title: "Set A", id: 1, type: props.type };
-  const { data, isLoading, error } = useQuery(
-    supabase.from("sets").select("*"),
-    {
-      onSuccess(data, key, config) {
-        // errorAlert(JSON.stringify(data));
-      },
-      onError(err, key, config) {
-        errorAlert(err.message);
-      },
-    },
-  );
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -88,7 +77,7 @@ export default function MultifunctionalList(props: {
             props.dataSource.map((item) => (
               <TextInput
                 key={item.id}
-                value={item.title}
+                value={item.name}
                 mode="flat"
                 style={{ backgroundColor: "" }}
                 right={

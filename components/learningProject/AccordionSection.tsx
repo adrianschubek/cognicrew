@@ -10,20 +10,20 @@ import AccordionListItems from "./AccordionListItems";
 import { ManagementType } from "../../types/common";
 
 export const accordionSectionItems = [
-  { title: "Set A", id: 1, type: "flashcard" },
-  { title: "Set B", id: 2, type: "flashcard" },
-  { title: "Set C", id: 3, type: "flashcard" },
-  { title: "Set D", id: 4, type: "flashcard" },
-  { title: "Set E", id: 5, type: "flashcard" },
-  { title: "Set F", id: 6, type: "flashcard" },
-  { title: "Set G", id: 7, type: "flashcard" },
-  { title: "Set H", id: 8, type: "flashcard" },
-  { title: "Set I", id: 9, type: "flashcard" },
-  { title: "Set J", id: 11, type: "flashcard" },
-  { title: "Set K", id: 12, type: "flashcard" },
-  { title: "Set L", id: 13, type: "flashcard" },
-  { title: "Set M", id: 14, type: "exercise" },
-  { title: "Set N", id: 15, type: "exercise" },
+  { title: "Set A", id: 1, type: 0 },
+  { title: "Set B", id: 2, type: 0 },
+  { title: "Set C", id: 3, type: 0 },
+  { title: "Set D", id: 4, type: 0 },
+  { title: "Set E", id: 5, type: 0 },
+  { title: "Set F", id: 6, type: 0 },
+  { title: "Set G", id: 7, type: 0 },
+  { title: "Set H", id: 8, type: 0 },
+  { title: "Set I", id: 9, type: 0 },
+  { title: "Set J", id: 11, type: 0 },
+  { title: "Set K", id: 12, type: 0 },
+  { title: "Set L", id: 13, type: 0 },
+  { title: "Set M", id: 14, type: 1 },
+  { title: "Set N", id: 15, type: 1 },
 ];
 const flashcards = [
   {
@@ -104,7 +104,7 @@ export default function AccordionSection(props: {
               left={(props) => <List.Icon {...props} icon="folder" />}
             >
               <AccordionListItems
-                accordionListItems={learningSet.type === "flashcard" ? flashcards : exercises}
+                accordionListItems={learningSet.type === ManagementType.FLASHCARD ? flashcards : exercises}
                 type={props.type}
               />
             </List.Accordion>
