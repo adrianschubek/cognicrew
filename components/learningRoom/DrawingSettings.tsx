@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { TouchableOpacity } from "react-native";
+import {Text } from "react-native-paper";
 import Animated from "react-native-reanimated";
 import { useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { COLORS, STROKE_SIZE, WIDTH } from "./Constants";
@@ -16,13 +17,11 @@ export const StrokeSettings = ({
 }) => {
   const { openColor, openStroke, setOpenStroke, setOpenColor } =
     useWhitebardStore();
-  // State of each container: open or closed
-  //const [openColor, setOpenColor] = useState(false);
-  //const [openStroke, setOpenStroke] = useState(false);
   // Width of each container, a derived state from open/close state
   const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 90 : 60;
   const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 90 : 60;
   // Animated styles to give life to the action of opening and closing each container
+
   const colorAnimatedStyles = useAnimatedStyle(() => {
     return {
       left: 10,

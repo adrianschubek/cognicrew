@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { Text, IconButton, useTheme, Button } from "react-native-paper";
+import { Text, IconButton, useTheme, Divider } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -9,11 +9,12 @@ import {
 import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 
-import { Canvas } from "../components/learningRoom/Canvas";
+import { Canvas} from "../components/learningRoom/Canvas";
 import { StrokeView } from "../components/learningRoom/StrokeView";
 import { useWhitebardStore } from "../stores/WhiteboardStore";
 
 export default function Whiteboard({ navigation }) {
+  const { resetPath } = useWhitebardStore();
   const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
@@ -62,17 +63,21 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
 
+        <Divider style={styles.divider}/>
+
         <View style={styles.mid}>
           <Canvas />
         </View>
 
+        <Divider style={styles.divider}/>
+
         <View style={styles.bottomLeft}>
-          <IconButton
-            icon="keyboard"
+            <IconButton
+            icon="delete"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={() => console.log("Pressed")}
-          />
+            onPress = {resetPath}
+            />
           <IconButton
             icon="pencil"
             iconColor={theme.colors.primary}
@@ -81,6 +86,12 @@ export default function Whiteboard({ navigation }) {
               setDrawing(true);
               console.log("Pressed");
             }}
+          />
+           <IconButton
+            icon="keyboard"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={() => console.log("Pressed")}
           />
         </View>
       </View>
@@ -97,11 +108,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topright: {
-    flexDirection: "column",
+    flexDirection: "row",
   },
   mid: {
     flex: 1,
-    backgroundColor: "red",
+  },
+  divider: {
+
   },
   image: {
     marginLeft: responsiveWidth(7),
@@ -114,6 +127,6 @@ const styles = StyleSheet.create({
 
   bottomLeft: {
     //flex: 1,
-    flexDirection: "column",
+    flexDirection: "row",
   },
 });

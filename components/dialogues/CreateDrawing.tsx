@@ -28,22 +28,13 @@ import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
 import { useWhitebardStore } from "../../stores/WhiteboardStore";
 
 export default function CreateDrawing({ showDrawing, close }) {
-  //const [paths, setPaths] = useState([]);"
-  //const [color, setColor] = useState(COLORS[0]);"
-  //const [stroke, setStroke] = useState(STROKE_SIZE[0]);
   const { color, setColor, setStroke, stroke } = useWhitebardStore();
   return (
     <>
       <Portal>
         <Dialog visible={showDrawing} onDismiss={close}>
           <Dialog.Title>Drawing</Dialog.Title>
-          <Dialog.Content>
-            <Text> Round duration</Text>
-            <View style={styles.container}>
-              <TextInput />
-            </View>
-          </Dialog.Content>
-          <Dialog.Content>
+          <Dialog.Content style ={styles.container}>
             <StrokeSettings
               strokeWidth={stroke}
               currentColor={color}
@@ -70,5 +61,6 @@ export default function CreateDrawing({ showDrawing, close }) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+  },
 });

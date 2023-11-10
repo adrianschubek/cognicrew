@@ -8,6 +8,8 @@ type WhiteboardStoreType = {
   setColor: (color: any) => void;
   setStroke: (stroke: any) => void;
 
+  resetPath: () => void;
+
   openColor: any;
   openStroke: any;
   setOpenColor: (openColor: any) => void;
@@ -23,6 +25,8 @@ export const useWhitebardStore = create<WhiteboardStoreType>((set, get) => ({
   },
   setColor: (color: any) => set({ color: color }),
   setStroke: (stroke: any) => set({ stroke: stroke }),
+
+  resetPath: () => set({ paths: []}),
 
   openColor: false,
   openStroke: false,
