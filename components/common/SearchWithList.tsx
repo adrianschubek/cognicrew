@@ -38,18 +38,17 @@ export default function SearchWithList(props: {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isLoading, error } = useSets(props.type);
-   const [dataSource, setDataSource] = useState([]); 
   useEffect(() => {
     if (!data) return;
-    console.log(data);
-    setDataSource(data);
+    //console.log(data);
+    setFiltered(data);
   }, [data])
-  const [filtered, setFiltered] = useState(dataSource);
+  const [filtered, setFiltered] = useState([]);
   //const [isSearching, setIsSearching] = useState(false);
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredItems = dataSource.filter((item) =>
-      item.title.toLowerCase().match(query.toLowerCase()),
+    const filteredItems = data.filter((item) =>
+      item.name.toLowerCase().match(query.toLowerCase()),
     );
     setFiltered(filteredItems);
   };

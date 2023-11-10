@@ -35,7 +35,7 @@ export default function MultifunctionalList(props: {
   const { error: errorAlert } = useAlerts();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
-  const Item = { title: "Set A", id: 1, type: props.type };
+  const Item = { name: "Set A", id: 1, type: props.type };
   return (
     <React.Fragment>
       <View style={styles.container}>
@@ -63,6 +63,7 @@ export default function MultifunctionalList(props: {
                   icon="check"
                   onPress={() => {
                     Keyboard.dismiss();
+                    console.log(props.dataSource)
                     // gleiche Funktion wie bei onSubmitEditing
                   }}
                 />
@@ -106,7 +107,7 @@ export default function MultifunctionalList(props: {
               value={value}
             >
               {props.dataSource.map((item) => (
-                <RadioButton.Item key={item.id} label={item.title} value={item.id} />
+                <RadioButton.Item key={item.id} label={item.name} value={item.id} />
               ))}
             </RadioButton.Group>
           )}
