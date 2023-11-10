@@ -6,6 +6,7 @@ import { COLORS, STROKE_SIZE, WIDTH } from "./Constants";
 
 import { styles } from "./DrawingStyle";
 import { StrokeView } from "./StrokeView"
+import { useWhitebardStore } from "../../stores/WhiteboardStore";
 
 export  const StrokeSettings = ({
     onChangeColor,
@@ -13,9 +14,11 @@ export  const StrokeSettings = ({
     currentColor,
     strokeWidth,
   }) => {
+    
+    const{openColor, openStroke, setOpenStroke, setOpenColor} = useWhitebardStore()
     // State of each container: open or closed
-    const [openColor, setOpenColor] = useState(false);
-    const [openStroke, setOpenStroke] = useState(false);
+    //const [openColor, setOpenColor] = useState(false);
+    //const [openStroke, setOpenStroke] = useState(false);
     // Width of each container, a derived state from open/close state
     const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 90 : 60;
     const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 90 : 60;

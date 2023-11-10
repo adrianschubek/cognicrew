@@ -22,8 +22,17 @@ import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
 import { NAVIGATION } from "../../types/common";
 
+import { Canvas } from "../learningRoom/Canvas";
+import { StrokeSettings } from "../learningRoom/DrawingSettings";
+import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
+import { useWhitebardStore } from "../../stores/WhiteboardStore";
+
+
 export default function CreateDrawing({showDrawing, close}) {
-    
+    //const [paths, setPaths] = useState([]);"
+    //const [color, setColor] = useState(COLORS[0]);"
+    //const [stroke, setStroke] = useState(STROKE_SIZE[0]);
+    const{color,setColor,setStroke,stroke} = useWhitebardStore()
   return (
     <>
         <Portal>
@@ -36,6 +45,14 @@ export default function CreateDrawing({showDrawing, close}) {
                                         
                                     />
                                 </View>
+                    </Dialog.Content>
+                    <Dialog.Content>
+                        <StrokeSettings
+                        strokeWidth={stroke}
+                        currentColor={color}
+                        onChangeColor={setColor}
+                        onChangeStroke={setStroke}
+                        />
                     </Dialog.Content>
                 <Dialog.Actions>
                     <Button 

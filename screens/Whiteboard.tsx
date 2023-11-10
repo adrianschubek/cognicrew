@@ -10,6 +10,8 @@ import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 
 import { Canvas } from "../components/learningRoom/Canvas";
+import { StrokeView } from "../components/learningRoom/StrokeView";
+import { useWhitebardStore } from "../stores/WhiteboardStore";
 
 export default function Whiteboard({ navigation }) {
     const [showDrawing, setDrawing] = useState(false);
@@ -57,9 +59,11 @@ export default function Whiteboard({ navigation }) {
                     <Text>User 2</Text>
                 </View>
             </View>
-            <View>
-               <Canvas />
+
+            <View style={styles.mid}>
+               <Canvas/>
             </View>
+
             <View style={styles.bottomLeft}>
                 <IconButton
                 icon="keyboard"
@@ -94,6 +98,10 @@ const styles = StyleSheet.create({
     topright: {
         flexDirection: "column",
        
+    },
+    mid: {
+        flex: 1,
+        backgroundColor: 'red',
     },
     image: {
         marginLeft: responsiveWidth(7),

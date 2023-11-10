@@ -5,15 +5,16 @@ import Svg, { Path } from "react-native-svg";
 
 import { styles } from "./DrawingStyle";
 import { StrokeSettings } from "./DrawingSettings";
+import { useWhitebardStore } from "../../stores/WhiteboardStore";
 
 export const Canvas = () => {
-    const [paths, setPaths] = useState([]);
-    const [color, setColor] = useState(COLORS[0]);
-    const [stroke, setStroke] = useState(STROKE_SIZE[0]);
-  
+ 
+  const{color,setColor,setStroke,stroke,setPaths,paths} = useWhitebardStore()
+
     const setNewPath = (x: number, y: number) => {
       setPaths(prev => {
         const result = [...prev, {path: [`M${x} ${y}`], color, stroke}];
+    
         return result;
       });
     };
@@ -25,7 +26,7 @@ export const Canvas = () => {
         return currentPath ? [...prev.slice(0, -1), currentPath] : prev;
       });
     };
-  
+    console.log(paths)
     return (
       <>
         <View
@@ -41,7 +42,8 @@ export const Canvas = () => {
             onPress={() => setPaths([])}>
           </TouchableOpacity>
           <Svg>
-            {paths.map(({path, color: c, stroke: s}, i) => {
+            {
+            paths.map(({path, color: c, stroke: s}, i) => {
               return (
                 <Path
                   key={i}
@@ -54,12 +56,7 @@ export const Canvas = () => {
             })}
           </Svg>
         </View>
-        <StrokeSettings
-          strokeWidth={stroke}
-          currentColor={color}
-          onChangeColor={setColor}
-          onChangeStroke={setStroke}
-        />
+
       </>
     );
   };
