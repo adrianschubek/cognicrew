@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import { TouchableOpacity } from "react-native";
 import Animated from "react-native-reanimated";
 import { useAnimatedStyle, withTiming } from "react-native-reanimated";
@@ -71,6 +71,7 @@ export const StrokeSettings = ({
             COLORS.map((c) => {
               return (
                 <TouchableOpacity
+                  key={c}
                   onPress={() => handleColorSelector(c)}
                   style={[{ backgroundColor: c }, styles.colorButton]}
                 />
