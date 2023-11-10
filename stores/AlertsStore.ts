@@ -1,39 +1,71 @@
 import { create } from "zustand";
 
-type AlertsStoreType = {
-  open: boolean;
+export type Alert = {
   icon: string;
   title: string;
   message: string;
   okText: string;
   cancelText: string;
+  dismissable: boolean;
   okAction: () => void;
   cancelAction: () => void;
-  setOpen: (open: boolean) => void;
-  setIcon: (icon: string) => void;
-  setTitle: (title: string) => void;
-  setMessage: (message: string) => void;
-  setOkText: (text: string) => void;
-  setCancelText: (text: string) => void;
-  setOkAction: (action: () => void) => void;
-  setCancelAction: (action: () => void) => void;
 };
 
-export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
-  open: false,
+export const DEFAULT_ALERT: Alert = {
   icon: "information-outline",
   title: "",
   message: "",
   okText: "OK",
   cancelText: "Cancel",
+  dismissable: true,
   okAction: () => {},
   cancelAction: () => {},
-  setOpen: (open: boolean) => set({ open: open }),
-  setIcon: (icon: string) => set({ icon: icon }),
-  setTitle: (title: string) => set({ title: title }),
-  setMessage: (message: string) => set({ message: message }),
-  setOkText: (text: string) => set({ okText: text }),
-  setCancelText: (text: string) => set({ cancelText: text }),
-  setOkAction: (action: () => void) => set({ okAction: action }),
-  setCancelAction: (action: () => void) => set({ cancelAction: action }),
+} as const;
+
+type AlertsStoreType = {
+  /**
+   * The current alert to display.
+   */
+  activeAlert: Alert;
+  /**
+   * The queue of alerts to display.
+   */
+  alerts: Alert[];
+  /**
+   * Creates a new alert and adds it to the queue.
+   */
+  dispatch: (alert: Partial<Alert>) => void;
+  /**
+   * Removes the current alert from the queue and sets the next alert as the current alert.
+   */
+  next: () => void;
+};
+
+export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
+  activeAlert: null,
+  alerts: [],
+  dispatch: (alert: Alert) => {
+    // ignore duplicate alerts already in queue
+    if (
+      get().alerts.some(
+        (a) =>
+          a.message === alert.message &&
+          a.title === alert.title &&
+          a.icon === alert.icon &&
+          a.okText === alert.okText &&
+          a.cancelText === alert.cancelText,
+      )
+    ) {
+      return;
+    }
+    set((state) => ({
+      alerts: [...state.alerts, { ...DEFAULT_ALERT, ...alert }],
+    }));
+  },
+  next: () => {
+    set((state) => ({
+      alerts: state.alerts.slice(1),
+      activeAlert: state.alerts[0],
+    }));
+  },
 }));

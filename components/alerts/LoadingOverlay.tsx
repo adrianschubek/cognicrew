@@ -1,10 +1,5 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  ActivityIndicator,
-  MD3Colors,
-  Text,
-  useTheme,
+  ActivityIndicator, useTheme
 } from "react-native-paper";
 import { View } from "react-native";
 
