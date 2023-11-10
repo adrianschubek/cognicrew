@@ -15,26 +15,6 @@ export default function SearchWithList(props: {
   mode?: Mode;
   [name: string]: any;
 }) {
-  const Items = [
-    { title: "Set A", id: 1, type: "flashcard" },
-    { title: "Set B", id: 2, type: "flashcard" },
-    { title: "Set C", id: 3, type: "flashcard" },
-    { title: "Set D", id: 4, type: "flashcard" },
-    { title: "Set E", id: 5, type: "flashcard" },
-    { title: "Set F", id: 6, type: "flashcard" },
-    { title: "Set G", id: 7, type: "flashcard" },
-    { title: "Set H", id: 8, type: "flashcard" },
-    { title: "Set I", id: 9, type: "flashcard" },
-    { title: "Set J", id: 11, type: "flashcard" },
-    { title: "Set K", id: 12, type: "flashcard" },
-    { title: "Set L", id: 13, type: "flashcard" },
-    { title: "Set M", id: 14, type: "exercise" },
-    { title: "Set N", id: 16, type: "exercise" },
-    { title: "Set O", id: 17, type: "exercise" },
-    { title: "Set P", id: 18, type: "exercise" },
-    { title: "Set Q", id: 19, type: "exercise" },
-    { title: "Set R", id: 20, type: "exercise" },
-  ];
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isLoading, error } = useSets(props.type);
@@ -52,7 +32,7 @@ export default function SearchWithList(props: {
     );
     setFiltered(filteredItems);
   };
-  if(isLoading || error) return <LoadingOverlay visible={isLoading}/>
+  if(error) return <LoadingOverlay visible={isLoading}/>
   return (
     <React.Fragment>
       <Searchbar

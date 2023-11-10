@@ -49,7 +49,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           label="Question:"
           onChangeText={(question) => {
             setQuestion(question);
-            console.log(question);
+            //console.log(question);
             //update backend
           }}
         />
@@ -59,7 +59,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           multiline={true}
           onChangeText={(answer) => {
             setAnswer(answer);
-            console.log(answer);
+            //console.log(answer);
             //update backend
           }}
         />

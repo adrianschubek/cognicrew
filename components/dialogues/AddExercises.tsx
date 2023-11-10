@@ -57,7 +57,7 @@ export default function AddExercises({ showAddExercises, close }) {
           label="Question:"
           onChangeText={(question) => {
             setQuestion(question);
-            console.log(question);
+            //console.log(question);
             //update backend
           }}
         />

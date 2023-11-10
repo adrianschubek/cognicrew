@@ -68,7 +68,6 @@ export default function Whiteboard({ navigation }) {
                 size={40}
                 onPress={() => {
                     setDrawing(true);
-                    console.log('Pressed');
                 }}
                 />
             </View>

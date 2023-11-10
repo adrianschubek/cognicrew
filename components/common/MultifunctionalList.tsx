@@ -36,8 +36,7 @@ export default function MultifunctionalList(props: {
   const theme = useTheme();
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
-  const { isMutating, trigger: deleteSet } = useDeleteSet();
-  const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
+  const { isMutating, trigger: upsertSet } = useUpsertSet();
   const createSet = () => {
     upsertSet({
       // @ts-ignore
@@ -45,6 +44,7 @@ export default function MultifunctionalList(props: {
       type: props.type,
       project_id: 1,
     });
+    setCreationQuery("");
   };
   return (
     <React.Fragment>
@@ -65,16 +65,18 @@ export default function MultifunctionalList(props: {
               label="create new Set"
               value={creationQuery}
               mode="flat"
+              disabled={isMutating}
               style={{ backgroundColor: "" }}
               //left={<TextInput.Icon icon="plus" />}
               right={
                 <TextInput.Icon
                   forceTextInputFocus={false}
                   icon="check"
+                  disabled={isMutating}
                   onPress={() => {
                     createSet();
                     Keyboard.dismiss();
-                    console.log(props.dataSource);
+                    //console.log(props.dataSource);
 
                   }}
                 />

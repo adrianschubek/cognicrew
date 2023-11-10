@@ -31,7 +31,7 @@ export default function EditFlashcard({ listItem }) {
           value={/*hier muss dann listItem.question hin*/ question}
           onChangeText={(question) => {
             setQuestion(question);
-            console.log(question);
+            //console.log(question);
             //update backend
           }}
         />
@@ -42,7 +42,7 @@ export default function EditFlashcard({ listItem }) {
           value={/*hier muss dann listItem.answer hin*/ answer}
           onChangeText={(answer) => {
             setAnswer(answer);
-            console.log(answer);
+            //console.log(answer);
             //update backend
           }}
         />

@@ -20,15 +20,16 @@ export default function TextInputListItem({ item }) {
   };
   return (
     <React.Fragment>
-      <LoadingOverlay visible={isMutating || isMutating2} />
       <TextInput
         value={title}
         mode="flat"
+        disabled={isMutating || isMutating2}
         style={{ backgroundColor: "" }}
         right={
           <TextInput.Icon
             forceTextInputFocus={false}
             icon="close"
+            disabled={isMutating || isMutating2}
             onPress={() => {
               deleteSet({ id: item.id });
             }}
@@ -41,7 +42,7 @@ export default function TextInputListItem({ item }) {
         onSubmitEditing={() => {
           save();
           Keyboard.dismiss();
-          console.log(item.name);
+          //console.log(item.name);
         }}
       />
     </React.Fragment>
