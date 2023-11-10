@@ -68,7 +68,6 @@ export function useDeleteSet() {
   return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id"));
 }
 export function useUpsertSet() {
-  const { success, error: errorAlert, info, okcancel } = useAlerts();
   return handleErrors(
     useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type,project_id"),
   );
