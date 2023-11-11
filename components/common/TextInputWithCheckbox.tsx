@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { use } from "chai";
+import { useEffect, useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
 import {
   responsiveHeight,
@@ -7,14 +8,13 @@ import {
 
 export default function TextInputWithCheckbox(props: {
   width?: any;
-  sendAnswer?: any;
-  listItemAnswer?: any;
+  sendAnswer?: ([string, boolean]) => any;
+  listItemAnswer?: [string, boolean];
   [name: string]: any;
 }) {
-  const [checked, setChecked] = useState(false); 
-  const [answer, setAnswer] = props.listItemAnswer
-    ? useState(props.listItemAnswer)
-    : useState("");
+  const [checked, setChecked] = useState(false);
+  const [answer, setAnswer] =  useState<[string, boolean]>(props.listItemAnswer??["", false]);
+  //useEffect(() => {  console.log(props.listItemAnswer)})
   return (
     <TextInput
       style={{
@@ -27,18 +27,24 @@ export default function TextInputWithCheckbox(props: {
             <Checkbox
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
-                setChecked(!checked);
+                setChecked((c) => {
+                  props.sendAnswer([answer[0], !c]);
+                  return !c;
+                });
                 //the answer is true if checked === true
               }}
             />
           )}
         />
       }
-      label={"Answer " + props.number}
+      label={/*"Answer " + props.number*/ answer[0]}
       multiline={true}
-      value={answer}
+      value={answer[0]}
       onChangeText={(text) => {
-        setAnswer(text);
+        setAnswer([text, checked]);
+        props.sendAnswer([text, checked]);
+        console.log("anwer[0]" + answer[0]);
+        console.log("props.listItemAnswer: " + props.listItemAnswer);
       }}
     />
   );

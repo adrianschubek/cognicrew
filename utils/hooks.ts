@@ -107,7 +107,7 @@ export function useUpsertExercise() {
 export function useAnswersExercises(exerciseId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("answers_exercises").select("answer,exercise,is_correct").eq("exercise", exerciseId)
+      supabase.from("answers_exercises").select("id,answer,exercise,is_correct").eq("exercise", exerciseId)
     ),
   );
 }
@@ -115,8 +115,8 @@ export function useUpsertAnswersExercise() {
   return handleErrors(
     useUpsertMutation(
       supabase.from("answers_exercises"),
-      ["exercise"],
-      "answer,exercise,is_correct",
+      ["id"],
+      "id,answer,exercise,is_correct",
     ),
   );
 }

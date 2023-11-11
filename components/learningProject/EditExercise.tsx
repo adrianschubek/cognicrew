@@ -1,6 +1,5 @@
 import { max } from "cypress/types/lodash";
-import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Text,
@@ -17,15 +16,41 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
+import { useAnswersExercises } from "../../utils/hooks";
+import LoadingOverlay from "../alerts/LoadingOverlay";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
   const [question, setQuestion] = useState(listItem.question);
-  const [answer1, setAnswer1] = useState(listItem.answer1);
-  const [answer2, setAnswer2] = useState(listItem.answer2);
-  const [answer3, setAnswer3] = useState(listItem.answer3);
-  const [answer4, setAnswer4] = useState(listItem.answer4);
-  const [checked, setChecked] = useState(false);
+  const { data, error, isLoading } = useAnswersExercises(listItem.id);
+  useEffect(() => {
+    if (!data) return;
+    setAnswers([
+      [data[0].answer, data[0].is_correct],
+      [data[1].answer, data[1].is_correct],
+      [data[2].answer, data[2].is_correct],
+      [data[3].answer, data[3].is_correct],
+    ]);
+  }, [data]);
+  const [answers, setAnswers] = useState<[string, boolean][]>([
+    ["", false],
+    ["", false],
+    ["", false],
+    ["", false],
+  ]);
+  const getAnswer1 = ([text, checked]) => {
+    setAnswers([[text, checked], answers[1], answers[2], answers[3]]);
+  };
+  const getAnswer2 = ([text, checked]) => {
+    setAnswers([answers[0], [text, checked], answers[2], answers[3]]);
+  };
+  const getAnswer3 = ([text, checked]) => {
+    setAnswers([answers[0], answers[1], [text, checked], answers[3]]);
+  };
+  const getAnswer4 = ([text, checked]) => {
+    setAnswers([answers[0], answers[1], answers[2], [text, checked]]);
+  };
+  if (error) return <LoadingOverlay visible={isLoading} />;
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title title="Edit here:" />
@@ -37,14 +62,30 @@ export default function EditExercise({ listItem }) {
           value={/*hier muss dann listItem.question hin*/ question}
           onChangeText={(question) => {
             setQuestion(question);
-            //console.log(question);
+            //console.log([answers[0], answers[1], answers[2], answers[3]]);
             //update backend
           }}
         />
-        <TextInputWithCheckbox listItemAnswer={listItem.answer1} number="1" />
-        <TextInputWithCheckbox listItemAnswer={listItem.answer2} number="2" />
-        <TextInputWithCheckbox listItemAnswer={listItem.answer3} number="3" />
-        <TextInputWithCheckbox listItemAnswer={listItem.answer4} number="4" />
+        <TextInputWithCheckbox
+          listItemAnswer={answers[0]}
+          sendAnswer={getAnswer1}
+          number="1"
+        />
+        <TextInputWithCheckbox
+          listItemAnswer={answers[1]}
+          sendAnswer={getAnswer2}
+          number="2"
+        />
+        <TextInputWithCheckbox
+          listItemAnswer={answers[2]}
+          sendAnswer={getAnswer3}
+          number="3"
+        />
+        <TextInputWithCheckbox
+          listItemAnswer={answers[3]}
+          sendAnswer={getAnswer4}
+          number="4"
+        />
       </Card.Content>
     </Card>
   );

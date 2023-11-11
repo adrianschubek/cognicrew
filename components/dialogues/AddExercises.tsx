@@ -20,27 +20,22 @@ import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { ManagementType } from "../../types/common";
 import { useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
+import { set } from "cypress/types/lodash";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
-  const exercise = {
-    question: "",
-    answer1: "",
-    answer2: "",
-    answer3: "",
-    answer4: "",
-    id: 0,
-    groupId: 0,
-  };
   const [question, setQuestion] = useState("");
-  const [answer1, setAnswer1] = useState<[string,boolean]>(["", false]);
-  const [answer2, setAnswer2] = useState<[string,boolean]>(["", false]);
-  const [answer3, setAnswer3] = useState<[string,boolean]>(["", false]);
-  const [answer4, setAnswer4] = useState<[string,boolean]>(["", false]);
+  const [answers, setAnswers] = useState<[string, boolean][]>([
+    ["", false],
+    ["", false],
+    ["", false],
+    ["", false],
+  ]);
   const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState();
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
-  const { isMutating: isMutating2, trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
+  const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
+    useUpsertAnswersExercise();
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
     console.log(setId);
@@ -48,36 +43,40 @@ export default function AddExercises({ showAddExercises, close }) {
   const addExercise = () => {
     upsertExercise({
       //@ts-expect-error
-      id:0,
       question: question,
       priority: priority,
       set_id: selectedSetId,
-    });
-    upsertAnswersExercise({
-      //@ts-expect-error
-      answer: answer1[0],
-      exercise_id: 0,
-      is_correct: answer1[1],
-
-    });
+    }).then((res) => {
+      answers.forEach((e) => {
+        //console.log(e);
+        upsertAnswersExercise({
+          //@ts-expect-error
+          answer: e[0],
+          exercise: res[0].id,
+          is_correct: e[1],
+        });
+      });
+    }); //an array is expected
     setQuestion("");
-    setAnswer1(["", false]);
-    setAnswer2(["", false]);
-    setAnswer3(["", false]);
-    setAnswer4(["", false]);
+    setAnswers([
+      ["", false],
+      ["", false],
+      ["", false],
+      ["", false],
+    ]);
   };
   const getAnswer1 = ([text, checked]) => {
-    setAnswer1([text, checked]);
-  }
+    setAnswers([[text, checked], answers[1], answers[2], answers[3]]);
+  };
   const getAnswer2 = ([text, checked]) => {
-    setAnswer2([text, checked]);
-  }
+    setAnswers([answers[0], [text, checked], answers[2], answers[3]]);
+  };
   const getAnswer3 = ([text, checked]) => {
-    setAnswer3([text, checked]);
-  }
+    setAnswers([answers[0], answers[1], [text, checked], answers[3]]);
+  };
   const getAnswer4 = ([text, checked]) => {
-    setAnswer4([text, checked]);
-  }
+    setAnswers([answers[0], answers[1], answers[2], [text, checked]]);
+  };
   return (
     <Portal>
       <Dialog
