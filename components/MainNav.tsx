@@ -8,6 +8,7 @@ import LearningProject from "../screens/LearningProject";
 import Login from "../screens/Login";
 import LearningRoom from "../screens/LearningRoom";
 import FlashcardManagement from "../screens/projectManagement/FlashcardManagement";
+import FilesManagement from "../screens/projectManagement/FilesManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import Whiteboard from "../screens/Whiteboard";
@@ -88,6 +89,10 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.EXERCISE_MANAGEMENT}
         component={ExerciseManagement}
+      />
+      <Stack.Screen
+        name={NAVIGATION.FILES_MANAGEMENT}
+        component={FilesManagement}
       />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
       <Stack.Screen
