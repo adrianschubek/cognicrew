@@ -14,7 +14,13 @@ export default function TextInputWithCheckbox(props: {
 }) {
   const [checked, setChecked] = useState(false);
   const [answer, setAnswer] =  useState<[string, boolean]>(props.listItemAnswer??["", false]);
-  //useEffect(() => {  console.log(props.listItemAnswer)})
+
+  useEffect(() => {
+    if (!props.listItemAnswer) return;
+    setAnswer(props.listItemAnswer);
+    setChecked(props.listItemAnswer[1]);
+  }, [props.listItemAnswer]);
+
   return (
     <TextInput
       style={{
