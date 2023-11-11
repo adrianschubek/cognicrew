@@ -20,6 +20,7 @@ import CreateProject from "../screens/projectManagement/CreateProject";
 import InviteFriends from "./dialogues/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
+import ExerciseGame from "../screens/ExerciseGame";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -35,12 +36,12 @@ function MainTab() {
 
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
 
+      <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
+
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
-      <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-      />
+      <Stack.Screen name={NAVIGATION.FLASHCARD_GAME} component={FlashcardGame} />
+      
     </Stack.Navigator>
   );
 }
