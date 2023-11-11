@@ -9,16 +9,20 @@ import {
 export default function TextInputWithCheckbox(props: {
   width?: any;
   sendAnswer?: ([string, boolean]) => any;
-  listItemAnswer?: [string, boolean];
+  listItemAnswer?: [string, boolean, number];
+  performOnTextChange?: () => any;
   [name: string]: any;
 }) {
-  const [checked, setChecked] = useState(false);
-  const [answer, setAnswer] =  useState<[string, boolean]>(props.listItemAnswer??["", false]);
+  const [answer, setAnswer] = useState<[string, boolean, number]>([
+    "",
+    false,
+    0,
+  ]);
 
   useEffect(() => {
     if (!props.listItemAnswer) return;
+    if (answer[0] !== "" && answer[1] != false && answer[2] != 0) return;
     setAnswer(props.listItemAnswer);
-    setChecked(props.listItemAnswer[1]);
   }, [props.listItemAnswer]);
 
   return (
@@ -31,26 +35,26 @@ export default function TextInputWithCheckbox(props: {
         <TextInput.Icon
           icon={() => (
             <Checkbox
-              status={checked ? "checked" : "unchecked"}
+              status={answer[1] ? "checked" : "unchecked"}
               onPress={() => {
-                setChecked((c) => {
-                  props.sendAnswer([answer[0], !c]);
-                  return !c;
-                });
+                setAnswer([answer[0], !answer[1], answer[2]]);
                 //the answer is true if checked === true
               }}
             />
           )}
         />
       }
-      label={/*"Answer " + props.number*/ answer[0]}
+      label={"Answer " + props.number}
       multiline={true}
       value={answer[0]}
       onChangeText={(text) => {
-        setAnswer([text, checked]);
-        props.sendAnswer([text, checked]);
-        console.log("anwer[0]" + answer[0]);
-        console.log("props.listItemAnswer: " + props.listItemAnswer);
+        setAnswer([text, answer[1], answer[2]]);
+        props.sendAnswer([text, answer[1]]);
+      }}
+      onEndEditing={() => {
+        props.performOnTextChange()
+          ? props.performOnTextChange()
+          : () => {}; /*if performOnTextChange is not defined, do nothing;*/
       }}
     />
   );
