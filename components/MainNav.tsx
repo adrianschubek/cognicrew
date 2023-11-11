@@ -19,6 +19,9 @@ import { NAVIGATION } from "../types/common";
 import CreateProject from "../screens/projectManagement/CreateProject";
 import { useNavigation } from "@react-navigation/native";
 import InviteFriends from "./dialogues/InviteFriends";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import AccountManage from "../screens/AccountManage";
+import { LogoutButton } from "./settings/AccountInfo";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -44,10 +47,16 @@ function MainTab() {
   );
 }
 
-function SettingsTab() {
+function AccountTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name={NAVIGATION.SETTINGS} component={Settings} />
+      <Stack.Screen
+        name={NAVIGATION.ACCOUNT}
+        component={AccountManage}
+        options={{
+          headerRight: LogoutButton,
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -88,7 +97,6 @@ function LearningProjectsTab() {
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
-
     </Stack.Navigator>
   );
 }
@@ -117,8 +125,8 @@ export default function MainNav() {
       />
       <Tab.Screen
         name="SettingsTab"
-        options={{ tabBarIcon: "cogs", title: "Settings" }}
-        component={SettingsTab}
+        options={{ tabBarIcon: "account", title: "Account" }}
+        component={AccountTab}
       />
     </Tab.Navigator>
   );

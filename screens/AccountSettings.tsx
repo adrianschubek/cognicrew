@@ -21,7 +21,7 @@ import DangerZone from "../components/settings/DangerZone";
 import Visual from "../components/settings/Visual";
 import NameChange from "../components/settings/NameChange";
 
-export default function AccountSettings({ nav }) {
+export default function AccountSettings() {
   const theme = useTheme();
 
   return (
