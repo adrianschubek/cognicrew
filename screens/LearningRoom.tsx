@@ -19,16 +19,6 @@ export default function LearningRoom({ navigation }) {
 
   return (
     <>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
-        
-      />
-      <CreateQuizGame
-        showCreateQuizGame={showCreateQuizGame}
-        close={() => setShowCreateQuizGame(false)}
-      />
-
       <View style={styles.container}>
         <StatusBar style="auto" />
         <LearningProjectCategory
@@ -49,7 +39,7 @@ export default function LearningRoom({ navigation }) {
             console.log("Flashcard Game Pressed");
           }}
         />
-        
+
         <LearningProjectCategory
           path={require("../assets/teamwork_symbol.png")}
           name={"Cogniboard"}
@@ -58,8 +48,15 @@ export default function LearningRoom({ navigation }) {
             console.log("Whiteboard pressed");
           }}
         />
-        
       </View>
+      <CreateFlashCardGame
+        showCreateFlashcardGame={showCreateFlashcardGame}
+        close={() => setShowCreateFlashcardGame(false)}
+      />
+      <CreateQuizGame
+        showCreateQuizGame={showCreateQuizGame}
+        close={() => setShowCreateQuizGame(false)}
+      />
     </>
   );
 }

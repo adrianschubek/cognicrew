@@ -16,6 +16,7 @@ export const enum NAVIGATION {
   CREATEEDIT_PROJECT = "CreateEditProject",
   INVITE_FRIENDS = "InviteFriends",
   DISCOVER = "Discover",
+  LOBBY = "Lobby",
 }
 export const enum ManagementType {
   FLASHCARD = 0,

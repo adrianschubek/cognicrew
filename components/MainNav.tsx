@@ -32,9 +32,9 @@ function MainTab() {
       />
       <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
 
-      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+      {/* <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
 
-      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} /> */}
 
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_GAME}
