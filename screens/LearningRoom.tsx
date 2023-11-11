@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
   container: {
     width: responsiveWidth(100),
     height: responsiveHeight(100),
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
