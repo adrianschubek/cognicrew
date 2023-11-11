@@ -91,7 +91,7 @@ export function useUpsertFlashcard() {
 export function useExercises(setId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("exercises").select("id,question,priority,set_id,answer1,answer2,answer3,answer4").eq("set_id", setId)
+      supabase.from("exercises").select("id,question,priority,set_id").eq("set_id", setId)
     ),
   );
 }
@@ -100,7 +100,23 @@ export function useUpsertExercise() {
     useUpsertMutation(
       supabase.from("exercises"),
       ["id"],
-      "id,question,priority,set_id,answer1,answer2,answer3,answer4",
+      "id,question,priority,set_id",
+    ),
+  );
+}
+export function useAnswersExercises(exerciseId: number) {
+  return handleErrors(
+    useQuery(
+      supabase.from("answers_exercises").select("answer,exercise,is_correct").eq("exercise", exerciseId)
+    ),
+  );
+}
+export function useUpsertAnswersExercise() {
+  return handleErrors(
+    useUpsertMutation(
+      supabase.from("answers_exercises"),
+      ["exercise"],
+      "answer,exercise,is_correct",
     ),
   );
 }

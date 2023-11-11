@@ -19,7 +19,7 @@ import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { ManagementType } from "../../types/common";
-import { useUpsertExercise } from "../../utils/hooks";
+import { useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
@@ -40,6 +40,7 @@ export default function AddExercises({ showAddExercises, close }) {
   const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState();
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
+  const { isMutating: isMutating2, trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
     console.log(setId);
@@ -47,13 +48,17 @@ export default function AddExercises({ showAddExercises, close }) {
   const addExercise = () => {
     upsertExercise({
       //@ts-expect-error
+      id:0,
       question: question,
-      answer1: answer1,
-      answer2: answer2,
-      answer3: answer3,
-      answer4: answer4,
       priority: priority,
       set_id: selectedSetId,
+    });
+    upsertAnswersExercise({
+      //@ts-expect-error
+      answer: answer1[0],
+      exercise_id: 0,
+      is_correct: answer1[1],
+
     });
     setQuestion("");
     setAnswer1(["", false]);

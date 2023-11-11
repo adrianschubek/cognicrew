@@ -8,13 +8,13 @@ import {
 export default function TextInputWithCheckbox(props: {
   width?: any;
   sendAnswer?: any;
-  listItemAnswer?: [string, boolean];
+  listItemAnswer?: any;
   [name: string]: any;
 }) {
-  const [checked, setChecked] = props.listItemAnswer ? useState(props.listItemAnswer[1]) : useState(false); 
+  const [checked, setChecked] = useState(false); 
   const [answer, setAnswer] = props.listItemAnswer
     ? useState(props.listItemAnswer)
-    : useState<[string, boolean]>(["", false]);
+    : useState("");
   return (
     <TextInput
       style={{
@@ -36,10 +36,9 @@ export default function TextInputWithCheckbox(props: {
       }
       label={"Answer " + props.number}
       multiline={true}
-      value={answer[0]}
+      value={answer}
       onChangeText={(text) => {
-        setAnswer([text, checked]);
-        props.sendAnswer([text, checked]);
+        setAnswer(text);
       }}
     />
   );
