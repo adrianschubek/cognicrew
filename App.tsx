@@ -19,7 +19,6 @@ import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
 import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
 import { SWRConfig } from "swr";
-import { AppState } from "react-native";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
