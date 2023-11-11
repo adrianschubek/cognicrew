@@ -112,7 +112,7 @@ export default function MainNav() {
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen
         name="HomeTab"
-        options={{ tabBarIcon: "home", title: "Feed" }}
+        options={{ tabBarIcon: "home", title: "Home" }}
         component={MainTab}
       />
       <Tab.Screen
