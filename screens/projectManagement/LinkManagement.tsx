@@ -9,12 +9,23 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
+import AddLinks from "../../components/dialogues/AddLinks";
+import { useState } from "react";
+
 export default function LinkManagement() {
+  const [showAddLink, setShowAddLink] = useState(false);
   return (
     <View style={styles.container}>
+      <AddLinks
+        showAddingLinks={showAddLink}
+        close={() => setShowAddLink(false)}
+      />
       <StatusBar style="auto" />
       <View style={styles.upperContainer}>
-        <TextWithPlusButton text="add new link" function={() => {}} />
+        <TextWithPlusButton text="add new link" function={() => 
+        {
+          setShowAddLink(true);
+        }} />
       </View>
       <ScrollView>
       <VideoLinkCards/>
