@@ -29,7 +29,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         //@ts-expect-error
         question: question,
         answer: answer,
-        priority: 5,
+        priority: priority,
         set_id: selectedSetId,
       },
     );
@@ -38,6 +38,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
   };
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState();
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);

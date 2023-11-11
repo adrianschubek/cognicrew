@@ -19,6 +19,7 @@ import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { ManagementType } from "../../types/common";
+import { useUpsertExercise } from "../../utils/hooks";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
@@ -31,11 +32,47 @@ export default function AddExercises({ showAddExercises, close }) {
     id: 0,
     groupId: 0,
   };
-  const [question, setQuestion] = useState(exercise.question);
-  const [answer1, setAnswer1] = useState(exercise.answer1);
-  const [answer2, setAnswer2] = useState(exercise.answer2);
-  const [answer3, setAnswer3] = useState(exercise.answer3);
-  const [answer4, setAnswer4] = useState(exercise.answer4);
+  const [question, setQuestion] = useState("");
+  const [answer1, setAnswer1] = useState<[string,boolean]>(["", false]);
+  const [answer2, setAnswer2] = useState<[string,boolean]>(["", false]);
+  const [answer3, setAnswer3] = useState<[string,boolean]>(["", false]);
+  const [answer4, setAnswer4] = useState<[string,boolean]>(["", false]);
+  const [priority, setPriority] = useState(5);
+  const [selectedSetId, setSelectedSetId] = useState();
+  const { isMutating, trigger: upsertExercise } = useUpsertExercise();
+  const getSelectedSetId = (setId) => {
+    setSelectedSetId(setId);
+    console.log(setId);
+  };
+  const addExercise = () => {
+    upsertExercise({
+      //@ts-expect-error
+      question: question,
+      answer1: answer1,
+      answer2: answer2,
+      answer3: answer3,
+      answer4: answer4,
+      priority: priority,
+      set_id: selectedSetId,
+    });
+    setQuestion("");
+    setAnswer1(["", false]);
+    setAnswer2(["", false]);
+    setAnswer3(["", false]);
+    setAnswer4(["", false]);
+  };
+  const getAnswer1 = ([text, checked]) => {
+    setAnswer1([text, checked]);
+  }
+  const getAnswer2 = ([text, checked]) => {
+    setAnswer2([text, checked]);
+  }
+  const getAnswer3 = ([text, checked]) => {
+    setAnswer3([text, checked]);
+  }
+  const getAnswer4 = ([text, checked]) => {
+    setAnswer4([text, checked]);
+  }
   return (
     <Portal>
       <Dialog
@@ -50,6 +87,7 @@ export default function AddExercises({ showAddExercises, close }) {
           mode="select"
           type={ManagementType.EXERCISE}
           searchPlaceholder="Search for exercise set"
+          sendSetId={getSelectedSetId}
         />
         <TextInput
           style={[styles.textInputStyle]}
@@ -57,35 +95,33 @@ export default function AddExercises({ showAddExercises, close }) {
           label="Question:"
           onChangeText={(question) => {
             setQuestion(question);
-            //console.log(question);
-            //update backend
           }}
         />
         <TextInputWithCheckbox
           number="1"
-          listItemAnswer={answer1}
+          sendAnswer={getAnswer1}
           width={responsiveWidth(70)}
         />
         <TextInputWithCheckbox
           number="2"
-          listItemAnswer={answer2}
+          sendAnswer={getAnswer2}
           width={responsiveWidth(70)}
         />
         <TextInputWithCheckbox
           number="3"
-          listItemAnswer={answer3}
+          sendAnswer={getAnswer3}
           width={responsiveWidth(70)}
         />
         <TextInputWithCheckbox
           number="4"
-          listItemAnswer={answer4}
+          sendAnswer={getAnswer4}
           width={responsiveWidth(70)}
         />
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
             onPress={() => {
-              close(), Keyboard.dismiss();
+              addExercise(), close(), Keyboard.dismiss();
             }}
             mode="contained"
           >

@@ -3,9 +3,6 @@ import * as React from "react";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
-  Text,
-  List,
-  Divider,
   useTheme,
   Card,
   TextInput,
@@ -15,11 +12,26 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import { useUpsertFlashcard } from "../../utils/hooks";
 
 export default function EditFlashcard({ listItem }) {
   const theme = useTheme();
   const [question, setQuestion] = useState(listItem.question);
   const [answer, setAnswer] = useState(listItem.answer);
+  const [priority, setPriority] = useState(listItem.priority);
+  const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
+  //is called everytime the user changes text in the textinput, thats the design right now, do we want to do it like that?
+  const editFlashcard = (question, answer, priority) => {
+    upsertFlashcard(
+      {
+        //@ts-expect-error
+        id:listItem.id,
+        question: question,
+        answer: answer,
+        priority: priority,
+        set_id: listItem.set_id,
+      },
+    );}
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title title="Edit here:" />
@@ -28,22 +40,20 @@ export default function EditFlashcard({ listItem }) {
           style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}
           multiline={true}
           label="Question:"
-          value={/*hier muss dann listItem.question hin*/ question}
+          value={question}
           onChangeText={(question) => {
             setQuestion(question);
-            //console.log(question);
-            //update backend
+            editFlashcard(question,answer,priority);
           }}
         />
         <TextInput
           style={styles.textInputStyle}
           label="Answer:"
           multiline={true}
-          value={/*hier muss dann listItem.answer hin*/ answer}
+          value={answer}
           onChangeText={(answer) => {
             setAnswer(answer);
-            //console.log(answer);
-            //update backend
+            editFlashcard(question,answer,priority);
           }}
         />
       </Card.Content>

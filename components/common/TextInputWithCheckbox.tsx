@@ -1,17 +1,28 @@
 import { useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
-import { responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+import {
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 
-export default function TextInputWithCheckbox(props:{
-  width? : any
-  listItemAnswer: string;
+export default function TextInputWithCheckbox(props: {
+  width?: any;
+  sendAnswer?: any;
+  listItemAnswer?: [string, boolean];
   [name: string]: any;
 }) {
-  const [checked, setChecked] = useState(false);
-  const [answer, setAnswer] = useState(props.listItemAnswer);
+  //props.listItemAnswer[1] doesn't work correctly because it is a string converted to a boolean. I tried to have the answers be a array of [string, boolean] but supabase seemingly just supports string[]
+  //another alternative would be to have 5 columns in the database, one for each answer 1-4 as a string and one as boolean[4] with the information regarding which answer is correct
+  const [checked, setChecked] = props.listItemAnswer ? useState(props.listItemAnswer[1]) : useState(false); 
+  const [answer, setAnswer] = props.listItemAnswer
+    ? useState(props.listItemAnswer)
+    : useState<[string, boolean]>(["", false]);
   return (
     <TextInput
-      style={{ marginBottom: responsiveHeight(1), width:props.width || "auto" }}
+      style={{
+        marginBottom: responsiveHeight(1),
+        width: props.width || "auto",
+      }}
       right={
         <TextInput.Icon
           icon={() => (
@@ -19,7 +30,7 @@ export default function TextInputWithCheckbox(props:{
               status={checked ? "checked" : "unchecked"}
               onPress={() => {
                 setChecked(!checked);
-                //  listItem.isCorrect === checked
+                //the answer is true if checked === true
               }}
             />
           )}
@@ -27,10 +38,10 @@ export default function TextInputWithCheckbox(props:{
       }
       label={"Answer " + props.number}
       multiline={true}
-      value={/*hier muss dann listItem.answer hin*/ answer}
-      onChangeText={(answer) => {
-        setAnswer(answer);
-        //update backend
+      value={answer[0]}
+      onChangeText={(text) => {
+        setAnswer([text, checked]);
+        props.sendAnswer([text, checked]);
       }}
     />
   );

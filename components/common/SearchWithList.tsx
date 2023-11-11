@@ -7,6 +7,7 @@ import MultifunctionalList from "./MultifunctionalList";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useSets } from "../../utils/hooks";
 import { get } from "cypress/types/lodash";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function SearchWithList(props: {
   type: ManagementType;
@@ -18,8 +19,9 @@ export default function SearchWithList(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const projectId = useProjectStore(state => state.projectId)
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading, error } = useSets(props.type);
+  const { data, isLoading, error } = useSets(props.type, projectId);
   useEffect(() => {
     if (!data) return;
     //console.log(data);

@@ -57,10 +57,10 @@ export function useAchievements() {
 }
 
 //Returns all Sets
-export function useSets(type: ManagementType) {
+export function useSets(type: ManagementType, projectId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("sets").select("id,name,type,project_id").eq("type", type),
+      supabase.from("sets").select("id,name,type,project_id").eq("type", type).eq("project_id", projectId)
     ),
   );
 }
@@ -72,12 +72,35 @@ export function useUpsertSet() {
     useUpsertMutation(supabase.from("sets"), ["id"], "id,name,type,project_id"),
   );
 }
+export function useFlashcards(setId: number) {
+  return handleErrors(
+    useQuery(
+      supabase.from("flashcards").select("id,question,answer,priority,set_id").eq("set_id", setId)
+    ),
+  );
+}
 export function useUpsertFlashcard() {
   return handleErrors(
     useUpsertMutation(
       supabase.from("flashcards"),
       ["id"],
       "id,question,answer,priority,set_id",
+    ),
+  );
+}
+export function useExercises(setId: number) {
+  return handleErrors(
+    useQuery(
+      supabase.from("exercises").select("id,question,priority,set_id,answer1,answer2,answer3,answer4").eq("set_id", setId)
+    ),
+  );
+}
+export function useUpsertExercise() {
+  return handleErrors(
+    useUpsertMutation(
+      supabase.from("exercises"),
+      ["id"],
+      "id,question,priority,set_id,answer1,answer2,answer3,answer4",
     ),
   );
 }

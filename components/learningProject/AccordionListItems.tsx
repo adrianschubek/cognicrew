@@ -1,4 +1,4 @@
-import { max } from "cypress/types/lodash";
+import { isNull, max } from "cypress/types/lodash";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -17,10 +17,32 @@ import {
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import { ManagementType } from "../../types/common";
+import { useEffect, useState } from "react";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useExercises, useFlashcards } from "../../utils/hooks";
 
-export default function AccordionListItems({accordionListItems, type}:{type: ManagementType, [name: string]: any} ) {
+export default function AccordionListItems({
+  type,
+  setId,
+}: {
+  type: ManagementType;
+  [name: string]: any;
+}) {
   const theme = useTheme();
-  return accordionListItems.map((listItem) => (
+
+  const { data, isLoading, error } =
+    type === ManagementType.FLASHCARD
+      ? useFlashcards(setId)
+      : useExercises(setId);
+  //doesn't update if new sets are added to the project, useEffect counterproductive? How to fix? through a listener?
+  useEffect(() => {
+    if (!data) return;
+    setContent(data);
+  }, [data]);
+  const [content, setContent] = useState([]);
+
+  if (error) return <LoadingOverlay visible={isLoading} />;
+  return content.map((listItem) => (
     <View key={listItem.id}>
       <List.Accordion
         title={listItem.question}
@@ -31,14 +53,18 @@ export default function AccordionListItems({accordionListItems, type}:{type: Man
         }}
       >
         {
-          type === ManagementType.FLASHCARD && <EditFlashcard listItem={listItem}/> //if type === flashcard then render <EditFlashcard/> component 
+          type === ManagementType.FLASHCARD && (
+            <EditFlashcard listItem={listItem} />
+          ) //if type === flashcard then render <EditFlashcard/> component
         }
         {
-          type === ManagementType.EXERCISE && <EditExercise listItem={listItem}/> //if type === exercise then render <EditExercise/> component 
+          type === ManagementType.EXERCISE && (
+            <EditExercise listItem={listItem} />
+          ) //if type === exercise then render <EditExercise/> component
         }
       </List.Accordion>
       <Divider />
-      </View>
+    </View>
   ));
 }
 
