@@ -121,9 +121,8 @@ export function useUpsertAnswersExercise() {
   );
 }
 /**
- *  dont show duplicate alerts with same message.
  * Display alerts.
- * @returns An object with functions to display alerts.
+ * @returns functions to display alerts.
  */
 export function useAlerts() {
   const dispatch = useAlertsStore((state) => state.dispatch);
