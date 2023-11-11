@@ -10,7 +10,7 @@ export default function TextInputWithCheckbox(props: {
   width?: any;
   sendAnswer?: ([string, boolean]) => any;
   listItemAnswer?: [string, boolean, number];
-  performOnTextChange?: () => any;
+  performFunction?: () => any;
   [name: string]: any;
 }) {
   const [answer, setAnswer] = useState<[string, boolean, number]>([
@@ -18,10 +18,13 @@ export default function TextInputWithCheckbox(props: {
     false,
     0,
   ]);
-
+const runPropFunction = () => {
+  if(props.performFunction !== undefined) {props.performFunction()}
+  else return;
+}
   useEffect(() => {
     if (!props.listItemAnswer) return;
-    if (answer[0] !== "" && answer[1] != false && answer[2] != 0) return;
+    if (answer[0] !== "" && answer[1] !== false && answer[2] !== 0) return;
     setAnswer(props.listItemAnswer);
   }, [props.listItemAnswer]);
 
@@ -38,6 +41,7 @@ export default function TextInputWithCheckbox(props: {
               status={answer[1] ? "checked" : "unchecked"}
               onPress={() => {
                 setAnswer([answer[0], !answer[1], answer[2]]);
+                console.log(!answer[1])
                 //the answer is true if checked === true
               }}
             />
@@ -52,9 +56,7 @@ export default function TextInputWithCheckbox(props: {
         props.sendAnswer([text, answer[1]]);
       }}
       onEndEditing={() => {
-        props.performOnTextChange()
-          ? props.performOnTextChange()
-          : () => {}; /*if performOnTextChange is not defined, do nothing;*/
+        runPropFunction();
       }}
     />
   );

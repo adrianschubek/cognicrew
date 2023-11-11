@@ -1,4 +1,4 @@
-import { isNull, max } from "cypress/types/lodash";
+import { isNull, max, set } from "cypress/types/lodash";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -19,7 +19,12 @@ import EditExercise from "./EditExercise";
 import { ManagementType } from "../../types/common";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { useExercises, useFlashcards } from "../../utils/hooks";
+import {
+  useExercises,
+  useFlashcards,
+  useUpsertAnswersExercise,
+  useUpsertExercise,
+} from "../../utils/hooks";
 
 export default function AccordionListItems({
   type,
@@ -29,7 +34,33 @@ export default function AccordionListItems({
   [name: string]: any;
 }) {
   const theme = useTheme();
-
+  const { isMutating, trigger: upsertExercise } = useUpsertExercise();
+  const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
+    useUpsertAnswersExercise();
+  const [question, setQuestion] = useState(false);
+  const [answers, setAnswers] = useState(false);
+  const [priority, setPriority] = useState(false);
+  useUpsertAnswersExercise();
+  const updateExercise = (listItem, answers, question, priority, setId) => {
+    upsertExercise({
+      //@ts-expect-error
+      id: listItem.id,
+      question: question,
+      priority: priority,
+      set_id: setId,
+    }).then((res) => {
+      answers.forEach((e) => {
+        console.log("ANSWER:" + "                    " + e);
+        upsertAnswersExercise({
+          //@ts-expect-error
+          id: e[2],
+          answer: e[0],
+          exercise: res[0].id,
+          is_correct: e[1],
+        });
+      });
+    });
+  };
   const { data, isLoading, error } =
     type === ManagementType.FLASHCARD
       ? useFlashcards(setId)
@@ -40,7 +71,7 @@ export default function AccordionListItems({
     setContent(data);
   }, [data]);
   const [content, setContent] = useState([]);
-
+  const [expanded, setExpanded] = useState(false);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return content.map((listItem) => (
     <View key={listItem.id}>
@@ -50,6 +81,19 @@ export default function AccordionListItems({
         style={{
           width: responsiveWidth(100),
           backgroundColor: theme.colors.secondaryContainer,
+        }}
+        onPress={() => {
+          if (expanded === true) {
+            console.log("accordion closed");
+            updateExercise(
+              listItem,
+              answers,
+              question,
+              priority,
+              listItem.set_id,
+            );
+          }
+          setExpanded(!expanded);
         }}
       >
         {
