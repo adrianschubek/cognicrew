@@ -41,29 +41,6 @@ export default function HomeScreen({ navigation }) {
         <JoinRoom navigation={navigation} />
         <CreateRoom navigation={navigation} />
       </View>
-      <View style={styles.footer}>
-        <Button
-          icon="account-group"
-          mode="contained"
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate(NAVIGATION.MANAGE_FRIENDS);
-          }}
-        >
-          Manage Your Friends
-        </Button>
-
-        <Button
-          icon="trophy"
-          mode="contained"
-          style={styles.button}
-          onPress={() => {
-            navigation.navigate(NAVIGATION.ACHIEVEMENTS);
-          }}
-        >
-          Test Achievements
-        </Button>
-      </View>
     </View>
   );
 }

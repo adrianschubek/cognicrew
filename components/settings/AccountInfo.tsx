@@ -16,7 +16,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
-const LogoutButton = () => {
+export const LogoutButton = () => {
   const theme = useTheme();
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -42,11 +42,10 @@ const LogoutButton = () => {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <Button
-        mode="outlined"
-        textColor={theme.colors.error}
+      <IconButton
+        mode="contained"
         style={{
-          borderColor: theme.colors.error,
+          borderColor: theme.colors.primary,
           marginRight: 10,
           borderRadius: 10,
         }}
@@ -55,9 +54,7 @@ const LogoutButton = () => {
           setShowConfirm(true);
         }}
         testID="logout-button"
-      >
-        Logout
-      </Button>
+      />
     </>
   );
 };
@@ -68,7 +65,7 @@ export default function AccountInfo(props) {
 
   return (
     <Card {...props} mode="contained">
-      <Card.Title title="Account" left={Account} right={LogoutButton} />
+      <Card.Title title="Account" left={Account} />
       <Card.Content>
         <Text variant="bodyMedium">{isLoading ? "..." : data}</Text>
         <Text variant="bodyMedium">{user.email}</Text>

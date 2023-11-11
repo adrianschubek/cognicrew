@@ -13,10 +13,12 @@ export const enum NAVIGATION {
   FLASHCARD_GAME = "FlashcardGame",
   EXERCISE_MANAGEMENT = "ExerciseManagement",
   LINK_MANAGEMENT = "LinkManagement",
+  FILES_MANAGEMENT = "FilesManagement",
   CREATEEDIT_PROJECT = "CreateEditProject",
   INVITE_FRIENDS = "InviteFriends",
   DISCOVER = "Discover",
   LOBBY = "Lobby",
+  ACCOUNT = "Account",
 }
 export const enum ManagementType {
   FLASHCARD = 0,

@@ -45,7 +45,12 @@ export default function LearningProjects({ navigation }) {
   }, []);
 
   return (
-    <Tab.Navigator initialRouteName={"default_my_projects"}>
+    <Tab.Navigator
+      initialRouteName={"default_my_projects"}
+      screenOptions={{
+        tabBarLabelStyle: { textTransform: "capitalize" },
+      }}
+    >
       <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
       <Tab.Screen
         name={"default_my_projects"}

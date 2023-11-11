@@ -77,6 +77,9 @@ export default function LearningProject({ navigation, route }) {
       <LearningProjectCategory
         path={require("../assets/files_symbol.png")}
         name={"Cognifiles"}
+        function={() => {
+          navigation.navigate(NAVIGATION.FILES_MANAGEMENT);
+        }}
       />
     </View>
   );

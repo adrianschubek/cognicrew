@@ -7,7 +7,7 @@ describe("Login", () => {
     cy.get('[data-testid="text-input-flat"]').first().type("foo@bar.de");
     cy.get('[data-testid="text-input-flat"]').last().type("foobar");
     cy.get('[data-testid="login-button"]').click();
-    cy.get('[href="/HomeTab"]').should("contain.text", "Feed");
+    cy.get('[href="/HomeTab"]').should("contain.text", "Home");
   });
 
   it("cannot login with invalid email", () => {
