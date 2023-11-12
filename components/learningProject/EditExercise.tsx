@@ -123,7 +123,7 @@ export default function EditExercise({ listItem }) {
     [], // dependencies array is empty because debounce and editFlashcard do not change
   );
   useEffect(() => {
-    if (question !== "" && answers !== null) {
+    if (question !== null && answers !== null) {
       // Call the debounced function
       debouncedEditExercise(question, answers, priority);
     }
