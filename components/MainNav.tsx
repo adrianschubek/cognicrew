@@ -20,10 +20,14 @@ import CreateProject from "../screens/projectManagement/CreateProject";
 import InviteFriends from "./dialogues/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
+import RoomsList from "../screens/RoomsList";
+import { IconButton, useTheme } from "react-native-paper";
+import Lobby from "../screens/Lobby";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function MainTab() {
+  const theme = useTheme();
   return (
     <Stack.Navigator>
       <Stack.Screen name={NAVIGATION.HOME} component={HomeScreen} />
@@ -33,14 +37,33 @@ function MainTab() {
       />
       <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
 
-      {/* <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
-
-      <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} /> */}
-
-      <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-      />
+      <Stack.Group
+        screenOptions={{
+          animation: "slide_from_bottom",
+        }}
+      >
+        <Stack.Screen
+          name={NAVIGATION.ROOMS_LIST}
+          component={RoomsList}
+          options={{ title: "Rooms" }}
+        />
+          <Stack.Screen
+          name={NAVIGATION.LOBBY}
+          component={Lobby}
+          options={{headerStyle: {
+            backgroundColor: theme.colors.primaryContainer,
+          }}}
+        />
+        <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+        <Stack.Screen
+          name={NAVIGATION.LEARNING_ROOM}
+          component={LearningRoom}
+        />
+        <Stack.Screen
+          name={NAVIGATION.FLASHCARD_GAME}
+          component={FlashcardGame}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   );
 }

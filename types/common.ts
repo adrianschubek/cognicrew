@@ -18,6 +18,7 @@ export const enum NAVIGATION {
   INVITE_FRIENDS = "InviteFriends",
   DISCOVER = "Discover",
   LOBBY = "Lobby",
+  ROOMS_LIST = "RoomsList",
   ACCOUNT = "Account",
 }
 export const enum ManagementType {

@@ -30,7 +30,7 @@ export default function CreateRoom({ navigation }) {
         mode="contained"
         style={[styles.container, { marginTop: responsiveHeight(2.9) }]}
         onPress={() => {
-          navigation.navigate(NAVIGATION.LOBBY);
+          navigation.navigate(NAVIGATION.ROOMS_LIST);
         }}
       >
         Create Room
