@@ -1,6 +1,7 @@
 import {
   Button,
   Dialog,
+  HelperText,
   Portal,
   Switch,
   Text,
@@ -8,7 +9,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 /**
  * controlled by zustand
@@ -88,51 +89,74 @@ export default function AlertSyncZustand() {
                   {message}
                 </Text>
               )}
-              {inputs.map((field, i) =>
-                field.type === "checkbox" ? (
-                  <TextInput
-                    key={i}
-                    style={{ marginTop: 10 }}
-                    theme={{ roundness: 10 }}
-                    value={field.label}
-                    editable={false}
-                    left={field.icon && <TextInput.Icon icon={field.icon} />}
-                    right={
-                      <TextInput.Icon
-                        icon={() => (
-                          <Switch
-                            value={inputValues[i] === "true"}
-                            onValueChange={() => {
-                              const newValues = [...inputValues];
-                              newValues[i] =
-                                inputValues[i] === "true" ? "false" : "true";
-                              setInputValues(newValues);
-                            }}
+              {inputs.map((field, i) => (
+                <Fragment key={i}>
+                  {field.type === "checkbox" ? (
+                    <>
+                      <TextInput
+                        style={{ marginTop: 10 }}
+                        theme={{ roundness: 10 }}
+                        value={field.label}
+                        editable={false}
+                        left={
+                          field.icon && <TextInput.Icon icon={field.icon} />
+                        }
+                        right={
+                          <TextInput.Icon
+                            icon={() => (
+                              <Switch
+                                value={inputValues[i] === "true"}
+                                onValueChange={() => {
+                                  const newValues = [...inputValues];
+                                  newValues[i] =
+                                    inputValues[i] === "true"
+                                      ? "false"
+                                      : "true";
+                                  setInputValues(newValues);
+                                }}
+                              />
+                            )}
                           />
-                        )}
+                        }
                       />
-                    }
-                  />
-                ) : (
-                  <TextInput
-                    key={i}
-                    style={{ marginVertical: 2 }}
-                    label={field.label}
-                    placeholder={field.placeholder}
-                    secureTextEntry={field.type === "password"}
-                    left={field.icon && <TextInput.Icon icon={field.icon} />}
-                    keyboardType={
-                      field.type === "number" ? "number-pad" : "default"
-                    }
-                    value={inputValues[i]}
-                    onChangeText={(text) => {
-                      const newValues = [...inputValues];
-                      newValues[i] = text;
-                      setInputValues(newValues);
-                    }}
-                  ></TextInput>
-                ),
-              )}
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <TextInput
+                        style={{ marginVertical: 2 }}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        secureTextEntry={field.type === "password"}
+                        left={
+                          field.icon && <TextInput.Icon icon={field.icon} />
+                        }
+                        keyboardType={
+                          field.type === "number" ? "number-pad" : "default"
+                        }
+                        value={inputValues[i]}
+                        onChangeText={(text) => {
+                          const newValues = [...inputValues];
+                          newValues[i] = text;
+                          setInputValues(newValues);
+                        }}
+                        error={
+                          field.validator && !field.validator(inputValues[i])
+                        }
+                      ></TextInput>
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                    </>
+                  )}
+                </Fragment>
+              ))}
             </Dialog.Content>
           </>
         )}
@@ -154,6 +178,15 @@ export default function AlertSyncZustand() {
                   okAction(inputValues);
                   next();
                 }}
+                disabled={
+                  inputs.some(
+                    (field, i) => field.required && inputValues[i].length === 0,
+                  ) ||
+                  inputs.some(
+                    (field, i) =>
+                      field.validator && !field.validator(inputValues[i]),
+                  )
+                }
               >
                 {okText}
               </Button>

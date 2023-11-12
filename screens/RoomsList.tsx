@@ -73,18 +73,14 @@ export default function RoomsList({ navigation }) {
                   info({ message: JSON.stringify(vars) });
                   navigation.navigate(NAVIGATION.LOBBY);
                 },
-                inputs: [
+                inputs: room.protected && [
                   {
                     label: "Room Code",
                     helperText: "This room is protected",
                     type: "number",
                     icon: "key",
-                    defaultValue: "222",
-                  },
-                  {
-                    label: "Code",
-                    placeholder: "Enter room code",
-                    type: "checkbox",
+                    validator: (value) => value.length !== 0,
+                    required: true,
                   },
                 ],
               });

@@ -8,7 +8,7 @@ type AlertInput = {
   required: boolean;
   icon: string;
   type: "text" | "number" | "password" | "checkbox";
-  validator: (value: string) => boolean;
+  validator: (inputValue: string) => boolean;
 };
 
 export type Alert = {
