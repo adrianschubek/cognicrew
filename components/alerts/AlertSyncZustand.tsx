@@ -11,9 +11,6 @@ import {
 import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, useEffect, useState } from "react";
 
-/**
- * controlled by zustand
- */
 export default function AlertSyncZustand() {
   /* const {
     open,

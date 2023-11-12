@@ -32,12 +32,6 @@ export default function RoomsList({ navigation }) {
     refreshInterval: focus ? 3000 : 0,
   });
 
-  const { trigger } = useInsertMutation(supabase.rpc("create_room"), {
-    onSuccess: () => {
-      trigger();
-    },
-  });
-
   if (isLoading) return <LoadingOverlay visible />;
 
   return (
