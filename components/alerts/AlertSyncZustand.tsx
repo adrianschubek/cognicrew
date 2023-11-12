@@ -31,7 +31,7 @@ export default function AlertSyncZustand() {
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
 
-  const [inputValues, setInputValues] = useState<string[]>([]);
+  const [inputValues, setInputValues] = useState<string[]>([]); // fixed by [""] 
 
   useEffect(() => {
     if (!activeAlert && alerts?.length > 0) {
@@ -49,7 +49,8 @@ export default function AlertSyncZustand() {
 
   const theme = useTheme();
 
-  if (!activeAlert) return null;
+  // Fixed? inpiutvalues may not be set but activeAlert is set during first render. => undefined
+  if (!activeAlert || activeAlert?.inputs?.length !== 0 && inputValues.length === 0) return null;
 
   const {
     icon,

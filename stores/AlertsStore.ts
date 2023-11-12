@@ -8,10 +8,7 @@ export type AlertInput = {
   required: boolean;
   icon: string;
   type: "text" | "number" | "password" | "checkbox";
-  /**
-   * //FIXME bug: inputValue can be undefined in AlertSyncZustand
-   */
-  validator: (inputValue: string | undefined) => boolean;
+  validator: (inputValue: string) => boolean;
 };
 
 export type Alert = {
