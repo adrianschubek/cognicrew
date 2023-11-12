@@ -12,6 +12,7 @@ import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
 import CreateQuizGame from "../components/dialogues/CreateQuizGame";
 
 import { NAVIGATION } from "../types/common";
+import ExerciseGame from "./ExerciseGame";
 
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
@@ -19,13 +20,19 @@ export default function LearningRoom({ navigation }) {
 
   return (
     <>
+      <CreateFlashCardGame
+        showCreateFlashcardGame={showCreateFlashcardGame}
+        close={() => setShowCreateFlashcardGame(false)}
+        
+      />
+
       <View style={styles.container}>
         <StatusBar style="auto" />
         <LearningProjectCategory
           path={require("../assets/completed_task_symbol.png")}
           name={"Cogniquiz"}
           function={() => {
-            setShowCreateQuizGame(true);
+            navigation.navigate(NAVIGATION.EXERCISE_GAME);
             console.log("Quiz Game Pressed");
           }}
         />

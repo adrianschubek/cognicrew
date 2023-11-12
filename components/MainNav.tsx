@@ -23,6 +23,7 @@ import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";
 import { IconButton, useTheme } from "react-native-paper";
 import Lobby from "../screens/Lobby";
+import ExerciseGame from "../screens/ExerciseGame";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +56,7 @@ function MainTab() {
           }}}
         />
         <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+        <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
         <Stack.Screen
           name={NAVIGATION.LEARNING_ROOM}
           component={LearningRoom}

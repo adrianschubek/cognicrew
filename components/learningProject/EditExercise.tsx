@@ -1,4 +1,4 @@
-import { max } from "cypress/types/lodash";
+import { max, update } from "cypress/types/lodash";
 import { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
@@ -23,7 +23,7 @@ import {
 } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 
-export default function EditExercise({ listItem }) {
+export default function EditExercise({ listItem, sendDataToParent }) {
   const theme = useTheme();
   const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState(listItem.set_id);
@@ -68,16 +68,36 @@ export default function EditExercise({ listItem }) {
     ["", false, 0],
   ]);
   const getAnswer1 = ([text, checked]) => {
-    setAnswers([[text, checked, answers[0][2]], answers[1], answers[2], answers[3]]);
+    setAnswers([
+      [text, checked, answers[0][2]],
+      answers[1],
+      answers[2],
+      answers[3],
+    ]);
   };
   const getAnswer2 = ([text, checked]) => {
-    setAnswers([answers[0], [text, checked, answers[1][2]], answers[2], answers[3]]);
+    setAnswers([
+      answers[0],
+      [text, checked, answers[1][2]],
+      answers[2],
+      answers[3],
+    ]);
   };
   const getAnswer3 = ([text, checked]) => {
-    setAnswers([answers[0], answers[1], [text, checked, answers[2][2]], answers[3]]);
+    setAnswers([
+      answers[0],
+      answers[1],
+      [text, checked, answers[2][2]],
+      answers[3],
+    ]);
   };
   const getAnswer4 = ([text, checked]) => {
-    setAnswers([answers[0], answers[1], answers[2], [text, checked, answers[3][2]]]);
+    setAnswers([
+      answers[0],
+      answers[1],
+      answers[2],
+      [text, checked, answers[3][2]],
+    ]);
   };
   if (error) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -91,6 +111,8 @@ export default function EditExercise({ listItem }) {
           value={/*hier muss dann listItem.question hin*/ question}
           onChangeText={(question) => {
             setQuestion(question);
+            sendDataToParent(question, answers, priority);
+            
             //console.log([answers[0], answers[1], answers[2], answers[3]]);
             //update backend
           }}
@@ -99,25 +121,30 @@ export default function EditExercise({ listItem }) {
           listItemAnswer={answers[0]}
           sendAnswer={getAnswer1}
           number="1"
-          performOnTextChange={updateExercise}
+          performFunction={updateExercise}
+          sendDataToParent={ () => sendDataToParent(question, answers, priority)}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[1]}
           sendAnswer={getAnswer2}
           number="2"
-          performOnTextChange={updateExercise}
+          performFunction={updateExercise}
+          sendDataToParent={() => sendDataToParent(question, answers, priority)}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[2]}
           sendAnswer={getAnswer3}
           number="3"
-          performOnTextChange={updateExercise}
+          performFunction={updateExercise}
+          sendDataToParent={() => {sendDataToParent(question, answers, priority)
+          console.log("EditExercise" + answers)}}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[3]}
           sendAnswer={getAnswer4}
           number="4"
-          performOnTextChange={updateExercise}
+          performFunction={updateExercise}
+          sendDataToParent={() => sendDataToParent(question, answers, priority)}
         />
       </Card.Content>
     </Card>

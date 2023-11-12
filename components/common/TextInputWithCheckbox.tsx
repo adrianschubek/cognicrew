@@ -6,11 +6,13 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 
+//takes some time to load for exercises, maybe there is a more efficient way to do this?
 export default function TextInputWithCheckbox(props: {
   width?: any;
   sendAnswer?: ([string, boolean]) => any;
   listItemAnswer?: [string, boolean, number];
-  performOnTextChange?: () => any;
+  performFunction?: () => any;
+  sendDataToParent?;
   [name: string]: any;
 }) {
   const [answer, setAnswer] = useState<[string, boolean, number]>([
@@ -19,12 +21,25 @@ export default function TextInputWithCheckbox(props: {
     0,
   ]);
 
+  const runPropFunction = () => {
+    if (props.performFunction !== undefined) {
+      props.performFunction();
+    } else return;
+  };
+  const sendData = () => {
+    if (props.sendDataToParent !== undefined) {
+      props.sendDataToParent();
+    } else return;
+  };
   useEffect(() => {
     if (!props.listItemAnswer) return;
-    if (answer[0] !== "" && answer[1] != false && answer[2] != 0) return;
+    if (answer[0] !== "" && answer[1] !== false && answer[2] !== 0) return;
     setAnswer(props.listItemAnswer);
   }, [props.listItemAnswer]);
-
+  useEffect(() => {
+    if (answer[0] !== "" && answer[1] !== false && answer[2] !== 0) return;
+    sendData();
+  }, [answer]);
   return (
     <TextInput
       style={{
@@ -38,6 +53,7 @@ export default function TextInputWithCheckbox(props: {
               status={answer[1] ? "checked" : "unchecked"}
               onPress={() => {
                 setAnswer([answer[0], !answer[1], answer[2]]);
+                props.sendAnswer([answer[0], !answer[1]]);
                 //the answer is true if checked === true
               }}
             />
@@ -50,11 +66,13 @@ export default function TextInputWithCheckbox(props: {
       onChangeText={(text) => {
         setAnswer([text, answer[1], answer[2]]);
         props.sendAnswer([text, answer[1]]);
+        sendData();
+        console.log(
+          "TextInputWithCheckbox:" + [answer[0], answer[1], answer[2]],
+        );
       }}
       onEndEditing={() => {
-        props.performOnTextChange()
-          ? props.performOnTextChange()
-          : () => {}; /*if performOnTextChange is not defined, do nothing;*/
+        //runPropFunction();
       }}
     />
   );
