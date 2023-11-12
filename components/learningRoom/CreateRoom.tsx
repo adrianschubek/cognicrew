@@ -28,7 +28,7 @@ export default function CreateRoom({ navigation }) {
       <Button
         icon="home"
         mode="contained"
-        style={[styles.container, { marginTop: responsiveHeight(2.9) }]}
+        style={[{ marginTop: responsiveHeight(2.9) }]}
         // onPress={() => {
         //   navigation.navigate(NAVIGATION.ROOMS_LIST);
         // }}

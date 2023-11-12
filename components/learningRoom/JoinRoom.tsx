@@ -14,23 +14,8 @@ import { NAVIGATION } from "../../types/common";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
-  const [showErrorJoin, setShowErrorJoin] = useState(false);
   return (
     <React.Fragment>
-      <Portal>
-        <Dialog
-          visible={showErrorJoin}
-          onDismiss={() => setShowErrorJoin(false)}
-        >
-          <Dialog.Title>Invalid Code</Dialog.Title>
-          <Dialog.Content>
-            <Text>Please enter a valid code</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowErrorJoin(false)}>Done</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <Text style={[styles.container, { textAlign: "center" }]}>
         Join room via ID:
       </Text>
@@ -55,20 +40,28 @@ export default function JoinRoom({ navigation }) {
         inputMode="numeric"
         style={[styles.container, { height: responsiveHeight(8) }]}
       />
-      <Button
-        labelStyle={{ textAlignVertical: "center" }}
-        style={[styles.container]}
-        mode="contained"
-        onPress={() => {
-          navigation.navigate(NAVIGATION.ROOMS_LIST);
-          // if (joinCode.length !== 7) {
-          //   setShowErrorJoin(true);
-          // } else {
-          // }
-        }}
-      >
-        Join
-      </Button>
+      <View style={{ flexDirection: "row", gap: 5 }}>
+        <Button
+          labelStyle={{ textAlignVertical: "center" }}
+          mode="contained"
+          onPress={() => {
+            // TODO:
+          }}
+          style={{ marginRight: "auto", flex: 1 }}
+        >
+          Join
+        </Button>
+        <Button
+          labelStyle={{ textAlignVertical: "center" }}
+          mode="contained"
+          onPress={() => {
+            navigation.navigate(NAVIGATION.ROOMS_LIST);
+          }}
+          style={{ marginRight: "auto", flex: 1 }}
+        >
+          Rooms
+        </Button>
+      </View>
     </React.Fragment>
   );
 }
