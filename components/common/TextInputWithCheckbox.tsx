@@ -37,6 +37,7 @@ export default function TextInputWithCheckbox(props: {
     setAnswer(props.listItemAnswer);
   }, [props.listItemAnswer]);
   useEffect(() => {
+    if (answer[0] !== "" && answer[1] !== false && answer[2] !== 0) return;
     sendData();
   }, [answer]);
   return (
