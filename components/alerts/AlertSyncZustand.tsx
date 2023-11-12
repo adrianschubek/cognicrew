@@ -129,6 +129,11 @@ export default function AlertSyncZustand() {
                           {field.helperText}
                         </HelperText>
                       )}
+                      {field.errorText && !field.validator(inputValues[i]) && (
+                        <HelperText type="error" visible={true}>
+                          {field.errorText}
+                        </HelperText>
+                      )}
                     </>
                   ) : (
                     <>
@@ -158,6 +163,11 @@ export default function AlertSyncZustand() {
                           {field.helperText}
                         </HelperText>
                       )}
+                      {field.errorText && !field.validator(inputValues[i]) && (
+                        <HelperText type="error" visible={true}>
+                          {field.errorText}
+                        </HelperText>
+                      )}
                     </>
                   )}
                 </Fragment>
@@ -183,16 +193,12 @@ export default function AlertSyncZustand() {
                   okAction(inputValues);
                   next();
                 }}
-                disabled={
-                  inputs?.some(
-                    (field, i) =>
-                      field.required && inputValues[i]?.length === 0,
-                  ) ||
-                  inputs?.some(
-                    (field, i) =>
-                      field.validator && !field.validator(inputValues[i]),
-                  )
-                }
+                disabled={inputs?.some(
+                  (field, i) =>
+                    field.required &&
+                    (inputValues[i]?.length === 0 ||
+                      (field.validator && !field.validator(inputValues[i]))),
+                )}
               >
                 {okText}
               </Button>
