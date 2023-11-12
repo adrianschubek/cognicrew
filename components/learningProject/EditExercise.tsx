@@ -23,7 +23,7 @@ import {
 } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 
-export default function EditExercise({ listItem }) {
+export default function EditExercise({ listItem, sendDataToParent }) {
   const theme = useTheme();
   const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState(listItem.set_id);
@@ -111,6 +111,8 @@ export default function EditExercise({ listItem }) {
           value={/*hier muss dann listItem.question hin*/ question}
           onChangeText={(question) => {
             setQuestion(question);
+            sendDataToParent(question, answers, priority);
+            
             //console.log([answers[0], answers[1], answers[2], answers[3]]);
             //update backend
           }}
@@ -120,24 +122,29 @@ export default function EditExercise({ listItem }) {
           sendAnswer={getAnswer1}
           number="1"
           performFunction={updateExercise}
+          sendDataToParent={ () => sendDataToParent(question, answers, priority)}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[1]}
           sendAnswer={getAnswer2}
           number="2"
           performFunction={updateExercise}
+          sendDataToParent={() => sendDataToParent(question, answers, priority)}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[2]}
           sendAnswer={getAnswer3}
           number="3"
           performFunction={updateExercise}
+          sendDataToParent={() => {sendDataToParent(question, answers, priority)
+          console.log("EditExercise" + answers)}}
         />
         <TextInputWithCheckbox
           listItemAnswer={answers[3]}
           sendAnswer={getAnswer4}
           number="4"
           performFunction={updateExercise}
+          sendDataToParent={() => sendDataToParent(question, answers, priority)}
         />
       </Card.Content>
     </Card>

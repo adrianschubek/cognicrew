@@ -37,9 +37,14 @@ export default function AccordionListItems({
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
-  const [question, setQuestion] = useState(false);
-  const [answers, setAnswers] = useState(false);
-  const [priority, setPriority] = useState(false);
+  const [question, setQuestion] = useState<string>("");
+  const [answers, setAnswers] = useState<[string, boolean, number][]>([
+    ["", false, 0],
+    ["", false, 0],
+    ["", false, 0],
+    ["", false, 0],
+  ]);
+  const [priority, setPriority] = useState<number>(0);
   useUpsertAnswersExercise();
   const updateExercise = (listItem, answers, question, priority, setId) => {
     upsertExercise({
@@ -72,6 +77,13 @@ export default function AccordionListItems({
   }, [data]);
   const [content, setContent] = useState([]);
   const [expanded, setExpanded] = useState(false);
+  const getData = (question, answers, priority) => {
+    setQuestion(question);
+    setAnswers(answers);
+    setPriority(priority);
+    console.log("AccordionListItems:" + answers);
+    console.log("AccordionListItems:" + question);
+  };
   if (error) return <LoadingOverlay visible={isLoading} />;
   return content.map((listItem) => (
     <View key={listItem.id}>
@@ -103,7 +115,7 @@ export default function AccordionListItems({
         }
         {
           type === ManagementType.EXERCISE && (
-            <EditExercise listItem={listItem} />
+            <EditExercise listItem={listItem} sendDataToParent={getData} />
           ) //if type === exercise then render <EditExercise/> component
         }
       </List.Accordion>
