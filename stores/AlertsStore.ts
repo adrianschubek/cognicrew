@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type AlertInput = {
+export type AlertInput = {
   label: string;
   helperText: string;
   placeholder: string;
@@ -8,7 +8,10 @@ type AlertInput = {
   required: boolean;
   icon: string;
   type: "text" | "number" | "password" | "checkbox";
-  validator: (inputValue: string) => boolean;
+  /**
+   * //FIXME bug: inputValue can be undefined in AlertSyncZustand
+   */
+  validator: (inputValue: string | undefined) => boolean;
 };
 
 export type Alert = {

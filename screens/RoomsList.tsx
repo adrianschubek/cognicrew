@@ -79,7 +79,10 @@ export default function RoomsList({ navigation }) {
                     helperText: "This room is protected",
                     type: "number",
                     icon: "key",
-                    validator: (value) => value.length !== 0,
+                    validator: (value) => { // FIXME how can value be undefined?
+                      console.log(value);
+                      return value?.length !== 0;
+                    },
                     required: true,
                   },
                 ],
