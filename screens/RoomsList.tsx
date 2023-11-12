@@ -150,7 +150,27 @@ export default function RoomsList({ navigation }) {
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
       <FAB
         icon={"location-enter"}
-        onPress={() => {}}
+        onPress={() => {
+          confirm({
+            icon: "location-enter",
+            title: "Join Room",
+            message: "Enter a room code",
+            okText: "Join",
+            okAction: (vars) => {
+              info({ message: JSON.stringify(vars) });
+              navigation.navigate(NAVIGATION.LOBBY);
+            },
+            inputs: [
+              {
+                label: "Room Code",
+                type: "number",
+                icon: "key",
+                validator: (value) => value.length !== 0,
+                required: true,
+              },
+            ],
+          });
+        }}
         color={theme.colors.onPrimary}
         style={{
           position: "absolute",
@@ -160,17 +180,7 @@ export default function RoomsList({ navigation }) {
           backgroundColor: theme.colors.primary,
         }}
         label={"Enter Room code"}
-        // onPress={save}
-        // disabled={isMutating}
       />
-      {/* <LearningProjectCategory
-        path={require("../assets/teamwork_symbol.png")}
-        name={"Cogniboard"}
-        function={() => {
-          navigation.navigate(NAVIGATION.WHITEBOARD);
-          console.log("Whiteboard pressed");
-        }}
-      /> */}
     </>
   );
 }
