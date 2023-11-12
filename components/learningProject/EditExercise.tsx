@@ -25,7 +25,7 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [priority, setPriority] = useState(5);
   const [question, setQuestion] = useState(listItem.question);
   const { data, error, isLoading } = useAnswersExercises(listItem.id);
@@ -33,7 +33,7 @@ export default function EditExercise({ listItem }) {
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
-    setIsUpdating(true);
+    setIsInitialized(true);
     upsertExercise({
       //@ts-expect-error
       id: listItem.id,
@@ -41,23 +41,21 @@ export default function EditExercise({ listItem }) {
       priority: priority,
       set_id: listItem.set_id,
     }).then((res) => {
-      answers.forEach((e) => {
-        upsertAnswersExercise({
-          //@ts-expect-error
-          id: e[2],
-          answer: e[0],
-          exercise: res[0].id,
-          is_correct: e[1],
-        });
-      }).then(() => {
-        setIsUpdating(false);
-      });
-      
+      answers
+        .forEach((e) => {
+          upsertAnswersExercise({
+            //@ts-expect-error
+            id: e[2],
+            answer: e[0],
+            exercise: res[0].id,
+            is_correct: e[1],
+          });
+        })
     });
   };
 
   useEffect(() => {
-    if (!data || isUpdating) return;
+    if (!data || isInitialized) return;
     setAnswers([
       [data[0].answer, data[0].is_correct, data[0].id],
       [data[1].answer, data[1].is_correct, data[1].id],
