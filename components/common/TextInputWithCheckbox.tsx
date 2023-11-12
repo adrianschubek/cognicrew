@@ -1,20 +1,44 @@
-import { useState } from "react";
+import { use } from "chai";
+import { useEffect, useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 
+//takes some time to load for exercises, maybe there is a more efficient way to do this?
 export default function TextInputWithCheckbox(props: {
   width?: any;
-  sendAnswer?: any;
-  listItemAnswer?: any;
+  sendAnswer?: ([string, boolean]) => any;
+  listItemAnswer?: [string, boolean, number];
+  performFunction?: () => any;
+  sendDataToParent?;
   [name: string]: any;
 }) {
-  const [checked, setChecked] = useState(false); 
-  const [answer, setAnswer] = props.listItemAnswer
-    ? useState(props.listItemAnswer)
-    : useState("");
+  const [answer, setAnswer] = useState<[string, boolean, number]>([
+    "",
+    false,
+    0,
+  ]);
+
+  const runPropFunction = () => {
+    if (props.performFunction !== undefined) {
+      props.performFunction();
+    } else return;
+  };
+  const sendData = () => {
+    if (props.sendDataToParent !== undefined) {
+      props.sendDataToParent();
+    } else return;
+  };
+  useEffect(() => {
+    if (!props.listItemAnswer) return;
+    if (answer[0] !== "" && answer[1] !== false && answer[2] !== 0) return;
+    setAnswer(props.listItemAnswer);
+  }, [props.listItemAnswer]);
+  useEffect(() => {
+    sendData();
+  }, [answer]);
   return (
     <TextInput
       style={{
@@ -25,9 +49,10 @@ export default function TextInputWithCheckbox(props: {
         <TextInput.Icon
           icon={() => (
             <Checkbox
-              status={checked ? "checked" : "unchecked"}
+              status={answer[1] ? "checked" : "unchecked"}
               onPress={() => {
-                setChecked(!checked);
+                setAnswer([answer[0], !answer[1], answer[2]]);
+                props.sendAnswer([answer[0], !answer[1]]);
                 //the answer is true if checked === true
               }}
             />
@@ -36,9 +61,17 @@ export default function TextInputWithCheckbox(props: {
       }
       label={"Answer " + props.number}
       multiline={true}
-      value={answer}
+      value={answer[0]}
       onChangeText={(text) => {
-        setAnswer(text);
+        setAnswer([text, answer[1], answer[2]]);
+        props.sendAnswer([text, answer[1]]);
+        sendData();
+        console.log(
+          "TextInputWithCheckbox:" + [answer[0], answer[1], answer[2]],
+        );
+      }}
+      onEndEditing={() => {
+        //runPropFunction();
       }}
     />
   );

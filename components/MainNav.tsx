@@ -5,10 +5,10 @@ import HomeScreen from "../screens/Home";
 import ManageFriends from "../screens/ManageFriends";
 import LearningProjects from "../screens/LearningProjects";
 import LearningProject from "../screens/LearningProject";
-import Settings from "../screens/AccountSettings";
 import Login from "../screens/Login";
 import LearningRoom from "../screens/LearningRoom";
 import FlashcardManagement from "../screens/projectManagement/FlashcardManagement";
+import FilesManagement from "../screens/projectManagement/FilesManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
 import Whiteboard from "../screens/Whiteboard";
@@ -17,8 +17,10 @@ import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import CreateProject from "../screens/projectManagement/CreateProject";
-import { useNavigation } from "@react-navigation/native";
 import InviteFriends from "./dialogues/InviteFriends";
+import AccountManage from "../screens/AccountManage";
+import { LogoutButton } from "./settings/AccountInfo";
+import ExerciseGame from "../screens/ExerciseGame";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -34,20 +36,26 @@ function MainTab() {
 
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
 
+      <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
+
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
-      <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-      />
+      <Stack.Screen name={NAVIGATION.FLASHCARD_GAME} component={FlashcardGame} />
+      
     </Stack.Navigator>
   );
 }
 
-function SettingsTab() {
+function AccountTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name={NAVIGATION.SETTINGS} component={Settings} />
+      <Stack.Screen
+        name={NAVIGATION.ACCOUNT}
+        component={AccountManage}
+        options={{
+          headerRight: LogoutButton,
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -83,12 +91,15 @@ function LearningProjectsTab() {
         name={NAVIGATION.EXERCISE_MANAGEMENT}
         component={ExerciseManagement}
       />
+      <Stack.Screen
+        name={NAVIGATION.FILES_MANAGEMENT}
+        component={FilesManagement}
+      />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateProject}
       />
-
     </Stack.Navigator>
   );
 }
@@ -107,7 +118,7 @@ export default function MainNav() {
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen
         name="HomeTab"
-        options={{ tabBarIcon: "home", title: "Feed" }}
+        options={{ tabBarIcon: "home", title: "Home" }}
         component={MainTab}
       />
       <Tab.Screen
@@ -117,8 +128,8 @@ export default function MainNav() {
       />
       <Tab.Screen
         name="SettingsTab"
-        options={{ tabBarIcon: "cogs", title: "Settings" }}
-        component={SettingsTab}
+        options={{ tabBarIcon: "account", title: "Account" }}
+        component={AccountTab}
       />
     </Tab.Navigator>
   );
