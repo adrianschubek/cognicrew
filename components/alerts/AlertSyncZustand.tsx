@@ -89,6 +89,7 @@ export default function AlertSyncZustand() {
                   {message}
                 </Text>
               )}
+              {/* FIXME: Crashes in production */}
               {inputs.map((field, i) => (
                 <Fragment key={i}>
                   {field.type === "checkbox" ? (
