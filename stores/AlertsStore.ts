@@ -1,5 +1,16 @@
 import { create } from "zustand";
 
+type AlertInput = {
+  label: string;
+  helperText: string;
+  placeholder: string;
+  defaultValue: string;
+  required: boolean;
+  icon: string;
+  type: "text" | "number" | "password" | "checkbox";
+  validator: (value: string) => boolean;
+};
+
 export type Alert = {
   icon: string;
   title: string;
@@ -7,8 +18,9 @@ export type Alert = {
   okText: string;
   cancelText: string;
   dismissable: boolean;
-  okAction: () => void;
-  cancelAction: () => void;
+  okAction: (inputValues: string[]) => void;
+  cancelAction: (inputValues: string[]) => void;
+  inputs: Partial<AlertInput>[];
 };
 
 export const DEFAULT_ALERT: Alert = {
@@ -20,7 +32,19 @@ export const DEFAULT_ALERT: Alert = {
   dismissable: true,
   okAction: () => {},
   cancelAction: () => {},
-} as const;
+  inputs: [],
+};
+
+export const DEFAULT_ALERT_INPUT: AlertInput = {
+  validator: () => true,
+  label: "",
+  helperText: "",
+  placeholder: "",
+  defaultValue: "",
+  icon: "",
+  required: false,
+  type: "text",
+};
 
 type AlertsStoreType = {
   /**
@@ -59,7 +83,21 @@ export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
       return;
     }
     set((state) => ({
-      alerts: [...state.alerts, { ...DEFAULT_ALERT, ...alert }],
+      alerts: [
+        ...state.alerts,
+        {
+          ...DEFAULT_ALERT,
+          ...{
+            ...alert,
+            inputs: alert.inputs
+              ? alert.inputs.map((input) => ({
+                  ...DEFAULT_ALERT_INPUT,
+                  ...input,
+                }))
+              : [],
+          },
+        },
+      ],
     }));
   },
   next: () => {

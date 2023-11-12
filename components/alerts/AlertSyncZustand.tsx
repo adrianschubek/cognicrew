@@ -1,6 +1,14 @@
-import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  Portal,
+  Switch,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * controlled by zustand
@@ -22,11 +30,21 @@ export default function AlertSyncZustand() {
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
 
+  const [inputValues, setInputValues] = useState<string[]>([]);
+
   useEffect(() => {
     if (!activeAlert && alerts.length > 0) {
       next();
     }
   }, [activeAlert, alerts]);
+
+  useEffect(() => {
+    if (activeAlert && activeAlert?.inputs.length !== 0) {
+      setInputValues(
+        activeAlert.inputs.map((field) => field.defaultValue ?? ""),
+      );
+    }
+  }, [activeAlert]);
 
   const theme = useTheme();
 
@@ -41,6 +59,7 @@ export default function AlertSyncZustand() {
     okText,
     cancelText,
     dismissable,
+    inputs,
   } = activeAlert;
 
   return (
@@ -61,19 +80,68 @@ export default function AlertSyncZustand() {
             </Text>
           </Dialog.Title>
         )}
-        {message && (
-          <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
-            <Text style={{ textAlign: "center" }} variant="bodyMedium">
-              {message}
-            </Text>
-          </Dialog.Content>
+        {(message || inputs.length !== 0) && (
+          <>
+            <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
+              {message && (
+                <Text style={{ textAlign: "center" }} variant="bodyMedium">
+                  {message}
+                </Text>
+              )}
+              {inputs.map((field, i) =>
+                field.type === "checkbox" ? (
+                  <TextInput
+                    key={i}
+                    style={{ marginTop: 10 }}
+                    theme={{ roundness: 10 }}
+                    value={field.label}
+                    editable={false}
+                    left={field.icon && <TextInput.Icon icon={field.icon} />}
+                    right={
+                      <TextInput.Icon
+                        icon={() => (
+                          <Switch
+                            value={inputValues[i] === "true"}
+                            onValueChange={() => {
+                              const newValues = [...inputValues];
+                              newValues[i] =
+                                inputValues[i] === "true" ? "false" : "true";
+                              setInputValues(newValues);
+                            }}
+                          />
+                        )}
+                      />
+                    }
+                  />
+                ) : (
+                  <TextInput
+                    key={i}
+                    style={{ marginVertical: 2 }}
+                    label={field.label}
+                    placeholder={field.placeholder}
+                    secureTextEntry={field.type === "password"}
+                    left={field.icon && <TextInput.Icon icon={field.icon} />}
+                    keyboardType={
+                      field.type === "number" ? "number-pad" : "default"
+                    }
+                    value={inputValues[i]}
+                    onChangeText={(text) => {
+                      const newValues = [...inputValues];
+                      newValues[i] = text;
+                      setInputValues(newValues);
+                    }}
+                  ></TextInput>
+                ),
+              )}
+            </Dialog.Content>
+          </>
         )}
         {(okText !== "" || cancelText !== "") && (
           <Dialog.Actions>
             {cancelText !== "" && (
               <Button
                 onPress={() => {
-                  cancelAction();
+                  cancelAction(inputValues);
                   next();
                 }}
               >
@@ -83,7 +151,7 @@ export default function AlertSyncZustand() {
             {okText !== "" && (
               <Button
                 onPress={() => {
-                  okAction();
+                  okAction(inputValues);
                   next();
                 }}
               >

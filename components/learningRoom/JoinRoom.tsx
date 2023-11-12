@@ -31,53 +31,51 @@ export default function JoinRoom({ navigation }) {
           </Dialog.Actions>
         </Dialog>
       </Portal>
-        <Text
-          style={[styles.container, {textAlign: 'center'}]}
-        >
-          Join room via ID:
-        </Text>
-        <TextInput
-          editable
-          placeholder="#"
-          value={joinCode}
-          error={joinCode.length > 1 && joinCode.length !== 7}
-          onChangeText={(text) => {
-            if (text === "") {
-              text = "#";
-            }
-            // only allow numbers
-            text = text.replace(/[^0-9]/g, "");
-            // if the first character is not a #, add it.
-            if (!text.includes("#")) {
-              text = "#" + text;
-            }
-            setJoinCode(text);
-          }}
-          maxLength={7}
-          inputMode="numeric"
-          style={[styles.container, {height: responsiveHeight(8)}]}
-        />
-        <Button
-          labelStyle={{ textAlignVertical: "center" }}
-          style={[styles.container]}
-          mode="contained"
-          onPress={() => {
-            if (joinCode.length !== 7) {
-              setShowErrorJoin(true);
-            } else {
-              navigation.navigate(NAVIGATION.LEARNING_ROOM, { code: joinCode });
-            }
-          }}
-        >
-          Join
-        </Button>
+      <Text style={[styles.container, { textAlign: "center" }]}>
+        Join room via ID:
+      </Text>
+      <TextInput
+        editable
+        placeholder="#"
+        value={joinCode}
+        error={joinCode.length > 1 && joinCode.length !== 7}
+        onChangeText={(text) => {
+          if (text === "") {
+            text = "#";
+          }
+          // only allow numbers
+          text = text.replace(/[^0-9]/g, "");
+          // if the first character is not a #, add it.
+          if (!text.includes("#")) {
+            text = "#" + text;
+          }
+          setJoinCode(text);
+        }}
+        maxLength={7}
+        inputMode="numeric"
+        style={[styles.container, { height: responsiveHeight(8) }]}
+      />
+      <Button
+        labelStyle={{ textAlignVertical: "center" }}
+        style={[styles.container]}
+        mode="contained"
+        onPress={() => {
+          navigation.navigate(NAVIGATION.ROOMS_LIST);
+          // if (joinCode.length !== 7) {
+          //   setShowErrorJoin(true);
+          // } else {
+          // }
+        }}
+      >
+        Join
+      </Button>
     </React.Fragment>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    width: '100%', 
-    alignItems: 'center',
-    marginVertical: 10, 
+    width: "100%",
+    alignItems: "center",
+    marginVertical: 10,
   },
 });

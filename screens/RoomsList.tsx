@@ -23,7 +23,7 @@ import { useAlerts } from "../utils/hooks";
 export default function RoomsList({ navigation }) {
   const theme = useTheme();
   const focus = useIsFocused();
-  const { confirm } = useAlerts();
+  const { confirm, info } = useAlerts();
   const {
     data: rooms,
     isLoading,
@@ -69,7 +69,24 @@ export default function RoomsList({ navigation }) {
                 title: room.name,
                 message: `Do you want to join this room hosted by ${room.host}?`,
                 okText: "Join",
-                okAction: () => navigation.navigate(NAVIGATION.LOBBY),
+                okAction: (vars) => {
+                  info({ message: JSON.stringify(vars) });
+                  navigation.navigate(NAVIGATION.LOBBY);
+                },
+                inputs: [
+                  {
+                    label: "Room Code",
+                    helperText: "This room is protected",
+                    type: "number",
+                    icon: "key",
+                    defaultValue: "222",
+                  },
+                  {
+                    label: "Code",
+                    placeholder: "Enter room code",
+                    type: "checkbox",
+                  },
+                ],
               });
             }}
             key={room.id}
@@ -134,8 +151,9 @@ export default function RoomsList({ navigation }) {
           </Card.Content>
         )}
       </ScrollView>
+      {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
       <FAB
-        icon={"plus"}
+        icon={"location-enter"}
         onPress={() => {}}
         color={theme.colors.onPrimary}
         style={{
@@ -145,7 +163,7 @@ export default function RoomsList({ navigation }) {
           bottom: 0,
           backgroundColor: theme.colors.primary,
         }}
-        label={"Create Room"}
+        label={"Enter Room code"}
         // onPress={save}
         // disabled={isMutating}
       />
