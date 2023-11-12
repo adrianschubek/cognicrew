@@ -11,6 +11,11 @@ type PreferencesStore = {
   setMasterVolume: (volume: number) => void;
   setMusicVolume: (volume: number) => void;
   setEffectsVolume: (volume: number) => void;
+  // TODO: use secure store for auth "remember me" data
+  email: string;
+  password: string;
+  setEmail: (email: string) => void;
+  setPassword: (password: string) => void;
 };
 
 export const usePreferencesStore = create<PreferencesStore>()(
@@ -24,6 +29,10 @@ export const usePreferencesStore = create<PreferencesStore>()(
       setMasterVolume: (volume: number) => set({ masterVolume: volume }),
       setMusicVolume: (volume: number) => set({ musicVolume: volume }),
       setEffectsVolume: (volume: number) => set({ effectsVolume: volume }),
+      email: "",
+      password: "",
+      setEmail: (email: string) => set({ email: email }),
+      setPassword: (password: string) => set({ password: password }),
     }),
     {
       name: "preferences",
