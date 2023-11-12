@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type AlertInput = {
+export type AlertInput = {
   label: string;
   helperText: string;
   placeholder: string;

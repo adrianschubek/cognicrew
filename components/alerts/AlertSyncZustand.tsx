@@ -31,17 +31,17 @@ export default function AlertSyncZustand() {
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
 
-  const [inputValues, setInputValues] = useState<string[]>([]);
+  const [inputValues, setInputValues] = useState<string[]>([]); // fixed by [""]
 
   useEffect(() => {
-    if (!activeAlert && alerts.length > 0) {
+    if (!activeAlert && alerts?.length > 0) {
       next();
     }
   }, [activeAlert, alerts]);
 
   useEffect(() => {
-    if (activeAlert && activeAlert?.inputs.length !== 0) {
-      setInputValues(
+    if (activeAlert && activeAlert?.inputs?.length !== 0) {
+      setInputValues(() =>
         activeAlert.inputs.map((field) => field.defaultValue ?? ""),
       );
     }
@@ -49,7 +49,12 @@ export default function AlertSyncZustand() {
 
   const theme = useTheme();
 
-  if (!activeAlert) return null;
+  // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined
+  if (
+    !activeAlert ||
+    (activeAlert?.inputs?.length !== 0 && inputValues.length === 0)
+  )
+    return null;
 
   const {
     icon,
@@ -81,7 +86,7 @@ export default function AlertSyncZustand() {
             </Text>
           </Dialog.Title>
         )}
-        {(message || inputs.length !== 0) && (
+        {(message || inputs?.length !== 0) && (
           <>
             <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
               {message && (
@@ -89,13 +94,12 @@ export default function AlertSyncZustand() {
                   {message}
                 </Text>
               )}
-              {/* FIXME: Crashes in production */}
               {inputs.map((field, i) => (
                 <Fragment key={i}>
                   {field.type === "checkbox" ? (
                     <>
                       <TextInput
-                        style={{ marginTop: 10 }}
+                        style={{ marginVertical: 2, marginTop: 10 }}
                         theme={{ roundness: 10 }}
                         value={field.label}
                         editable={false}
@@ -129,7 +133,7 @@ export default function AlertSyncZustand() {
                   ) : (
                     <>
                       <TextInput
-                        style={{ marginVertical: 2 }}
+                        style={{ marginVertical: 2, marginTop: 10 }}
                         label={field.label}
                         placeholder={field.placeholder}
                         secureTextEntry={field.type === "password"}
@@ -180,10 +184,11 @@ export default function AlertSyncZustand() {
                   next();
                 }}
                 disabled={
-                  inputs.some(
-                    (field, i) => field.required && inputValues[i].length === 0,
+                  inputs?.some(
+                    (field, i) =>
+                      field.required && inputValues[i]?.length === 0,
                   ) ||
-                  inputs.some(
+                  inputs?.some(
                     (field, i) =>
                       field.validator && !field.validator(inputValues[i]),
                   )
