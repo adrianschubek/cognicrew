@@ -59,11 +59,11 @@ export default function App() {
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <AuthProvider>
+          <AuthProvider >
             <SWRConfig
               value={{
-                revalidateIfStale: false,
-                revalidateOnFocus: false,
+                // revalidateIfStale: false,
+                // revalidateOnFocus: false,
                 provider: () => new Map(),
                 isVisible: () => true,
                 isOnline: () => true,
