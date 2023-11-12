@@ -166,7 +166,6 @@ export default function RoomsList({ navigation }) {
                 type: "number",
                 icon: "key",
                 validator: (value) => value.length !== 0,
-                required: true,
               },
             ],
           });

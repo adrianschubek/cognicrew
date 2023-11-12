@@ -1,25 +1,81 @@
 import { create } from "zustand";
 
-export type AlertInput = {
+type AlertInput = {
+  /**
+   * The label to display for the input.
+   */
   label: string;
+  /**
+   * The helper text to display for the input.
+   */
   helperText: string;
+  /**
+   * The placeholder text to display for the input.
+   */
   placeholder: string;
+  /**
+   * The default value of the input.
+   */
   defaultValue: string;
+  /**
+   * Whether or not the input is required.
+   */
   required: boolean;
+  /**
+   * The icon to display for the input.
+   */
   icon: string;
+  /**
+   * The type of the input.
+   */
   type: "text" | "number" | "password" | "checkbox";
+  /**
+   * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
+   */
   validator: (inputValue: string) => boolean;
+  /**
+   * The error text to display if the input is invalid.
+   */
+  errorText: string;
 };
 
 export type Alert = {
+  /**
+   * The icon to display in the alert.
+   */
   icon: string;
+  /**
+   * The title of the alert.
+   */
   title: string;
+  /**
+   * The message of the alert.
+   */
   message: string;
+  /**
+   * The text to display on the "OK" button.
+   */
   okText: string;
+  /**
+   * The text to display on the "Cancel" button.
+   */
   cancelText: string;
+  /**
+   * Whether or not the alert can be dismissed (e.g. by clicking outside of the alert).
+   */
   dismissable: boolean;
+  /**
+   * The action to perform when the "OK" button is clicked.
+   */
   okAction: (inputValues: string[]) => void;
+  /**
+   * The action to perform when the "Cancel" button is clicked.
+   */
   cancelAction: (inputValues: string[]) => void;
+  /**
+   * The inputs to display in the alert.
+   * @see AlertInput
+   */
   inputs: Partial<AlertInput>[];
 };
 
@@ -44,6 +100,7 @@ export const DEFAULT_ALERT_INPUT: AlertInput = {
   icon: "",
   required: false,
   type: "text",
+  errorText: "",
 };
 
 type AlertsStoreType = {
