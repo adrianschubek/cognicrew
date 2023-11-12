@@ -34,38 +34,6 @@ export default function AccordionListItems({
   [name: string]: any;
 }) {
   const theme = useTheme();
-  const { isMutating, trigger: upsertExercise } = useUpsertExercise();
-  const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
-    useUpsertAnswersExercise();
-  const [question, setQuestion] = useState<string>("");
-  const [answers, setAnswers] = useState<[string, boolean, number][]>([
-    ["", false, 0],
-    ["", false, 0],
-    ["", false, 0],
-    ["", false, 0],
-  ]);
-  const [priority, setPriority] = useState<number>(0);
-  useUpsertAnswersExercise();
-  const updateExercise = (listItem, answers, question, priority, setId) => {
-    upsertExercise({
-      //@ts-expect-error
-      id: listItem.id,
-      question: question,
-      priority: priority,
-      set_id: setId,
-    }).then((res) => {
-      answers.forEach((e) => {
-        console.log("ANSWER:" + "                    " + e);
-        upsertAnswersExercise({
-          //@ts-expect-error
-          id: e[2],
-          answer: e[0],
-          exercise: res[0].id,
-          is_correct: e[1],
-        });
-      });
-    });
-  };
   const { data, isLoading, error } =
     type === ManagementType.FLASHCARD
       ? useFlashcards(setId)
@@ -76,14 +44,6 @@ export default function AccordionListItems({
     setContent(data);
   }, [data]);
   const [content, setContent] = useState([]);
-  const [expanded, setExpanded] = useState(false);
-  const getData = (question, answers, priority) => {
-    setQuestion(question);
-    setAnswers(answers);
-    setPriority(priority);
-    console.log("AccordionListItems:" + answers);
-    console.log("AccordionListItems:" + question);
-  };
   if (error) return <LoadingOverlay visible={isLoading} />;
   return content.map((listItem) => (
     <View key={listItem.id}>
@@ -94,19 +54,6 @@ export default function AccordionListItems({
           width: responsiveWidth(100),
           backgroundColor: theme.colors.secondaryContainer,
         }}
-        onPress={() => {
-          if (expanded === true) {
-            console.log("accordion closed");
-            updateExercise(
-              listItem,
-              answers,
-              question,
-              priority,
-              listItem.set_id,
-            );
-          }
-          setExpanded(!expanded);
-        }}
       >
         {
           type === ManagementType.FLASHCARD && (
@@ -115,7 +62,7 @@ export default function AccordionListItems({
         }
         {
           type === ManagementType.EXERCISE && (
-            <EditExercise listItem={listItem} sendDataToParent={getData} />
+            <EditExercise listItem={listItem} />
           ) //if type === exercise then render <EditExercise/> component
         }
       </List.Accordion>

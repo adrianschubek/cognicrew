@@ -41,7 +41,7 @@ export default function EditFlashcard({ listItem }) {
   const debouncedEditFlashcard = useCallback(
     debounce((q, a, p) => {
       editFlashcard(q, a, p);
-    }, 1000),
+    }, 500),
     [] // dependencies array is empty because debounce and editFlashcard do not change
   );
   

@@ -48,7 +48,6 @@ export default function AddExercises({ showAddExercises, close }) {
       set_id: selectedSetId,
     }).then((res) => {
       answers.forEach((e) => {
-        //console.log(e);
         upsertAnswersExercise({
           //@ts-expect-error
           answer: e[0],
