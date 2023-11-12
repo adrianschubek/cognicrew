@@ -23,7 +23,6 @@
     "@supabase/postgrest-js": "^1.8.5",
     "@supabase/supabase-js": "^2.38.4",
     "@types/react": "~18.2.14",
-    "axios": "^1.6.1",
     "expo": "~49.0.15",
     "expo-status-bar": "~1.6.0",
     "react": "^18.2.0",
