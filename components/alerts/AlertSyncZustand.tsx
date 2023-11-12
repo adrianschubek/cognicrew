@@ -49,7 +49,7 @@ export default function AlertSyncZustand() {
 
   const theme = useTheme();
 
-  // Fixed? inputvalues may not be set but activeAlert is set during first render. => undefined
+  // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined
   if (
     !activeAlert ||
     (activeAlert?.inputs?.length !== 0 && inputValues.length === 0)
@@ -99,7 +99,7 @@ export default function AlertSyncZustand() {
                   {field.type === "checkbox" ? (
                     <>
                       <TextInput
-                        style={{ marginTop: 10 }}
+                        style={{ marginVertical: 2, marginTop: 10 }}
                         theme={{ roundness: 10 }}
                         value={field.label}
                         editable={false}
@@ -133,7 +133,7 @@ export default function AlertSyncZustand() {
                   ) : (
                     <>
                       <TextInput
-                        style={{ marginVertical: 2 }}
+                        style={{ marginVertical: 2, marginTop: 10 }}
                         label={field.label}
                         placeholder={field.placeholder}
                         secureTextEntry={field.type === "password"}
