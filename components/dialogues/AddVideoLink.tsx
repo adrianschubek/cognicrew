@@ -2,15 +2,30 @@ import * as React from 'react';
 import { View, Keyboard, StyleSheet } from 'react-native';
 import { Dialog, Button, TextInput, Portal } from 'react-native-paper';
 import { responsiveWidth, responsiveHeight } from 'react-native-responsive-dimensions';
+import { useUpsertLink } from '../../utils/hooks';
+import { useProjectStore } from '../../stores/ProjectStore';
 
 export default function AddVideoLink({ video, showVideoLinkDialog, close, onSubmit }) {
   const [title, setTitle] = React.useState(video?.title || '');
   const [subtitle, setSubtitle] = React.useState(video?.subtitle || '');
   const [description, setDescription] = React.useState(video?.description || '');
-  const [videoURL, setVideoURL] = React.useState(video?.videoURL || '');
+  const [videoURL, setVideoURL] = React.useState(video?.link_url || '');
+
+  const projectId = useProjectStore((state) => state.projectId);
+
+  const { isMutating, trigger: upsertLink } = useUpsertLink();
+  const addOrEdit = () => {
+    upsertLink({
+      // @ts-expect-error
+      learning_project: projectId, title: title, subtitle: subtitle, description: description, link_url: videoURL
+    });
+    close();
+  }
 
   const handleSubmit = () => {
-    onSubmit({ title, subtitle, description, videoURL });
+
+
+
     setTitle('');
     setSubtitle('');
     setDescription('');
@@ -24,7 +39,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close, onSubm
       setTitle(video.title);
       setSubtitle(video.subtitle);
       setDescription(video.description);
-      setVideoURL(video.videoURL);
+      setVideoURL(video.link_url);
     } else {
       setTitle('');
       setSubtitle('');
@@ -70,7 +85,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close, onSubm
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
-            onPress={handleSubmit}
+            onPress={() => {addOrEdit()}}
             mode="contained"
           >
             {video ? 'Update Video' : 'Add New Video'}

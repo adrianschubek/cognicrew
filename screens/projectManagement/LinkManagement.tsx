@@ -4,27 +4,35 @@ import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimen
 import TextWithPlusButton from '../../components/common/TextWithPlusButton';
 import VideoLinkCards from '../../components/learningProject/VideoLinkCards';
 import AddVideoLink from '../../components/dialogues/AddVideoLink';
+import { useLinks } from '../../utils/hooks';
+import { useEffect } from 'react';
+import { useProjectStore } from '../../stores/ProjectStore';
+
 
 export default function LinkManagement() {
-  const [videos, setVideos] = React.useState([
-    {
-      title: 'Video über Bären',
-      subtitle: 'Dies ist ein Video',
-      description: 'Detailed description of the video here...',
-      id: 1,
-      videoURL: 'https://www.youtube.com/watch?v=17cRUUKcVOo',
-    },
-  ]);
+
   const [showVideoLinkDialog, setShowVideoLinkDialog] = React.useState(false);
   const [editingVideo, setEditingVideo] = React.useState(null);
+  
+  const projectId = useProjectStore((state) => state.projectId);
+  const {data, isLoading, error} = useLinks(projectId);
+  
+  useEffect(() => {
+    if (!data) return;
+    setLinkItems(data);
+  }, [data]);
+
+  const [linkItems, setLinkItems] = React.useState([]);
+
+
 
   const handleAddOrEditVideo = (videoData) => {
     if (editingVideo) {
-      setVideos(videos.map(video => video.id === editingVideo.id ? { ...videoData, id: video.id } : video));
+      setLinkItems(linkItems.map(video => video.id === editingVideo.id ? { ...videoData, id: video.id } : video));
     } else {
-      setVideos([...videos, { ...videoData, id: videos.length + 1 }]);
+      setLinkItems([...linkItems, { ...videoData, id: linkItems.length + 1 }]);
     }
-    console.log("Updated videos: ", videos);
+    console.log("Updated videos: ", linkItems);
 
     setEditingVideo(null);
     setShowVideoLinkDialog(false);
@@ -33,10 +41,6 @@ export default function LinkManagement() {
   const handleEditVideo = (video) => {
     setEditingVideo(video);
     setShowVideoLinkDialog(true);
-  };
-
-  const handleDeleteVideo = (videoId) => {
-    setVideos(videos.filter(video => video.id !== videoId));
   };
 
   return (
@@ -61,7 +65,7 @@ export default function LinkManagement() {
         />
       </View>
       <ScrollView>
-        <VideoLinkCards videos={videos} onDelete={handleDeleteVideo} onEdit={handleEditVideo} />
+        <VideoLinkCards videos={linkItems} onEdit={handleEditVideo} />
       </ScrollView>
     </View>
   );

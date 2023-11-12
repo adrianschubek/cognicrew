@@ -3,8 +3,9 @@ import { useState } from 'react';
 import { Card, IconButton, Text, Menu, Divider } from 'react-native-paper';
 import { Share, Image, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { responsiveWidth, responsiveHeight } from 'react-native-responsive-dimensions';
+import { useDeleteLink } from '../../utils/hooks';
 
-export default function VideoLinkCards({ videos, onDelete, onEdit }) {
+export default function VideoLinkCards({ videos, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -16,6 +17,8 @@ export default function VideoLinkCards({ videos, onDelete, onEdit }) {
     const isYouTubeURL = youtubePatterns.some(pattern => videoURL.includes(pattern));
     return isYouTubeURL ? youtubeIcon : defaultIcon;
   };
+
+  const { isMutating, trigger: deleteLink } = useDeleteLink();
 
   const openVideo = (url) => {
     if (!url) {
@@ -48,7 +51,7 @@ export default function VideoLinkCards({ videos, onDelete, onEdit }) {
       elevation={1}
       style={styles.cardStyle}
       key={video.id}
-      onPress={() => openVideo(video.videoURL)}
+      onPress={() => openVideo(video.link_url)}
       accessible
       accessibilityLabel={`Video titled ${video.title}`}
     >
@@ -56,8 +59,8 @@ export default function VideoLinkCards({ videos, onDelete, onEdit }) {
         title={video.title}
         subtitle={video.subtitle}
         left={() => (
-          <TouchableOpacity onPress={() => openVideo(video.videoURL)}>
-            <Image source={{ uri: getIconForVideo(video.videoURL) }} style={styles.iconStyle} />
+          <TouchableOpacity onPress={() => openVideo(video.link_url)}>
+            <Image source={{ uri: getIconForVideo(video.link_url) }} style={styles.iconStyle} />
           </TouchableOpacity>
         )}
         right={() => (
@@ -67,7 +70,7 @@ export default function VideoLinkCards({ videos, onDelete, onEdit }) {
               visible={menuVisible === video.id}
               onDismiss={() => setMenuVisible(false)}
               anchor={<IconButton icon="dots-vertical" onPress={() => setMenuVisible(video.id)} />}>
-              <Menu.Item onPress={() => { onDelete(video.id); setMenuVisible(false); }} title="Delete" />
+              <Menu.Item onPress={() => { deleteLink({id:video.id}); setMenuVisible(false); }} title="Delete" />
               <Divider />
               <Menu.Item onPress={() => { onEdit(video); setMenuVisible(false); }} title="Edit" />
             </Menu>
