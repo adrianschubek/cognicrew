@@ -1,42 +1,32 @@
-import * as React from 'react';
-import { View, ScrollView, StyleSheet, StatusBar } from 'react-native';
-import { responsiveHeight, responsiveWidth } from 'react-native-responsive-dimensions';
-import TextWithPlusButton from '../../components/common/TextWithPlusButton';
-import VideoLinkCards from '../../components/learningProject/VideoLinkCards';
-import AddVideoLink from '../../components/dialogues/AddVideoLink';
+import * as React from "react";
+import { View, ScrollView, StyleSheet, StatusBar } from "react-native";
+import {
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
+import TextWithPlusButton from "../../components/common/TextWithPlusButton";
+import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
+import AddVideoLink from "../../components/dialogues/AddVideoLink";
+import { useLinks } from "../../utils/hooks";
+import { useEffect, useState } from "react";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function LinkManagement() {
-  const [videos, setVideos] = React.useState([
-    {
-      title: 'Video über Bären',
-      subtitle: 'Dies ist ein Video',
-      description: 'Detailed description of the video here...',
-      id: 1,
-      videoURL: 'https://www.youtube.com/watch?v=17cRUUKcVOo',
-    },
-  ]);
-  const [showVideoLinkDialog, setShowVideoLinkDialog] = React.useState(false);
-  const [editingVideo, setEditingVideo] = React.useState(null);
+  const [showVideoLinkDialog, setShowVideoLinkDialog] = useState(false);
+  const [editingVideo, setEditingVideo] = useState(null);
 
-  const handleAddOrEditVideo = (videoData) => {
-    if (editingVideo) {
-      setVideos(videos.map(video => video.id === editingVideo.id ? { ...videoData, id: video.id } : video));
-    } else {
-      setVideos([...videos, { ...videoData, id: videos.length + 1 }]);
-    }
-    console.log("Updated videos: ", videos);
+  const projectId = useProjectStore((state) => state.projectId);
+  const { data, isLoading, error } = useLinks(projectId);
 
-    setEditingVideo(null);
-    setShowVideoLinkDialog(false);
-  };
+  useEffect(() => {
+    if (!data) return;
+    setLinkItems(data);
+  }, [data]);
 
+  const [linkItems, setLinkItems] = useState([]);
   const handleEditVideo = (video) => {
     setEditingVideo(video);
     setShowVideoLinkDialog(true);
-  };
-
-  const handleDeleteVideo = (videoId) => {
-    setVideos(videos.filter(video => video.id !== videoId));
   };
 
   return (
@@ -49,7 +39,6 @@ export default function LinkManagement() {
           setShowVideoLinkDialog(false);
           setEditingVideo(null);
         }}
-        onSubmit={handleAddOrEditVideo}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
@@ -61,7 +50,7 @@ export default function LinkManagement() {
         />
       </View>
       <ScrollView>
-        <VideoLinkCards videos={videos} onDelete={handleDeleteVideo} onEdit={handleEditVideo} />
+        <VideoLinkCards videos={linkItems} onEdit={handleEditVideo} />
       </ScrollView>
     </View>
   );
@@ -72,14 +61,14 @@ const styles = StyleSheet.create({
     width: responsiveWidth(100),
     height: responsiveHeight(100),
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   upperContainer: {
     flex: 0,
     width: responsiveWidth(100),
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
 });

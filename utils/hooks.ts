@@ -111,6 +111,7 @@ export function useAnswersExercises(exerciseId: number) {
     ),
   );
 }
+
 export function useUpsertAnswersExercise() {
   return handleErrors(
     useUpsertMutation(
@@ -120,6 +121,29 @@ export function useUpsertAnswersExercise() {
     ),
   );
 }
+
+export function useLinks(projectId: number) {
+  return handleErrors(
+    useQuery(
+      supabase.from("links").select("id,link_url,learning_project,title,subtitle,description").eq("learning_project", projectId)
+    ),
+  );
+}
+
+export function useDeleteLink() {
+  return handleErrors(useDeleteMutation(supabase.from("links"), ["id"], "id"));
+}
+
+export function useUpsertLink() {
+  return handleErrors(
+    useUpsertMutation(
+      supabase.from("links"),
+      ["id"],
+      "id,link_url,learning_project,title,subtitle,description",
+    ),
+  );
+}
+
 /**
  * Display alerts.
  * @returns functions to display alerts.

@@ -1,42 +1,57 @@
-import * as React from 'react';
-import { View, Keyboard, StyleSheet } from 'react-native';
-import { Dialog, Button, TextInput, Portal } from 'react-native-paper';
-import { responsiveWidth, responsiveHeight } from 'react-native-responsive-dimensions';
+import * as React from "react";
+import { View, Keyboard, StyleSheet } from "react-native";
+import { Dialog, Button, TextInput, Portal } from "react-native-paper";
+import {
+  responsiveWidth,
+  responsiveHeight,
+} from "react-native-responsive-dimensions";
+import { useUpsertLink } from "../../utils/hooks";
+import { useProjectStore } from "../../stores/ProjectStore";
+import { useEffect, useState } from "react";
 
-export default function AddVideoLink({ video, showVideoLinkDialog, close, onSubmit }) {
-  const [title, setTitle] = React.useState(video?.title || '');
-  const [subtitle, setSubtitle] = React.useState(video?.subtitle || '');
-  const [description, setDescription] = React.useState(video?.description || '');
-  const [videoURL, setVideoURL] = React.useState(video?.videoURL || '');
-
-  const handleSubmit = () => {
-    onSubmit({ title, subtitle, description, videoURL });
-    setTitle('');
-    setSubtitle('');
-    setDescription('');
-    setVideoURL('');
+export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
+  const [title, setTitle] = useState(video?.title || "");
+  const [subtitle, setSubtitle] = useState(video?.subtitle || "");
+  const [description, setDescription] = useState(video?.description || "");
+  const [videoURL, setVideoURL] = useState(video?.link_url || "");
+  const projectId = useProjectStore((state) => state.projectId);
+  const { isMutating, trigger: upsertLink } = useUpsertLink();
+  const addOrEdit = () => {
+    upsertLink({
+      // @ts-expect-error
+      learning_project: projectId,
+      id: video?.id,
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      link_url: videoURL,
+    });
+    close();
+    setTitle("");
+    setSubtitle("");
+    setDescription("");
+    setVideoURL("");
     close();
     Keyboard.dismiss();
   };
-
-  React.useEffect(() => {
+  useEffect(() => {
     if (video) {
       setTitle(video.title);
       setSubtitle(video.subtitle);
       setDescription(video.description);
-      setVideoURL(video.videoURL);
+      setVideoURL(video.link_url);
     } else {
-      setTitle('');
-      setSubtitle('');
-      setDescription('');
-      setVideoURL('');
+      setTitle("");
+      setSubtitle("");
+      setDescription("");
+      setVideoURL("");
     }
   }, [video]);
 
   return (
     <Portal>
       <Dialog
-        style={{ alignItems: 'center' }}
+        style={{ alignItems: "center" }}
         visible={showVideoLinkDialog}
         onDismiss={() => {
           close();
@@ -70,10 +85,12 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close, onSubm
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70) }}
-            onPress={handleSubmit}
+            onPress={() => {
+              addOrEdit();
+            }}
             mode="contained"
           >
-            {video ? 'Update Video' : 'Add New Video'}
+            {video ? "Update Video" : "Add New Video"}
           </Button>
         </Dialog.Actions>
       </Dialog>
