@@ -10,6 +10,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+import { useUsername } from "../../utils/hooks";
 /**
  * `getFriendIconUrl` - Returns a URL for a friend's icon.
  * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
@@ -27,6 +28,7 @@ export default function FriendItem(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const friendName = useUsername(props.friend).data;
   return (
       <View
         style={[styles.item, { backgroundColor: theme.colors.background, shadowColor: theme.colors.shadow }]}
@@ -35,7 +37,7 @@ export default function FriendItem(props: {
           source={{ uri: getFriendIconUrl(props.friend) }}
           style={styles.profileIcon}
         />
-        <Text style={styles.itemText}>{props.friend}</Text>
+        <Text style={styles.itemText}>{friendName}</Text>
         <IconButton
           icon={props.icon}
           size={responsiveFontSize(3)}
