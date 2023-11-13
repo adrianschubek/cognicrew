@@ -66,7 +66,7 @@ export default function App() {
                 // revalidateOnFocus: false,
                 provider: () => new Map(),
                 isVisible: () => true,
-                isOnline: () => true,
+                isOnline: () => true
               }}
             >
               <AlertSyncZustand />

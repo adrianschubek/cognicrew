@@ -12,6 +12,7 @@ import {
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useUsername } from "../../utils/hooks";
+import { mutate } from "swr";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -33,6 +34,7 @@ export const LogoutButton = () => {
               onPress={async () => {
                 setShowConfirm(false);
                 await supabase.auth.signOut();
+                mutate(/* match all keys */ () => true, undefined, false);
               }}
               testID="logout-confirm-button"
             >
