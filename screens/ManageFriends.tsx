@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   Portal,
@@ -20,12 +20,16 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { useFriends } from "../utils/hooks";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
+import { useAuth } from "../providers/AuthProvider";
+import { filter } from "cypress/types/bluebird";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friends, setFriends] = useState([
+  const [friends2, setFriends2] = useState([
     "Cognimo",
     "Cognick",
     "Cognidrian",
@@ -39,6 +43,9 @@ export default function ManageFriends({ navigation }) {
   const [pendingFriends, setPendingFriends] = useState([]);
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [friends, setFriends] = useState([]);
+  const user = useAuth().user;
+  const { data, error, isLoading } = useFriends();
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
@@ -110,12 +117,18 @@ export default function ManageFriends({ navigation }) {
    * @param {string} friend - The name of the friend to accept.
    */
   const acceptFriend = (friend) => {
-    setFriends([...friends, friend]);
+    setFriends2([...friends, friend]);
     setPendingFriends(pendingFriends.filter((f) => f !== friend));
     setSnackbarText(`${friend} has been added to your friends list`);
     setSnackbarVisible(true);
   };
 
+  useEffect(() => {
+    if (!data) return;
+    setFriends(data);
+    console.log(data);
+  }, [data]);
+  if (error) return <LoadingOverlay visible={isLoading} />;
   return (
     <ScrollView style={styles.container}>
       <View style={styles.innerContainer}>
@@ -137,14 +150,34 @@ export default function ManageFriends({ navigation }) {
             placeholder="Search friends"
           />
           <ScrollView style={styles.friendsListContainer}>
-            {filteredFriends.map((friend, index) => (
-              <FriendItem
-                key={index}
-                icon="close-circle"
-                friend={friend}
-                onIconPress={() => confirmDelete(friend)}
-              />
-            ))}
+            {filteredFriends
+              .filter((friendPair) => {
+                // filter out friends that have not received a friend request
+                if (friendPair.user_from_id !== user.id) {
+                  return false;
+                }
+                return filteredFriends.some((friendPair2) => {
+                  // (User A, User B) => (User B, User A)
+                  return (
+                    friendPair2.user_from_id === friendPair.user_to_id &&
+                    friendPair2.user_to_id === friendPair.user_from_id
+                  );
+                });
+              })
+              .map((friend, index) => (
+                <FriendItem
+                  key={index}
+                  icon="close-circle"
+                  friend={
+                    friend.user_from_id === user.id
+                      ? friend.user_to_id
+                      : friend.user_from_id
+                  }
+                  onIconPress={() => {
+                    /*confirmDelete(friend);*/
+                  }}
+                />
+              ))}
           </ScrollView>
           <Divider style={styles.divider} />
         </View>

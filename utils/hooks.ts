@@ -42,10 +42,6 @@ export function useUsername(uid?: string) {
     ),
   );
 }
-
-/**
- * Returns all achievements.
- */
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -53,6 +49,19 @@ export function useAchievements() {
         .from("achievements")
         .select("id,name,icon_name,description")
         .order("id"),
+    ),
+  );
+}
+
+/**
+ * Returns all Friends.
+ */
+export function useFriends() {
+  return handleErrors(
+    useQuery(
+      supabase
+        .from("friends")
+        .select("user_from_id,user_to_id"),
     ),
   );
 }
