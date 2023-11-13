@@ -37,9 +37,11 @@ export default function AlertSyncZustand() {
   }, [activeAlert, alerts]);
 
   useEffect(() => {
-    if (activeAlert && activeAlert?.inputs?.length !== 0) {
+    if (activeAlert) {
       setInputValues(() =>
-        activeAlert.inputs.map((field) => field.defaultValue ?? ""),
+        activeAlert?.inputs?.length !== 0
+          ? activeAlert.inputs.map((field) => field.defaultValue ?? "")
+          : [],
       );
     }
   }, [activeAlert]);
