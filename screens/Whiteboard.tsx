@@ -9,8 +9,11 @@ import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
+import Slider from "@react-native-community/slider";
 
 export default function Whiteboard({ navigation }) {
+  const { setShapeSize, shapeSize } = useWhiteboardStore();
+
   const { resetPath, undoLastPath, redoLastPath, setSelectedShape } =
     useWhiteboardStore();
   const [showDrawing, setDrawing] = useState(false);
@@ -70,48 +73,62 @@ export default function Whiteboard({ navigation }) {
         <Divider style={styles.divider} />
 
         <View style={styles.bottomLeft}>
-          <IconButton
-            icon="delete"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={resetPath}
-          />
-          <IconButton
-            icon="pencil"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={() => {
-              setSelectedShape('none');
-              setDrawing(true);
-              console.log("Pressed");
-            }}
-          />
-          <IconButton
-            icon="triangle-outline"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={() => setSelectedShape("triangle")}
-          />
-          <IconButton
-            icon="square-outline"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={() => setSelectedShape("square")}
-          />
-          <IconButton
-            icon="circle-outline"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={() => setSelectedShape("circle")}
-          />
-          <IconButton
-            icon="keyboard"
-            iconColor={theme.colors.primary}
-            size={40}
-            onPress={() => {
-              console.log("Pressed");
-            }}
-          />
+          <View style={styles.iconRow}>
+            <IconButton
+              icon="delete"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={resetPath}
+            />
+            <IconButton
+              icon="pencil"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={() => {
+                setSelectedShape("none");
+                setDrawing(true);
+                console.log("Pressed");
+              }}
+            />
+            <IconButton
+              icon="triangle-outline"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={() => setSelectedShape("triangle")}
+            />
+            <IconButton
+              icon="square-outline"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={() => setSelectedShape("square")}
+            />
+            <IconButton
+              icon="circle-outline"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={() => setSelectedShape("circle")}
+            />
+            <IconButton
+              icon="keyboard"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={() => {
+                console.log("Pressed");
+              }}
+            />
+          </View>
+
+          <View style={styles.sliderRow}>
+            <Text style={styles.sliderLabel}>Shape size:</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={10}
+              maximumValue={100}
+              step={1}
+              value={shapeSize}
+              onValueChange={(value) => setShapeSize(value)}
+            />
+          </View>
         </View>
       </View>
     </React.Fragment>
@@ -143,6 +160,23 @@ const styles = StyleSheet.create({
   },
 
   bottomLeft: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  iconRow: {
     flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  sliderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  slider: {
+    width: 200,
+    height: 40,
+    marginLeft: 10,
+  },
+  sliderLabel: {
+    marginRight: 10,
   },
 });

@@ -1,7 +1,11 @@
 import { create } from "zustand";
 
-type PathType = { path: string[]; color: string; stroke: number };
-
+type PathType = {
+  path: string[];
+  color: string;
+  stroke: number;
+  size: number;
+};
 type WhiteboardStoreType = {
   paths: PathType[];
   undoPaths: PathType[];
@@ -10,6 +14,9 @@ type WhiteboardStoreType = {
   openColor: boolean;
   openStroke: boolean;
   selectedShape: "square" | "triangle" | "circle" | "none";
+  shapeSize: number;
+  setShapeSize: (size: number) => void;
+
   setSelectedShape: (shape: "square" | "triangle" | "circle" | "none") => void;
   setPaths: (fn: (prev: PathType[]) => PathType[]) => void;
   setColor: (color: string) => void;
@@ -22,14 +29,16 @@ type WhiteboardStoreType = {
 };
 
 export const useWhiteboardStore = create<WhiteboardStoreType>((set) => ({
+  shapeSize: 50,
   selectedShape: "none",
-  setSelectedShape: (shape) => set({ selectedShape: shape }),
   paths: [],
   undoPaths: [],
   color: "#FF0000",
   stroke: 12,
   openColor: false,
   openStroke: false,
+  setShapeSize: (size) => set({ shapeSize: size }),
+  setSelectedShape: (shape) => set({ selectedShape: shape }),
   setPaths: (fn) =>
     set((state) => {
       const newPaths = fn(state.paths);

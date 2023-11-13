@@ -4,15 +4,17 @@ import Svg, { Path, Polygon, Rect, Circle } from "react-native-svg";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
 export const Canvas = () => {
-  const { color, stroke, setPaths, paths, selectedShape } =
+  const { color, stroke, setPaths, paths, selectedShape, shapeSize } =
     useWhiteboardStore();
 
   // Function to start a new path for freehand drawing
   const setNewPath = (x: number, y: number) => {
     if (selectedShape === "none") {
-      console.log("call setNewPath");
       setPaths((prev) => {
-        const result = [...prev, { path: [`M${x} ${y}`], color, stroke }];
+        const result = [
+          ...prev,
+          { path: [`M${x} ${y}`], color, stroke, size: shapeSize },
+        ];
         return result;
       });
     }
@@ -32,14 +34,16 @@ export const Canvas = () => {
   // Function to draw a selected shape
   const drawShape = (x: number, y: number) => {
     if (selectedShape !== "none") {
-      const shapePath = getShapePath(x, y, selectedShape);
-      setPaths((prev) => [...prev, { path: [shapePath], color, stroke }]);
+      const shapePath = getShapePath(x, y, selectedShape, shapeSize);
+      setPaths((prev) => [
+        ...prev,
+        { path: [shapePath], color, stroke, size: shapeSize },
+      ]);
     }
   };
 
   // Function to generate SVG path for the selected shape
-  const getShapePath = (x, y, shape) => {
-    const size = 50;
+  const getShapePath = (x, y, shape, size) => {
     const halfSize = size / 2;
 
     switch (shape) {
@@ -48,9 +52,11 @@ export const Canvas = () => {
           x + halfSize
         } ${y + halfSize} Z`;
       case "square":
-        return `M${x - halfSize} ${y - halfSize} h${size} v${size} h${-size} Z`;
+        return `M${x - halfSize} ${
+          y - halfSize
+        } h${shapeSize} v${shapeSize} h${-shapeSize} Z`;
       case "circle":
-        return `M${x - halfSize},${y - halfSize}`;
+        return `M${x},${y},circle`;
       default:
         return "";
     }
@@ -74,16 +80,16 @@ export const Canvas = () => {
       }}
     >
       <Svg>
-        {paths.map(({ path, color: c, stroke: s }, i) => {
-          if (path[0].startsWith("M") && path[0].includes(",")) {
-            // Identifying circle
+        {paths.map(({ path, color: c, stroke: s, size }, i) => {
+          if (path[0].startsWith("M") && path[0].includes("circle")) {
             const [mx, my] = path[0].substring(1).split(",").map(Number);
+            const radius = size / 2;
             return (
               <Circle
                 key={i}
-                cx={mx + 25}
-                cy={my + 25}
-                r="25"
+                cx={mx}
+                cy={my}
+                r={radius}
                 stroke={c}
                 strokeWidth={s}
                 fill="none"
