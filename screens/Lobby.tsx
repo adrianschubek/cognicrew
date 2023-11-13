@@ -54,6 +54,7 @@ export default function Lobby() {
         Waiting for host to start a game
       </Text>
       <Button
+      style={{ marginTop: 20 }}
         onPress={() =>
           confirm({
             icon: "location-exit",
