@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, ScrollView, Alert } from "react-native";
 import {
   Dialog,
   Portal,
@@ -15,12 +15,15 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { accordionSectionItems } from "../learningProject/AccordionSection";
-import { ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { useRoute } from '@react-navigation/native';
-import { NAVIGATION } from "../../types/common";
+import { ManagementType, NAVIGATION } from "../../types/common";
+import { useSets } from "../../utils/hooks";
+import { useProjectStore } from "../../stores/ProjectStore";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
   const navigation = useNavigation<any>();
@@ -54,24 +57,35 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
   };
 
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState(
-    accordionSectionItems.map(item => ({ ...item, checked: false }))
-  );
+
+  // Initialize filteredAccordionSectionItems with an empty array
+  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState([]);
+
+  //TODO implement correct projectId 
+  const projectId = useProjectStore((state) => state.projectId);
+  const { data } = useSets(ManagementType.FLASHCARD, 168);
+  
+  useEffect(() => {
+    if (data !== undefined && data !== null) {
+      const formattedSetsData = (data ?? []).map((item) => ({ ...item, checked: false }));
+      setFilteredAccordionSectionItems(formattedSetsData);
+    }
+  }, [data]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredItems = accordionSectionItems.map((item) => ({
+    const filteredItems = data.map((item) => ({
       ...item,
-      checked: false // Reset checkbox state when filtering
+      checked: false
     })).filter((item) =>
-      item.title.toLowerCase().includes(query.toLowerCase())
+      item.name.toLowerCase().includes(query.toLowerCase())
     );
-    console.log("filteredAccordionSectionItems: ", filteredItems);
     setFilteredAccordionSectionItems(filteredItems);
   }
 
-  // Add a state for checked items in AccordionSection
   const [checkedItems, setCheckedItems] = useState([]);
+
+  const checkedItemsToNavigate = checkedItems || filteredAccordionSectionItems;
 
   const handleCheckboxPress = (id) => {
     const updatedItems = filteredAccordionSectionItems.map((item) => {
@@ -81,10 +95,22 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
       return item;
     });
     setFilteredAccordionSectionItems(updatedItems);
-  
-    // Update the checked items state
+
     const newCheckedItems = updatedItems.filter((item) => item.checked);
     setCheckedItems(newCheckedItems);
+  };
+
+  const handleNavigation = (totalTimeInSeconds) => {
+    if (checkedItems === null || checkedItems.length === 0) {
+      // If checkedItems is null or empty, show an alert
+      Alert.alert("Choose Sets", "Choose one or multiple sets to play a game.");
+    } else {
+      // If checkedItems is not null and not empty, navigate to FLASHCARD_GAME
+      navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
+        totalTimeInSeconds,
+        checkedItems,
+      });
+    }
   };
 
   return (
@@ -133,7 +159,7 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
             >
               {filteredAccordionSectionItems.map((learningSet) => (
                 <View key={learningSet.id} style={styles.accordionItem}>
-                  <Text style={styles.accordionTitle}>{learningSet.title}</Text>
+                  <Text style={styles.accordionTitle}>{learningSet.name}</Text>
                   <Checkbox
                     status={learningSet.checked ? "checked" : "unchecked"}
                     onPress={() => handleCheckboxPress(learningSet.id)}
@@ -150,9 +176,7 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
                   onPress={() => {
                     const totalTimeInSeconds = computeTimeInSeconds();
                     close();
-                    navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
-                      totalTimeInSeconds,
-                      checkedItems});
+                    handleNavigation(totalTimeInSeconds);
                   }}
               >Done</Button>
           </Dialog.Actions>

@@ -13,59 +13,36 @@ import {
 import CountDown from 'react-native-countdown-component';
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
+import { useFlashcards } from "../utils/hooks";
 
 export default function FlashcardGame({route}) {
 const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;
 const checkedItems = route.params?.checkedItems || [];
-  
-//TODO add set functionality, currently it is just picking a flashcard from below
-  const flashcards = [ {question: "What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? What does Sigmund Freud base his main theory on? ",
-    answer: "on case studies of his own patients and those of his colleagues",
-    id: 1,
-    groupId: 1,
-  },
-  {
-    question: "Why can't I find love and why doesn't my family love me?",
-    answer: "because I am clearly unloveable",
-    id: 2,
-    groupId: 1
-  },
-  {
-    question: "Why do we live?",
-    answer: "we live ultimately to survive and pass on our genes",
-    id: 3,
-    groupId: 2
-  },
-  {
-    question: "How can i convince my gf to buy me a Porsche?",
-    answer:
-      "use of questionable, agressive and emotionaly manipulative tactics",
-    id: 4,
-    groupId: 3
-  },
-  {
-    question: "1",
-    answer:
-      "1",
-    id: 5,
-    groupId: 3
-  },
-]
+const [currentFlashcard, setCurrentFlashcard] = useState(null);
 
-  // useEffect to show a random flashcard on initial mount
+  // Fetch flashcards data using the useFlashcards hook when the component mounts
+  const { data: flashcards } = useFlashcards(getRandomFirstIndex(checkedItems));
+
   useEffect(() => {
-    showRandomFlashcard();
-  }, []);
-
-function getRandomFlashcard(flashcards) {
-  const randomIndex = Math.floor(Math.random() * flashcards.length);
-  return flashcards[randomIndex];
-}
-  const [currentFlashcard, setCurrentFlashcard] = useState(null);
+    if (flashcards != undefined && flashcards.length > 0) {
+      const randomIndex = Math.floor(Math.random() * flashcards.length);
+      setCurrentFlashcard(flashcards[randomIndex]);
+    }
+  }, [flashcards]);
 
   const showRandomFlashcard = () => {
-    const randomCard = getRandomFlashcard(flashcards);
-    setCurrentFlashcard(randomCard);
+    if (flashcards.length > 0) {
+      const randomIndex = Math.floor(Math.random() * flashcards.length);
+      setCurrentFlashcard(flashcards[randomIndex]);
+    }
+  };
+
+  function getRandomFirstIndex(checkedItems) {
+    if (checkedItems.length === 0) {
+      return null;
+    }
+    const index =  Math.floor(Math.random() * checkedItems.length);
+    return checkedItems[index].id;
   }
 
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
@@ -101,7 +78,7 @@ function getRandomFlashcard(flashcards) {
 
   return (
     <>
-              <KeyboardAvoidingView
+      <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}>
         <View style={styles.container}>
@@ -139,7 +116,6 @@ function getRandomFlashcard(flashcards) {
                 </View>
           <ScrollView
             contentContainerStyle={styles.scrollContent}>
-              <Button onPress={showRandomFlashcard}>Next</Button>
               <Text style={styles.questionStyle}>{currentFlashcard ? currentFlashcard.question : ''}</Text>
           </ScrollView>
           </View>
@@ -152,12 +128,12 @@ function getRandomFlashcard(flashcards) {
                 onChangeText={(text) => setUserInput(text)}
               />
             </View>
-            <View style={styles.submitButtonContainer}>
-              {showNextButton ? (
-                <Button onPress={handleNext}>Next</Button>
+          <View style={styles.submitButtonContainer}>
+            {showNextButton ? (
+              <Button onPress={handleNext}>Next</Button>
               ) : (
-                <Button onPress={checkAnswer}>Submit</Button>
-              )}
+              <Button onPress={checkAnswer}>Submit</Button>
+            )}
             </View>
       </KeyboardAvoidingView>
     </>
