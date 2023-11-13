@@ -137,6 +137,13 @@ export default function LearningProject({ navigation, route }) {
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },
+              {
+                label: "Size",
+                type: "number",
+                icon: "account-group",
+                defaultValue: "2",
+                disabled: true,
+              },
             ],
           });
         }}

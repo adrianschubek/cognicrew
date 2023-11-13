@@ -154,6 +154,7 @@ export default function AlertSyncZustand() {
                         error={
                           field.validator && !field.validator(inputValues[i])
                         }
+                        disabled={field.disabled}
                       ></TextInput>
                       {field.helperText && (
                         <HelperText type="info" visible={true}>
