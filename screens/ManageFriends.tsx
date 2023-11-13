@@ -20,7 +20,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useFriends } from "../utils/hooks";
+import { useDeleteFriend, useFriends, useInsertFriend } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { filter } from "cypress/types/bluebird";
@@ -29,23 +29,17 @@ export default function ManageFriends({ navigation }) {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friends2, setFriends2] = useState([
-    "Cognimo",
-    "Cognick",
-    "Cognidrian",
-    "Cognian",
-    "CogniLex",
-    "Yoojin",
-  ]);
   // const projects = ["Biology", "Psychology", "Computer Science"];
   const [visible, setVisible] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
-  const [pendingFriends, setPendingFriends] = useState([]);
+  //const [pendingFriends, setPendingFriends] = useState([]);
   const [snackbarText, setSnackbarText] = useState("");
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [friends, setFriends] = useState([]);
   const user = useAuth().user;
   const { data, error, isLoading } = useFriends();
+  const { trigger: deleteFriend } = useDeleteFriend();
+  const { trigger: addFriend } = useInsertFriend();
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
@@ -58,6 +52,8 @@ export default function ManageFriends({ navigation }) {
       )
     : friends;
 
+  const pendingFriendRequestReceived = filteredFriends;
+  const pendingFriendRequestSent = filteredFriends;
   const toggleAddFriendPopup = () => {
     setShowAddFriendPopup(!showAddFriendPopup);
   };
@@ -69,17 +65,6 @@ export default function ManageFriends({ navigation }) {
   const confirmDelete = (friend) => {
     setSelectedFriend(friend);
     setVisible(true);
-  };
-
-  /**
-   * `deleteFriend` - Deletes a friend from the friends list and shows a snackbar confirmation.
-   * @param {string} friend - The name of the friend to delete.
-   */
-  const deleteFriend = (friend) => {
-    setFriends((currentFriends) => currentFriends.filter((f) => f !== friend));
-    setSnackbarText(`${friend} has been deleted from your friends list`);
-    setSnackbarVisible(true);
-    setVisible(false);
   };
 
   /**
@@ -95,38 +80,9 @@ export default function ManageFriends({ navigation }) {
     }
   };
 
-  /**
-   * `addFriend` - Attempts to add a friend to the pending friends list and gives feedback via snackbar.
-   * @param {string} friend - The name of the friend to add.
-   */
-  const addFriend = (friend) => {
-    if (
-      friend &&
-      !friends.includes(friend) &&
-      !pendingFriends.includes(friend)
-    ) {
-      setPendingFriends([...pendingFriends, friend]);
-      setSnackbarText(`Friend request sent to ${friend}`);
-      setSnackbarVisible(true);
-      setSearchQuery("");
-    }
-  };
-
-  /**
-   * `acceptFriend` - Moves a friend from the pending list to the confirmed friends list.
-   * @param {string} friend - The name of the friend to accept.
-   */
-  const acceptFriend = (friend) => {
-    setFriends2([...friends, friend]);
-    setPendingFriends(pendingFriends.filter((f) => f !== friend));
-    setSnackbarText(`${friend} has been added to your friends list`);
-    setSnackbarVisible(true);
-  };
-
   useEffect(() => {
     if (!data) return;
     setFriends(data);
-    console.log(data);
   }, [data]);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -151,19 +107,16 @@ export default function ManageFriends({ navigation }) {
           />
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends
-              .filter((friendPair) => {
+              .filter((friendPair) =>
                 // filter out friends that have not received a friend request
-                if (friendPair.user_from_id !== user.id) {
-                  return false;
-                }
-                return filteredFriends.some((friendPair2) => {
-                  // (User A, User B) => (User B, User A)
-                  return (
-                    friendPair2.user_from_id === friendPair.user_to_id &&
-                    friendPair2.user_to_id === friendPair.user_from_id
-                  );
-                });
-              })
+                friendPair.user_from_id !== user.id
+                  ? false
+                  : filteredFriends.some(
+                      (friendPair2) =>
+                        friendPair2.user_from_id === friendPair.user_to_id &&
+                        friendPair2.user_to_id === friendPair.user_from_id,
+                    ),
+              )
               .map((friend, index) => (
                 <FriendItem
                   key={index}
@@ -174,7 +127,7 @@ export default function ManageFriends({ navigation }) {
                       : friend.user_from_id
                   }
                   onIconPress={() => {
-                    /*confirmDelete(friend);*/
+                    //deleteFriend(friend)
                   }}
                 />
               ))}
@@ -183,21 +136,76 @@ export default function ManageFriends({ navigation }) {
         </View>
 
         {/* Pending friends list */}
-        {pendingFriends.length > 0 && (
+        {pendingFriendRequestReceived === null && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Pending friend requests</Text>
-            {pendingFriends.map((friend, index) => (
-              <FriendItem
-                key={index}
-                icon="check"
-                friend={friend}
-                onIconPress={() => acceptFriend(friend)}
-              />
-            ))}
+            <Text style={styles.sectionTitle}>
+              Pending received friend requests
+            </Text>
+            {pendingFriendRequestReceived
+              .filter((friendPair) =>
+                //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
+                pendingFriendRequestReceived.some(
+                  (friendPair2) =>
+                    friendPair2.user_from_id === friendPair.user_to_id &&
+                    friendPair2.user_to_id === friendPair.user_from_id,
+                )
+                  ? false
+                  : friendPair.user_to_id === user.id,
+              )
+              .map((friend, index) => (
+                <FriendItem
+                  key={index}
+                  icon="check"
+                  friend={
+                    friend.user_from_id === user.id
+                      ? friend.user_to_id
+                      : friend.user_from_id
+                  }
+                  onIconPress={() =>
+                    addFriend({
+                      //@ts-expect-error
+                      user_from_id: friend.user_to_id,
+                      user_to_id: friend.user_from_id,
+                    })
+                  }
+                />
+              ))}
             <Divider style={styles.divider} />
           </View>
         )}
-
+        {pendingFriendRequestSent === null && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              Pending sent friend requests
+            </Text>
+            {pendingFriendRequestSent
+              .filter((friendPair) =>
+                //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
+                pendingFriendRequestSent.some(
+                  (friendPair2) =>
+                    friendPair2.user_from_id === friendPair.user_to_id &&
+                    friendPair2.user_to_id === friendPair.user_from_id,
+                )
+                  ? false
+                  : friendPair.user_from_id === user.id,
+              )
+              .map((friend, index) => (
+                <FriendItem
+                  key={index}
+                  icon="close-circle"
+                  friend={
+                    friend.user_from_id === user.id
+                      ? friend.user_to_id
+                      : friend.user_from_id
+                  }
+                  onIconPress={() => {
+                    deleteFriend(friend);
+                  }}
+                />
+              ))}
+            <Divider style={styles.divider} />
+          </View>
+        )}
         {/* Project search */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Projects</Text>
