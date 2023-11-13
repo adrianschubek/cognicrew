@@ -27,7 +27,11 @@ export default function Lobby() {
         title: "Leave room?",
         message: "Are you sure you want to leave this room?",
         okText: "Leave",
-        okAction: () => navigation.dispatch(e.data.action),
+        okAction: () => {
+          // TODO: Leave room server rpc
+          // TODO: setRoom(null)
+          navigation.dispatch(e.data.action);
+        },
       });
     });
   }, []);
@@ -54,14 +58,18 @@ export default function Lobby() {
         Waiting for host to start a game
       </Text>
       <Button
-      style={{ marginTop: 20 }}
+        style={{ marginTop: 20 }}
         onPress={() =>
           confirm({
             icon: "location-exit",
             title: "Leave room?",
             message: "Are you sure you want to leave this room?",
             okText: "Leave",
-            okAction: () => navigation.navigate(NAVIGATION.HOME),
+            okAction: () => {
+              // TODO: Leave room server rpc
+              // TODO: setRoom(null)
+              navigation.navigate(NAVIGATION.HOME);
+            },
           })
         }
       >
