@@ -60,7 +60,7 @@ export function useAchievements() {
 export function useSets(type: ManagementType, projectId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("sets").select("id,name,type,project_id").eq("type", type).eq("project_id", projectId)
+      supabase.from("sets").select("id,name,type,project_id").eq("type", type).eq("project_id", projectId),
     ),
   );
 }
@@ -75,7 +75,10 @@ export function useUpsertSet() {
 export function useFlashcards(setId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("flashcards").select("id,question,answer,priority,set_id").eq("set_id", setId)
+      supabase
+        .from("flashcards")
+        .select("id,question,answer,priority,set_id")
+        .eq("set_id", setId),
     ),
   );
 }
@@ -91,7 +94,10 @@ export function useUpsertFlashcard() {
 export function useExercises(setId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("exercises").select("id,question,priority,set_id").eq("set_id", setId)
+      supabase
+        .from("exercises")
+        .select("id,question,priority,set_id")
+        .eq("set_id", setId),
     ),
   );
 }
@@ -107,7 +113,10 @@ export function useUpsertExercise() {
 export function useAnswersExercises(exerciseId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("answers_exercises").select("id,answer,exercise,is_correct").eq("exercise", exerciseId)
+      supabase
+        .from("answers_exercises")
+        .select("id,answer,exercise,is_correct")
+        .eq("exercise", exerciseId),
     ),
   );
 }
@@ -125,7 +134,10 @@ export function useUpsertAnswersExercise() {
 export function useLinks(projectId: number) {
   return handleErrors(
     useQuery(
-      supabase.from("links").select("id,link_url,learning_project,title,subtitle,description").eq("learning_project", projectId)
+      supabase
+        .from("links")
+        .select("id,link_url,learning_project,title,subtitle,description")
+        .eq("learning_project", projectId),
     ),
   );
 }

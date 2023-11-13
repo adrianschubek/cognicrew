@@ -25,6 +25,7 @@ import { useAlerts, useDeleteSet, useUpsertSet } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import TextInputListItem from "./ListItems/TextInputListItem";
 import { useProjectStore } from "../../stores/ProjectStore";
+import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function MultifunctionalList(props: {
   dataSource;
@@ -39,16 +40,19 @@ export default function MultifunctionalList(props: {
   const [creationQuery, setCreationQuery] = useState("");
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
-  const projectId = useProjectStore(state => state.projectId)
+  const projectId = useProjectStore((state) => state.projectId);
+  const incrementRefetchIndex = useRefetchIndexStore(
+    (state) => state.incrementRefetchIndex,
+  );
   const createSet = () => {
-    upsertSet(
-      {
-        //@ts-expect-error
-        name: creationQuery,
-        type: props.type,
-        project_id: projectId,
-      },
-    );
+    upsertSet({
+      //@ts-expect-error
+      name: creationQuery,
+      type: props.type,
+      project_id: projectId,
+    }).then(() => {
+      incrementRefetchIndex();
+    });
     setCreationQuery("");
   };
   return (

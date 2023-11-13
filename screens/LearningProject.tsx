@@ -19,6 +19,7 @@ import { NAVIGATION } from "../types/common";
 import { useEffect } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts } from "../utils/hooks";
+import { useRefetchIndexStore } from "../stores/BackendCommunicationStore";
 
 export default function LearningProject({ navigation, route }) {
   const { project } = route.params;
