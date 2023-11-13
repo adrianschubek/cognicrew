@@ -62,6 +62,7 @@ export default function App() {
           <AuthProvider >
             <SWRConfig
               value={{
+                // FIXME:
                 // revalidateIfStale: false,
                 // revalidateOnFocus: false,
                 provider: () => new Map(),

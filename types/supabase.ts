@@ -88,18 +88,21 @@ export interface Database {
           answer: string
           created_at: string
           exercise: number
+          id: number
           is_correct: boolean
         }
         Insert: {
           answer: string
           created_at?: string
           exercise: number
+          id?: number
           is_correct: boolean
         }
         Update: {
           answer?: string
           created_at?: string
           exercise?: number
+          id?: number
           is_correct?: boolean
         }
         Relationships: [
@@ -115,7 +118,6 @@ export interface Database {
         Row: {
           created_at: string
           id: number
-          learning_project: number
           priority: number | null
           question: string
           set_id: number
@@ -123,7 +125,6 @@ export interface Database {
         Insert: {
           created_at?: string
           id?: number
-          learning_project: number
           priority?: number | null
           question?: string
           set_id: number
@@ -131,18 +132,11 @@ export interface Database {
         Update: {
           created_at?: string
           id?: number
-          learning_project?: number
           priority?: number | null
           question?: string
           set_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "exercises_learning_project_fkey"
-            columns: ["learning_project"]
-            referencedRelation: "learning_projects"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "exercises_set_id_fkey"
             columns: ["set_id"]
@@ -156,7 +150,6 @@ export interface Database {
           answer: string | null
           created_at: string
           id: number
-          learning_project: number | null
           priority: number | null
           question: string | null
           set_id: number
@@ -165,7 +158,6 @@ export interface Database {
           answer?: string | null
           created_at?: string
           id?: number
-          learning_project?: number | null
           priority?: number | null
           question?: string | null
           set_id: number
@@ -174,18 +166,11 @@ export interface Database {
           answer?: string | null
           created_at?: string
           id?: number
-          learning_project?: number | null
           priority?: number | null
           question?: string | null
           set_id?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "flashcards_learning_project_fkey"
-            columns: ["learning_project"]
-            referencedRelation: "learning_projects"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "flashcards_set_id_fkey"
             columns: ["set_id"]
@@ -197,19 +182,16 @@ export interface Database {
       friends: {
         Row: {
           created_at: string
-          is_pending: boolean | null
           user_from_id: string
           user_to_id: string
         }
         Insert: {
           created_at?: string
-          is_pending?: boolean | null
           user_from_id: string
           user_to_id: string
         }
         Update: {
           created_at?: string
-          is_pending?: boolean | null
           user_from_id?: string
           user_to_id?: string
         }
@@ -271,21 +253,30 @@ export interface Database {
       links: {
         Row: {
           created_at: string
+          description: string | null
           id: number
           learning_project: number | null
           link_url: string | null
+          subtitle: string | null
+          title: string | null
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: number
           learning_project?: number | null
           link_url?: string | null
+          subtitle?: string | null
+          title?: string | null
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: number
           learning_project?: number | null
           link_url?: string | null
+          subtitle?: string | null
+          title?: string | null
         }
         Relationships: [
           {
@@ -363,21 +354,52 @@ export interface Database {
       }
       rooms: {
         Row: {
+          code: number | null
           created_at: string
+          host: string
           id: string
+          is_ingame: boolean
+          max_size: number
           name: string | null
+          project_id: number | null
+          secret_key: string
         }
         Insert: {
+          code?: number | null
           created_at?: string
+          host: string
           id?: string
+          is_ingame?: boolean
+          max_size?: number
           name?: string | null
+          project_id?: number | null
+          secret_key?: string
         }
         Update: {
+          code?: number | null
           created_at?: string
+          host?: string
           id?: string
+          is_ingame?: boolean
+          max_size?: number
           name?: string | null
+          project_id?: number | null
+          secret_key?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "rooms_host_fkey"
+            columns: ["host"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rooms_project_id_fkey"
+            columns: ["project_id"]
+            referencedRelation: "learning_projects"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       sets: {
         Row: {
@@ -402,12 +424,6 @@ export interface Database {
           type?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "sets_id_fkey"
-            columns: ["id"]
-            referencedRelation: "flashcards"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "sets_project_id_fkey"
             columns: ["project_id"]
@@ -517,31 +533,35 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      create_room: {
+        Args: {
+          p_project_id: number
+          p_code: number
+          p_name: string
+        }
+        Returns: Record<string, unknown>
+      }
+      delete_room: {
+        Args: {
+          p_room_id: string
+        }
+        Returns: undefined
+      }
       getUsername: {
         Args: {
           user_id: string
         }
         Returns: string
       }
-      memberOfProject: {
-        Args: {
-          p_user_id: string
-          p_project_id: number
-        }
-        Returns: boolean
-      }
-      myJoinedProjects: {
-        Args: {
-          p_user_id: string
-        }
-        Returns: Record<string, unknown>
-      }
-      project_member: {
-        Args: {
-          p_user_id: string
-          p_project_id: number
-        }
-        Returns: boolean
+      list_rooms: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          name: string
+          created_at: string
+          protected: boolean
+          host: string
+        }[]
       }
     }
     Enums: {

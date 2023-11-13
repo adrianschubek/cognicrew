@@ -70,7 +70,7 @@ export default function RoomsList({ navigation }) {
                 message: `Do you want to join this room hosted by ${room.host}?`,
                 okText: "Join",
                 okAction: (vars) => {
-                  info({ message: JSON.stringify(vars) });
+                  // info({ message: JSON.stringify(vars) });
                   navigation.navigate(NAVIGATION.LOBBY);
                 },
                 inputs: room.protected && [
@@ -135,17 +135,15 @@ export default function RoomsList({ navigation }) {
             </Card.Content>
           </Card>
         )}
-        {true && (
-          <Card.Content
-            style={{
-              marginTop: 20,
-              alignContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <LoadingAnimation color={theme.colors.secondaryContainer} />
-          </Card.Content>
-        )}
+        <Card.Content
+          style={{
+            marginTop: 20,
+            alignContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <LoadingAnimation color={theme.colors.secondaryContainer} />
+        </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
       <FAB

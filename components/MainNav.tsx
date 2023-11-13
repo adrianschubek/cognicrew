@@ -48,15 +48,20 @@ function MainTab() {
           component={RoomsList}
           options={{ title: "Rooms" }}
         />
-          <Stack.Screen
+        {/* <Stack.Screen
           name={NAVIGATION.LOBBY}
           component={Lobby}
-          options={{headerStyle: {
-            backgroundColor: theme.colors.primaryContainer,
-          }}}
-        />
+          options={{
+            headerStyle: {
+              backgroundColor: theme.colors.primaryContainer,
+            },
+          }}
+        /> */}
         <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
-        <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
+        <Stack.Screen
+          name={NAVIGATION.EXERCISE_GAME}
+          component={ExerciseGame}
+        />
         <Stack.Screen
           name={NAVIGATION.LEARNING_ROOM}
           component={LearningRoom}
@@ -128,17 +133,8 @@ function LearningProjectsTab() {
   );
 }
 
-export default function MainNav() {
-  const { session, user } = useAuth();
-
-  return !session || !user ? (
-    <Stack.Navigator
-      initialRouteName="Login"
-      screenOptions={{ headerShown: false }}
-    >
-      <Tab.Screen name="Login" component={Login} />
-    </Stack.Navigator>
-  ) : (
+function MainTabs() {
+  return (
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen
         name="HomeTab"
@@ -156,5 +152,23 @@ export default function MainNav() {
         component={AccountTab}
       />
     </Tab.Navigator>
+  );
+}
+
+export default function MainNav() {
+  const { session, user } = useAuth();
+
+  return !session || !user ? (
+    <Stack.Navigator
+      initialRouteName="Login"
+      screenOptions={{ headerShown: false }}
+    >
+      <Tab.Screen name="Login" component={Login} />
+    </Stack.Navigator>
+  ) : (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={"_main_"} component={MainTabs} />
+      <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
+    </Stack.Navigator>
   );
 }
