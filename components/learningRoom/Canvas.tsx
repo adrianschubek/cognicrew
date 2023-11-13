@@ -2,12 +2,12 @@ import React from "react";
 import { ColorValue, TouchableOpacity, View } from "react-native";
 import Svg, { Path } from "react-native-svg";
 
-import { useWhitebardStore } from "../../stores/WhiteboardStore";
+import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
 
 
 export const Canvas = () => {
-  const { color, stroke, setPaths, paths } = useWhitebardStore();
+  const { color, stroke, setPaths, paths } = useWhiteboardStore();
 
   const setNewPath = (x: number, y: number) => {
     console.log("call setNewPath")

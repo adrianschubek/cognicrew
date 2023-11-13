@@ -8,10 +8,10 @@ import {
 import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas} from "../components/learningRoom/Canvas";
-import { useWhitebardStore } from "../stores/WhiteboardStore";
+import { useWhiteboardStore } from "../stores/WhiteboardStore";
 
 export default function Whiteboard({ navigation }) {
-  const { resetPath} = useWhitebardStore();
+  const { resetPath, undoLastPath, redoLastPath } = useWhiteboardStore();
   const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
@@ -33,14 +33,14 @@ export default function Whiteboard({ navigation }) {
               icon="arrow-left-bold"
               iconColor={theme.colors.primary}
               size={40}
-              onPress={() => console.log("Pressed")}
-            />
+              onPress={undoLastPath}
+              />
             <IconButton
               icon="arrow-right-bold"
               iconColor={theme.colors.primary}
               size={40}
-              onPress={() => console.log("Pressed")}
-            />
+              onPress={redoLastPath}
+              />
           </View>
           <View style={styles.topright}>
             <Image
