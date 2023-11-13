@@ -82,6 +82,9 @@ export function useAchievementsByUser(userId: string) {
   return { data: allAchievements, isLoading };
 }
 
+/**
+ * Returns all achievements not achieved by a specific user.
+ */
 export function useNotAchievementsByUser(userId: string) {
   const { data: userAchievements, isLoading: isLoadingUserAchievements } = useQuery(
     supabase
@@ -91,7 +94,6 @@ export function useNotAchievementsByUser(userId: string) {
   );
 
   const userAchievementIds = userAchievements?.map((ua) => ua.achievement_id) || [];
-  console.log("User Achievement IDs:", userAchievementIds);
 
   const { data: allAchievements, isLoading: isLoadingAllAchievements } = useQuery(
     supabase
@@ -99,21 +101,14 @@ export function useNotAchievementsByUser(userId: string) {
       .select("id, name, icon_name, description")
       .order("id")
   );
-  console.log("All Achievements:", allAchievements);
 
   // Filter out user achievements
   const notAchieved = allAchievements?.filter((achievement) => !userAchievementIds.includes(achievement.id)) || [];
-
-  console.log("Not Achieved:", notAchieved);
 
   const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
 
   return { data: notAchieved, isLoading };
 }
-
-
-
-
 
 
 //Returns all Sets
