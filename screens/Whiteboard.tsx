@@ -7,11 +7,12 @@ import {
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
-import { Canvas} from "../components/learningRoom/Canvas";
+import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 
 export default function Whiteboard({ navigation }) {
-  const { resetPath, undoLastPath, redoLastPath } = useWhiteboardStore();
+  const { resetPath, undoLastPath, redoLastPath, setSelectedShape } =
+    useWhiteboardStore();
   const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
@@ -34,13 +35,13 @@ export default function Whiteboard({ navigation }) {
               iconColor={theme.colors.primary}
               size={40}
               onPress={undoLastPath}
-              />
+            />
             <IconButton
               icon="arrow-right-bold"
               iconColor={theme.colors.primary}
               size={40}
               onPress={redoLastPath}
-              />
+            />
           </View>
           <View style={styles.topright}>
             <Image
@@ -60,21 +61,21 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
 
-        <Divider style={styles.divider}/>
+        <Divider style={styles.divider} />
 
         <View style={styles.mid}>
           <Canvas />
         </View>
 
-        <Divider style={styles.divider}/>
+        <Divider style={styles.divider} />
 
         <View style={styles.bottomLeft}>
-            <IconButton
+          <IconButton
             icon="delete"
             iconColor={theme.colors.primary}
             size={40}
-            onPress = {resetPath}
-            />
+            onPress={resetPath}
+          />
           <IconButton
             icon="pencil"
             iconColor={theme.colors.primary}
@@ -88,11 +89,21 @@ export default function Whiteboard({ navigation }) {
             icon="triangle-outline"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={() => {
-              console.log("Pressed");
-            }}
+            onPress={() => setSelectedShape("triangle")}
           />
-           <IconButton
+          <IconButton
+            icon="square-outline"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={() => setSelectedShape("square")}
+          />
+          <IconButton
+            icon="circle-outline"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={() => setSelectedShape("circle")}
+          />
+          <IconButton
             icon="keyboard"
             iconColor={theme.colors.primary}
             size={40}
@@ -120,15 +131,13 @@ const styles = StyleSheet.create({
   mid: {
     flex: 1,
   },
-  divider: {
-
-  },
+  divider: {},
   image: {
     marginLeft: responsiveWidth(7),
     width: responsiveWidth(14),
     height: responsiveHeight(7),
     marginRight: 3,
-    borderRadius: 35, 
+    borderRadius: 35,
     overflow: "hidden",
   },
 
