@@ -13,6 +13,7 @@ import { useSets } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
+import { use } from "chai";
 
 export const accordionSectionItems = [
   { title: "Set A", id: 1, type: 0 },
@@ -35,15 +36,15 @@ export default function AccordionSection(props: {
   width?: number;
   [name: string]: any;
 }) {
-  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex); //refetchIndex has to be part of the hook, so it calls again, when refetchIndex changes, have to find out how to do that
+  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error } = useSets(props.type, projectId);
+  const { data, isLoading, error } = useSets(props.type, projectId, refetchIndex);
   const [sets, setSets] = useState([]);
   useEffect(() => {
     if (!data) return;
     setSets(data);
-    console.log(refetchIndex);
-  }, [data, refetchIndex]);
+  }, [data]);
+
 
   // Call this function to refetch the data
 

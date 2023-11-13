@@ -6,6 +6,7 @@ import {
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
+
 import { supabase } from "../supabase";
 import { ifMod } from "./common";
 import { useCallback, useEffect, useMemo } from "react";
@@ -44,7 +45,7 @@ export function useUsername(uid?: string) {
 
 /**
  * Returns all achievements.
-*/
+ */
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -60,22 +61,25 @@ export function useAchievements() {
  * Returns all achievements for a specific user.
  */
 export function useAchievementsByUser(userId: string) {
-  const { data: userAchievements, isLoading: isLoadingUserAchievements } = useQuery(
-    supabase
-      .from("user_achievements")
-      .select("achievement_id")
-      .eq("user_id", userId)
-  );
+  const { data: userAchievements, isLoading: isLoadingUserAchievements } =
+    useQuery(
+      supabase
+        .from("user_achievements")
+        .select("achievement_id")
+        .eq("user_id", userId),
+    );
 
-  const userAchievementIds = userAchievements?.map((ua) => ua.achievement_id) || [];
+  const userAchievementIds =
+    userAchievements?.map((ua) => ua.achievement_id) || [];
 
-  const { data: allAchievements, isLoading: isLoadingAllAchievements } = useQuery(
-    supabase
-      .from("achievements")
-      .select("id, name, icon_name, description")
-      .in("id", userAchievementIds)
-      .order("id")
-  );
+  const { data: allAchievements, isLoading: isLoadingAllAchievements } =
+    useQuery(
+      supabase
+        .from("achievements")
+        .select("id, name, icon_name, description")
+        .in("id", userAchievementIds)
+        .order("id"),
+    );
 
   const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
 
@@ -86,38 +90,55 @@ export function useAchievementsByUser(userId: string) {
  * Returns all achievements not achieved by a specific user.
  */
 export function useNotAchievementsByUser(userId: string) {
-  const { data: userAchievements, isLoading: isLoadingUserAchievements } = useQuery(
-    supabase
-      .from("user_achievements")
-      .select("achievement_id")
-      .eq("user_id", userId)
-  );
+  const { data: userAchievements, isLoading: isLoadingUserAchievements } =
+    useQuery(
+      supabase
+        .from("user_achievements")
+        .select("achievement_id")
+        .eq("user_id", userId),
+    );
 
-  const userAchievementIds = userAchievements?.map((ua) => ua.achievement_id) || [];
+  const userAchievementIds =
+    userAchievements?.map((ua) => ua.achievement_id) || [];
 
-  const { data: allAchievements, isLoading: isLoadingAllAchievements } = useQuery(
-    supabase
-      .from("achievements")
-      .select("id, name, icon_name, description")
-      .order("id")
-  );
+  const { data: allAchievements, isLoading: isLoadingAllAchievements } =
+    useQuery(
+      supabase
+        .from("achievements")
+        .select("id, name, icon_name, description")
+        .order("id"),
+    );
 
   // Filter out user achievements
-  const notAchieved = allAchievements?.filter((achievement) => !userAchievementIds.includes(achievement.id)) || [];
+  const notAchieved =
+    allAchievements?.filter(
+      (achievement) => !userAchievementIds.includes(achievement.id),
+    ) || [];
 
   const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
 
   return { data: notAchieved, isLoading };
 }
 
-
 //Returns all Sets
-export function useSets(type: ManagementType, projectId: number) {
-  return handleErrors(
-    useQuery(
-      supabase.from("sets").select("id,name,type,project_id").eq("type", type).eq("project_id", projectId),
-    ),
-  );
+export function useSets(
+  type: ManagementType,
+  projectId: number,
+  refetchIndex?: number,
+) {
+  const query = supabase
+    .from("sets")
+    .select("id,name,type,project_id")
+    .eq("type", type)
+    .eq("project_id", projectId);
+
+  const { data, isLoading, error, mutate } = useQuery(query);
+  if (!refetchIndex) return { data, isLoading, error };
+  useEffect(() => {
+    mutate();
+  }, [refetchIndex]);
+
+  return { data, isLoading, error };
 }
 export function useDeleteSet() {
   return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id"));
