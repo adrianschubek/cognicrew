@@ -81,6 +81,7 @@ export default function Whiteboard({ navigation }) {
             iconColor={theme.colors.primary}
             size={40}
             onPress={() => {
+              setSelectedShape('none');
               setDrawing(true);
               console.log("Pressed");
             }}
