@@ -20,10 +20,15 @@ import { useEffect } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts } from "../utils/hooks";
 import { useRefetchIndexStore } from "../stores/BackendCommunicationStore";
+import {
+  useInsertMutation,
+  useUpsertMutation,
+} from "@supabase-cache-helpers/postgrest-swr";
+import { supabase } from "../supabase";
 
 export default function LearningProject({ navigation, route }) {
   const { project } = route.params;
-  const { confirm, info } = useAlerts();
+  const { confirm, info, error: errorAlert } = useAlerts();
   const theme = useTheme();
 
   const reset = useProjectStore((state) => state.reset);
@@ -60,6 +65,23 @@ export default function LearningProject({ navigation, route }) {
       ),
     });
   }, []);
+
+  const createRoom = async (params: string[]) => {
+    supabase
+      .rpc("create_room", {
+        p_project_id: parseInt(project.id),
+        p_name: params[0] ?? null,
+        p_code: parseInt(params[1]) ?? null,
+      })
+      .then(({ data, error }) => {
+        if (error) {
+          errorAlert({ message: error.message });
+          return;
+        }
+        // TODO: save new room data to to zustand
+        info({ message: JSON.stringify(data) });
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -100,8 +122,7 @@ export default function LearningProject({ navigation, route }) {
             title: "Create Room",
             okText: "Create",
             okAction: (vars) => {
-              info({ message: JSON.stringify(vars) });
-              navigation.navigate(NAVIGATION.LOBBY);
+              createRoom(vars);
             },
             inputs: [
               {
@@ -116,6 +137,13 @@ export default function LearningProject({ navigation, route }) {
                 helperText: "Optional. Leave blank for public room.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
+              },
+              {
+                label: "Size",
+                type: "number",
+                icon: "account-group",
+                defaultValue: "2",
+                disabled: true,
               },
             ],
           });

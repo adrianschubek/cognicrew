@@ -12,8 +12,6 @@ import {
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useUsername } from "../../utils/hooks";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { Cache } from "swr";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
@@ -35,8 +33,6 @@ export const LogoutButton = () => {
               onPress={async () => {
                 setShowConfirm(false);
                 await supabase.auth.signOut();
-                // https://github.com/vercel/swr/issues/161#issuecomment-1079198998
-                Cache.clear();
               }}
               testID="logout-confirm-button"
             >

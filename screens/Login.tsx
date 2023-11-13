@@ -12,9 +12,12 @@ import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
+import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
-  const [text, setText] = useState("foo@bar.de");
-  const [text2, setText2] = useState("foobar");
+  // TODO: only save password when "remember me" is checked
+  const { email, password, setEmail, setPassword } = usePreferencesStore();
+  // const [text, setText] = useState("foo@bar.de");
+  // const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
@@ -52,10 +55,10 @@ export default function Login({ navigation }) {
       <View style={styles.loginContainer}>
         <TextInput
           style={styles.dataInput}
-          label="Username or E-mail address:"
+          label="E-Mail"
           placeholder="Max Mustermann"
-          value={text}
-          onChangeText={(text) => setText(text)}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           style={[styles.dataInput, { marginTop: responsiveHeight(1) }]}
@@ -64,8 +67,8 @@ export default function Login({ navigation }) {
           onSubmitEditing={async () => {
             setLoginDisabled(true);
             const { error, data } = await supabase.auth.signInWithPassword({
-              email: text,
-              password: text2,
+              email,
+              password,
             });
             if (error)
               errorAlert({
@@ -76,8 +79,8 @@ export default function Login({ navigation }) {
             }
           }}
           secureTextEntry={true}
-          value={text2}
-          onChangeText={(text2) => setText2(text2)}
+          value={password}
+          onChangeText={(text2) => setPassword(text2)}
         />
         <View
           style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
@@ -100,8 +103,8 @@ export default function Login({ navigation }) {
           onPress={async () => {
             setLoginDisabled(true);
             const { data, error } = await supabase.auth.signInWithPassword({
-              email: text,
-              password: text2,
+              email,
+              password,
             });
             if (error) errorAlert({ message: error.message });
             if (data || error) {

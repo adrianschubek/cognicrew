@@ -11,9 +11,6 @@ import {
 import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, useEffect, useState } from "react";
 
-/**
- * controlled by zustand
- */
 export default function AlertSyncZustand() {
   /* const {
     open,
@@ -40,9 +37,11 @@ export default function AlertSyncZustand() {
   }, [activeAlert, alerts]);
 
   useEffect(() => {
-    if (activeAlert && activeAlert?.inputs?.length !== 0) {
+    if (activeAlert) {
       setInputValues(() =>
-        activeAlert.inputs.map((field) => field.defaultValue ?? ""),
+        activeAlert?.inputs?.length !== 0
+          ? activeAlert.inputs.map((field) => field.defaultValue ?? "")
+          : [],
       );
     }
   }, [activeAlert]);
@@ -157,6 +156,7 @@ export default function AlertSyncZustand() {
                         error={
                           field.validator && !field.validator(inputValues[i])
                         }
+                        disabled={field.disabled}
                       ></TextInput>
                       {field.helperText && (
                         <HelperText type="info" visible={true}>
