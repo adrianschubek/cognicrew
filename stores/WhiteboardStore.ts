@@ -1,29 +1,79 @@
 import { create } from "zustand";
 
+type PathType = {
+  path: string[];
+  color: string;
+  stroke: number;
+  size: number;
+};
 type WhiteboardStoreType = {
-  paths: any;
-  color: any;
-  stroke: any;
-  openColor: any;
-  openStroke: any;
-  setPaths: (fn: (prev: any[]) => any[]) => void;
-  setColor: (color: any) => void;
-  setStroke: (stroke: any) => void;
+  paths: PathType[];
+  undoPaths: PathType[];
+  color: string;
+  stroke: number;
+  openColor: boolean;
+  openStroke: boolean;
+  selectedShape: "square" | "triangle" | "circle" | "none";
+  shapeSize: number;
+  setShapeSize: (size: number) => void;
+
+  setSelectedShape: (shape: "square" | "triangle" | "circle" | "none") => void;
+  setPaths: (fn: (prev: PathType[]) => PathType[]) => void;
+  setColor: (color: string) => void;
+  setStroke: (stroke: number) => void;
   resetPath: () => void;
-  setOpenColor: (openColor: any) => void;
-  setOpenStroke: (openColor: any) => void;
+  undoLastPath: () => void;
+  redoLastPath: () => void;
+  setOpenColor: (open: boolean) => void;
+  setOpenStroke: (open: boolean) => void;
 };
 
-export const useWhitebardStore = create<WhiteboardStoreType>((set, get) => ({
+export const useWhiteboardStore = create<WhiteboardStoreType>((set) => ({
+  shapeSize: 50,
+  selectedShape: "none",
   paths: [],
+  undoPaths: [],
   color: "#FF0000",
   stroke: 12,
   openColor: false,
   openStroke: false,
-  setPaths: (paths: (prev: any[]) => any[]) => {set({ paths: paths(get().paths) });},
-  setColor: (color: any) => set({ color: color }),
-  setStroke: (stroke: any) => set({ stroke: stroke }),
-  resetPath: () => set({ paths: []}),
-  setOpenColor: (openColor: any) => set({ openColor: openColor }),
-  setOpenStroke: (openStroke: any) => set({ openStroke: openStroke }),
+  setShapeSize: (size) => set({ shapeSize: size }),
+  setSelectedShape: (shape) => set({ selectedShape: shape }),
+  setPaths: (fn) =>
+    set((state) => {
+      const newPaths = fn(state.paths);
+      return { ...state, paths: newPaths, undoPaths: [] };
+    }),
+  setColor: (color) => set({ color }),
+  setStroke: (stroke) => set({ stroke }),
+  resetPath: () => set({ paths: [], undoPaths: [] }),
+  undoLastPath: () =>
+    set((state) => {
+      if (state.paths.length > 0) {
+        const newUndoPaths = [
+          ...state.undoPaths,
+          state.paths[state.paths.length - 1],
+        ];
+        return {
+          ...state,
+          paths: state.paths.slice(0, -1),
+          undoPaths: newUndoPaths,
+        };
+      }
+      return state;
+    }),
+  redoLastPath: () =>
+    set((state) => {
+      if (state.undoPaths.length > 0) {
+        const lastUndoPath = state.undoPaths[state.undoPaths.length - 1];
+        return {
+          ...state,
+          paths: [...state.paths, lastUndoPath],
+          undoPaths: state.undoPaths.slice(0, -1),
+        };
+      }
+      return state;
+    }),
+  setOpenColor: (open) => set({ openColor: open }),
+  setOpenStroke: (open) => set({ openStroke: open }),
 }));

@@ -25,10 +25,10 @@ import { NAVIGATION } from "../../types/common";
 import { Canvas } from "../learningRoom/Canvas";
 import { StrokeSettings } from "../learningRoom/DrawingSettings";
 import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
-import { useWhitebardStore } from "../../stores/WhiteboardStore";
+import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
 export default function CreateDrawing({ showDrawing, close }) {
-  const { color, setColor, setStroke, stroke } = useWhitebardStore();
+  const { color, setColor, setStroke, stroke } = useWhiteboardStore();
   return (
     <>
       <Portal>
