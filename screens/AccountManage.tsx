@@ -18,7 +18,7 @@ export default function AccountManage({ navigation }) {
         name={NAVIGATION.ACHIEVEMENTS}
         component={Achievements}
         options={{
-          tabBarIcon: () => <Icon size={24} source="trophy" />,
+          // tabBarIcon: () => <Icon size={24} source="trophy" />,
         }}
       />
       <Top.Screen
@@ -26,14 +26,14 @@ export default function AccountManage({ navigation }) {
         component={ManageFriends}
         options={{
           title: "Friends",
-          tabBarIcon: () => <Icon size={24} source="account-group" />,
+          // tabBarIcon: () => <Icon size={24} source="account-group" />,
         }}
       />
       <Top.Screen
         name={NAVIGATION.SETTINGS}
         component={AccountSettings}
         options={{
-          tabBarIcon: () => <Icon size={24} source="cogs" />,
+          // tabBarIcon: () => <Icon size={24} source="cogs" />,
         }}
       />
     </Top.Navigator>
