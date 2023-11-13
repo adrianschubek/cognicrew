@@ -11,6 +11,10 @@ import {
 import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, useEffect, useState } from "react";
 
+/**
+ * Universal alert component that can be used to display alerts.
+ * @see useAlerts
+ */
 export default function AlertSyncZustand() {
   const activeAlert = useAlertsStore((state) => state.activeAlert);
   const alerts = useAlertsStore((state) => state.alerts);
