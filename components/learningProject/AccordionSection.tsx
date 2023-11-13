@@ -12,6 +12,7 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useSets } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export const accordionSectionItems = [
   { title: "Set A", id: 1, type: 0 },
@@ -34,14 +35,17 @@ export default function AccordionSection(props: {
   width?: number;
   [name: string]: any;
 }) {
+  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex); //refetchIndex has to be part of the hook, so it calls again, when refetchIndex changes, have to find out how to do that
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error } = useSets(props.type, projectId);
+  const [sets, setSets] = useState([]);
   useEffect(() => {
-    //doesn't update if new sets are added to the project, useEffect counterproductive? How to fix? through a listener?
     if (!data) return;
     setSets(data);
-  }, [data]);
-  const [sets, setSets] = useState([]);
+    console.log(refetchIndex);
+  }, [data, refetchIndex]);
+
+  // Call this function to refetch the data
 
   if (error) return <LoadingOverlay visible={isLoading} />;
   return (

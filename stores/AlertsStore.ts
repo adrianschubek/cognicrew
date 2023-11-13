@@ -37,6 +37,10 @@ type AlertInput = {
    * The error text to display if the input is invalid.
    */
   errorText: string;
+  /**
+   * Whether or not the input is disabled.
+   */
+  disabled?: boolean;
 };
 
 export type Alert = {
@@ -101,6 +105,7 @@ export const DEFAULT_ALERT_INPUT: AlertInput = {
   required: false,
   type: "text",
   errorText: "",
+  disabled: false,
 };
 
 type AlertsStoreType = {

@@ -18,11 +18,12 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts, useUsername } from "../utils/hooks";
 
 export default function RoomsList({ navigation }) {
   const theme = useTheme();
   const focus = useIsFocused();
+  const { data: username } = useUsername();
   const { confirm, info } = useAlerts();
   const {
     data: rooms,
@@ -30,12 +31,6 @@ export default function RoomsList({ navigation }) {
     isValidating,
   } = useQuery(supabase.rpc("list_rooms"), {
     refreshInterval: focus ? 3000 : 0,
-  });
-
-  const { trigger } = useInsertMutation(supabase.rpc("create_room"), {
-    onSuccess: () => {
-      trigger();
-    },
   });
 
   if (isLoading) return <LoadingOverlay visible />;
@@ -64,6 +59,11 @@ export default function RoomsList({ navigation }) {
         {rooms?.map((room) => (
           <TouchableOpacity
             onPress={() => {
+              if (room.host === username)
+                return info({
+                  title: "Your room",
+                  message: "You cannot join your own room.",
+                });
               confirm({
                 icon: "location-enter",
                 title: room.name,
