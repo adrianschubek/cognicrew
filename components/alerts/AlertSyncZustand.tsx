@@ -12,18 +12,6 @@ import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, useEffect, useState } from "react";
 
 export default function AlertSyncZustand() {
-  /* const {
-    open,
-    icon,
-    title,
-    message,
-    setOpen,
-    okAction,
-    cancelAction,
-    okText,
-    cancelText, 
-  }*/
-
   const activeAlert = useAlertsStore((state) => state.activeAlert);
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
