@@ -29,11 +29,11 @@ export default function CreateRoom({ navigation }) {
         icon="home"
         mode="contained"
         style={[{ marginTop: responsiveHeight(2.9) }]}
-        // onPress={() => {
-        //   navigation.navigate(NAVIGATION.ROOMS_LIST);
-        // }}
+         onPress={() => {
+          navigation.navigate(NAVIGATION.WHITEBOARD);
+        }}
       >
-        Create Room
+        WHITEBOARD
       </Button>
     </React.Fragment>
   );
