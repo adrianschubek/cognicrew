@@ -1,15 +1,16 @@
-//=== Edge function to be deployed to server directly!
 /**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
+ * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
  */
 export type PublicRoomState = {
   screen: "lobby" | "ingame" | "results";
   game: "quiz" | "flashcards" | "whiteboard";
+  lastRound: number;
   current: {
     /**
      * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
      */
-    index: number;
+    round: number;
     question: string;
     /**
      * Only for quiz. answer options
@@ -41,7 +42,7 @@ export type PrivateRoomState = {
       answer: string;
     }[];
     /**
-     * // TODO: REMOVE THIS. maybe use direct realtime client to client and skip database! https://supabase.com/docs/guides/realtime/broadcast
+     * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
     whiteboard: {};
@@ -56,22 +57,18 @@ export type PrivateRoomState = {
      */
     user: string;
 
-    answer: string;
     questions: {
       id: number;
-      question: string;
-      answers: string[];
-      correct: number[];
+      answerIndex: number;
     }[];
     flashcards: {
       id: number;
-      question: string;
       answer: string;
     }[];
     /**
-     * // TODO: REMOVE THIS. maybe use direct realtime client to client and skip database! https://supabase.com/docs/guides/realtime/broadcast
+     * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
     whiteboard: {}; //
-  };
+  }[];
 };
