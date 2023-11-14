@@ -19,10 +19,12 @@ import { ManagementType } from "../types/common";
  */
 function handleErrors<T>(fn: T): T {
   const { error: errorAlert } = useAlerts();
-  // @ts-ignore fn.error always exists
+  // @ts-expect-error fn.error always exists
   if (fn.error) {
-    // @ts-ignore
+    // @ts-expect-error
     errorAlert({ title: "Error", message: fn.error.message });
+    // @ts-expect-error
+    console.log(fn.error.message);
   }
   return fn;
 }

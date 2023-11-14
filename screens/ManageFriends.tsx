@@ -57,7 +57,12 @@ export default function ManageFriends({ navigation }) {
   );
 
   const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
-
+  const allPossibleFriendIds = friendPairs
+    //.filter((friendPair) => friendPair.user_from_id === user.id ?? false)
+    .map((friendPair) => friendPair.user_to_id) as string[];
+    const userNames = useUserNames(allPossibleFriendIds).data
+    const [userNamesLoaded, setUserNamesLoaded] = useState([]);
+  // FriendPairs of friends
   const filteredFriendPairs = friendPairs.filter((friendPair) =>
     // filter out friends that have not received a friend request
     friendPair.user_from_id !== user.id
@@ -72,24 +77,34 @@ export default function ManageFriends({ navigation }) {
   const filteredFriends = filteredFriendPairs.map(
     (friendPair) => friendPair.user_to_id,
   ) as string[];
-  const userNames = useUserNames(filteredFriends).data as string[];
-  const [userNamesLoaded, setUserNamesLoaded] = useState([] as string[]);
-  const searchFilterFriends = filteredFriends.filter((friend,i) =>
-    userNamesLoaded[i].toLowerCase().includes(searchQuery.toLowerCase()),
+
+  const searchFilterFriends = filteredFriends /*.filter(
+    (friend, i) =>
+      userNamesLoaded[i] &&
+      userNamesLoaded[i].toLowerCase().includes(searchQuery.toLowerCase()),
+  );*/
+  const pendingFriendRequestReceived = friendPairs.filter((friendPair) =>
+    //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
+    friendPairs.some(
+      (friendPair2) =>
+        friendPair2.user_from_id === friendPair.user_to_id &&
+        friendPair2.user_to_id === friendPair.user_from_id,
+    )
+      ? false
+      : friendPair.user_to_id === user.id,
   );
-  const pendingFriendRequestReceived = friendPairs;
-  const pendingFriendRequestSent = friendPairs;
+  const pendingFriendRequestSent = friendPairs.filter((friendPair) =>
+    //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
+    friendPairs.some(
+      (friendPair2) =>
+        friendPair2.user_from_id === friendPair.user_to_id &&
+        friendPair2.user_to_id === friendPair.user_from_id,
+    )
+      ? false
+      : friendPair.user_from_id === user.id,
+  );
   const toggleAddFriendPopup = () => {
     setShowAddFriendPopup(!showAddFriendPopup);
-  };
-
-  /**
-   * `confirmDelete` - Opens a dialog to confirm deletion of a friend.
-   * @param {string} friend - The name of the friend to potentially delete.
-   */
-  const confirmDelete = (friend) => {
-    setSelectedFriend(friend);
-    setVisible(true);
   };
 
   /**
@@ -104,10 +119,11 @@ export default function ManageFriends({ navigation }) {
       setProjectQuery(query);
     }
   };
-useEffect(() => {
-  if(!userNames) return;
-  setUserNamesLoaded(userNames)
-},[userNames])
+  useEffect(() => {
+    if (!userNames) return;
+    console.log(userNames);
+    setUserNamesLoaded(userNames);
+  }, [userNames]);
   useEffect(() => {
     if (!data) return;
     setFriendPairs(data);
@@ -154,40 +170,29 @@ useEffect(() => {
             <Text style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
-            {pendingFriendRequestReceived
-              .filter((friendPair) =>
-                //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
-                pendingFriendRequestReceived.some(
-                  (friendPair2) =>
-                    friendPair2.user_from_id === friendPair.user_to_id &&
-                    friendPair2.user_to_id === friendPair.user_from_id,
-                )
-                  ? false
-                  : friendPair.user_to_id === user.id,
-              )
-              .map((friend, index) => (
-                <FriendItem
-                  key={index}
-                  icon="check"
-                  secondIcon="close-circle"
-                  friend={
-                    friend.user_from_id === user.id
-                      ? friend.user_to_id
-                      : friend.user_from_id
-                  }
-                  onIconPress={() =>
-                    addFriend({
-                      //@ts-expect-error
-                      user_from_id: friend.user_to_id,
-                      user_to_id: friend.user_from_id,
-                    })
-                  }
-                  onSecondIconPress={() => {
-                    console.log(friend);
-                    deleteFriendRequest(friend);
-                  }}
-                />
-              ))}
+            {pendingFriendRequestReceived.map((friend, index) => (
+              <FriendItem
+                key={index}
+                icon="check"
+                secondIcon="close-circle"
+                friend={
+                  friend.user_from_id === user.id
+                    ? friend.user_to_id
+                    : friend.user_from_id
+                }
+                onIconPress={() =>
+                  addFriend({
+                    //@ts-expect-error
+                    user_from_id: friend.user_to_id,
+                    user_to_id: friend.user_from_id,
+                  })
+                }
+                onSecondIconPress={() => {
+                  console.log(friend);
+                  deleteFriendRequest(friend);
+                }}
+              />
+            ))}
             <Divider style={styles.divider} />
           </View>
         )}
@@ -196,31 +201,20 @@ useEffect(() => {
             <Text style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
-            {pendingFriendRequestSent
-              .filter((friendPair) =>
-                //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
-                pendingFriendRequestSent.some(
-                  (friendPair2) =>
-                    friendPair2.user_from_id === friendPair.user_to_id &&
-                    friendPair2.user_to_id === friendPair.user_from_id,
-                )
-                  ? false
-                  : friendPair.user_from_id === user.id,
-              )
-              .map((friend, index) => (
-                <FriendItem
-                  key={index}
-                  icon="close-circle"
-                  friend={
-                    friend.user_from_id === user.id
-                      ? friend.user_to_id
-                      : friend.user_from_id
-                  }
-                  onIconPress={() => {
-                    deleteFriendRequest(friend);
-                  }}
-                />
-              ))}
+            {pendingFriendRequestSent.map((friend, index) => (
+              <FriendItem
+                key={index}
+                icon="close-circle"
+                friend={
+                  friend.user_from_id === user.id
+                    ? friend.user_to_id
+                    : friend.user_from_id
+                }
+                onIconPress={() => {
+                  deleteFriendRequest(friend);
+                }}
+              />
+            ))}
             <Divider style={styles.divider} />
           </View>
         )}
@@ -255,6 +249,10 @@ useEffect(() => {
         addFriend={addFriend}
         close={() => {
           toggleAddFriendPopup();
+          console.log(userNames);
+          //console.log("ErrorAngst:" + searchFilterFriends);
+          //console.log(friendPairs.length);
+          //console.log(pendingFriendRequestReceived.length);
         }}
       />
 
