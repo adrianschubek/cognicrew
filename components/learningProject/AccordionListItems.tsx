@@ -1,13 +1,9 @@
-import { isNull, max, set } from "cypress/types/lodash";
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import {
-  Text,
   List,
   Divider,
   useTheme,
-  Card,
-  TextInput,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -22,8 +18,6 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import {
   useExercises,
   useFlashcards,
-  useUpsertAnswersExercise,
-  useUpsertExercise,
 } from "../../utils/hooks";
 
 export default function AccordionListItems({

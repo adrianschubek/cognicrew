@@ -42,9 +42,8 @@ export default function EditFlashcard({ listItem }) {
     debounce((q, a, p) => {
       editFlashcard(q, a, p);
     }, 500),
-    [] // dependencies array is empty because debounce and editFlashcard do not change
+    [], // dependencies array is empty because debounce and editFlashcard do not change
   );
-  
 
   useEffect(() => {
     if (question !== "" && answer !== "") {
