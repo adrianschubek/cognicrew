@@ -1,17 +1,6 @@
-import {
-  ActivityIndicator,
-  Card,
-  Divider,
-  FAB,
-  Icon,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import {
-  useInsertMutation,
-  useQuery,
-} from "@supabase-cache-helpers/postgrest-swr";
+import { Card, Divider, FAB, Icon, Text, useTheme } from "react-native-paper";
+import { ScrollView, TouchableOpacity } from "react-native";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -52,7 +41,7 @@ export default function RoomsList({ navigation }) {
               <Text>No active Rooms</Text>
             </Card.Content>
           </Card>
-        )}
+        )} 
         <Text variant="titleMedium">All Rooms</Text>
         {/* Freidns from */}
 
@@ -61,8 +50,8 @@ export default function RoomsList({ navigation }) {
             onPress={() => {
               if (room.host === username)
                 return info({
-                  title: "Your room",
-                  message: "You cannot join your own room.",
+                  title: "Already connected",
+                  message: "You already joined this room.",
                 });
               confirm({
                 icon: "location-enter",
@@ -143,30 +132,41 @@ export default function RoomsList({ navigation }) {
           }}
         >
           <LoadingAnimation color={theme.colors.secondaryContainer} />
+          {/* <Text
+            variant="labelSmall"
+            style={{ color: theme.colors.secondary, textAlign: "center" }}
+          >
+            Only rooms of projects you are a member of will be shown here.
+            TEMPORARY REMOVE THIS LATER. Everyone should be able to play!
+          </Text> */}
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
       <FAB
         icon={"location-enter"}
         onPress={() => {
-          confirm({
-            icon: "location-enter",
-            title: "Join Room",
-            message: "Enter a room code",
-            okText: "Join",
-            okAction: (vars) => {
-              info({ message: JSON.stringify(vars) });
-              navigation.navigate(NAVIGATION.LOBBY);
-            },
-            inputs: [
-              {
-                label: "Room Code",
-                type: "number",
-                icon: "key",
-                validator: (value) => value.length !== 0,
-              },
-            ],
+          info({
+            title: "Coming soon",
+            message: "This feature is coming soon.",
           });
+          // confirm({
+          //   icon: "location-enter",
+          //   title: "Join Room",
+          //   message: "Enter a room code",
+          //   okText: "Join",
+          //   okAction: (vars) => {
+          //     info({ message: JSON.stringify(vars) });
+          //     navigation.navigate(NAVIGATION.LOBBY);
+          //   },
+          //   inputs: [
+          //     {
+          //       label: "Room Code",
+          //       type: "number",
+          //       icon: "key",
+          //       validator: (value) => value.length !== 0,
+          //     },
+          //   ],
+          // });
         }}
         color={theme.colors.onPrimary}
         style={{
