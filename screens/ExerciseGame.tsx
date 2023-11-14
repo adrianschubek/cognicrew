@@ -52,7 +52,7 @@ const fetchQuestions = () => {
 
 
 export default function ExerciseGame({}) {
-  const {data, error, isLoading} = useExercisesAndAnswers(132) // setID is hardcoded 
+  const {data, error, isLoading} = useExercisesAndAnswers(141) // setID is hardcoded 
   
   const [questions, setQuestions] = React.useState(
     shuffleArray(fetchQuestions()),

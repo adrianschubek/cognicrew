@@ -240,8 +240,8 @@ export function useExercisesAndAnswers(setId: number){
     useQuery(
       supabase
       .from("exercises")
-      .select("id,question,priority,set_id")
-      //.eq("set_id", setId)
+      .select("id,question,priority,set_id,answers_exercises(exercise)")
+      .eq("set_id", setId)
     )
   )
 }
