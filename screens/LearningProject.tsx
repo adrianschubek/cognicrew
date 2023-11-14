@@ -162,7 +162,6 @@ export default function LearningProject({ navigation, route }) {
                 helperText: "A code to enter this room directly. This also bypasses the password. Leave blank for no join code.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
-                disabled: true,
               },
               {
                 label: "Size",

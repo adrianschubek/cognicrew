@@ -1,4 +1,3 @@
-
 /**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
  * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
@@ -60,13 +59,10 @@ export type PrivateRoomState = {
 
     questions: {
       id: number;
-      question: string;
-      answers: string[];
-      correct: number[];
+      answerIndex: number;
     }[];
     flashcards: {
       id: number;
-      question: string;
       answer: string;
     }[];
     /**
@@ -74,5 +70,5 @@ export type PrivateRoomState = {
      * @deprecated
      */
     whiteboard: {}; //
-  };
+  }[];
 };
