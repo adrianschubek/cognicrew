@@ -61,9 +61,9 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
   // Initialize filteredAccordionSectionItems with an empty array
   const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState([]);
 
-  //TODO implement correct projectId 
+  //TODO test
   const projectId = useProjectStore((state) => state.projectId);
-  const { data } = useSets(ManagementType.FLASHCARD, 168);
+  const { data } = useSets(ManagementType.FLASHCARD, projectId);
   
   useEffect(() => {
     if (data !== undefined && data !== null) {
