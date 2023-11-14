@@ -6,6 +6,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
+import { useUsername } from "../../utils/hooks";
 
 // will be replaced with real icon of user once backend is ready for it
 const getFriendIconUrl = (friendName) =>
@@ -22,6 +23,7 @@ export default function FriendItem2(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const username = useUsername(props.friend);
 
   return (
     <View
@@ -41,7 +43,7 @@ export default function FriendItem2(props: {
         source={{ uri: getFriendIconUrl(props.friend) }}
         style={styles.profileIcon}
       />
-      <Text style={styles.itemText}>{props.friend}</Text>
+      <Text style={styles.itemText}>{username.data}</Text>
 
       <IconButton
         icon={props.icon}

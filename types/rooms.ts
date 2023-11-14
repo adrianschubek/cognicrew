@@ -1,10 +1,20 @@
+export const enum ScreenState {
+  LOBBY,
+  INGAME,
+  RESULTS,
+}
+export const enum GameState {
+  QUIZ,
+  FLASHCARDS,
+  WHITEBOARD,
+}
 /**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
  * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
  */
 export type PublicRoomState = {
-  screen: "lobby" | "ingame" | "results";
-  game: "quiz" | "flashcards" | "whiteboard";
+  screen: ScreenState;
+  game: GameState;
   lastRound: number;
   current: {
     /**

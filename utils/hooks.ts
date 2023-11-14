@@ -24,7 +24,7 @@ function handleErrors<T>(fn: T): T {
     // @ts-expect-error
     errorAlert({ title: "Error", message: fn.error.message });
     // @ts-expect-error
-    console.log(fn.error.message);
+    console.log("[handleErrors] " + fn.error.message);
   }
   return fn;
 }
@@ -54,8 +54,12 @@ export function useUserNames(userIds: string[]) {
     ),
   );
 }
+export function useFriendsList() {
+  return handleErrors(useQuery(supabase.rpc("list_friends")));
+}
 /**
  * Returns all Friends.
+ * @deprecated Use {@link useFriendsList} instead.
  */
 export function useFriends() {
   return handleErrors(
@@ -194,8 +198,10 @@ export function useFlashcards(setId: number) {
   );
 }
 
-export function useFlashcardsMultipleSets(sets: { id: number; name: string; type: number; project_id: number }[]) {
-  const setIds = sets.map(set => set.id);
+export function useFlashcardsMultipleSets(
+  sets: { id: number; name: string; type: number; project_id: number }[],
+) {
+  const setIds = sets.map((set) => set.id);
 
   return handleErrors(
     useQuery(
@@ -246,15 +252,15 @@ export function useAnswersExercises(exerciseId: number) {
   );
 }
 
-export function useExercisesAndAnswers(setId: number){
+export function useExercisesAndAnswers(setId: number) {
   return handleErrors(
     useQuery(
       supabase
-      .from("exercises")
-      .select("id,question,priority,set_id,answers_exercises(exercise)")
-      .eq("set_id", setId)
-    )
-  )
+        .from("exercises")
+        .select("id,question,priority,set_id,answers_exercises(exercise)")
+        .eq("set_id", setId),
+    ),
+  );
 }
 
 export function useUpsertAnswersExercise() {
