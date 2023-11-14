@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts } from "../utils/hooks";
 import { useRefetchIndexStore } from "../stores/BackendCommunicationStore";
@@ -25,6 +25,7 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
+import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
 
 export default function LearningProject({ navigation, route }) {
   const { project } = route.params;
@@ -35,6 +36,8 @@ export default function LearningProject({ navigation, route }) {
   useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
+
+  const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
@@ -113,6 +116,19 @@ export default function LearningProject({ navigation, route }) {
         function={() => {
           navigation.navigate(NAVIGATION.FILES_MANAGEMENT);
         }}
+      />
+      <Button
+        style={[{ marginTop: responsiveHeight(2.9) }]}
+         onPress={() => {
+          setShowCreateFlashcardGame(true);
+        }}
+      >
+        Test FlashcardGame
+      </Button>
+      <CreateFlashCardGame
+        showCreateFlashcardGame={showCreateFlashcardGame}
+        close={() => setShowCreateFlashcardGame(false)}
+        
       />
       <FAB
         icon={"play"}

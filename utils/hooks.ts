@@ -182,6 +182,20 @@ export function useFlashcards(setId: number) {
     ),
   );
 }
+
+export function useFlashcardsMultipleSets(sets: { id: number; name: string; type: number; project_id: number }[]) {
+  const setIds = sets.map(set => set.id);
+
+  return handleErrors(
+    useQuery(
+      supabase
+        .from("flashcards")
+        .select("id,question,answer,priority,set_id")
+        .in("set_id", setIds),
+    ),
+  );
+}
+
 export function useUpsertFlashcard() {
   return handleErrors(
     useUpsertMutation(

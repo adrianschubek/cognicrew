@@ -13,37 +13,37 @@ import {
 import CountDown from 'react-native-countdown-component';
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useFlashcards } from "../utils/hooks";
+import { useFlashcards, useFlashcardsMultipleSets } from "../utils/hooks";
+import { useQuery } from "react-query";
 
 export default function FlashcardGame({route}) {
 const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;
 const checkedItems = route.params?.checkedItems || [];
-const [currentFlashcard, setCurrentFlashcard] = useState(null);
 
   // Fetch flashcards data using the useFlashcards hook when the component mounts
-  const { data: flashcards } = useFlashcards(getRandomFirstIndex(checkedItems));
+  const { data: flashcards } = useFlashcardsMultipleSets(checkedItems);
+
+  // Shuffle the flashcards array when it is first loaded
+  const [shuffledFlashcards, setShuffledFlashcards] = useState([]);
 
   useEffect(() => {
-    if (flashcards != undefined && flashcards.length > 0) {
-      const randomIndex = Math.floor(Math.random() * flashcards.length);
-      setCurrentFlashcard(flashcards[randomIndex]);
+    if (flashcards !== undefined && flashcards.length > 0) {
+      setShuffledFlashcards(shuffleArray(flashcards));
+      setCurrentFlashcardIndex(0);
     }
   }, [flashcards]);
 
-  const showRandomFlashcard = () => {
-    if (flashcards.length > 0) {
-      const randomIndex = Math.floor(Math.random() * flashcards.length);
-      setCurrentFlashcard(flashcards[randomIndex]);
+  const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
+
+  const showNextFlashcard = () => {
+    if (currentFlashcardIndex < shuffledFlashcards.length - 1) {
+      setCurrentFlashcardIndex(currentFlashcardIndex + 1);
+    } else if (currentFlashcardIndex >= shuffledFlashcards.length - 1) {
+      alert('You finished the Quiz!');
     }
   };
 
-  function getRandomFirstIndex(checkedItems) {
-    if (checkedItems.length === 0) {
-      return null;
-    }
-    const index =  Math.floor(Math.random() * checkedItems.length);
-    return checkedItems[index].id;
-  }
+  const currentFlashcard = shuffledFlashcards[currentFlashcardIndex];
 
   const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
   const [showNextButton, setShowNextButton] = useState(false);
@@ -71,10 +71,19 @@ const [currentFlashcard, setCurrentFlashcard] = useState(null);
     setShowNextButton(false);
     setIsAnswerCorrect(false);
     setUserInput(''); // Clear the TextInput
-    showRandomFlashcard();
+    showNextFlashcard();
   }
 
   const [userInput, setUserInput] = useState('');
+
+  const shuffleArray = (array) => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
 
   return (
     <>
