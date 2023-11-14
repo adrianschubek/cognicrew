@@ -106,41 +106,26 @@ export default function AddExercises({ showAddExercises, close }) {
             onChangeText={(question) => {
               setQuestion(question);
             }}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-            }}
           />
           <TextInputWithCheckbox
             number="1"
             sendAnswer={getAnswer1}
             width={responsiveWidth(70)}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-            }}
           />
           <TextInputWithCheckbox
             number="2"
             sendAnswer={getAnswer2}
             width={responsiveWidth(70)}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-            }}
           />
           <TextInputWithCheckbox
             number="3"
             sendAnswer={getAnswer3}
             width={responsiveWidth(70)}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-            }}
           />
           <TextInputWithCheckbox
             number="4"
             sendAnswer={getAnswer4}
             width={responsiveWidth(70)}
-            onSubmitEditing={() => {
-              Keyboard.dismiss();
-            }}
           />
           <Dialog.Actions>
           
