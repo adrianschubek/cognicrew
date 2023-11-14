@@ -38,7 +38,7 @@ export default function AccordionSection(props: {
 }) {
   const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error } = useSets(props.type, projectId, refetchIndex);
+  const { data, isLoading, error } = useSets(props.type, projectId, /*refetchIndex */);
   const [sets, setSets] = useState([]);
   useEffect(() => {
     if (!data) return;
