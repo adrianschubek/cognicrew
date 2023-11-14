@@ -1,3 +1,4 @@
+//=== Edge function to be deployed to server directly!
 /**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
  */
