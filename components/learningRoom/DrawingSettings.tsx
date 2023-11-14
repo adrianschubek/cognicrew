@@ -44,11 +44,11 @@ export const StrokeSettings = ({
   };
   // handling open and close, where if you open A, B should be closed
   const handleToggleColor = () => {
-  setOpenColor(!openColor); 
-  setOpenStroke(false);
+    setOpenColor(!openColor);
+    setOpenStroke(false);
   };
   const handleToggleStrokeSize = () => {
-    setOpenStroke(!openStroke); 
+    setOpenStroke(!openStroke);
     setOpenColor(false);
   };
 

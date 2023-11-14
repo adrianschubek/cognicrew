@@ -17,9 +17,7 @@ import { NAVIGATION } from "../../types/common";
 export default function CreateRoom({ navigation }) {
   return (
     <React.Fragment>
-      <Text
-        style={[styles.container, { textAlign: 'center' }]}
-      >
+      <Text style={[styles.container, { textAlign: "center" }]}>
         Create room:
       </Text>
 
@@ -29,7 +27,7 @@ export default function CreateRoom({ navigation }) {
         icon="home"
         mode="contained"
         style={[{ marginTop: responsiveHeight(2.9) }]}
-         onPress={() => {
+        onPress={() => {
           navigation.navigate(NAVIGATION.WHITEBOARD);
         }}
       >
@@ -40,7 +38,7 @@ export default function CreateRoom({ navigation }) {
         icon="home"
         mode="contained"
         style={[{ marginTop: responsiveHeight(2.9) }]}
-         onPress={() => {
+        onPress={() => {
           navigation.navigate(NAVIGATION.FLASHCARD_GAME);
         }}
       >
@@ -51,20 +49,19 @@ export default function CreateRoom({ navigation }) {
         icon="home"
         mode="contained"
         style={[{ marginTop: responsiveHeight(2.9) }]}
-         onPress={() => {
+        onPress={() => {
           navigation.navigate(NAVIGATION.EXERCISE_GAME);
         }}
       >
         QUIZ
       </Button>
-      
     </React.Fragment>
   );
 }
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginVertical: 10,
   },
 });

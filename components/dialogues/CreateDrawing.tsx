@@ -16,7 +16,6 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
-import { accordionSectionItems } from "../learningProject/AccordionSection";
 import { ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useRoute } from "@react-navigation/native";

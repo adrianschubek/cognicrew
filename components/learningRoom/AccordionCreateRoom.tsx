@@ -17,41 +17,39 @@ export const accordionSectionItems = [
 
 export default function AccordionSection(props) {
   const [expanded, setExpanded] = React.useState(true);
-  const [getLearningProject, setLearningProject] = React.useState("Search project for room creation");
+  const [getLearningProject, setLearningProject] = React.useState(
+    "Search project for room creation",
+  );
 
   return (
     <List.Section>
-        <ScrollView>
-                <List.Accordion
-                    title={getLearningProject}
-                    style={styles.accordion}
-                    titleStyle={styles.accordionTitle}
-                    left={props => <List.Icon {...props} icon="folder" />}
-                >
-                    {accordionSectionItems.map((learningProject) => (
-                    <React.Fragment key={learningProject.id}>
-                        <List.Item
-                            title={learningProject.title}
-                            onPress={() => {
-                                setLearningProject(learningProject.title);
-                            }}
-                            titleStyle={styles.listTitle}
-                        />
-                    </React.Fragment>
-                    ))}
-                </List.Accordion>
-          </ScrollView>
+      <ScrollView>
+        <List.Accordion
+          title={getLearningProject}
+          style={styles.accordion}
+          titleStyle={styles.accordionTitle}
+          left={(props) => <List.Icon {...props} icon="folder" />}
+        >
+          {accordionSectionItems.map((learningProject) => (
+            <React.Fragment key={learningProject.id}>
+              <List.Item
+                title={learningProject.title}
+                onPress={() => {
+                  setLearningProject(learningProject.title);
+                }}
+                titleStyle={styles.listTitle}
+              />
+            </React.Fragment>
+          ))}
+        </List.Accordion>
+      </ScrollView>
     </List.Section>
   );
 }
 const styles = StyleSheet.create({
   accordionTitle: {
-    fontSize: responsiveFontSize(2), 
+    fontSize: responsiveFontSize(2),
   },
-  listTitle: {
-
-  },
-  accordion: {
-
-  }
+  listTitle: {},
+  accordion: {},
 });

@@ -41,16 +41,15 @@ export default function EditExercise({ listItem }) {
       priority: priority,
       set_id: listItem.set_id,
     }).then((res) => {
-      answers
-        .forEach((e) => {
-          upsertAnswersExercise({
-            //@ts-expect-error
-            id: e[2],
-            answer: e[0],
-            exercise: res[0].id,
-            is_correct: e[1],
-          });
-        })
+      answers.forEach((e) => {
+        upsertAnswersExercise({
+          //@ts-expect-error
+          id: e[2],
+          answer: e[0],
+          exercise: res[0].id,
+          is_correct: e[1],
+        });
+      });
     });
   };
 
