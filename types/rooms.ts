@@ -1,6 +1,10 @@
 //=== Edge function to be deployed to server directly!
 /**
+ * maybe https://supabase.com/docs/guides/functions/schedule-functions
+ */
+/**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
+ * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
  */
 export type PublicRoomState = {
   screen: "lobby" | "ingame" | "results";
@@ -57,7 +61,6 @@ export type PrivateRoomState = {
      */
     user: string;
 
-    answer: string;
     questions: {
       id: number;
       question: string;
