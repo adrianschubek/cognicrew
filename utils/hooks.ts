@@ -43,6 +43,15 @@ export function useUsername(uid?: string) {
     ),
   );
 }
+export function useUserNames(userIds: string[]) {
+  return handleErrors(
+    useQuery(
+      supabase.rpc("get_usernames", {
+        user_ids: userIds,
+      }),
+    ),
+  );
+}
 /**
  * Returns all Friends.
  */

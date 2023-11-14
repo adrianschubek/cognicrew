@@ -1,15 +1,11 @@
 import * as React from "react";
+import { StyleSheet, View, Image } from "react-native";
+import { IconButton, Text, useTheme } from "react-native-paper";
 import {
-  StyleSheet,
-  View,
-  Image,
-} from "react-native";
-import {
-  IconButton,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 import { useUsername } from "../../utils/hooks";
 /**
  * `getFriendIconUrl` - Returns a URL for a friend's icon.
@@ -22,28 +18,43 @@ const getFriendIconUrl = (friendName) =>
   `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
 
 export default function FriendItem(props: {
-  icon: string,
+  icon: string;
+  secondIcon?: string;
   friend: string;
   onIconPress;
+  onSecondIconPress?;
   [name: string]: any;
 }) {
   const theme = useTheme();
   const friendName = useUsername(props.friend).data;
   return (
-      <View
-        style={[styles.item, { backgroundColor: theme.colors.background, shadowColor: theme.colors.shadow }]}
-      >
-        <Image
-          source={{ uri: getFriendIconUrl(props.friend) }}
-          style={styles.profileIcon}
-        />
-        <Text style={styles.itemText}>{friendName}</Text>
-        <IconButton
-          icon={props.icon}
-          size={responsiveFontSize(3)}
-          onPress={props.onIconPress}
-        />
-      </View>
+    <View
+      style={[
+        styles.item,
+        {
+          backgroundColor: theme.colors.background,
+          shadowColor: theme.colors.shadow,
+        },
+      ]}
+    >
+      <Image
+        source={{ uri: getFriendIconUrl(props.friend) }}
+        style={styles.profileIcon}
+      />
+      <Text style={styles.itemText}>{friendName}</Text>
+      <IconButton
+        icon={props.icon}
+        size={responsiveFontSize(3)}
+        onPress={props.onIconPress}
+      />
+      {props.secondIcon && (
+      <IconButton
+        icon={props.secondIcon}
+        size={responsiveFontSize(3)}
+        onPress={props.onSecondIconPress}
+      />
+      )}
+    </View>
   );
 }
 const styles = StyleSheet.create({
