@@ -14,7 +14,6 @@ import CountDown from 'react-native-countdown-component';
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useFlashcards, useFlashcardsMultipleSets } from "../utils/hooks";
-import { useQuery } from "react-query";
 
 export default function FlashcardGame({route}) {
 const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;

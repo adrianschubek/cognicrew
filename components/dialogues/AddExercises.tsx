@@ -1,5 +1,11 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Keyboard,
+  KeyboardAvoidingView,
+} from "react-native";
 import {
   Button,
   Dialog,
@@ -86,51 +92,69 @@ export default function AddExercises({ showAddExercises, close }) {
           Keyboard.dismiss();
         }}
       >
-        <SearchWithList
-          mode="select"
-          type={ManagementType.EXERCISE}
-          searchPlaceholder="Search for exercise set"
-          sendSetId={getSelectedSetId}
-        />
-        <TextInput
-          style={[styles.textInputStyle]}
-          multiline={true}
-          label="Question:"
-          onChangeText={(question) => {
-            setQuestion(question);
-          }}
-        />
-        <TextInputWithCheckbox
-          number="1"
-          sendAnswer={getAnswer1}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="2"
-          sendAnswer={getAnswer2}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="3"
-          sendAnswer={getAnswer3}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="4"
-          sendAnswer={getAnswer4}
-          width={responsiveWidth(70)}
-        />
-        <Dialog.Actions>
-          <Button
-            style={{ width: responsiveWidth(70) }}
-            onPress={() => {
-              addExercise(), close(), Keyboard.dismiss();
+
+          <SearchWithList
+            mode="select"
+            type={ManagementType.EXERCISE}
+            searchPlaceholder="Search for exercise set"
+            sendSetId={getSelectedSetId}
+          />
+          <TextInput
+            style={[styles.textInputStyle]}
+            multiline={true}
+            label="Question:"
+            onChangeText={(question) => {
+              setQuestion(question);
             }}
-            mode="contained"
-          >
-            add new exercise
-          </Button>
-        </Dialog.Actions>
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+          />
+          <TextInputWithCheckbox
+            number="1"
+            sendAnswer={getAnswer1}
+            width={responsiveWidth(70)}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+          />
+          <TextInputWithCheckbox
+            number="2"
+            sendAnswer={getAnswer2}
+            width={responsiveWidth(70)}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+          />
+          <TextInputWithCheckbox
+            number="3"
+            sendAnswer={getAnswer3}
+            width={responsiveWidth(70)}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+          />
+          <TextInputWithCheckbox
+            number="4"
+            sendAnswer={getAnswer4}
+            width={responsiveWidth(70)}
+            onSubmitEditing={() => {
+              Keyboard.dismiss();
+            }}
+          />
+          <Dialog.Actions>
+          
+            <Button
+              style={{ width: responsiveWidth(70) }}
+              onPress={() => {
+                addExercise(), close(), Keyboard.dismiss();
+              }}
+              mode="contained"
+            >
+              add new exercise
+            </Button>
+            
+          </Dialog.Actions>
       </Dialog>
     </Portal>
   );
