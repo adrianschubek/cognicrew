@@ -5,11 +5,12 @@
 export type PublicRoomState = {
   screen: "lobby" | "ingame" | "results";
   game: "quiz" | "flashcards" | "whiteboard";
+  lastRound: number;
   current: {
     /**
      * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
      */
-    index: number;
+    round: number;
     question: string;
     /**
      * Only for quiz. answer options
