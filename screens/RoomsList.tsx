@@ -1,15 +1,6 @@
-import {
-  Card,
-  Divider,
-  FAB,
-  Icon,
-  Text,
-  useTheme
-} from "react-native-paper";
+import { Card, Divider, FAB, Icon, Text, useTheme } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native";
-import {
-  useQuery
-} from "@supabase-cache-helpers/postgrest-swr";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -41,7 +32,7 @@ export default function RoomsList({ navigation }) {
           marginHorizontal: 15,
         }}
       >
-        {/* <Text variant="titleMedium">Friend Rooms</Text>
+        <Text variant="titleMedium">Friend Rooms</Text>
         {true && (
           <Card mode="contained">
             <Card.Content
@@ -51,7 +42,7 @@ export default function RoomsList({ navigation }) {
             </Card.Content>
           </Card>
         )} 
-        <Text variant="titleMedium">All Rooms</Text>*/}
+        <Text variant="titleMedium">All Rooms</Text>
         {/* Freidns from */}
 
         {rooms?.map((room) => (
@@ -141,33 +132,41 @@ export default function RoomsList({ navigation }) {
           }}
         >
           <LoadingAnimation color={theme.colors.secondaryContainer} />
-          <Text variant="labelSmall" style={{color: theme.colors.secondary, textAlign:"center"}}>
+          {/* <Text
+            variant="labelSmall"
+            style={{ color: theme.colors.secondary, textAlign: "center" }}
+          >
             Only rooms of projects you are a member of will be shown here.
-          </Text>
+            TEMPORARY REMOVE THIS LATER. Everyone should be able to play!
+          </Text> */}
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
       <FAB
         icon={"location-enter"}
         onPress={() => {
-          confirm({
-            icon: "location-enter",
-            title: "Join Room",
-            message: "Enter a room code",
-            okText: "Join",
-            okAction: (vars) => {
-              info({ message: JSON.stringify(vars) });
-              navigation.navigate(NAVIGATION.LOBBY);
-            },
-            inputs: [
-              {
-                label: "Room Code",
-                type: "number",
-                icon: "key",
-                validator: (value) => value.length !== 0,
-              },
-            ],
+          info({
+            title: "Coming soon",
+            message: "This feature is coming soon.",
           });
+          // confirm({
+          //   icon: "location-enter",
+          //   title: "Join Room",
+          //   message: "Enter a room code",
+          //   okText: "Join",
+          //   okAction: (vars) => {
+          //     info({ message: JSON.stringify(vars) });
+          //     navigation.navigate(NAVIGATION.LOBBY);
+          //   },
+          //   inputs: [
+          //     {
+          //       label: "Room Code",
+          //       type: "number",
+          //       icon: "key",
+          //       validator: (value) => value.length !== 0,
+          //     },
+          //   ],
+          // });
         }}
         color={theme.colors.onPrimary}
         style={{
