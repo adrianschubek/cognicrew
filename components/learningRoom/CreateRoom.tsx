@@ -35,6 +35,29 @@ export default function CreateRoom({ navigation }) {
       >
         WHITEBOARD
       </Button>
+
+      <Button
+        icon="home"
+        mode="contained"
+        style={[{ marginTop: responsiveHeight(2.9) }]}
+         onPress={() => {
+          navigation.navigate(NAVIGATION.FLASHCARD_GAME);
+        }}
+      >
+        FLASHCARDS
+      </Button>
+
+      <Button
+        icon="home"
+        mode="contained"
+        style={[{ marginTop: responsiveHeight(2.9) }]}
+         onPress={() => {
+          navigation.navigate(NAVIGATION.EXERCISE_GAME);
+        }}
+      >
+        QUIZ
+      </Button>
+      
     </React.Fragment>
   );
 }
