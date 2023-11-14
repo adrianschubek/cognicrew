@@ -221,6 +221,17 @@ export function useAnswersExercises(exerciseId: number) {
   );
 }
 
+export function useExercisesAndAnswers(setId: number){
+  return handleErrors(
+    useQuery(
+      supabase
+      .from("exercises")
+      .select("id,question,priority,set_id")
+      //.eq("set_id", setId)
+    )
+  )
+}
+
 export function useUpsertAnswersExercise() {
   return handleErrors(
     useUpsertMutation(

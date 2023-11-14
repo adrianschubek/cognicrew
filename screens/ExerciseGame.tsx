@@ -20,6 +20,8 @@ import {
   responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import { useAnswersExercises, useExercises, useExercisesAndAnswers } from "../utils/hooks";
+import { useEffect, useState } from "react";
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -48,7 +50,10 @@ const fetchQuestions = () => {
   ];
 };
 
+
 export default function ExerciseGame({}) {
+  const {data, error, isLoading} = useExercisesAndAnswers(132) // setID is hardcoded 
+  
   const [questions, setQuestions] = React.useState(
     shuffleArray(fetchQuestions()),
   );
@@ -127,6 +132,13 @@ export default function ExerciseGame({}) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progressBar = (currentQuestionIndex + 1) / questions.length;
+  
+  const [exercises, setExercises] = useState([]);
+  useEffect(() => {
+    if (!data) return;
+    setExercises(data);
+    console.log(data);
+  }, [data]);
 
   return quizComplete ? (
     <Portal>
@@ -145,7 +157,7 @@ export default function ExerciseGame({}) {
           >
             Retake Quiz
           </Button>
-          <Button onPress={close}>Close</Button>
+          <Button onPress={() => {}}>Close</Button>
         </Dialog.Actions>
       </Dialog>
     </Portal>
