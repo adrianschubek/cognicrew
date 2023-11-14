@@ -42,7 +42,7 @@ export type PrivateRoomState = {
       answer: string;
     }[];
     /**
-     * // TODO: REMOVE THIS. maybe use direct realtime client to client and skip database! https://supabase.com/docs/guides/realtime/broadcast
+     * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
     whiteboard: {};
@@ -70,7 +70,7 @@ export type PrivateRoomState = {
       answer: string;
     }[];
     /**
-     * // TODO: REMOVE THIS. maybe use direct realtime client to client and skip database! https://supabase.com/docs/guides/realtime/broadcast
+     * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
     whiteboard: {}; //
