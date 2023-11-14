@@ -1,16 +1,14 @@
 import {
-  ActivityIndicator,
   Card,
   Divider,
   FAB,
   Icon,
   Text,
-  useTheme,
+  useTheme
 } from "react-native-paper";
-import { ScrollView, TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity } from "react-native";
 import {
-  useInsertMutation,
-  useQuery,
+  useQuery
 } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
@@ -43,7 +41,7 @@ export default function RoomsList({ navigation }) {
           marginHorizontal: 15,
         }}
       >
-        <Text variant="titleMedium">Friend Rooms</Text>
+        {/* <Text variant="titleMedium">Friend Rooms</Text>
         {true && (
           <Card mode="contained">
             <Card.Content
@@ -52,8 +50,8 @@ export default function RoomsList({ navigation }) {
               <Text>No active Rooms</Text>
             </Card.Content>
           </Card>
-        )}
-        <Text variant="titleMedium">All Rooms</Text>
+        )} 
+        <Text variant="titleMedium">All Rooms</Text>*/}
         {/* Freidns from */}
 
         {rooms?.map((room) => (
@@ -143,6 +141,9 @@ export default function RoomsList({ navigation }) {
           }}
         >
           <LoadingAnimation color={theme.colors.secondaryContainer} />
+          <Text variant="labelSmall" style={{color: theme.colors.secondary, textAlign:"center"}}>
+            Only rooms of projects you are a member of will be shown here.
+          </Text>
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}

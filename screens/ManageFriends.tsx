@@ -18,12 +18,10 @@ import AddFriend from "../components/dialogues/AddFriend";
 import {
   responsiveFontSize,
   responsiveHeight,
-  responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { useDeleteFriend, useFriends, useInsertFriend } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
-import { filter } from "cypress/types/bluebird";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
