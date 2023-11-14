@@ -3,14 +3,24 @@
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
  */
 export type PublicRoomState = {
-  state: "lobby" | "ingame" | "results";
-  game: "quiz" | "flashcards";
+  screen: "lobby" | "ingame" | "results";
+  game: "quiz" | "flashcards" | "whiteboard";
   current: {
+    /**
+     * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
+     */
+    index: number;
     question: string;
     /**
      * Only for quiz. answer options
      */
     options: string[];
+
+    /**
+     * Remaining time in seconds.
+     * // TODO: Alternative use Timestamp day.js
+     */
+    remainingSeconds: number;
   };
 };
 
