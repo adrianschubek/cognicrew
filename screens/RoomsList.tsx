@@ -59,8 +59,8 @@ export default function RoomsList({ navigation }) {
             onPress={() => {
               if (room.host === username)
                 return info({
-                  title: "Your room",
-                  message: "You cannot join your own room.",
+                  title: "Already connected",
+                  message: "You already joined this room.",
                 });
               confirm({
                 icon: "location-enter",
