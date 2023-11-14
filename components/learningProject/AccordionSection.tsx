@@ -48,7 +48,7 @@ export default function AccordionSection(props: {
 
   // Call this function to refetch the data
 
-  if (error) return <LoadingOverlay visible={isLoading} />;
+  if (error || !data) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Section style={{ width: props.width || responsiveWidth(100) }}>
       {sets
