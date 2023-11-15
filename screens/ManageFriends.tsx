@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   useTheme,
+  FAB,
 } from "react-native-paper";
 import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
@@ -20,6 +21,7 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {
+  useAlerts,
   useDeleteFriend,
   useFriends,
   useInsertFriend,
@@ -32,6 +34,7 @@ import { supabase } from "../supabase";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
+  const { confirm } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
   // const projects = ["Biology", "Psychology", "Computer Science"];
@@ -50,6 +53,14 @@ export default function ManageFriends({ navigation }) {
       p_other_userid: friend,
     });
     if (error) console.log(error);
+    return data;
+  }
+  async function searchUser(username) {
+    let { data, error } = await supabase.rpc("search_user", {
+      search_query: username,
+    });
+    if (error) console.log(error);
+    //console.log(data)
     return data;
   }
   const icon = (props) => (
@@ -80,17 +91,19 @@ export default function ManageFriends({ navigation }) {
     (friendPair) => friendPair.user_to_id,
   ) as string[];
 
-   const searchFilterFriends = searchQuery
-    ? userNamesLoaded && userNamesLoaded
+  const searchFilterFriends = searchQuery
+    ? userNamesLoaded &&
+      userNamesLoaded
         .map((userName) =>
           userName.substring(1, userName.length - 1).split(","),
         )
         .filter((userName) => {
           return (
             filteredFriends.includes(userName[0]) &&
-            userName[1].toLowerCase().includes(searchQuery.toLowerCase()) 
+            userName[1].toLowerCase().includes(searchQuery.toLowerCase())
           );
-        }).map((userName) => userName[0])
+        })
+        .map((userName) => userName[0])
     : filteredFriends;
 
   const pendingFriendRequestReceived = friendPairs.filter((friendPair) =>
@@ -143,8 +156,45 @@ export default function ManageFriends({ navigation }) {
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Manage Friends</Text>
+
           <View style={styles.iconsContainer}>
-            <TextWithPlusButton text="" function={toggleAddFriendPopup} />
+            <TextWithPlusButton
+              text=""
+              function={() =>
+                //toggleAddFriendPopup()
+                confirm({
+                  icon: "account-multiple-plus",
+                  title: "Get in touch with your colleagues",
+                  message: "Enter your friend's nickname:",
+                  messageStyle: { textAlign: "left" },
+                  okText: "Add Friend",
+                  okAction: async (vars) => {
+                     let friend = await searchUser(vars[0]);
+                    //console.log("friendFromDatabase: " , friend);
+                    if ((friend && friend["username"]) === vars[0])
+                    console.log("friendFromDatabase: " , friend),
+                    console.log([vars[0]]),
+                      addFriend({
+                        //@ts-expect-error
+                        user_from_id: user.id,
+                        user_to_id: friend["id"],
+                      });
+                    else return "There is no friend with this nickname";
+                  },
+                  inputs: [
+                    {
+                      label: "Your friend's nickname",
+                      type: "text",
+                      icon: "account-plus",
+                      helperText: "Pay attention to capitalization",
+                      required: true,
+                      //validator: (value) => searchUser(value[0]).test(value),
+                      errorText: "There is no friend with this nickname",
+                    },
+                  ],
+                })
+              }
+            />
             {icon({ style: styles.iconStyle })}
           </View>
         </View>
@@ -220,6 +270,7 @@ export default function ManageFriends({ navigation }) {
                     : friend.user_from_id
                 }
                 onIconPress={() => {
+                  console.log(friend);
                   deleteFriendRequest(friend);
                 }}
               />
