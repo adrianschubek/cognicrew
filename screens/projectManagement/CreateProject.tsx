@@ -18,6 +18,7 @@ import { useAlerts, useUsername } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
+import { NAVIGATION } from "../../types/common";
 
 export default function CreateProject({
   navigation,
@@ -129,7 +130,7 @@ export default function CreateProject({
         success({
           title: `Project ${project === null ? "created" : "saved"}.`,
           message: "You can now invite other users to join your project.",
-          okAction: () => navigation.goBack(),
+          okAction: () => navigation.navigate(NAVIGATION.LEARNING_PROJECTS),
         });
       },
       onError: (error) => {
