@@ -50,7 +50,7 @@ export default function ProjectGroups() {
       )
       .subscribe();
     const realtimeProjects2 = supabase
-      .channel("custom-all-channel")
+      .channel("custom-all-channel2")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "user_learning_projects" },
