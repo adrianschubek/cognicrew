@@ -28,7 +28,7 @@ type AlertInput = {
   /**
    * The type of the input.
    */
-  type: "text" | "number" | "password" | "checkbox";
+  type: "text" | "number" | "password" | "checkbox" | "button";
   /**
    * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
    */
@@ -56,6 +56,10 @@ export type Alert = {
    * The message of the alert.
    */
   message: string;
+  /**
+   * The alignment of the message.
+   */
+  messageAlign?: "left" | "center" | "right";
   /**
    * The text to display on the "OK" button.
    */
@@ -87,6 +91,7 @@ export const DEFAULT_ALERT: Alert = {
   icon: "information-outline",
   title: "",
   message: "",
+  messageAlign: "center",
   okText: "OK",
   cancelText: "",
   dismissable: true,

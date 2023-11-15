@@ -51,6 +51,7 @@ export default function AlertSyncZustand() {
     icon,
     title,
     message,
+    messageAlign,
     okAction,
     cancelAction,
     okText,
@@ -81,7 +82,7 @@ export default function AlertSyncZustand() {
           <>
             <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
               {message && (
-                <Text style={{ textAlign: "center" }} variant="bodyMedium">
+                <Text style={{ textAlign: messageAlign }} variant="bodyMedium">
                   {message}
                 </Text>
               )}
@@ -126,6 +127,8 @@ export default function AlertSyncZustand() {
                         </HelperText>
                       )}
                     </>
+                  ) : field.type === "button" ? (
+                    <></>
                   ) : (
                     <>
                       <TextInput
