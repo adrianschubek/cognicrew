@@ -1,3 +1,4 @@
+import { StyleProp, TextStyle } from "react-native";
 import { create } from "zustand";
 
 type AlertInput = {
@@ -53,17 +54,17 @@ export type Alert = {
    */
   title: string;
   /**
-   * The alignment of the title.
+   * Custom style for the title.
    */
-  titleAlign?: "left" | "center" | "right";
+  titleStyle: StyleProp<TextStyle>,
   /**
    * The message of the alert.
    */
   message: string;
   /**
-   * The alignment of the message.
+   * Custom style for the message.
    */
-  messageAlign?: "left" | "center" | "right";
+  messageStyle: StyleProp<TextStyle>,
   /**
    * The text to display on the "OK" button.
    */
@@ -94,9 +95,9 @@ export type Alert = {
 export const DEFAULT_ALERT: Alert = {
   icon: "information-outline",
   title: "",
-  titleAlign: "center",
+  titleStyle: {},
   message: "",
-  messageAlign: "center",
+  messageStyle: {},
   okText: "OK",
   cancelText: "",
   dismissable: true,

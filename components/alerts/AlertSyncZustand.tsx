@@ -50,8 +50,10 @@ export default function AlertSyncZustand() {
   const {
     icon,
     title,
+    titleStyle,
     titleAlign,
     message,
+    messageStyle,
     messageAlign,
     okAction,
     cancelAction,
@@ -74,7 +76,10 @@ export default function AlertSyncZustand() {
         )}
         {title && (
           <Dialog.Title style={{ textAlign: titleAlign, marginTop: 8 }}>
-            <Text style={{ color: theme.colors.primary }} variant="titleLarge">
+            <Text
+              style={{ color: theme.colors.primary, ...(titleStyle as {}) }}
+              variant="titleLarge"
+            >
               {title}
             </Text>
           </Dialog.Title>
@@ -83,7 +88,10 @@ export default function AlertSyncZustand() {
           <>
             <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
               {message && (
-                <Text style={{ textAlign: messageAlign }} variant="bodyMedium">
+                <Text
+                  style={{ textAlign: messageAlign, ...(messageStyle as {}) }}
+                  variant="bodyMedium"
+                >
                   {message}
                 </Text>
               )}

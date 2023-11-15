@@ -15,7 +15,7 @@ import { useAlerts } from "../../utils/hooks";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
-  const {alert} = useAlerts();
+  const { alert } = useAlerts();
   return (
     <React.Fragment>
       <Text style={[styles.container, { textAlign: "center" }]}>
@@ -49,9 +49,11 @@ export default function JoinRoom({ navigation }) {
           onPress={() => {
             // TODO:
             alert({
-              inputs: [
-                {}
-              ]
+              title: "Join room",
+              titleStyle: {
+                color: "red",
+              },
+              inputs: [{}],
             });
           }}
           style={{ marginRight: "auto", flex: 1 }}
