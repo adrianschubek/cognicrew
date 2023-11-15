@@ -18,10 +18,12 @@ export default function ProjectGroups() {
   const [projectGroups, setProjectGroups] = useState(
     {} as { [semester: string]: typeof data },
   );
-  const { data, isLoading, error } = useQuery(
+  const { data , isLoading, error, mutate } = useQuery(
     supabase
       .from("learning_projects")
-      .select("id,name,description,is_published,created_at,tags,group,owner_id"),
+      .select(
+        "id,name,description,is_published,created_at,tags,group,owner_id",
+      ),
     {
       onSuccess(data, key, config) {
         // errorAlert(JSON.stringify(data));
@@ -33,6 +35,19 @@ export default function ProjectGroups() {
       },
     },
   );
+  // const [data, setData] = useState(null);
+  const realtimeProjects = supabase
+    .channel("custom-all-channel")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "learning_projects" },
+      (payload) => {
+        console.log("Change received!", payload);
+        // trigger refetch useQuery
+        mutate();
+      },
+    )
+    .subscribe();
 
   // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
   useEffect(() => {
@@ -69,7 +84,7 @@ export default function ProjectGroups() {
     setProjectGroups(groups);
   }, [data]);
 
-  if (isLoading || error) return <LoadingOverlay visible={true} />;
+  if (!data ) return <LoadingOverlay visible={true} />;
 
   return (
     <ScrollView

@@ -10,6 +10,7 @@ import {
   Text,
   TextInput,
   useTheme,
+  IconButton,
 } from "react-native-paper";
 import { Snackbar, Checkbox } from "react-native-paper";
 import {
@@ -20,7 +21,7 @@ import {
 import TextWithPlusButton from "../common/TextWithPlusButton";
 import InviteFriendDialog from "./InviteFriendDialog";
 import FriendItem2 from "../manageFriends/FriendItem2";
-import { useFriends, useFriendsList } from "../../utils/hooks";
+import { useAlerts, useFriends, useFriendsList } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -31,6 +32,7 @@ export default function InviteFriends({ navigation }) {
   const [friends, setFriends] = useState([]);
 
   const projectId = useProjectStore((state) => state.projectId);
+  const { error: errorAlert, success } = useAlerts();
 
   const { data, error, isLoading } = useFriendsList();
   useEffect(() => {
@@ -106,14 +108,24 @@ export default function InviteFriends({ navigation }) {
     setSnackbarVisible(true);
   };
 
+  const remove = async (userId: string) => {
+    let { data, error } = await supabase.rpc("remove_user_from_project", {
+      p_other_user_id: userId,
+      p_project_id: projectId,
+    });
+
+    if (error) errorAlert({ message: error.message });
+    else success({ message: "User removed from project." });
+  };
+
   const invite = async (userId: string) => {
     let { data, error } = await supabase.rpc("invite_user_to_project", {
       p_other_user_id: userId,
       p_project_id: projectId,
     });
 
-    if (error) console.error(error);
-    else console.log(data);
+    if (error) errorAlert({ message: error.message });
+    else success({ message: "User invited to project." });
   };
 
   if (isLoading || error) return <LoadingOverlay visible />;
@@ -148,6 +160,10 @@ export default function InviteFriends({ navigation }) {
                   invitedFriends[friend] ? styles.invitedFriendItem : null,
                 ]}
               >
+                <IconButton
+                  icon={"close"}
+                  onPress={() => remove(friend.user_from_id)}
+                />
                 <FriendItem2
                   key={index}
                   friend={friend.user_from_id}
@@ -236,7 +252,7 @@ const styles = StyleSheet.create({
     maxHeight: responsiveHeight(37.5),
   },
   friendItem2: {
-    flexDirection: "row",
+    // flexDirection: "row",
     alignItems: "center",
   },
   invitedFriendItem: {
