@@ -57,11 +57,13 @@ export default function ManageFriends({ navigation }) {
   );
 
   const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
-  const allPossibleFriendIds = friendPairs
-    //.filter((friendPair) => friendPair.user_from_id === user.id ?? false)
-    .map((friendPair) => friendPair.user_to_id) as string[];
-    const userNames = useUserNames(allPossibleFriendIds).data
-    const [userNamesLoaded, setUserNamesLoaded] = useState([]);
+  const allPossibleFriendIds = friendPairs.map((friendPair) =>
+    friendPair.user_to_id === user.id
+      ? friendPair.user_from_id
+      : friendPair.user_to_id,
+  ) as string[];
+  const userNames = useUserNames(allPossibleFriendIds).data as string[];
+  const [userNamesLoaded, setUserNamesLoaded] = useState([] as string[]);
   // FriendPairs of friends
   const filteredFriendPairs = friendPairs.filter((friendPair) =>
     // filter out friends that have not received a friend request
@@ -78,11 +80,19 @@ export default function ManageFriends({ navigation }) {
     (friendPair) => friendPair.user_to_id,
   ) as string[];
 
-  const searchFilterFriends = filteredFriends /*.filter(
-    (friend, i) =>
-      userNamesLoaded[i] &&
-      userNamesLoaded[i].toLowerCase().includes(searchQuery.toLowerCase()),
-  );*/
+   const searchFilterFriends = searchQuery
+    ? userNamesLoaded && userNamesLoaded
+        .map((userName) =>
+          userName.substring(1, userName.length - 1).split(","),
+        )
+        .filter((userName) => {
+          return (
+            filteredFriends.includes(userName[0]) &&
+            userName[1].toLowerCase().includes(searchQuery.toLowerCase()) 
+          );
+        }).map((userName) => userName[0])
+    : filteredFriends;
+    
   const pendingFriendRequestReceived = friendPairs.filter((friendPair) =>
     //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
     friendPairs.some(
@@ -121,7 +131,9 @@ export default function ManageFriends({ navigation }) {
   };
   useEffect(() => {
     if (!userNames) return;
-    console.log(userNames);
+    //console.log("userNames: " + userNames);
+    console.log(searchFilterFriends);
+    //console.log("filteredFriends: " + filteredFriends);
     setUserNamesLoaded(userNames);
   }, [userNames]);
   useEffect(() => {
