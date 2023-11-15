@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Dialog,
   HelperText,
   Portal,
@@ -21,6 +22,7 @@ export default function AlertSyncZustand() {
   const next = useAlertsStore((state) => state.next);
 
   const [inputValues, setInputValues] = useState<string[]>([]); // fixed by [""]
+  const [tempError, setTempError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!activeAlert && alerts?.length > 0) {
@@ -35,6 +37,7 @@ export default function AlertSyncZustand() {
           ? activeAlert.inputs.map((field) => field.defaultValue ?? "")
           : [],
       );
+      setTempError(() => null);
     }
   }, [activeAlert]);
 
@@ -177,12 +180,33 @@ export default function AlertSyncZustand() {
             </Dialog.Content>
           </>
         )}
+        {tempError && (
+          <Dialog.Content>
+            <Card
+              mode="outlined"
+              theme={{
+                colors: {
+                  outline: theme.colors.onError,
+                  surface: theme.colors.error,
+                },
+              }}
+            >
+              <Card.Content>
+                <Text style={{ color: theme.colors.onError }}>{tempError}</Text>
+              </Card.Content>
+            </Card>
+          </Dialog.Content>
+        )}
         {(okText !== "" || cancelText !== "") && (
           <Dialog.Actions>
             {cancelText !== "" && (
               <Button
                 onPress={() => {
-                  cancelAction(inputValues);
+                  const ret = cancelAction(inputValues);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
                   next();
                 }}
               >
@@ -192,7 +216,11 @@ export default function AlertSyncZustand() {
             {okText !== "" && (
               <Button
                 onPress={() => {
-                  okAction(inputValues);
+                  const ret = okAction(inputValues);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
                   next();
                 }}
                 disabled={inputs?.some(

@@ -56,7 +56,7 @@ export type Alert = {
   /**
    * Custom style for the title.
    */
-  titleStyle: StyleProp<TextStyle>,
+  titleStyle: StyleProp<TextStyle>;
   /**
    * The message of the alert.
    */
@@ -64,7 +64,7 @@ export type Alert = {
   /**
    * Custom style for the message.
    */
-  messageStyle: StyleProp<TextStyle>,
+  messageStyle: StyleProp<TextStyle>;
   /**
    * The text to display on the "OK" button.
    */
@@ -79,12 +79,14 @@ export type Alert = {
   dismissable: boolean;
   /**
    * The action to perform when the "OK" button is clicked.
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    */
-  okAction: (inputValues: string[]) => void;
+  okAction: (inputValues: string[]) => string | void;
   /**
    * The action to perform when the "Cancel" button is clicked.
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    */
-  cancelAction: (inputValues: string[]) => void;
+  cancelAction: (inputValues: string[]) => string | void;
   /**
    * The inputs to display in the alert.
    * @see AlertInput

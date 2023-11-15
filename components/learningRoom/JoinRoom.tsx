@@ -53,6 +53,10 @@ export default function JoinRoom({ navigation }) {
               titleStyle: {
                 color: "red",
               },
+              // dismissable: false,
+              okAction(inputValues) {
+                return "no user found";
+              },
               inputs: [{}],
             });
           }}
