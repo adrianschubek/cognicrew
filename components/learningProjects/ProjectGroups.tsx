@@ -18,7 +18,7 @@ export default function ProjectGroups() {
   const [projectGroups, setProjectGroups] = useState(
     {} as { [semester: string]: typeof data },
   );
-  const { data , isLoading, error, mutate } = useQuery(
+  const { data, isLoading, error, mutate } = useQuery(
     supabase
       .from("learning_projects")
       .select(
@@ -43,6 +43,15 @@ export default function ProjectGroups() {
       { event: "*", schema: "public", table: "learning_projects" },
       (payload) => {
         console.log("Change received!", payload);
+        // trigger refetch useQuery
+        mutate();
+      },
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "user_learning_projects" },
+      (payload) => {
+        console.log("Change received! ulp", payload);
         // trigger refetch useQuery
         mutate();
       },
@@ -84,7 +93,7 @@ export default function ProjectGroups() {
     setProjectGroups(groups);
   }, [data]);
 
-  if (!data ) return <LoadingOverlay visible={true} />;
+  if (!data) return <LoadingOverlay visible={true} />;
 
   return (
     <ScrollView
