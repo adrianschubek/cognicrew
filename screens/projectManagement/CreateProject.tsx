@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
+  Card,
   Divider,
   FAB,
   HelperText,
@@ -10,11 +11,13 @@ import {
   Switch,
   Text,
   TextInput,
+  useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts, useUsername } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
+import { useAuth } from "../../providers/AuthProvider";
 
 export default function CreateProject({
   navigation,
@@ -36,7 +39,9 @@ export default function CreateProject({
   const username = useUsername(project?.owner_id ?? null);
 
   const { success, error: errorAlert, info, confirm } = useAlerts();
+  const theme = useTheme();
 
+  const myid = useAuth().user.id;
   useEffect(() => {
     navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
@@ -158,6 +163,25 @@ export default function CreateProject({
         }}
       >
         <StatusBar style="auto" />
+        {project?.owner_id !== myid && (
+          <Card
+            theme={{
+              colors: {
+                surface: theme.colors.errorContainer,
+                outline: theme.colors.errorContainer,
+              },
+            }}
+            style={{ marginVertical: 10 }}
+            mode="outlined"
+          >
+            <Card.Content>
+              <Text>
+                You have no permission to edit this project. Please contact the
+                owner.
+              </Text>
+            </Card.Content>
+          </Card>
+        )}
         <TextInput
           label="Title"
           value={title}

@@ -21,7 +21,7 @@ export default function ProjectGroups() {
   const { data, isLoading, error } = useQuery(
     supabase
       .from("learning_projects")
-      .select("id,name,description,is_published,created_at,tags,group"),
+      .select("id,name,description,is_published,created_at,tags,group,owner_id"),
     {
       onSuccess(data, key, config) {
         // errorAlert(JSON.stringify(data));
