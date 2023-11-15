@@ -36,6 +36,7 @@ export default function ProjectGroups() {
     },
   );
   // const [data, setData] = useState(null);
+  // FIXME: useSubscription
   useEffect(() => {
     const realtimeProjects = supabase
       .channel("projects_all")

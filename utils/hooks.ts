@@ -307,7 +307,10 @@ export function useAlerts() {
 
   return {
     alert: (config: Partial<Alert>) => {
-      dispatch(config);
+      dispatch({
+        icon: "",
+        ...config,
+      });
     },
     /**
      * Creates a success alert using the given config.

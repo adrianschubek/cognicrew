@@ -87,7 +87,9 @@ export default function AlertSyncZustand() {
         )}
         {(message || inputs?.length !== 0) && (
           <>
-            <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
+            <Dialog.Content
+              style={{ marginTop: !title ? (icon ? 15 : 40) : undefined }}
+            >
               {message && (
                 <Text
                   style={{ textAlign: "center", ...(messageStyle as {}) }}

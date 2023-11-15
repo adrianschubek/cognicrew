@@ -49,7 +49,7 @@ export default function JoinRoom({ navigation }) {
           onPress={() => {
             // TODO:
             alert({
-              title: "Join room",
+              // title: "Join room",
               titleStyle: {
                 color: "red",
               },
@@ -57,15 +57,16 @@ export default function JoinRoom({ navigation }) {
               okAction(inputValues) {
                 return "";
               },
-              inputs: [
-                {
-                  label: "Room ID",
-                  type: "button",
-                  action() {
-                    return "x"
-                  }
-                },
-              ],
+              message: "Are you sure you want to join this room?",
+              // inputs: [
+              //   {
+              //     label: "Room ID",
+              //     type: "button",
+              //     action() {
+              //       return "x"
+              //     }
+              //   },
+              // ],
             });
           }}
           style={{ marginRight: "auto", flex: 1 }}
