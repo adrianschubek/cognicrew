@@ -53,6 +53,10 @@ export type Alert = {
    */
   title: string;
   /**
+   * The alignment of the title.
+   */
+  titleAlign?: "left" | "center" | "right";
+  /**
    * The message of the alert.
    */
   message: string;
@@ -90,6 +94,7 @@ export type Alert = {
 export const DEFAULT_ALERT: Alert = {
   icon: "information-outline",
   title: "",
+  titleAlign: "center",
   message: "",
   messageAlign: "center",
   okText: "OK",
