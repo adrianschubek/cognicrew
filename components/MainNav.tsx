@@ -22,7 +22,7 @@ import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";
 import { IconButton, useTheme } from "react-native-paper";
-import Lobby from "../screens/Lobby";
+import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();

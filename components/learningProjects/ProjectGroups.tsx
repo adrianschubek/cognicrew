@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useQuery, useSubscription } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../../supabase";
 import { useAlerts } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
@@ -36,39 +36,7 @@ export default function ProjectGroups() {
     },
   );
   // const [data, setData] = useState(null);
-  useEffect(() => {
-    const realtimeProjects = supabase
-      .channel("projects_all")
-      .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
-        console.log("Change received!", payload);
-        mutate(); // eskalation
-      })
-      .subscribe();
-
-    //   .channel("custom-all-channel")
-    //   .on(
-    //     "postgres_changes",
-    //     { event: "*", schema: "public", table: "learning_projects" },
-    //     (payload) => {
-    //       console.log("Change received!", payload);
-    //       // trigger refetch useQuery
-    //       mutate();
-    //     },
-    //   )
-    //   .subscribe();
-    // const realtimeProjects2 = supabase
-    //   .channel("custom-all-channel2")
-    //   .on(
-    //     "postgres_changes",
-    //     { event: "*", schema: "public", table: "user_learning_projects" },
-    //     (payload) => {
-    //       console.log("Change received! ulp", payload);
-    //       // trigger refetch useQuery
-    //       mutate();
-    //     },
-    //   )
-    //   .subscribe();
-  }, []);
+  // FIXME: useSubscription() TODO
 
   // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
   useEffect(() => {

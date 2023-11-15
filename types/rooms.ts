@@ -11,32 +11,40 @@ export const enum GameState {
 /**
  * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
  * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
- */
+ */ // TODO: Supabase on insert send webhook -> edge function!!!
 export type PublicRoomState = {
   screen: ScreenState;
   game: GameState;
-  lastRound: number;
-  current: {
-    /**
-     * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
-     */
-    round: number;
-    question: string;
-    /**
-     * Only for quiz. answer options
-     */
-    options: string[];
+  /**
+   * Connected players
+   */
+  players: {
+    id: string;
+    name: string;
+  }[];
+  numRounds: number;
+  // current: {
+  /**
+   * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
+   */
+  round: number;
+  question: string;
+  /**
+   * Only for quiz. answer options
+   */
+  options: string[];
 
-    /**
-     * Remaining time in seconds.
-     * // TODO: Alternative use Timestamp day.js
-     */
-    remainingSeconds: number;
-  };
+  /**
+   * Remaining time in seconds.
+   * // TODO: Alternative use Timestamp day.js
+   */
+  remainingSeconds: number;
+  // };
 };
 
 /**
  * quiz/card answers data + user answers [hidden from client, No Access]
+ * //TODO On Update Trigger -> execute Webhook -> Edge Function -> Update PublicRoomState
  */
 export type PrivateRoomState = {
   gameData: {
