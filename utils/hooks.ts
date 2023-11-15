@@ -338,7 +338,7 @@ export function useAlerts() {
     },
     info: (config: Partial<Alert>) => {
       dispatch({
-        icon: "information",
+        icon: "information-outline",
         title: "Info",
         ...config,
       });
