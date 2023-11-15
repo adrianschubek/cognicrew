@@ -159,6 +159,11 @@ type AlertsStoreType = {
   next: () => void;
 };
 
+/**
+ * internal. do not use.
+ * 
+ * @see Use `const { alert } = useAlerts();` instead.
+ */
 export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
   activeAlert: null,
   alerts: [],
