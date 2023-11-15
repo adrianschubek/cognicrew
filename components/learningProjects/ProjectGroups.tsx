@@ -48,6 +48,9 @@ export default function ProjectGroups() {
           mutate();
         },
       )
+      .subscribe();
+    const realtimeProjects2 = supabase
+      .channel("custom-all-channel")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "user_learning_projects" },
