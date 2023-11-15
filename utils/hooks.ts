@@ -17,14 +17,17 @@ import { ManagementType } from "../types/common";
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
  */
-function handleErrors<T>(fn: T): T {
+function handleErrors<T>(
+  fn: T,
+  getErrorMessage: (errorMsg: string) => string = (errorMsg) => errorMsg,
+): T {
   const { error: errorAlert } = useAlerts();
   // @ts-expect-error fn.error always exists
   if (fn.error) {
     // @ts-expect-error
-    errorAlert({ title: "Error", message: fn.error.message });
+    errorAlert({ title: "Error", message: getErrorMessage(fn.error.message) });
     // @ts-expect-error
-    console.log("[handleErrors] " + fn.error.message);
+    console.log("[handleErrors] " + getErrorMessage(fn.error.message));
   }
   return fn;
 }
