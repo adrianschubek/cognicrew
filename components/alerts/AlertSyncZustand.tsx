@@ -140,8 +140,8 @@ export default function AlertSyncZustand() {
                   ) : field.type === "button" ? (
                     <>
                       <Button
-                        onPress={() => {
-                          const ret = field.action(inputValues);
+                        onPress={async () => {
+                          const ret = await field.action(inputValues);
                           if (typeof ret === "string") {
                             setTempError(ret);
                             return;
@@ -222,8 +222,8 @@ export default function AlertSyncZustand() {
           <Dialog.Actions>
             {cancelText !== "" && (
               <Button
-                onPress={() => {
-                  const ret = cancelAction(inputValues);
+                onPress={async () => {
+                  const ret = await cancelAction(inputValues);
                   if (typeof ret === "string") {
                     setTempError(ret);
                     return;
@@ -236,8 +236,8 @@ export default function AlertSyncZustand() {
             )}
             {okText !== "" && (
               <Button
-                onPress={() => {
-                  const ret = okAction(inputValues);
+                onPress={async () => {
+                  const ret = await okAction(inputValues);
                   if (typeof ret === "string") {
                     setTempError(ret);
                     return;

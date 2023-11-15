@@ -61,6 +61,9 @@ export default function JoinRoom({ navigation }) {
                 {
                   label: "Room ID",
                   type: "button",
+                  action() {
+                    return "x"
+                  }
                 },
               ],
             });

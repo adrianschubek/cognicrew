@@ -51,7 +51,7 @@ type AlertInput = {
    *
    * Only applicable if `type` is `button`.
    */
-  action: (inputValues: string[]) => string | void;
+  action: (inputValues: string[]) => string | void | Promise<string | void>;
 };
 
 export type Alert = {
@@ -94,7 +94,7 @@ export type Alert = {
    *
    * Return an empty string to keep the input open without displaying an error.
    */
-  okAction: (inputValues: string[]) => string | void;
+  okAction: (inputValues: string[]) => string | void | Promise<string | void>;
   /**
    * The action to perform when the "Cancel" button is clicked.
    *
@@ -102,7 +102,9 @@ export type Alert = {
    *
    * Return an empty string to keep the input open without displaying an error.
    */
-  cancelAction: (inputValues: string[]) => string | void;
+  cancelAction: (
+    inputValues: string[],
+  ) => string | void | Promise<string | void>;
   /**
    * The inputs to display in the alert.
    * @see AlertInput
