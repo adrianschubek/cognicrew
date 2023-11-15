@@ -138,7 +138,28 @@ export default function AlertSyncZustand() {
                       )}
                     </>
                   ) : field.type === "button" ? (
-                    <></>
+                    <>
+                      <Button
+                        onPress={() => {
+                          const ret = field.action(inputValues);
+                          if (typeof ret === "string") {
+                            setTempError(ret);
+                            return;
+                          }
+                          next();
+                        }}
+                        disabled={field.disabled}
+                        style={{ marginTop: 10 }}
+                        mode="contained-tonal"
+                      >
+                        {field.label}
+                      </Button>
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                    </>
                   ) : (
                     <>
                       <TextInput

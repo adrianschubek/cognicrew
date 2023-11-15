@@ -55,9 +55,14 @@ export default function JoinRoom({ navigation }) {
               },
               // dismissable: false,
               okAction(inputValues) {
-                return "no user found";
+                return "";
               },
-              inputs: [{}],
+              inputs: [
+                {
+                  label: "Room ID",
+                  type: "button",
+                },
+              ],
             });
           }}
           style={{ marginRight: "auto", flex: 1 }}

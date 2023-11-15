@@ -42,6 +42,16 @@ type AlertInput = {
    * Whether or not the input is disabled.
    */
   disabled?: boolean;
+  /**
+   * The action to perform when the button is clicked.
+   *
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
+   *
+   * Only applicable if `type` is `button`.
+   */
+  action: (inputValues: string[]) => string | void;
 };
 
 export type Alert = {
@@ -79,12 +89,18 @@ export type Alert = {
   dismissable: boolean;
   /**
    * The action to perform when the "OK" button is clicked.
+   *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
    */
   okAction: (inputValues: string[]) => string | void;
   /**
    * The action to perform when the "Cancel" button is clicked.
+   *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
    */
   cancelAction: (inputValues: string[]) => string | void;
   /**
@@ -119,6 +135,7 @@ export const DEFAULT_ALERT_INPUT: AlertInput = {
   type: "text",
   errorText: "",
   disabled: false,
+  action: () => {},
 };
 
 type AlertsStoreType = {
