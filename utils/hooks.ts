@@ -12,6 +12,7 @@ import { supabase } from "../supabase";
 import { ifMod } from "./common";
 import { useCallback, useEffect, useMemo } from "react";
 import { ManagementType } from "../types/common";
+import { get } from "cypress/types/lodash";
 
 /**
  * Handles errors thrown by the given supabase query.
@@ -85,6 +86,11 @@ export function useInsertFriend() {
       ["user_from_id", "user_to_id"],
       "user_from_id,user_to_id",
     ),
+    (error) => {
+      if (error.includes("duplicate key value violates unique constraint")) {
+        return "You are already friends with this user.";
+      } else return error;
+    },
   );
 }
 

@@ -10,7 +10,6 @@ import {
   Text,
   TextInput,
   useTheme,
-  FAB,
 } from "react-native-paper";
 import { Snackbar } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
@@ -26,7 +25,6 @@ import {
   useFriends,
   useInsertFriend,
   useUserNames,
-  useUsername,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
@@ -34,7 +32,7 @@ import { supabase } from "../supabase";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
-  const { confirm } = useAlerts();
+  const { confirm, alert, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
   // const projects = ["Biology", "Psychology", "Computer Science"];
@@ -215,7 +213,15 @@ export default function ManageFriends({ navigation }) {
                 icon="close-circle"
                 friend={friend}
                 onIconPress={() => {
-                  deleteFriend(friend);
+                  info({
+                    //icon: "account-off",
+                    title:"",
+                    message: "Are you sure you want to delete this friend?",
+                    okText: "Delete Friend",
+                    okAction: () => {
+                      deleteFriend(friend);
+                    },
+                  })
                 }}
               />
             ))}
@@ -247,8 +253,15 @@ export default function ManageFriends({ navigation }) {
                   })
                 }
                 onSecondIconPress={() => {
-                  //console.log(friend);
-                  deleteFriendRequest(friend);
+                  info({
+                    //icon: "account-off",
+                    title:"",
+                    message: "Are you sure you want to delete this friend?",
+                    okText: "Delete Friend",
+                    okAction: () => {
+                      deleteFriendRequest(friend);
+                    },
+                  })
                 }}
               />
             ))}
@@ -270,8 +283,16 @@ export default function ManageFriends({ navigation }) {
                     : friend.user_from_id
                 }
                 onIconPress={() => {
-                  console.log(friend);
-                  deleteFriendRequest(friend);
+                  info({
+                    //icon: "information-outline",
+                    title:"",
+                    message: "Are you sure you want to delete this friend?",
+                    okText: "Delete Friend",
+                    okAction: () => {
+                      deleteFriendRequest(friend);
+                    },
+                  })
+                  
                 }}
               />
             ))}
