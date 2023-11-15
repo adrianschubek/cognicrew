@@ -163,7 +163,7 @@ export default function CreateProject({
         }}
       >
         <StatusBar style="auto" />
-        {project?.owner_id !== myid && (
+        {project?.owner_id !== null && project?.owner_id !== myid && (
           <Card
             theme={{
               colors: {
