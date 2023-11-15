@@ -92,7 +92,7 @@ export default function ManageFriends({ navigation }) {
           );
         }).map((userName) => userName[0])
     : filteredFriends;
-    
+
   const pendingFriendRequestReceived = friendPairs.filter((friendPair) =>
     //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
     friendPairs.some(
@@ -131,9 +131,6 @@ export default function ManageFriends({ navigation }) {
   };
   useEffect(() => {
     if (!userNames) return;
-    //console.log("userNames: " + userNames);
-    console.log(searchFilterFriends);
-    //console.log("filteredFriends: " + filteredFriends);
     setUserNamesLoaded(userNames);
   }, [userNames]);
   useEffect(() => {
@@ -200,7 +197,7 @@ export default function ManageFriends({ navigation }) {
                   })
                 }
                 onSecondIconPress={() => {
-                  console.log(friend);
+                  //console.log(friend);
                   deleteFriendRequest(friend);
                 }}
               />
@@ -261,10 +258,6 @@ export default function ManageFriends({ navigation }) {
         addFriend={addFriend}
         close={() => {
           toggleAddFriendPopup();
-          console.log(userNames);
-          //console.log("ErrorAngst:" + searchFilterFriends);
-          //console.log(friendPairs.length);
-          //console.log(pendingFriendRequestReceived.length);
         }}
       />
 
