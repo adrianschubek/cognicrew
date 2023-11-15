@@ -38,29 +38,36 @@ export default function ProjectGroups() {
   // const [data, setData] = useState(null);
   useEffect(() => {
     const realtimeProjects = supabase
-      .channel("custom-all-channel")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "learning_projects" },
-        (payload) => {
-          console.log("Change received!", payload);
-          // trigger refetch useQuery
-          mutate();
-        },
-      )
+      .channel("projects_all")
+      .on("postgres_changes", { event: "*", schema: "public" }, (payload) => {
+        console.log("Change received!", payload);
+        mutate(); // eskalation
+      })
       .subscribe();
-    const realtimeProjects2 = supabase
-      .channel("custom-all-channel2")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "user_learning_projects" },
-        (payload) => {
-          console.log("Change received! ulp", payload);
-          // trigger refetch useQuery
-          mutate();
-        },
-      )
-      .subscribe();
+
+    //   .channel("custom-all-channel")
+    //   .on(
+    //     "postgres_changes",
+    //     { event: "*", schema: "public", table: "learning_projects" },
+    //     (payload) => {
+    //       console.log("Change received!", payload);
+    //       // trigger refetch useQuery
+    //       mutate();
+    //     },
+    //   )
+    //   .subscribe();
+    // const realtimeProjects2 = supabase
+    //   .channel("custom-all-channel2")
+    //   .on(
+    //     "postgres_changes",
+    //     { event: "*", schema: "public", table: "user_learning_projects" },
+    //     (payload) => {
+    //       console.log("Change received! ulp", payload);
+    //       // trigger refetch useQuery
+    //       mutate();
+    //     },
+    //   )
+    //   .subscribe();
   }, []);
 
   // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
