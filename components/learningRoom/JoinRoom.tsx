@@ -47,6 +47,19 @@ export default function JoinRoom({ navigation }) {
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
           onPress={async () => {
+            info({ message: "Joining room...", inputs:[
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+            ] });
             // TODO: debug
             const { data, error } = await supabase.functions.invoke(
               "room-init",

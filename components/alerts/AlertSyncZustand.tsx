@@ -11,6 +11,7 @@ import {
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, useEffect, useState } from "react";
+import { ScrollView } from "react-native";
 
 /**
  * Universal alert component that can be used to display alerts.
@@ -70,194 +71,200 @@ export default function AlertSyncZustand() {
         visible={true}
         onDismiss={() => dismissable && next()}
         testID={icon + "_alert"}
-        style={{ zIndex: 999999 }}
+        style={{ zIndex: 999999, overflow: "scroll" }}
       >
-        {icon && (
-          <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
-        )}
-        {title && (
-          <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
-            <Text
-              style={{ color: theme.colors.primary, ...(titleStyle as {}) }}
-              variant="titleLarge"
-            >
-              {title}
-            </Text>
-          </Dialog.Title>
-        )}
-        {(message || inputs?.length !== 0) && (
-          <>
-            <Dialog.Content
-              style={{ marginTop: !title ? (icon ? 15 : 40) : undefined }}
-            >
-              {message && (
-                <Text
-                  style={{ textAlign: "center", ...(messageStyle as {}) }}
-                  variant="bodyMedium"
-                >
-                  {message}
-                </Text>
-              )}
-              {inputs.map((field, i) => (
-                <Fragment key={i}>
-                  {field.type === "checkbox" ? (
-                    <>
-                      <TextInput
-                        style={{ marginVertical: 2, marginTop: 10 }}
-                        theme={{ roundness: 10 }}
-                        value={field.label}
-                        editable={false}
-                        left={
-                          field.icon && <TextInput.Icon icon={field.icon} />
-                        }
-                        right={
-                          <TextInput.Icon
-                            icon={() => (
-                              <Switch
-                                value={inputValues[i] === "true"}
-                                onValueChange={() => {
-                                  const newValues = [...inputValues];
-                                  newValues[i] =
-                                    inputValues[i] === "true"
-                                      ? "false"
-                                      : "true";
-                                  setInputValues(newValues);
-                                }}
-                              />
-                            )}
-                          />
-                        }
-                      />
-                      {field.helperText && (
-                        <HelperText type="info" visible={true}>
-                          {field.helperText}
-                        </HelperText>
-                      )}
-                      {field.errorText && !field.validator(inputValues[i]) && (
-                        <HelperText type="error" visible={true}>
-                          {field.errorText}
-                        </HelperText>
-                      )}
-                    </>
-                  ) : field.type === "button" ? (
-                    <>
-                      <Button
-                        onPress={async () => {
-                          const ret = await field.action(inputValues);
-                          if (typeof ret === "string") {
-                            setTempError(ret);
-                            return;
-                          }
-                          next();
-                        }}
-                        disabled={field.disabled}
-                        style={{ marginTop: 10 }}
-                        mode="contained-tonal"
-                      >
-                        {field.label}
-                      </Button>
-                      {field.helperText && (
-                        <HelperText type="info" visible={true}>
-                          {field.helperText}
-                        </HelperText>
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      <TextInput
-                        style={{ marginVertical: 2, marginTop: 10 }}
-                        label={field.label}
-                        placeholder={field.placeholder}
-                        secureTextEntry={field.type === "password"}
-                        left={
-                          field.icon && <TextInput.Icon icon={field.icon} />
-                        }
-                        keyboardType={
-                          field.type === "number" ? "number-pad" : "default"
-                        }
-                        value={inputValues[i]}
-                        onChangeText={(text) => {
-                          const newValues = [...inputValues];
-                          newValues[i] = text;
-                          setInputValues(newValues);
-                        }}
-                        error={
-                          field.validator && !field.validator(inputValues[i])
-                        }
-                        disabled={field.disabled}
-                      ></TextInput>
-                      {field.helperText && (
-                        <HelperText type="info" visible={true}>
-                          {field.helperText}
-                        </HelperText>
-                      )}
-                      {field.errorText && !field.validator(inputValues[i]) && (
-                        <HelperText type="error" visible={true}>
-                          {field.errorText}
-                        </HelperText>
-                      )}
-                    </>
-                  )}
-                </Fragment>
-              ))}
-            </Dialog.Content>
-          </>
-        )}
-        {tempError && (
-          <Dialog.Content>
-            <Card
-              mode="outlined"
-              theme={{
-                colors: {
-                  outline: theme.colors.onError,
-                  surface: theme.colors.error,
-                },
-              }}
-            >
-              <Card.Content>
-                <Text style={{ color: theme.colors.onError }}>{tempError}</Text>
-              </Card.Content>
-            </Card>
-          </Dialog.Content>
-        )}
-        {(okText !== "" || cancelText !== "") && (
-          <Dialog.Actions>
-            {cancelText !== "" && (
-              <Button
-                onPress={async () => {
-                  const ret = await cancelAction(inputValues);
-                  if (typeof ret === "string") {
-                    setTempError(ret);
-                    return;
-                  }
-                  next();
-                }}
+        <ScrollView>
+          {icon && (
+            <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
+          )}
+          {title && (
+            <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
+              <Text
+                style={{ color: theme.colors.primary, ...(titleStyle as {}) }}
+                variant="titleLarge"
               >
-                {cancelText}
-              </Button>
-            )}
-            {okText !== "" && (
-              <Button
-                onPress={async () => {
-                  const ret = await okAction(inputValues);
-                  if (typeof ret === "string") {
-                    setTempError(ret);
-                    return;
-                  }
-                  next();
-                }}
-                disabled={inputs?.some(
-                  (field, i) =>
-                    field.required &&
-                    (inputValues[i]?.length === 0 ||
-                      (field.validator && !field.validator(inputValues[i]))),
+                {title}
+              </Text>
+            </Dialog.Title>
+          )}
+          {(message || inputs?.length !== 0) && (
+            <>
+              <Dialog.Content
+                style={{ marginTop: !title ? (icon ? 15 : 40) : undefined }}
+              >
+                {message && (
+                  <Text
+                    style={{ textAlign: "center", ...(messageStyle as {}) }}
+                    variant="bodyMedium"
+                  >
+                    {message}
+                  </Text>
                 )}
+                {inputs.map((field, i) => (
+                  <Fragment key={i}>
+                    {field.type === "checkbox" ? (
+                      <>
+                        <TextInput
+                          style={{ marginVertical: 2, marginTop: 10 }}
+                          theme={{ roundness: 10 }}
+                          value={field.label}
+                          editable={false}
+                          left={
+                            field.icon && <TextInput.Icon icon={field.icon} />
+                          }
+                          right={
+                            <TextInput.Icon
+                              icon={() => (
+                                <Switch
+                                  value={inputValues[i] === "true"}
+                                  onValueChange={() => {
+                                    const newValues = [...inputValues];
+                                    newValues[i] =
+                                      inputValues[i] === "true"
+                                        ? "false"
+                                        : "true";
+                                    setInputValues(newValues);
+                                  }}
+                                />
+                              )}
+                            />
+                          }
+                        />
+                        {field.helperText && (
+                          <HelperText type="info" visible={true}>
+                            {field.helperText}
+                          </HelperText>
+                        )}
+                        {field.errorText &&
+                          !field.validator(inputValues[i]) && (
+                            <HelperText type="error" visible={true}>
+                              {field.errorText}
+                            </HelperText>
+                          )}
+                      </>
+                    ) : field.type === "button" ? (
+                      <>
+                        <Button
+                          onPress={async () => {
+                            const ret = await field.action(inputValues);
+                            if (typeof ret === "string") {
+                              setTempError(ret);
+                              return;
+                            }
+                            next();
+                          }}
+                          disabled={field.disabled}
+                          style={{ marginTop: 10 }}
+                          mode="contained-tonal"
+                        >
+                          {field.label}
+                        </Button>
+                        {field.helperText && (
+                          <HelperText type="info" visible={true}>
+                            {field.helperText}
+                          </HelperText>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <TextInput
+                          style={{ marginVertical: 2, marginTop: 10 }}
+                          label={field.label}
+                          placeholder={field.placeholder}
+                          secureTextEntry={field.type === "password"}
+                          left={
+                            field.icon && <TextInput.Icon icon={field.icon} />
+                          }
+                          keyboardType={
+                            field.type === "number" ? "number-pad" : "default"
+                          }
+                          value={inputValues[i]}
+                          onChangeText={(text) => {
+                            const newValues = [...inputValues];
+                            newValues[i] = text;
+                            setInputValues(newValues);
+                          }}
+                          error={
+                            field.validator && !field.validator(inputValues[i])
+                          }
+                          disabled={field.disabled}
+                        ></TextInput>
+                        {field.helperText && (
+                          <HelperText type="info" visible={true}>
+                            {field.helperText}
+                          </HelperText>
+                        )}
+                        {field.errorText &&
+                          !field.validator(inputValues[i]) && (
+                            <HelperText type="error" visible={true}>
+                              {field.errorText}
+                            </HelperText>
+                          )}
+                      </>
+                    )}
+                  </Fragment>
+                ))}
+              </Dialog.Content>
+            </>
+          )}
+          {tempError && (
+            <Dialog.Content>
+              <Card
+                mode="outlined"
+                theme={{
+                  colors: {
+                    outline: theme.colors.onError,
+                    surface: theme.colors.error,
+                  },
+                }}
               >
-                {okText}
-              </Button>
-            )}
-          </Dialog.Actions>
-        )}
+                <Card.Content>
+                  <Text style={{ color: theme.colors.onError }}>
+                    {tempError}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </Dialog.Content>
+          )}
+          {(okText !== "" || cancelText !== "") && (
+            <Dialog.Actions>
+              {cancelText !== "" && (
+                <Button
+                  onPress={async () => {
+                    const ret = await cancelAction(inputValues);
+                    if (typeof ret === "string") {
+                      setTempError(ret);
+                      return;
+                    }
+                    next();
+                  }}
+                >
+                  {cancelText}
+                </Button>
+              )}
+              {okText !== "" && (
+                <Button
+                  onPress={async () => {
+                    const ret = await okAction(inputValues);
+                    if (typeof ret === "string") {
+                      setTempError(ret);
+                      return;
+                    }
+                    next();
+                  }}
+                  disabled={inputs?.some(
+                    (field, i) =>
+                      field.required &&
+                      (inputValues[i]?.length === 0 ||
+                        (field.validator && !field.validator(inputValues[i]))),
+                  )}
+                >
+                  {okText}
+                </Button>
+              )}
+            </Dialog.Actions>
+          )}
+        </ScrollView>
       </Dialog>
     </Portal>
   );
