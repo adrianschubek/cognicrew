@@ -46,28 +46,17 @@ export default function JoinRoom({ navigation }) {
         <Button
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
-          onPress={() => {
+          onPress={async () => {
             // TODO:
-            alert({
-              // title: "Join room",
-              titleStyle: {
-                color: "red",
+            const { data, error } = await supabase.functions.invoke("hello", {
+              body: {
+                foo: "bar",
               },
-              // dismissable: false,
-              okAction(inputValues) {
-                return "";
-              },
-              message: "Are you sure you want to join this room?",
-              // inputs: [
-              //   {
-              //     label: "Room ID",
-              //     type: "button",
-              //     action() {
-              //       return "x"
-              //     }
-              //   },
-              // ],
+              method: "POST",
             });
+            console.log(data, error);
+            // if (data) alert({ message: JSON.stringify(data.message) });
+            // else alert({ title: "Error", message: JSON.stringify(error) });
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >
