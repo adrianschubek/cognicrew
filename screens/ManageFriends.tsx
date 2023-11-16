@@ -1,20 +1,9 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  Dialog,
-  Portal,
-  Button,
-  Divider,
-  Avatar,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
-import { Snackbar } from "react-native-paper";
+import { Divider, Avatar, Text, TextInput, useTheme } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
-import AddFriend from "../components/dialogues/AddFriend";
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -23,15 +12,12 @@ import {
   useAlerts,
   useDeleteFriend,
   useFriends,
-  useFriendsList,
   useInsertFriend,
   useSubscriptionFriends,
-  useUserNames,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
-import { set } from "cypress/types/lodash";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -41,11 +27,8 @@ export default function ManageFriends({ navigation }) {
   const [friendPairs, setFriendPairs] = useState([]);
   const user = useAuth().user;
   const { data, error, isLoading } = useFriends();
-  //const {data: data2, error: error2, isLoading: isLoading2} = useFriendsList();
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
-  // const [friendList, setFriendList] = useState([]);
-  const [refetchIndex, setRefetchIndex] = useState(0);
   const { status } = useSubscriptionFriends();
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
@@ -57,7 +40,7 @@ export default function ManageFriends({ navigation }) {
   async function friendIdsAndNames() {
     let { data, error } = await supabase.rpc("list_friends_ids_and_names");
     if (error) console.log(error);
-    return {data, error}
+    return { data, error };
   }
   async function searchUser(username) {
     let { data, error } = await supabase.rpc("search_user", {
@@ -70,14 +53,6 @@ export default function ManageFriends({ navigation }) {
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
-  const allPossibleFriendIds = friendPairs.map((friendPair) =>
-    friendPair.user_to_id === user.id
-      ? friendPair.user_from_id
-      : friendPair.user_to_id,
-  ) as string[];
-  const userNames = useUserNames(allPossibleFriendIds, refetchIndex)
-    .data as string[];
-  const [userNamesLoaded, setUserNamesLoaded] = useState([] as string[]);
   // FriendPairs of friends
   const filteredFriendPairs = friendPairs.filter((friendPair) =>
     // filter out friends that have not received a friend request
@@ -89,32 +64,32 @@ export default function ManageFriends({ navigation }) {
             friendPair2.user_to_id === friendPair.user_from_id,
         ),
   );
-
-  const filteredFriends = filteredFriendPairs.map(
-    (friendPair) => friendPair.user_to_id,
-  ) as string[];
-
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
-  
-  const searchFilterFriends = friendIdsAndNamesData && friendIdsAndNamesData
-        .filter((e) => {
-          return (
-            e.username.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        })
-        .map((e) => e.id)
-function filterForPendingFriends(friendPairs, direction: "sent" | "received") {
-  return friendPairs.filter((friendPair) =>
-    //if (User A, User B) => (User B, User A) combination is found return false
-    friendPairs.some(
-      (friendPair2) =>
-        friendPair2.user_from_id === friendPair.user_to_id &&
-        friendPair2.user_to_id === friendPair.user_from_id,
-    )
-      ? false
-      : ( direction === "received" ? friendPair.user_to_id === user.id : friendPair.user_from_id === user.id)
-  );
-}
+
+  const searchFilterFriends =
+    friendIdsAndNamesData &&
+    friendIdsAndNamesData
+      .filter((e) => {
+        return e.username.toLowerCase().includes(searchQuery.toLowerCase());
+      })
+      .map((e) => e.id);
+  function filterForPendingFriends(
+    friendPairs,
+    direction: "sent" | "received",
+  ) {
+    return friendPairs.filter((friendPair) =>
+      //if (User A, User B) => (User B, User A) combination is found return false
+      friendPairs.some(
+        (friendPair2) =>
+          friendPair2.user_from_id === friendPair.user_to_id &&
+          friendPair2.user_to_id === friendPair.user_from_id,
+      )
+        ? false
+        : direction === "received"
+        ? friendPair.user_to_id === user.id
+        : friendPair.user_from_id === user.id,
+    );
+  }
   /**
    * `handleSearch` - Updates the search query state based on user input.
    * @param {string} query - The current text in the search input field.
@@ -135,13 +110,7 @@ function filterForPendingFriends(friendPairs, direction: "sent" | "received") {
     fetchData();
   }, [data]);
   useEffect(() => {
-    if (!userNames) return;
-    setUserNamesLoaded(userNames);
-  }, [userNames]);
-  useEffect(() => {
     if (!data) return;
-    setRefetchIndex(refetchIndex + 1);
-    setUserNamesLoaded([]);
     setFriendPairs(data);
   }, [data]);
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
@@ -226,71 +195,75 @@ function filterForPendingFriends(friendPairs, direction: "sent" | "received") {
         </View>
 
         {/* Pending friends list */}
-        {filterForPendingFriends(friendPairs,"received").length > 0 && (
+        {filterForPendingFriends(friendPairs, "received").length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
-            {filterForPendingFriends(friendPairs,"received").map((friend, index) => (
-              <FriendItem
-                key={index}
-                icon="check"
-                secondIcon="close-circle"
-                friend={
-                  friend.user_from_id === user.id
-                    ? friend.user_to_id
-                    : friend.user_from_id
-                }
-                onIconPress={() =>
-                  addFriend({
-                    //@ts-expect-error
-                    user_from_id: friend.user_to_id,
-                    user_to_id: friend.user_from_id,
-                  })
-                }
-                onSecondIconPress={() => {
-                  info({
-                    //icon: "account-off",
-                    title: "",
-                    message: "Are you sure you want to delete this friend?",
-                    okText: "Delete Friend",
-                    okAction: () => {
-                      deleteFriendRequest(friend);
-                    },
-                  });
-                }}
-              />
-            ))}
+            {filterForPendingFriends(friendPairs, "received").map(
+              (friend, index) => (
+                <FriendItem
+                  key={index}
+                  icon="check"
+                  secondIcon="close-circle"
+                  friend={
+                    friend.user_from_id === user.id
+                      ? friend.user_to_id
+                      : friend.user_from_id
+                  }
+                  onIconPress={() =>
+                    addFriend({
+                      //@ts-expect-error
+                      user_from_id: friend.user_to_id,
+                      user_to_id: friend.user_from_id,
+                    })
+                  }
+                  onSecondIconPress={() => {
+                    info({
+                      //icon: "account-off",
+                      title: "",
+                      message: "Are you sure you want to delete this friend?",
+                      okText: "Delete Friend",
+                      okAction: () => {
+                        deleteFriendRequest(friend);
+                      },
+                    });
+                  }}
+                />
+              ),
+            )}
             <Divider style={styles.divider} />
           </View>
         )}
-        {filterForPendingFriends(friendPairs,"sent").length > 0 && (
+        {filterForPendingFriends(friendPairs, "sent").length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
-            {filterForPendingFriends(friendPairs,"sent").map((friend, index) => (
-              <FriendItem
-                key={index}
-                icon="close-circle"
-                friend={
-                  friend.user_from_id === user.id
-                    ? friend.user_to_id
-                    : friend.user_from_id
-                }
-                onIconPress={() => {
-                  info({
-                    //icon: "information-outline",
-                    title: "",
-                    message: "Are you sure you want to delete this friend?",
-                    okText: "Delete Friend",
-                    okAction: () => {
-                      deleteFriendRequest(friend);
-                    },
-                  });
-                }}
-              />
-            ))}
+            {filterForPendingFriends(friendPairs, "sent").map(
+              (friend, index) => (
+                <FriendItem
+                  key={index}
+                  icon="close-circle"
+                  friend={
+                    friend.user_from_id === user.id
+                      ? friend.user_to_id
+                      : friend.user_from_id
+                  }
+                  onIconPress={() => {
+                    info({
+                      //icon: "information-outline",
+                      title: "",
+                      message: "Are you sure you want to delete this friend?",
+                      okText: "Delete Friend",
+                      okAction: () => {
+                        deleteFriendRequest(friend);
+                      },
+                    });
+                  }}
+                />
+              ),
+            )}
             <Divider style={styles.divider} />
           </View>
         )}
