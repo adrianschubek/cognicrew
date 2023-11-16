@@ -25,6 +25,10 @@ export type PublicRoomState = {
   numRounds: number;
   // current: {
   /**
+   * is current round completed/already submitted answer?
+   */
+  completedRound: number;
+  /**
    * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
    */
   round: number;
