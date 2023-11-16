@@ -125,6 +125,8 @@ export default function LearningProject({ navigation, route }) {
                 p_name: params[0] ?? null,
                 p_code: parseInt(params[1]) ?? null,
                 p_share_code: parseInt(params[2]) ?? null,
+                // TODO: max_size
+                // TODO: is_private friends only
               });
               if (error) return error.message;
               // TODO: save new room data to to zustand
@@ -155,10 +157,18 @@ export default function LearningProject({ navigation, route }) {
                 errorText: "Room code must be between 0 and 6 digits",
               },
               {
+                label: "Friends only",
+                type: "checkbox",
+                helperText: "Only friends can join this room.",
+                disabled: true,
+              },
+              {
                 label: "Size",
                 type: "number",
+                helperText: "The maximum amount of players in this room.",
                 icon: "account-group",
                 defaultValue: "2",
+                disabled: true,
               },
             ],
           });
