@@ -1,4 +1,4 @@
-// verify this is called by webhook
+// verify this is called by webhook. Should only be called by database trigger on room creation.
 
 // Follow this setup guide to integrate the Deno language server with your editor:
 // https://deno.land/manual/getting_started/setup_your_environment
@@ -10,7 +10,7 @@ serve(async (req) => {
   return new Response(JSON.stringify(await req.json()), {
     headers: { "Content-Type": "application/json" },
   });
-
+// TODO: use immer to update state
   return new Response(
     `"Hello from Edge Functions! xxxxxyyyyyyyyyyyyyyyyyyyyyyyy"`,
     { headers: { "Content-Type": "application/json" } },
