@@ -109,6 +109,7 @@ export default function AlertSyncZustand() {
                           theme={{ roundness: 10 }}
                           value={field.label}
                           editable={false}
+                          disabled={field.disabled}
                           left={
                             field.icon && <TextInput.Icon icon={field.icon} />
                           }
@@ -116,6 +117,7 @@ export default function AlertSyncZustand() {
                             <TextInput.Icon
                               icon={() => (
                                 <Switch
+                                  disabled={field.disabled}
                                   value={inputValues[i] === "true"}
                                   onValueChange={() => {
                                     const newValues = [...inputValues];
