@@ -15,7 +15,7 @@ serve(async (req) => {
     );
 
     // if not called from webhook, return 403 (check ?secret=...)
-    // FIXME: put secret somewhere save into env var.
+    // FIXME: put secret somewhere safe into env var.
     const SECRET = "Ur7diwgmWzT7g8er9LV6PM3HAURXM6vJ";
     if (!(await req.url.includes(`secret=${SECRET}`))) {
       return new Response("Function was not called by database", {
@@ -25,10 +25,11 @@ serve(async (req) => {
     const body = await req.json();
     // TODO: if option INSERT, DELETE, UPDATE do ....
     if (body.type === "INSERT") {
+      return new Response(JSON.stringify(await req.json()));
+      
     }
+    
     return new Response(body.type, { status: 200 });
-
-    return new Response(JSON.stringify(await req.json()));
 
     const { data, error } = await supabase.from("learning_projects").select(`id,
               name,
