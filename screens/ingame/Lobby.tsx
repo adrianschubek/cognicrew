@@ -16,6 +16,7 @@ export default function Lobby() {
 
   const room = useRoomStore((state) => state.room);
   const roomState = useRoomStore((state) => state.roomState);
+  const setRoom = useRoomStore((state) => state.setRoom);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -33,8 +34,7 @@ export default function Lobby() {
         okText: "Leave",
         okAction: () => {
           // TODO: Leave room server rpc
-          // TODO: setRoom(null)
-          navigation.dispatch(e.data.action);
+          setRoom(null);
         },
       });
     });
@@ -73,8 +73,7 @@ export default function Lobby() {
             okText: "Leave",
             okAction: () => {
               // TODO: Leave room server rpc
-              // TODO: setRoom(null)
-              navigation.navigate(NAVIGATION.HOME);
+              setRoom(null);
             },
           })
         }

@@ -8,22 +8,21 @@ import React, { useEffect } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
+import { useRoomStore } from "../stores/RoomStore";
 
 export default function RoomsList({ navigation }) {
   const theme = useTheme();
   const focus = useIsFocused();
   const { data: username } = useUsername();
   const { confirm, info } = useAlerts();
+  const setRoom = useRoomStore((state) => state.setRoom);
   const {
     data: rooms,
     isLoading,
     isValidating,
     mutate,
   } = useQuery(supabase.rpc("list_rooms"), {
-    // refreshInterval: focus ? 3000 : 0,
-    onSuccess(data, key, config) {
-      console.log("Success!", data);
-    },
+    
   });
 
   // Cheating: check for updates on room_tracker then refetch rooms
@@ -34,7 +33,6 @@ export default function RoomsList({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "tracker" },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )
@@ -84,7 +82,8 @@ export default function RoomsList({ navigation }) {
                   });
 
                   if (error) return error.message;
-                  else console.log(data);
+                  console.log(data);
+                  setRoom(data);
                 },
                 inputs: room.protected && [
                   {
