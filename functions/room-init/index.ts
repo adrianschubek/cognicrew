@@ -14,8 +14,24 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
 
-    const { data, error } = await supabase.from("learning_projects")
-      .select(`name,
+    // if not called from webhook, return 403 (check ?secret=...)
+    // FIXME: put secret somewhere save into env var.
+    const SECRET = "Ur7diwgmWzT7g8er9LV6PM3HAURXM6vJ";
+    if (!(await req.url.includes(`secret=${SECRET}`))) {
+      return new Response("Function was not called by database", {
+        status: 403,
+      });
+    }
+    const body = await req.json();
+    // TODO: if option INSERT, DELETE, UPDATE do ....
+    if (body.type === "INSERT") {
+    }
+    return new Response(body.type, { status: 200 });
+
+    return new Response(JSON.stringify(await req.json()));
+
+    const { data, error } = await supabase.from("learning_projects").select(`id,
+              name,
               sets(
                 name,
                 exercises(

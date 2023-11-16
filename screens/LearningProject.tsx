@@ -69,24 +69,6 @@ export default function LearningProject({ navigation, route }) {
     });
   }, []);
 
-  const createRoom = async (params: string[]) => {
-    supabase
-      .rpc("create_room", {
-        p_project_id: parseInt(project.id),
-        p_name: params[0] ?? null,
-        p_code: parseInt(params[1]) ?? null,
-        p_share_code: parseInt(params[2]) ?? null,
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          errorAlert({ message: error.message });
-          return;
-        }
-        // TODO: save new room data to to zustand
-        info({ message: JSON.stringify(data) });
-      });
-  };
-
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -120,7 +102,7 @@ export default function LearningProject({ navigation, route }) {
       />
       <Button
         style={[{ marginTop: responsiveHeight(2.9) }]}
-         onPress={() => {
+        onPress={() => {
           setShowCreateFlashcardGame(true);
         }}
       >
@@ -129,7 +111,6 @@ export default function LearningProject({ navigation, route }) {
       <CreateFlashCardGame
         showCreateFlashcardGame={showCreateFlashcardGame}
         close={() => setShowCreateFlashcardGame(false)}
-        
       />
       <FAB
         icon={"play"}
@@ -138,8 +119,16 @@ export default function LearningProject({ navigation, route }) {
             icon: "play",
             title: "Create Room",
             okText: "Create",
-            okAction: (vars) => {
-              createRoom(vars);
+            okAction: async (params) => {
+              const { data, error } = await supabase.rpc("create_room", {
+                p_project_id: parseInt(project.id),
+                p_name: params[0] ?? null,
+                p_code: parseInt(params[1]) ?? null,
+                p_share_code: parseInt(params[2]) ?? null,
+              });
+              if (error) return error.message;
+              // TODO: save new room data to to zustand
+              info({ message: JSON.stringify(data) });
             },
             inputs: [
               {
@@ -151,7 +140,8 @@ export default function LearningProject({ navigation, route }) {
                 label: "Password",
                 type: "number",
                 icon: "key",
-                helperText: "A password required to join. Leave blank for no password.",
+                helperText:
+                  "A password required to join. Leave blank for no password.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },
@@ -159,7 +149,8 @@ export default function LearningProject({ navigation, route }) {
                 label: "Join Code",
                 type: "number",
                 icon: "share-circle",
-                helperText: "A code to enter this room directly. This also bypasses the password. Leave blank for no join code.",
+                helperText:
+                  "A code to enter this room directly. This also bypasses the password. Leave blank for no join code.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },
@@ -168,7 +159,6 @@ export default function LearningProject({ navigation, route }) {
                 type: "number",
                 icon: "account-group",
                 defaultValue: "2",
-                disabled: true,
               },
             ],
           });
