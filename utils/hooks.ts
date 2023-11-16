@@ -5,6 +5,7 @@ import {
   useDeleteMutation,
   useInsertMutation,
   useQuery,
+  useSubscription,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 
@@ -49,14 +50,16 @@ export function useUsername(uid?: string) {
     ),
   );
 }
-export function useUserNames(userIds: string[]) {
-  return handleErrors(
-    useQuery(
-      supabase.rpc("get_usernames", {
-        user_ids: userIds,
-      }),
-    ),
-  );
+export function useUserNames(userIds: string[], refetchIndex?: number) {
+  const query = supabase.rpc("get_usernames", {
+    user_ids: userIds,
+  });
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  if (!refetchIndex) return { data, isLoading, error };
+  useEffect(() => {
+    mutate();
+  }, [refetchIndex]);
+  return { data, isLoading, error };
 }
 export function useFriendsList() {
   return handleErrors(useQuery(supabase.rpc("list_friends")));
@@ -68,6 +71,21 @@ export function useFriendsList() {
 export function useFriends() {
   return handleErrors(
     useQuery(supabase.from("friends").select("user_from_id,user_to_id")),
+  );
+}
+export function useSubscriptionFriends() {
+  return handleErrors(
+    useSubscription(
+      supabase,
+      `subscription_friends`,
+      {
+        event: "*",
+        table: "friends",
+        schema: "public",
+      },
+      ["user_from_id,user_to_id"],
+      { callback: (payload) => console.log(payload) },
+    ),
   );
 }
 export function useDeleteFriend() {

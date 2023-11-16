@@ -1,12 +1,13 @@
 import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { IconButton, Text, useTheme } from "react-native-paper";
+import { Checkbox, IconButton, Text, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { useUsername } from "../../utils/hooks";
+import { useState } from "react";
 /**
  * `getFriendIconUrl` - Returns a URL for a friend's icon.
  * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
@@ -23,9 +24,12 @@ export default function FriendItem(props: {
   friend: string;
   onIconPress;
   onSecondIconPress?;
+  showCheckbox?: boolean;
+  onCheck?: () => void;
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const [checked, setChecked] = useState(false);
   const friendName = useUsername(props.friend).data;
   return (
     <View
@@ -37,6 +41,13 @@ export default function FriendItem(props: {
         },
       ]}
     >
+      {props.showCheckbox && (
+        <Checkbox
+          status={checked ? "checked" : "unchecked"}
+          onPress={props.onCheck? props.onCheck : () => {}}
+          color={theme.colors.primary}
+        />
+      )}
       <Image
         source={{ uri: getFriendIconUrl(props.friend) }}
         style={styles.profileIcon}
@@ -48,11 +59,11 @@ export default function FriendItem(props: {
         onPress={props.onIconPress}
       />
       {props.secondIcon && (
-      <IconButton
-        icon={props.secondIcon}
-        size={responsiveFontSize(3)}
-        onPress={props.onSecondIconPress}
-      />
+        <IconButton
+          icon={props.secondIcon}
+          size={responsiveFontSize(3)}
+          onPress={props.onSecondIconPress}
+        />
       )}
     </View>
   );

@@ -24,6 +24,7 @@ import {
   useDeleteFriend,
   useFriends,
   useInsertFriend,
+  useSubscriptionFriends,
   useUserNames,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -32,20 +33,15 @@ import { supabase } from "../supabase";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
-  const { confirm, alert, info } = useAlerts();
+  const { confirm, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  // const projects = ["Biology", "Psychology", "Computer Science"];
-  const [visible, setVisible] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState(null);
-  //const [pendingFriends, setPendingFriends] = useState([]);
-  const [snackbarText, setSnackbarText] = useState("");
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [friendPairs, setFriendPairs] = useState([]);
   const user = useAuth().user;
   const { data, error, isLoading } = useFriends();
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
+  //const { status } = useSubscriptionFriends();
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,
@@ -64,8 +60,6 @@ export default function ManageFriends({ navigation }) {
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
-
-  const [showAddFriendPopup, setShowAddFriendPopup] = useState(false);
   const allPossibleFriendIds = friendPairs.map((friendPair) =>
     friendPair.user_to_id === user.id
       ? friendPair.user_from_id
@@ -124,9 +118,6 @@ export default function ManageFriends({ navigation }) {
       ? false
       : friendPair.user_from_id === user.id,
   );
-  const toggleAddFriendPopup = () => {
-    setShowAddFriendPopup(!showAddFriendPopup);
-  };
 
   /**
    * `handleSearch` - Updates the search query state based on user input.
@@ -148,7 +139,7 @@ export default function ManageFriends({ navigation }) {
     if (!data) return;
     setFriendPairs(data);
   }, [data]);
-  if (error) return <LoadingOverlay visible={isLoading} />;
+  if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <ScrollView style={styles.container}>
       <View style={styles.innerContainer}>
@@ -309,38 +300,6 @@ export default function ManageFriends({ navigation }) {
           />
         </View>
       </View>
-
-      {/* Delete confirmation dialog */}
-      <Portal>
-        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-          <Dialog.Title>Delete Confirmation</Dialog.Title>
-          <Dialog.Content>
-            <Text>Are you sure you want to remove {selectedFriend}?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisible(false)}>Cancel</Button>
-            <Button onPress={() => deleteFriend(selectedFriend)}>Delete</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-
-      {/* Friend popup dialog */}
-      <AddFriend
-        showAddFriendPopup={showAddFriendPopup}
-        addFriend={addFriend}
-        close={() => {
-          toggleAddFriendPopup();
-        }}
-      />
-
-      {/* Snackbar - providing feedback to the user */}
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-      >
-        {snackbarText}
-      </Snackbar>
     </ScrollView>
   );
 }

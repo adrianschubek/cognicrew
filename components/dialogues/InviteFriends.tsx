@@ -20,25 +20,36 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../common/TextWithPlusButton";
 import InviteFriendDialog from "./InviteFriendDialog";
-import FriendItem2 from "../manageFriends/FriendItem2";
-import { useAlerts, useFriends, useFriendsList } from "../../utils/hooks";
+import { useAlerts, useFriendsList } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
+import FriendItem from "../manageFriends/FriendItem";
+import { use } from "chai";
 
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const [friends, setFriends] = useState([]);
-
   const projectId = useProjectStore((state) => state.projectId);
   const { error: errorAlert, success } = useAlerts();
-
+  const [projectMembers, setProjectMembers] = useState([]);
+  async function getProjectMembers() {
+    let { data, error } = await supabase.rpc("project_members", {
+      p_project_id: projectId,
+    });
+    if (error) console.log(error);
+    console.log("data", data);
+    return data;
+  } 
   const { data, error, isLoading } = useFriendsList();
   useEffect(() => {
     if (!data) return;
     setFriends(data);
   }, [data]);
+ useEffect(() => {
+  
+ }, []);
 
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -160,19 +171,19 @@ export default function InviteFriends({ navigation }) {
                   invitedFriends[friend] ? styles.invitedFriendItem : null,
                 ]}
               >
-                <IconButton
-                  icon={"close"}
-                  onPress={() => remove(friend.user_from_id)}
-                />
-                <FriendItem2
+                <FriendItem
                   key={index}
                   friend={friend.user_from_id}
-                  checked={checkedState[friend]}
                   onCheck={() => handleCheckboxChange(friend)}
                   icon="email-plus-outline"
                   onIconPress={() =>
                     // !invitedFriends[friend] && inviteFriend(friend)
                     invite(friend.user_from_id)
+                  }
+                  secondIcon="close"
+                  onSecondIconPress={() =>
+                     remove(friend.user_from_id)
+                    //getProjectMembers()
                   }
                 />
               </View>
