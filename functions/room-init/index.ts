@@ -16,7 +16,8 @@ serve(async (req) => {
 
     const { data, error } = await supabase.from("learning_projects")
       .select(`name,
-              sets(name,
+              sets(
+                name,
                 exercises(
                   id,
                   question,
