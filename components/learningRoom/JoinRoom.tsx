@@ -58,7 +58,8 @@ export default function JoinRoom({ navigation }) {
               },
             );
             if (error) errorAlert({ message: JSON.stringify(error) });
-            else info({ message: JSON.stringify(data) });
+            else console.log(JSON.stringify(data, null, 2));
+            // else info({ message: JSON.stringify(data) });
             // if (data) alert({ message: JSON.stringify(data.message) });
             // else alert({ title: "Error", message: JSON.stringify(error) });
           }}

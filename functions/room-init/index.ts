@@ -13,8 +13,25 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
-      throw new Error("LOLOL")
-    const { data, error } = await supabase.from("profiles").select("*");
+
+    const { data, error } = await supabase.from("learning_projects")
+      .select(`name,
+              sets(name,
+                exercises(
+                  id,
+                  question,
+                  answers_exercises(
+                    id,
+                    answer,
+                    is_correct
+                  )
+                ),
+                flashcards(
+                  id,
+                  question,
+                  answer
+                )
+              )`); // .eq("id",projectId)
 
     if (error) {
       throw error;
