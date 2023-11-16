@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useQuery, useSubscription } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../../supabase";
 import { useAlerts } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";

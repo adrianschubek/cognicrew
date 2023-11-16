@@ -1,19 +1,16 @@
 import { useAuth } from "../providers/AuthProvider";
 import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
-  useDeleteItem,
   useDeleteMutation,
   useInsertMutation,
   useQuery,
   useSubscription,
-  useUpsertMutation,
+  useUpsertMutation
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { ifMod } from "./common";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { ManagementType } from "../types/common";
-import { get } from "cypress/types/lodash";
 
 /**
  * Handles errors thrown by the given supabase query.

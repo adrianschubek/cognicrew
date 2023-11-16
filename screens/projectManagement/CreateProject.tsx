@@ -55,8 +55,8 @@ export default function CreateProject({
       confirm({
         title: "Discard changes?",
         message:
-          "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        okText: "Discard",
+          "All unsaved changes will be lost. Do you want to continue?",
+        okText: "Continue",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
@@ -134,8 +134,20 @@ export default function CreateProject({
         });
       },
       onError: (error) => {
+        let err = "";
+        switch (error.message) {
+          case 'new row for relation "learning_projects" violates check constraint "check_group_format"':
+            err =
+              "Invalid semester. Please use the format 'Summer XXXX' or 'Winter XX/YY'.";
+            break;
+          case 'new row for relation "learning_projects" violates check constraint "learning_projects_name_check"':
+            err = "Please enter a title between 2 and 99 characters.";
+            break;
+          default:
+            err = error.message;
+        }
         errorAlert({
-          message: error.message,
+          message: err,
         });
       },
     },

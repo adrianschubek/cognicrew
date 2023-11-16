@@ -3,8 +3,9 @@ import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts } from "../utils/hooks";
-import { NAVIGATION } from "../types/common";
+import { useAlerts } from "../../utils/hooks";
+import { NAVIGATION } from "../../types/common";
+import { useRoomStore } from "../../stores/RoomStore";
 
 export default function Lobby() {
   const theme = useTheme();
@@ -12,6 +13,9 @@ export default function Lobby() {
   // TODO: if owner exists this screen. delete room rpc(delete_room) !!!
   //TODO: in database: cron auto cleanup rooms after X minutes
   // TODO: maybe delte immediately after lobby started from rooms table. and use room_code in profiles table?
+
+  const room = useRoomStore((state) => state.room);
+  const roomState = useRoomStore((state) => state.roomState);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -36,6 +40,8 @@ export default function Lobby() {
     });
   }, []);
 
+  // TODO: is user is owner show host lobby view (list users, select game, close)
+  // TODO: oncreate room call db fucntion to insert public_room_state
   return (
     <SafeAreaView
       style={{
