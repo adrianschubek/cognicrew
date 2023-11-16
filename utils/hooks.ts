@@ -52,7 +52,6 @@ export function useUserNames(userIds: string[], refetchIndex?: number) {
     user_ids: userIds,
   });
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
-  if (!refetchIndex) return { data, isLoading, error };
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
@@ -196,11 +195,9 @@ export function useSets(
     .eq("project_id", projectId);
 
   const { data, isLoading, error, mutate } = useQuery(query);
-  if (!refetchIndex) return { data, isLoading, error };
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
-
   return { data, isLoading, error };
 }
 export function useDeleteSet() {
