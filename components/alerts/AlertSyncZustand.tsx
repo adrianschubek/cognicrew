@@ -1,5 +1,6 @@
 import {
   Button,
+  Card,
   Dialog,
   HelperText,
   Portal,
@@ -21,6 +22,7 @@ export default function AlertSyncZustand() {
   const next = useAlertsStore((state) => state.next);
 
   const [inputValues, setInputValues] = useState<string[]>([]); // fixed by [""]
+  const [tempError, setTempError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!activeAlert && alerts?.length > 0) {
@@ -35,6 +37,7 @@ export default function AlertSyncZustand() {
           ? activeAlert.inputs.map((field) => field.defaultValue ?? "")
           : [],
       );
+      setTempError(() => null);
     }
   }, [activeAlert]);
 
@@ -50,7 +53,9 @@ export default function AlertSyncZustand() {
   const {
     icon,
     title,
+    titleStyle,
     message,
+    messageStyle,
     okAction,
     cancelAction,
     okText,
@@ -72,16 +77,24 @@ export default function AlertSyncZustand() {
         )}
         {title && (
           <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
-            <Text style={{ color: theme.colors.primary }} variant="titleLarge">
+            <Text
+              style={{ color: theme.colors.primary, ...(titleStyle as {}) }}
+              variant="titleLarge"
+            >
               {title}
             </Text>
           </Dialog.Title>
         )}
         {(message || inputs?.length !== 0) && (
           <>
-            <Dialog.Content style={{ marginTop: !title ? 15 : undefined }}>
+            <Dialog.Content
+              style={{ marginTop: !title ? (icon ? 15 : 40) : undefined }}
+            >
               {message && (
-                <Text style={{ textAlign: "center" }} variant="bodyMedium">
+                <Text
+                  style={{ textAlign: "center", ...(messageStyle as {}) }}
+                  variant="bodyMedium"
+                >
                   {message}
                 </Text>
               )}
@@ -126,6 +139,29 @@ export default function AlertSyncZustand() {
                         </HelperText>
                       )}
                     </>
+                  ) : field.type === "button" ? (
+                    <>
+                      <Button
+                        onPress={async () => {
+                          const ret = await field.action(inputValues);
+                          if (typeof ret === "string") {
+                            setTempError(ret);
+                            return;
+                          }
+                          next();
+                        }}
+                        disabled={field.disabled}
+                        style={{ marginTop: 10 }}
+                        mode="contained-tonal"
+                      >
+                        {field.label}
+                      </Button>
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                    </>
                   ) : (
                     <>
                       <TextInput
@@ -167,12 +203,33 @@ export default function AlertSyncZustand() {
             </Dialog.Content>
           </>
         )}
+        {tempError && (
+          <Dialog.Content>
+            <Card
+              mode="outlined"
+              theme={{
+                colors: {
+                  outline: theme.colors.onError,
+                  surface: theme.colors.error,
+                },
+              }}
+            >
+              <Card.Content>
+                <Text style={{ color: theme.colors.onError }}>{tempError}</Text>
+              </Card.Content>
+            </Card>
+          </Dialog.Content>
+        )}
         {(okText !== "" || cancelText !== "") && (
           <Dialog.Actions>
             {cancelText !== "" && (
               <Button
-                onPress={() => {
-                  cancelAction(inputValues);
+                onPress={async () => {
+                  const ret = await cancelAction(inputValues);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
                   next();
                 }}
               >
@@ -181,8 +238,12 @@ export default function AlertSyncZustand() {
             )}
             {okText !== "" && (
               <Button
-                onPress={() => {
-                  okAction(inputValues);
+                onPress={async () => {
+                  const ret = await okAction(inputValues);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
                   next();
                 }}
                 disabled={inputs?.some(

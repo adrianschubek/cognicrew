@@ -1,30 +1,31 @@
 import { useAuth } from "../providers/AuthProvider";
 import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
-  useDeleteItem,
   useDeleteMutation,
   useInsertMutation,
   useQuery,
-  useUpsertMutation,
+  useUpsertMutation
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { ifMod } from "./common";
-import { useCallback, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { ManagementType } from "../types/common";
 
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
  */
-function handleErrors<T>(fn: T): T {
+function handleErrors<T>(
+  fn: T,
+  getErrorMessage: (errorMsg: string) => string = (errorMsg) => errorMsg,
+): T {
   const { error: errorAlert } = useAlerts();
   // @ts-expect-error fn.error always exists
   if (fn.error) {
     // @ts-expect-error
-    errorAlert({ title: "Error", message: fn.error.message });
+    errorAlert({ title: "Error", message: getErrorMessage(fn.error.message) });
     // @ts-expect-error
-    console.log("[handleErrors] " + fn.error.message);
+    console.log("[handleErrors] " + getErrorMessage(fn.error.message));
   }
   return fn;
 }
@@ -82,6 +83,11 @@ export function useInsertFriend() {
       ["user_from_id", "user_to_id"],
       "user_from_id,user_to_id",
     ),
+    (error) => {
+      if (error.includes("duplicate key value violates unique constraint")) {
+        return "You are already friends with this user.";
+      } else return error;
+    },
   );
 }
 
@@ -307,7 +313,10 @@ export function useAlerts() {
 
   return {
     alert: (config: Partial<Alert>) => {
-      dispatch(config);
+      dispatch({
+        icon: "",
+        ...config,
+      });
     },
     /**
      * Creates a success alert using the given config.
@@ -335,7 +344,7 @@ export function useAlerts() {
     },
     info: (config: Partial<Alert>) => {
       dispatch({
-        icon: "information",
+        icon: "information-outline",
         title: "Info",
         ...config,
       });

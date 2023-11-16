@@ -11,9 +11,11 @@ import { useState } from "react";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { NAVIGATION } from "../../types/common";
+import { useAlerts } from "../../utils/hooks";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
+  const { alert } = useAlerts();
   return (
     <React.Fragment>
       <Text style={[styles.container, { textAlign: "center" }]}>
@@ -44,8 +46,17 @@ export default function JoinRoom({ navigation }) {
         <Button
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
-          onPress={() => {
+          onPress={async () => {
             // TODO:
+            const { data, error } = await supabase.functions.invoke("hello", {
+              body: {
+                foo: "bar",
+              },
+              method: "POST",
+            });
+            console.log(data, error);
+            // if (data) alert({ message: JSON.stringify(data.message) });
+            // else alert({ title: "Error", message: JSON.stringify(error) });
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >

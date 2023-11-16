@@ -287,6 +287,31 @@ export interface Database {
           }
         ]
       }
+      private_room_states: {
+        Row: {
+          created_at: string
+          data: Json | null
+          room_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          room_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "private_room_states_room_id_fkey"
+            columns: ["room_id"]
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       profiles: {
         Row: {
           id: string
@@ -352,6 +377,31 @@ export interface Database {
           }
         ]
       }
+      public_room_states: {
+        Row: {
+          created_at: string
+          data: Json
+          room_id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          room_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "public_room_states_room_id_fkey"
+            columns: ["room_id"]
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       rooms: {
         Row: {
           code: number | null
@@ -359,10 +409,12 @@ export interface Database {
           host: string
           id: string
           is_ingame: boolean
+          is_private: boolean
           max_size: number
           name: string | null
           project_id: number | null
           secret_key: string
+          share_code: number | null
         }
         Insert: {
           code?: number | null
@@ -370,10 +422,12 @@ export interface Database {
           host: string
           id?: string
           is_ingame?: boolean
+          is_private?: boolean
           max_size?: number
           name?: string | null
           project_id?: number | null
           secret_key?: string
+          share_code?: number | null
         }
         Update: {
           code?: number | null
@@ -381,10 +435,12 @@ export interface Database {
           host?: string
           id?: string
           is_ingame?: boolean
+          is_private?: boolean
           max_size?: number
           name?: string | null
           project_id?: number | null
           secret_key?: string
+          share_code?: number | null
         }
         Relationships: [
           {
@@ -538,8 +594,15 @@ export interface Database {
           p_project_id: number
           p_code: number
           p_name: string
+          p_share_code: number
         }
         Returns: Record<string, unknown>
+      }
+      delete_friend: {
+        Args: {
+          p_other_userid: string
+        }
+        Returns: boolean
       }
       delete_room: {
         Args: {
@@ -547,11 +610,39 @@ export interface Database {
         }
         Returns: undefined
       }
+      get_usernames: {
+        Args: {
+          user_ids: string[]
+        }
+        Returns: unknown
+      }
       getUsername: {
         Args: {
           user_id: string
         }
         Returns: string
+      }
+      invite_user_to_project: {
+        Args: {
+          p_project_id: number
+          p_other_user_id: string
+        }
+        Returns: undefined
+      }
+      join_room: {
+        Args: {
+          p_room_id: number
+          p_room_code: number
+        }
+        Returns: Record<string, unknown>
+      }
+      list_friends: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          user_from_id: string
+          user_to_id: string
+        }[]
       }
       list_rooms: {
         Args: Record<PropertyKey, never>
@@ -562,6 +653,25 @@ export interface Database {
           protected: boolean
           host: string
         }[]
+      }
+      quick_join_room: {
+        Args: {
+          p_share_code: number
+        }
+        Returns: Record<string, unknown>
+      }
+      remove_user_from_project: {
+        Args: {
+          p_project_id: number
+          p_other_user_id: string
+        }
+        Returns: undefined
+      }
+      search_user: {
+        Args: {
+          search_query: string
+        }
+        Returns: Record<string, unknown>
       }
     }
     Enums: {

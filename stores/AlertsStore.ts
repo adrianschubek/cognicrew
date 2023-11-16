@@ -1,3 +1,4 @@
+import { StyleProp, TextStyle } from "react-native";
 import { create } from "zustand";
 
 type AlertInput = {
@@ -28,7 +29,7 @@ type AlertInput = {
   /**
    * The type of the input.
    */
-  type: "text" | "number" | "password" | "checkbox";
+  type: "text" | "number" | "password" | "checkbox" | "button";
   /**
    * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
    */
@@ -41,6 +42,16 @@ type AlertInput = {
    * Whether or not the input is disabled.
    */
   disabled?: boolean;
+  /**
+   * The action to perform when the button is clicked.
+   *
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
+   *
+   * Only applicable if `type` is `button`.
+   */
+  action: (inputValues: string[]) => string | void | Promise<string | void>;
 };
 
 export type Alert = {
@@ -53,9 +64,17 @@ export type Alert = {
    */
   title: string;
   /**
+   * Custom style for the title.
+   */
+  titleStyle: StyleProp<TextStyle>;
+  /**
    * The message of the alert.
    */
   message: string;
+  /**
+   * Custom style for the message.
+   */
+  messageStyle: StyleProp<TextStyle>;
   /**
    * The text to display on the "OK" button.
    */
@@ -70,12 +89,22 @@ export type Alert = {
   dismissable: boolean;
   /**
    * The action to perform when the "OK" button is clicked.
+   *
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
    */
-  okAction: (inputValues: string[]) => void;
+  okAction: (inputValues: string[]) => string | void | Promise<string | void>;
   /**
    * The action to perform when the "Cancel" button is clicked.
+   *
+   * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
+   *
+   * Return an empty string to keep the input open without displaying an error.
    */
-  cancelAction: (inputValues: string[]) => void;
+  cancelAction: (
+    inputValues: string[],
+  ) => string | void | Promise<string | void>;
   /**
    * The inputs to display in the alert.
    * @see AlertInput
@@ -86,7 +115,9 @@ export type Alert = {
 export const DEFAULT_ALERT: Alert = {
   icon: "information-outline",
   title: "",
+  titleStyle: {},
   message: "",
+  messageStyle: {},
   okText: "OK",
   cancelText: "",
   dismissable: true,
@@ -106,6 +137,7 @@ export const DEFAULT_ALERT_INPUT: AlertInput = {
   type: "text",
   errorText: "",
   disabled: false,
+  action: () => {},
 };
 
 type AlertsStoreType = {
@@ -127,6 +159,11 @@ type AlertsStoreType = {
   next: () => void;
 };
 
+/**
+ * internal. do not use.
+ * 
+ * @see Use `const { alert } = useAlerts();` instead.
+ */
 export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
   activeAlert: null,
   alerts: [],

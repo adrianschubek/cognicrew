@@ -36,7 +36,30 @@ export default function ProjectGroups() {
     },
   );
   // const [data, setData] = useState(null);
-  // FIXME: useSubscription() TODO
+  // FIXME: useSubscription
+
+  useEffect(() => {
+    const realtimeProjects = supabase
+      .channel("projects_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "user_learning_projects" },
+        (payload) => {
+          console.log("Change received!", payload);
+          mutate(); // eskalation
+        },
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "learning_projects" },
+        (payload) => {
+          console.log("Change received!", payload);
+          // trigger refetch useQuery
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
 
   // latest to oldest algorithm: "Winter 2023/24" > "Summer 2023" => +1
   useEffect(() => {
