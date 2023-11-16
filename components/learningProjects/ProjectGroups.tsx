@@ -136,7 +136,7 @@ export default function ProjectGroups() {
                       style={styles.avatar}
                       size={responsiveFontSize(10)}
                       label={project.name.substring(0, 2)}
-                      theme={{ colors: { primary: getRandomColor() } }}
+                      theme={{ colors: { primary: getRandomColor(project.name) } }}
                     />
                     <Text style={styles.textStyle}>
                       {project.name.length > 32

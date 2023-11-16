@@ -12,7 +12,10 @@ export function ifMod<T>(
   }
 }
 
-export function getRandomColor(): string {
+/**
+ * Returns the same color for the same input string.
+ */
+export function getRandomColor(str: string = ""): string {
   const materialColorsHex = [
     "#F44336",
     "#E91E63",
@@ -35,6 +38,20 @@ export function getRandomColor(): string {
     "#607D8B",
   ] as const;
 
-  const randomIndex = Math.floor(Math.random() * materialColorsHex.length);
-  return materialColorsHex[randomIndex];
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // Ensure the hash is positive
+  hash = Math.abs(hash);
+
+  // Map the hash to an index in materialColorsHex array
+  const index = hash % materialColorsHex.length;
+
+  // Return the color corresponding to the index
+  return materialColorsHex[index];
+  
+  // const randomIndex = Math.floor(Math.random() * materialColorsHex.length);
+  // return materialColorsHex[randomIndex];
 }

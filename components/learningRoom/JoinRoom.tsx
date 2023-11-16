@@ -62,6 +62,8 @@ export default function JoinRoom({ navigation }) {
             // else info({ message: JSON.stringify(data) });
             // if (data) alert({ message: JSON.stringify(data.message) });
             // else alert({ title: "Error", message: JSON.stringify(error) });
+
+            // useSWR
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >
