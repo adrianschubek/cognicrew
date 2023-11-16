@@ -13,7 +13,7 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
     );
-
+      throw new Error("LOLOL")
     const { data, error } = await supabase.from("profiles").select("*");
 
     if (error) {

@@ -15,7 +15,7 @@ import { useAlerts } from "../../utils/hooks";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
-  const { alert } = useAlerts();
+  const { alert, error: errorAlert, info } = useAlerts();
   return (
     <React.Fragment>
       <Text style={[styles.container, { textAlign: "center" }]}>
@@ -48,13 +48,17 @@ export default function JoinRoom({ navigation }) {
           mode="contained"
           onPress={async () => {
             // TODO: debug
-            const { data, error } = await supabase.functions.invoke("room-init", {
-              body: {
-                foo: "bar",
+            const { data, error } = await supabase.functions.invoke(
+              "room-init",
+              {
+                body: {
+                  foo: "bar",
+                },
+                method: "POST",
               },
-              method: "POST",
-            });
-            console.log(data, error);
+            );
+            if (error) errorAlert({ message: JSON.stringify(error) });
+            else info({ message: JSON.stringify(data) });
             // if (data) alert({ message: JSON.stringify(data.message) });
             // else alert({ title: "Error", message: JSON.stringify(error) });
           }}
