@@ -12,7 +12,7 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-nat
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 
-export default function Lobby() {
+export default function Lobby({navigation}) {
   const theme = useTheme();
   const { confirm } = useAlerts();
 
@@ -22,8 +22,6 @@ export default function Lobby() {
   const [userList, setUserList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const navigation = useNavigation();
 
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
 
