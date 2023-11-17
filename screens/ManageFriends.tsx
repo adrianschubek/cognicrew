@@ -119,7 +119,8 @@ export default function ManageFriends({ navigation }) {
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container}
+    nestedScrollEnabled={true}>
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Manage Friends</Text>
@@ -172,7 +173,8 @@ export default function ManageFriends({ navigation }) {
             value={searchQuery}
             placeholder="Search friends"
           />
-          <ScrollView style={styles.friendsListContainer}>
+          <ScrollView style={styles.friendsListContainer}
+           nestedScrollEnabled={true}>
             {searchFilterFriends.map((friend, index) => (
               <FriendItem
                 key={index}
@@ -323,6 +325,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   friendsListContainer: {
-    //maxHeight: responsiveHeight(37.5),
+    maxHeight: responsiveHeight(37.5),
   },
 });

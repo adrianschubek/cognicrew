@@ -185,7 +185,7 @@ export default function InviteFriends({ navigation }) {
               let isMember = projectMembers
                 .map((member) => member.user_id)
                 .includes(friend.id);
-                console.log(isMember);
+                //console.log(isMember);
               return (
                 <FriendItem
                   key={index}
