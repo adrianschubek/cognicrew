@@ -19,6 +19,7 @@ import {
   useExercises,
   useFlashcards,
 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
 export default function AccordionListItems({
   type,
@@ -28,15 +29,29 @@ export default function AccordionListItems({
   [name: string]: any;
 }) {
   const theme = useTheme();
-  const { data, isLoading, error } =
+  const { data, isLoading, error, mutate } =
     type === ManagementType.FLASHCARD
       ? useFlashcards(setId)
       : useExercises(setId);
-  //doesn't update if new sets are added to the project, useEffect counterproductive? How to fix? through a listener?
+
   useEffect(() => {
     if (!data) return;
     setContent(data);
   }, [data]);
+  
+  useEffect(() => {
+    const realtimeFlashcardsOrExercises = supabase
+      .channel("flashcards_or_exercises_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: type === ManagementType.FLASHCARD ? "flashcards": "exercises" },
+        (payload) => {
+          console.log("Change received!", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
   const [content, setContent] = useState([]);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return content.map((listItem) => (

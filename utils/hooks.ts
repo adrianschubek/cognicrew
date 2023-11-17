@@ -48,13 +48,12 @@ export function useUsername(uid?: string) {
   );
 }
 
-export async function useUsernamesByRoom(roomId?: string) { 
-let { data, error } = await supabase
-.rpc('list_room_members');
+export async function useUsernamesByRoom(roomId?: string) {
+  let { data, error } = await supabase.rpc("list_room_members");
 
-if (error) console.error(error)
-else console.log(data)
-return {data, error};
+  if (error) console.error(error);
+  else console.log(data);
+  return { data, error };
 }
 
 export function useRoomByUserId(userId?: string) {
@@ -204,7 +203,7 @@ export function useSets(
     .eq("type", type)
     .eq("project_id", projectId);
 
-  const { data, isLoading, error, mutate } = useQuery(query);
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
@@ -219,14 +218,15 @@ export function useUpsertSet() {
   );
 }
 export function useFlashcards(setId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("flashcards")
-        .select("id,question,answer,priority,set_id")
-        .eq("set_id", setId),
-    ),
-  );
+  const query = supabase
+    .from("flashcards")
+    .select("id,question,answer,priority,set_id")
+    .eq("set_id", setId);
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, []);
+  return { data, isLoading, error, mutate };
 }
 
 export function useFlashcardsMultipleSets(
@@ -254,15 +254,17 @@ export function useUpsertFlashcard() {
   );
 }
 export function useExercises(setId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("exercises")
-        .select("id,question,priority,set_id")
-        .eq("set_id", setId),
-    ),
-  );
+  const query = supabase
+    .from("exercises")
+    .select("id,question,priority,set_id")
+    .eq("set_id", setId);
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, []);
+  return { data, isLoading, error, mutate };
 }
+
 export function useUpsertExercise() {
   return handleErrors(
     useUpsertMutation(
