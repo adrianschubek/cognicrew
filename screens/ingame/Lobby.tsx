@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts } from "../../utils/hooks";
 import { NAVIGATION } from "../../types/common";
-import { useRoomStore } from "../../stores/RoomStore";
+import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
+import { supabase } from "../../supabase";
 
 export default function Lobby() {
   const theme = useTheme();
@@ -15,8 +16,10 @@ export default function Lobby() {
   // TODO: maybe delte immediately after lobby started from rooms table. and use room_code in profiles table?
 
   const room = useRoomStore((state) => state.room);
-  const roomState = useRoomStore((state) => state.roomState);
+  const roomState = useRoomStateStore((state) => state.roomState);
   const setRoom = useRoomStore((state) => state.setRoom);
+
+  // TODO: Realtime subscription filter -> = room.id
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -32,8 +35,9 @@ export default function Lobby() {
         title: "Leave room?",
         message: "Are you sure you want to leave this room?",
         okText: "Leave",
-        okAction: () => {
-          // TODO: Leave room server rpc
+        okAction: async () => {
+          const { error } = await supabase.rpc("leave_room");
+          if (error) return error.message;
           setRoom(null);
         },
       });
@@ -71,8 +75,9 @@ export default function Lobby() {
             title: "Leave room?",
             message: "Are you sure you want to leave this room?",
             okText: "Leave",
-            okAction: () => {
-              // TODO: Leave room server rpc
+            okAction: async () => {
+              const { error } = await supabase.rpc("leave_room");
+              if (error) return error.message;
               setRoom(null);
             },
           })

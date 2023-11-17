@@ -52,17 +52,21 @@ export type PublicRoomState = {
  */
 export type PrivateRoomState = {
   gameData: {
-    questions: {
-      id: number;
-      question: string;
-      answers: string[];
-      correct: number[];
-    }[];
-    flashcards: {
-      id: number;
-      question: string;
-      answer: string;
-    }[];
+    // questions: {
+    //   id: number;
+    //   question: string;
+    //   answers: string[];
+    //   correct: number[];
+    // }[];
+    // flashcards: {
+    //   id: number;
+    //   question: string;
+    //   answer: string;
+    // }[];
+    sets: any; /**
+
+
+    **/
     /**
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
@@ -94,3 +98,115 @@ export type PrivateRoomState = {
     whiteboard: {}; //
   }[];
 };
+
+
+
+/**
+ * sets
+ * 
+ * {
+  "data": [
+    {
+      "id": 175,
+      "name": "9999",
+      "sets": [
+        {
+          "name": "Mathe",
+          "exercises": [],
+          "flashcards": [
+            {
+              "id": 37,
+              "question": "Uii",
+              "answer": "Oppo"
+            }
+          ]
+        },
+        {
+          "name": "Test",
+          "exercises": [
+            {
+              "id": 66,
+              "question": "Hffg",
+              "answers_exercises": [
+                {
+                  "id": 114,
+                  "answer": "Hgg",
+                  "is_correct": false
+                },
+                {
+                  "id": 115,
+                  "answer": "",
+                  "is_correct": false
+                },
+                {
+                  "id": 116,
+                  "answer": "",
+                  "is_correct": false
+                },
+                {
+                  "id": 117,
+                  "answer": "",
+                  "is_correct": false
+                }
+              ]
+            },
+            {
+              "id": 56,
+              "question": "1+1?",
+              "answers_exercises": [
+                {
+                  "id": 83,
+                  "answer": "",
+                  "is_correct": true
+                },
+                {
+                  "id": 85,
+                  "answer": "2",
+                  "is_correct": true
+                },
+                {
+                  "id": 84,
+                  "answer": "3",
+                  "is_correct": false
+                },
+                {
+                  "id": 82,
+                  "answer": "",
+                  "is_correct": true
+                }
+              ]
+            },
+            {
+              "id": 57,
+              "question": "9999",
+              "answers_exercises": [
+                {
+                  "id": 88,
+                  "answer": "999",
+                  "is_correct": true
+                },
+                {
+                  "id": 87,
+                  "answer": "8888",
+                  "is_correct": false
+                },
+                {
+                  "id": 89,
+                  "answer": "",
+                  "is_correct": false
+                },
+                {
+                  "id": 86,
+                  "answer": "",
+                  "is_correct": false
+                }
+              ]
+            }
+          ],
+          "flashcards": []
+        }
+      ]
+    }
+  ]
+}
+ */
