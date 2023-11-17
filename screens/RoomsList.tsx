@@ -6,7 +6,6 @@ import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
-import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
@@ -22,7 +21,7 @@ function Room({ room }) {
     <>
       <TouchableOpacity
         onPress={() => {
-          if (room.host === username)
+          if (room.host === user.id)
             return info({
               title: "Already connected",
               message: "You already joined this room.",
