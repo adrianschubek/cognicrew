@@ -13,11 +13,11 @@ import {
   useDeleteFriend,
   useFriends,
   useInsertFriend,
-  useSubscriptionFriends,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
+import { useSubscription } from "@supabase-cache-helpers/postgrest-swr";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -25,13 +25,16 @@ export default function ManageFriends({ navigation }) {
   const { confirm, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friendPairs, setFriendPairs] = useState([]);
+  const [friendRequestsSent, setFriendRequestsSent] = useState([]);
+  const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
+  //const [friendPairs, setFriendPairs] = useState([]);
+  //const { friendPairs } = useSubscriptionFriends();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
   const [refetchIndex, setRefetchIndex] = useState(0);
   const { data, error, isLoading } = useFriends(refetchIndex);
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
-  const { status } = useSubscriptionFriends();
+
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,
@@ -54,17 +57,6 @@ export default function ManageFriends({ navigation }) {
   }
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
-  );
-  // FriendPairs of friends
-  const filteredFriendPairs = friendPairs.filter((friendPair) =>
-    // filter out friends that have not received a friend request
-    friendPair.user_from_id !== user.id
-      ? false
-      : friendPairs.some(
-          (friendPair2) =>
-            friendPair2.user_from_id === friendPair.user_to_id &&
-            friendPair2.user_to_id === friendPair.user_from_id,
-        ),
   );
   const searchFilterFriends =
     friendIdsAndNamesData &&
@@ -103,6 +95,31 @@ export default function ManageFriends({ navigation }) {
       setProjectQuery(query);
     }
   };
+  /*
+  function useSubscriptionFriends() {
+    const [friendPairs, setFriendPairs] = useState([]);
+  
+    useSubscription(
+      supabase,
+      `subscription_friends`,
+      {
+        event: "*",
+        table: "friends",
+        schema: "public",
+      },
+      ["user_from_id,user_to_id"],
+      {
+        callback: (payload) => {
+          console.log(payload);
+          // Update friendPairs with the new data
+          setFriendPairs(payload.new as string[]);
+        },
+      },
+    );
+  
+    return { friendPairs };
+  }
+  */
   useEffect(() => {
     const fetchData = async () => {
       const { data } = await friendIdsAndNames();
@@ -112,8 +129,11 @@ export default function ManageFriends({ navigation }) {
   }, [data]);
   useEffect(() => {
     if (!data) return;
-    setFriendPairs(data);
+    //setFriendPairs(data);
+    setFriendRequestsSent(filterForPendingFriends(data, "sent")),
+    setFriendRequestsReceived(filterForPendingFriends(data, "received")); 
   }, [data]);
+
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <ScrollView style={styles.container}>
@@ -198,22 +218,18 @@ export default function ManageFriends({ navigation }) {
         </View>
 
         {/* Pending friends list */}
-        {filterForPendingFriends(friendPairs, "received").length > 0 && (
+        {friendRequestsReceived.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
-            {filterForPendingFriends(friendPairs, "received").map(
+            {friendRequestsReceived.map(
               (friend, index) => (
                 <FriendItem
                   key={index}
                   icon="check"
                   secondIcon="close-circle"
-                  friend={
-                    friend.user_from_id === user.id
-                      ? friend.user_to_id
-                      : friend.user_from_id
-                  }
+                  friend={friend.user_from_id}
                   onIconPress={() =>
                     addFriend({
                       //@ts-expect-error
@@ -238,21 +254,17 @@ export default function ManageFriends({ navigation }) {
             <Divider style={styles.divider} />
           </View>
         )}
-        {filterForPendingFriends(friendPairs, "sent").length > 0 && (
+        {friendRequestsSent.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
-            {filterForPendingFriends(friendPairs, "sent").map(
+            {friendRequestsSent.map(
               (friend, index) => (
                 <FriendItem
                   key={index}
                   icon="close-circle"
-                  friend={
-                    friend.user_from_id === user.id
-                      ? friend.user_to_id
-                      : friend.user_from_id
-                  }
+                  friend={friend.user_to_id}
                   onIconPress={() => {
                     info({
                       //icon: "information-outline",
@@ -336,6 +348,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   friendsListContainer: {
-    maxHeight: responsiveHeight(37.5),
+    //maxHeight: responsiveHeight(37.5),
   },
 });
