@@ -21,12 +21,14 @@ import { supabase } from "../supabase";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
+  const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
   const [friendPairs, setFriendPairs] = useState([]);
-  const user = useAuth().user;
-  const { data, error, isLoading } = useFriends();
+  const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
+  const [refetchIndex, setRefetchIndex] = useState(0);
+  const { data, error, isLoading } = useFriends(refetchIndex);
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
   const { status } = useSubscriptionFriends();
@@ -64,8 +66,6 @@ export default function ManageFriends({ navigation }) {
             friendPair2.user_to_id === friendPair.user_from_id,
         ),
   );
-  const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
-
   const searchFilterFriends =
     friendIdsAndNamesData &&
     friendIdsAndNamesData
@@ -73,6 +73,7 @@ export default function ManageFriends({ navigation }) {
         return e.username.toLowerCase().includes(searchQuery.toLowerCase());
       })
       .map((e) => e.id);
+
   function filterForPendingFriends(
     friendPairs,
     direction: "sent" | "received",
@@ -184,7 +185,9 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriend(friend);
+                      deleteFriend(friend).then(() =>
+                        setRefetchIndex((i) => i + 1),
+                      );
                     },
                   });
                 }}

@@ -5,7 +5,7 @@ import {
   useInsertMutation,
   useQuery,
   useSubscription,
-  useUpsertMutation
+  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
@@ -62,12 +62,15 @@ export function useFriendsList() {
 }
 /**
  * Returns all Friends.
- * @deprecated Use {@link useFriendsList} instead.
+ * @see Use {@link useFriendsList} instead if you only want tuples non pending friends.
  */
-export function useFriends() {
-  return handleErrors(
-    useQuery(supabase.from("friends").select("user_from_id,user_to_id")),
-  );
+export function useFriends(refetchIndex?: number) {
+  const query = supabase.from("friends").select("user_from_id,user_to_id");
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, [refetchIndex]);
+  return { data, isLoading, error };
 }
 export function useSubscriptionFriends() {
   return handleErrors(
