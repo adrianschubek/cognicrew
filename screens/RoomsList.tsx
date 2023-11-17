@@ -4,11 +4,97 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
+
+function Room({ room }) {
+  const theme = useTheme();
+  const focus = useIsFocused();
+  const { data: username } = useUsername();
+  const { confirm, info } = useAlerts();
+  const setRoom = useRoomStore((state) => state.setRoom);
+  return (
+    <>
+      <TouchableOpacity
+        onPress={() => {
+          if (room.host === username)
+            return info({
+              title: "Already connected",
+              message: "You already joined this room.",
+            });
+          confirm({
+            icon: "location-enter",
+            title: room.name,
+            message: `Do you want to join this room hosted by ${room.hostname}?`,
+            okText: "Join",
+            okAction: async (vars) => {
+              const { data, error } = await supabase.rpc("join_room", {
+                p_room_code: vars[0] ?? null,
+                p_room_id: room.id,
+              });
+
+              if (error) return error.message;
+              console.log(data);
+              setRoom(data);
+            },
+            inputs: room.protected && [
+              {
+                label: "Room Code",
+                helperText: "This room is protected",
+                type: "number",
+                icon: "key",
+                validator: (value) => value.length !== 0,
+                required: true,
+              },
+            ],
+          });
+        }}
+      >
+        <Card
+          mode="contained"
+          style={{
+            marginVertical: 5,
+            backgroundColor: theme.colors.primaryContainer,
+          }}
+        >
+          <Card.Content
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              paddingTop: 10,
+            }}
+          >
+            <Text>
+              {room.name ? room?.name?.substring(0, 45) : "Unnamed Room"}
+            </Text>
+          </Card.Content>
+          <Divider style={{ margin: 5 }} />
+          <Card.Content
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              paddingBottom: 10,
+            }}
+          >
+            <Text style={{ marginLeft: "auto" }}>
+              <Icon size={16} source={room.protected && "key"} />
+            </Text>
+            <Text style={{ marginLeft: 5 }}>
+              <Icon size={16} source={"shield-crown"} /> {room.hostname}
+            </Text>
+            <Text style={{ marginLeft: 5 }}>
+              <Icon size={16} source={"account"} /> {room.cursize}/
+              {room.maxsize}
+            </Text>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+    </>
+  );
+}
 
 export default function RoomsList({ navigation }) {
   const theme = useTheme();
@@ -21,12 +107,23 @@ export default function RoomsList({ navigation }) {
     isLoading,
     isValidating,
     mutate,
-  } = useQuery(supabase.rpc("list_rooms"), {
-    
-  });
+  } = useQuery(supabase.rpc("list_rooms"), {});
+
+  const [friends, setFriends] = useState([]);
+  const getFriends = async () => {
+    const { data, error } = await supabase.rpc("list_friends_ids_and_names");
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log(data);
+    setFriends(data.map((friend) => friend.id));
+  };
 
   // Cheating: check for updates on room_tracker then refetch rooms
   useEffect(() => {
+    getFriends();
     const roomsTracker = supabase
       .channel("list-rooms-tracker")
       .on(
@@ -34,12 +131,16 @@ export default function RoomsList({ navigation }) {
         { event: "*", schema: "public", table: "tracker" },
         (payload) => {
           mutate();
+          getFriends();
         },
       )
       .subscribe();
   }, []);
 
   if (isLoading) return <LoadingOverlay visible />;
+
+  const friendRooms = rooms.filter((room) => friends.includes(room.host));
+  const otherRooms = rooms.filter((room) => !friends.includes(room.host));
 
   return (
     <>
@@ -50,7 +151,10 @@ export default function RoomsList({ navigation }) {
         }}
       >
         <Text variant="titleMedium">Friend Rooms</Text>
-        {true && (
+        {friendRooms.map((room) => (
+          <Room key={room.id} room={room} />
+        ))}
+        {friendRooms.length === 0 && (
           <Card mode="contained">
             <Card.Content
               style={{ alignContent: "center", alignItems: "center" }}
@@ -60,86 +164,10 @@ export default function RoomsList({ navigation }) {
           </Card>
         )}
         <Text variant="titleMedium">All Rooms</Text>
-        {/* Freidns from */}
-
-        {rooms?.map((room) => (
-          <TouchableOpacity
-            onPress={() => {
-              if (room.host === username)
-                return info({
-                  title: "Already connected",
-                  message: "You already joined this room.",
-                });
-              confirm({
-                icon: "location-enter",
-                title: room.name,
-                message: `Do you want to join this room hosted by ${room.hostname}?`,
-                okText: "Join",
-                okAction: async (vars) => {
-                  const { data, error } = await supabase.rpc("join_room", {
-                    p_room_code: vars[0] ?? null,
-                    p_room_id: room.id,
-                  });
-
-                  if (error) return error.message;
-                  console.log(data);
-                  setRoom(data);
-                },
-                inputs: room.protected && [
-                  {
-                    label: "Room Code",
-                    helperText: "This room is protected",
-                    type: "number",
-                    icon: "key",
-                    validator: (value) => value.length !== 0,
-                    required: true,
-                  },
-                ],
-              });
-            }}
-            key={room.id}
-          >
-            <Card
-              mode="contained"
-              style={{
-                marginVertical: 5,
-                backgroundColor: theme.colors.primaryContainer,
-              }}
-            >
-              <Card.Content
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  paddingTop: 10,
-                }}
-              >
-                <Text>
-                  {room.name ? room?.name?.substring(0, 45) : "Unnamed Room"}
-                </Text>
-              </Card.Content>
-              <Divider style={{ margin: 5 }} />
-              <Card.Content
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  paddingBottom: 10,
-                }}
-              >
-                <Text style={{ marginLeft: "auto" }}>
-                  <Icon size={16} source={room.protected && "key"} />
-                </Text>
-                <Text style={{ marginLeft: 5 }}>
-                  <Icon size={16} source={"shield-crown"} /> {room.hostname}
-                </Text>
-                <Text style={{ marginLeft: 5 }}>
-                  <Icon size={16} source={"account"} /> {room.cursize}/
-                  {room.maxsize}
-                </Text>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
+        {otherRooms.map((room) => (
+          <Room key={room.id} room={room} />
         ))}
-        {rooms.length === 0 && (
+        {otherRooms.length === 0 && (
           <Card mode="contained">
             <Card.Content
               style={{ alignContent: "center", alignItems: "center" }}
@@ -173,24 +201,6 @@ export default function RoomsList({ navigation }) {
             title: "Coming soon",
             message: "This feature is coming soon.",
           });
-          // confirm({
-          //   icon: "location-enter",
-          //   title: "Join Room",
-          //   message: "Enter a room code",
-          //   okText: "Join",
-          //   okAction: (vars) => {
-          //     info({ message: JSON.stringify(vars) });
-          //     navigation.navigate(NAVIGATION.LOBBY);
-          //   },
-          //   inputs: [
-          //     {
-          //       label: "Room Code",
-          //       type: "number",
-          //       icon: "key",
-          //       validator: (value) => value.length !== 0,
-          //     },
-          //   ],
-          // });
         }}
         color={theme.colors.onPrimary}
         style={{
