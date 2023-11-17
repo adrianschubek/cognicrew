@@ -13,6 +13,7 @@ import { useSets } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
+import { supabase } from "../../supabase";
 
 export default function AccordionSection(props: {
   type: ManagementType;
@@ -21,7 +22,7 @@ export default function AccordionSection(props: {
 }) {
   const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error } = useSets(
+  const { data, isLoading, error, mutate } = useSets(
     props.type,
     projectId /*refetchIndex */,
   );
@@ -31,7 +32,19 @@ export default function AccordionSection(props: {
     setSets(data);
   }, [data]);
 
-  // Call this function to refetch the data
+  useEffect(() => {
+    const realtimeSets = supabase
+      .channel("sets_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "sets" },
+        (payload) => {
+          console.log("Change received!", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
 
   if (error || !data) return <LoadingOverlay visible={isLoading} />;
   return (

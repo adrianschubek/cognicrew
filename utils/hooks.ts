@@ -208,7 +208,7 @@ export function useSets(
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
-  return { data, isLoading, error };
+  return { data, isLoading, error, mutate };
 }
 export function useDeleteSet() {
   return handleErrors(useDeleteMutation(supabase.from("sets"), ["id"], "id"));
