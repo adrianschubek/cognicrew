@@ -16,10 +16,9 @@ export default function Lobby() {
   const { confirm } = useAlerts();
 
   const room = useRoomStore((state) => state.room);
+  const roomState = useRoomStateStore((state) => state.roomState);
+  const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const navigation = useNavigation();
 
@@ -64,13 +63,10 @@ export default function Lobby() {
         title: "Leave room?",
         message: "Are you sure you want to leave this room?",
         okText: "Leave",
-        okAction: () => {
-          // Use setTimeout to delay the state update until after rendering
-          setTimeout(() => {
-            // TODO: Leave room server rpc
-            // TODO: setRoom(null)
-            navigation.dispatch(e.data.action);
-          }, 0);
+        okAction: async () => {
+          const { error } = await supabase.rpc("leave_room");
+          if (error) return error.message;
+          setRoom(null);
         },
       });
     });
@@ -199,7 +195,9 @@ export default function Lobby() {
                 okText: "Leave",
                 okAction: () => {
                   setTimeout(() => {
-                    navigation.navigate(NAVIGATION.HOME);
+                    const { error } = await supabase.rpc("leave_room");
+                    if (error) return error.message;
+                    setRoom(null);
                   }, 0);
                 },
               })

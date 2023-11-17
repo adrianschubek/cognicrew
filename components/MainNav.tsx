@@ -24,6 +24,8 @@ import RoomsList from "../screens/RoomsList";
 import { IconButton, useTheme } from "react-native-paper";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
+import { useRoomStore } from "../stores/RoomStore";
+import { useEffect } from "react";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -133,7 +135,13 @@ function LearningProjectsTab() {
   );
 }
 
-function MainTabs() {
+function MainTabs({ navigation }) {
+  const room = useRoomStore((state) => state.room);
+  // redirect to lobby if user is currently ingame
+  useEffect(() => {
+    if (room) navigation.navigate(NAVIGATION.LOBBY);
+    else navigation.navigate(NAVIGATION.ROOMS_LIST);
+  }, [room]);
   return (
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen

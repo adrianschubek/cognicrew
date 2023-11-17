@@ -4,7 +4,7 @@ import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
-import React from "react";
+import React, { useEffect } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
@@ -17,13 +17,29 @@ export default function RoomsList({ navigation }) {
   const { data: username } = useUsername();
   const user = useAuth().user;
   const { confirm, info } = useAlerts();
+  const setRoom = useRoomStore((state) => state.setRoom);
   const {
     data: rooms,
     isLoading,
     isValidating,
+    mutate,
   } = useQuery(supabase.rpc("list_rooms"), {
-    refreshInterval: focus ? 3000 : 0,
+    
   });
+
+  // Cheating: check for updates on room_tracker then refetch rooms
+  useEffect(() => {
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker" },
+        (payload) => {
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
 
   const setRoom = useRoomStore((state) => state.setRoom);
 
@@ -46,7 +62,7 @@ export default function RoomsList({ navigation }) {
               <Text>No active Rooms</Text>
             </Card.Content>
           </Card>
-        )} 
+        )}
         <Text variant="titleMedium">All Rooms</Text>
         {/* Freidns from */}
 
@@ -61,12 +77,17 @@ export default function RoomsList({ navigation }) {
               confirm({
                 icon: "location-enter",
                 title: room.name,
-                message: `Do you want to join this room hosted by ${room.host}?`,
+                message: `Do you want to join this room hosted by ${room.hostname}?`,
                 okText: "Join",
-                okAction: (vars) => {
-                  // info({ message: JSON.stringify(vars) });
-                  setRoom(room);
-                  navigation.navigate(NAVIGATION.LOBBY);
+                okAction: async (vars) => {
+                  const { data, error } = await supabase.rpc("join_room", {
+                    p_room_code: vars[0] ?? null,
+                    p_room_id: room.id,
+                  });
+
+                  if (error) return error.message;
+                  console.log(data);
+                  setRoom(data);
                 },
                 inputs: room.protected && [
                   {
@@ -112,10 +133,11 @@ export default function RoomsList({ navigation }) {
                   <Icon size={16} source={room.protected && "key"} />
                 </Text>
                 <Text style={{ marginLeft: 5 }}>
-                  <Icon size={16} source={"shield-crown"} /> {room.host}
+                  <Icon size={16} source={"shield-crown"} /> {room.hostname}
                 </Text>
                 <Text style={{ marginLeft: 5 }}>
-                  <Icon size={16} source={"account"} /> 1/2
+                  <Icon size={16} source={"account"} /> {room.cursize}/
+                  {room.maxsize}
                 </Text>
               </Card.Content>
             </Card>

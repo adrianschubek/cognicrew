@@ -1,31 +1,19 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  Dialog,
-  Portal,
-  Button,
-  Divider,
-  Avatar,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
-import { Snackbar } from "react-native-paper";
+import { Divider, Avatar, Text, TextInput, useTheme } from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
-import AddFriend from "../components/dialogues/AddFriend";
 import {
   responsiveFontSize,
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {
+  friendIdsAndNames,
   useAlerts,
   useDeleteFriend,
   useFriends,
   useInsertFriend,
-  useSubscriptionFriends,
-  useUserNames,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
@@ -33,15 +21,19 @@ import { supabase } from "../supabase";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
+  const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [projectQuery, setProjectQuery] = useState("");
-  const [friendPairs, setFriendPairs] = useState([]);
-  const user = useAuth().user;
-  const { data, error, isLoading } = useFriends();
+  const [friendRequestsSent, setFriendRequestsSent] = useState([]);
+  const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
+  //const [friendPairs, setFriendPairs] = useState([]);
+  //const { friendPairs } = useSubscriptionFriends();
+  const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
+  const { data, error, isLoading, mutate } = useFriends();
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
-  //const { status } = useSubscriptionFriends();
+
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,
@@ -60,65 +52,30 @@ export default function ManageFriends({ navigation }) {
   const icon = (props) => (
     <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
   );
-  const allPossibleFriendIds = friendPairs.map((friendPair) =>
-    friendPair.user_to_id === user.id
-      ? friendPair.user_from_id
-      : friendPair.user_to_id,
-  ) as string[];
-  const userNames = useUserNames(allPossibleFriendIds).data as string[];
-  const [userNamesLoaded, setUserNamesLoaded] = useState([] as string[]);
-  // FriendPairs of friends
-  const filteredFriendPairs = friendPairs.filter((friendPair) =>
-    // filter out friends that have not received a friend request
-    friendPair.user_from_id !== user.id
-      ? false
-      : friendPairs.some(
-          (friendPair2) =>
-            friendPair2.user_from_id === friendPair.user_to_id &&
-            friendPair2.user_to_id === friendPair.user_from_id,
-        ),
-  );
+  const searchFilterFriends =
+    friendIdsAndNamesData &&
+    friendIdsAndNamesData
+      .filter((e) => {
+        return e.username.toLowerCase().includes(searchQuery.toLowerCase());
+      })
 
-  const filteredFriends = filteredFriendPairs.map(
-    (friendPair) => friendPair.user_to_id,
-  ) as string[];
-
-  const searchFilterFriends = searchQuery
-    ? userNamesLoaded &&
-      userNamesLoaded
-        .map((userName) =>
-          userName.substring(1, userName.length - 1).split(","),
-        )
-        .filter((userName) => {
-          return (
-            filteredFriends.includes(userName[0]) &&
-            userName[1].toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        })
-        .map((userName) => userName[0])
-    : filteredFriends;
-
-  const pendingFriendRequestReceived = friendPairs.filter((friendPair) =>
-    //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
-    friendPairs.some(
-      (friendPair2) =>
-        friendPair2.user_from_id === friendPair.user_to_id &&
-        friendPair2.user_to_id === friendPair.user_from_id,
-    )
-      ? false
-      : friendPair.user_to_id === user.id,
-  );
-  const pendingFriendRequestSent = friendPairs.filter((friendPair) =>
-    //if (User A, User B) => (User B, User A) combination is found return false, else return true if friendPair.user_to_id === user.id
-    friendPairs.some(
-      (friendPair2) =>
-        friendPair2.user_from_id === friendPair.user_to_id &&
-        friendPair2.user_to_id === friendPair.user_from_id,
-    )
-      ? false
-      : friendPair.user_from_id === user.id,
-  );
-
+  function filterForPendingFriends(
+    friendPairs,
+    direction: "sent" | "received",
+  ) {
+    return friendPairs.filter((friendPair) =>
+      //if (User A, User B) => (User B, User A) combination is found return false
+      friendPairs.some(
+        (friendPair2) =>
+          friendPair2.user_from_id === friendPair.user_to_id &&
+          friendPair2.user_to_id === friendPair.user_from_id,
+      )
+        ? false
+        : direction === "received"
+        ? friendPair.user_to_id === user.id
+        : friendPair.user_from_id === user.id,
+    );
+  }
   /**
    * `handleSearch` - Updates the search query state based on user input.
    * @param {string} query - The current text in the search input field.
@@ -131,14 +88,35 @@ export default function ManageFriends({ navigation }) {
       setProjectQuery(query);
     }
   };
+
   useEffect(() => {
-    if (!userNames) return;
-    setUserNamesLoaded(userNames);
-  }, [userNames]);
+    const realtimeFriends = supabase
+      .channel("friends_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "friends" },
+        (payload) => {
+          console.log("Change received!", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await friendIdsAndNames();
+      setFriendIdsAndNamesData(data);
+    };
+    fetchData();
+  }, [data]);
   useEffect(() => {
     if (!data) return;
-    setFriendPairs(data);
+    //setFriendPairs(data);
+    setFriendRequestsSent(filterForPendingFriends(data, "sent")),
+      setFriendRequestsReceived(filterForPendingFriends(data, "received"));
   }, [data]);
+
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <ScrollView style={styles.container}>
@@ -150,7 +128,6 @@ export default function ManageFriends({ navigation }) {
             <TextWithPlusButton
               text=""
               function={() =>
-                //toggleAddFriendPopup()
                 confirm({
                   icon: "account-multiple-plus",
                   title: "Get in touch with your colleagues",
@@ -158,11 +135,9 @@ export default function ManageFriends({ navigation }) {
                   messageStyle: { textAlign: "left" },
                   okText: "Add Friend",
                   okAction: async (vars) => {
-                     let friend = await searchUser(vars[0]);
-                    //console.log("friendFromDatabase: " , friend);
-                    if ((friend && friend["username"]) === vars[0])
-                    console.log("friendFromDatabase: " , friend),
-                    console.log([vars[0]]),
+                    let input = vars[0].trim();
+                    let friend = await searchUser(input);
+                    if ((friend && friend["username"]) === input)
                       addFriend({
                         //@ts-expect-error
                         user_from_id: user.id,
@@ -202,17 +177,18 @@ export default function ManageFriends({ navigation }) {
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friend={friend}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() => {
                   info({
                     //icon: "account-off",
-                    title:"",
+                    title: "",
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriend(friend);
+                      deleteFriend(friend.id);
                     },
-                  })
+                  });
                 }}
               />
             ))}
@@ -221,21 +197,17 @@ export default function ManageFriends({ navigation }) {
         </View>
 
         {/* Pending friends list */}
-        {pendingFriendRequestReceived.length > 0 && (
+        {friendRequestsReceived.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
-            {pendingFriendRequestReceived.map((friend, index) => (
+            {friendRequestsReceived.map((friend, index) => (
               <FriendItem
                 key={index}
                 icon="check"
                 secondIcon="close-circle"
-                friend={
-                  friend.user_from_id === user.id
-                    ? friend.user_to_id
-                    : friend.user_from_id
-                }
+                friendId={friend.user_from_id}
                 onIconPress={() =>
                   addFriend({
                     //@ts-expect-error
@@ -246,44 +218,39 @@ export default function ManageFriends({ navigation }) {
                 onSecondIconPress={() => {
                   info({
                     //icon: "account-off",
-                    title:"",
+                    title: "",
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
                       deleteFriendRequest(friend);
                     },
-                  })
+                  });
                 }}
               />
             ))}
             <Divider style={styles.divider} />
           </View>
         )}
-        {pendingFriendRequestSent.length > 0 && (
+        {friendRequestsSent.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
-            {pendingFriendRequestSent.map((friend, index) => (
+            {friendRequestsSent.map((friend, index) => (
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friend={
-                  friend.user_from_id === user.id
-                    ? friend.user_to_id
-                    : friend.user_from_id
-                }
+                friendId={friend.user_to_id}
                 onIconPress={() => {
                   info({
                     //icon: "information-outline",
-                    title:"",
+                    title: "",
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
                       deleteFriendRequest(friend);
                     },
-                  })
-                  
+                  });
                 }}
               />
             ))}
@@ -356,6 +323,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   friendsListContainer: {
-    maxHeight: responsiveHeight(37.5),
+    //maxHeight: responsiveHeight(37.5),
   },
 });

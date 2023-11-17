@@ -5,7 +5,7 @@ import {
   useInsertMutation,
   useQuery,
   useSubscription,
-  useUpsertMutation
+  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
@@ -69,7 +69,6 @@ export function useUserNames(userIds: string[], refetchIndex?: number) {
     user_ids: userIds,
   });
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
-  if (!refetchIndex) return { data, isLoading, error };
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
@@ -78,29 +77,22 @@ export function useUserNames(userIds: string[], refetchIndex?: number) {
 export function useFriendsList() {
   return handleErrors(useQuery(supabase.rpc("list_friends")));
 }
+export async function friendIdsAndNames() {
+  let { data, error } = await supabase.rpc("list_friends_ids_and_names");
+  if (error) console.log(error);
+  return { data, error };
+}
 /**
  * Returns all Friends.
- * @deprecated Use {@link useFriendsList} instead.
+ * @see Use {@link useFriendsList} instead if you only want tuples non pending friends.
  */
-export function useFriends() {
-  return handleErrors(
-    useQuery(supabase.from("friends").select("user_from_id,user_to_id")),
-  );
-}
-export function useSubscriptionFriends() {
-  return handleErrors(
-    useSubscription(
-      supabase,
-      `subscription_friends`,
-      {
-        event: "*",
-        table: "friends",
-        schema: "public",
-      },
-      ["user_from_id,user_to_id"],
-      { callback: (payload) => console.log(payload) },
-    ),
-  );
+export function useFriends(refetchIndex?: number) {
+  const query = supabase.from("friends").select("user_from_id,user_to_id");
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, [refetchIndex]);
+  return { data, isLoading, error, mutate };
 }
 export function useDeleteFriend() {
   return handleErrors(
@@ -120,7 +112,7 @@ export function useInsertFriend() {
     ),
     (error) => {
       if (error.includes("duplicate key value violates unique constraint")) {
-        return "You are already friends with this user.";
+        return "You already sent a friend request or are already friends with this user.";
       } else return error;
     },
   );
@@ -213,11 +205,9 @@ export function useSets(
     .eq("project_id", projectId);
 
   const { data, isLoading, error, mutate } = useQuery(query);
-  if (!refetchIndex) return { data, isLoading, error };
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
-
   return { data, isLoading, error };
 }
 export function useDeleteSet() {

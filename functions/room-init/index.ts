@@ -15,7 +15,7 @@ serve(async (req) => {
     );
 
     // if not called from webhook, return 403 (check ?secret=...)
-    // FIXME: put secret somewhere save into env var.
+    // FIXME: put secret somewhere safe into env var.
     const SECRET = "Ur7diwgmWzT7g8er9LV6PM3HAURXM6vJ";
     if (!(await req.url.includes(`secret=${SECRET}`))) {
       return new Response("Function was not called by database", {
@@ -23,41 +23,59 @@ serve(async (req) => {
       });
     }
     const body = await req.json();
+    // body.record.id is the room id
     // TODO: if option INSERT, DELETE, UPDATE do ....
-    if (body.type === "INSERT") {
+    switch (body.type) {
+      /**
+       * new room created. copy all project data into private_state.
+       */
+      case "INSERT": {
+        const { data, error } = await supabase
+          .from("learning_projects")
+          .select(
+            `id,
+                  name,
+                  sets(
+                    name,
+                    exercises(
+                      id,
+                      question,
+                      answers_exercises(
+                        id,
+                        answer,
+                        is_correct
+                      )
+                    ),
+                    flashcards(
+                      id,
+                      question,
+                      answer
+                    )
+                  )`,
+          )
+          .eq("id", body.record.project_id);
+
+        if (error) {
+          throw error;
+        }
+        return new Response(JSON.stringify({ data }), {
+          headers: { "Content-Type": "application/json" },
+          status: 200,
+        });
+      }
+      /**
+       * if is_ingame updated -> start game
+       */
+      case "UPDATE":
+        break;
+      /**
+       * old_record.project_id is the room id
+       */
+      case "DELETE":
+        break;
+      default:
+        return new Response("Error Invalid body type!", { status: 400 });
     }
-    return new Response(body.type, { status: 200 });
-
-    return new Response(JSON.stringify(await req.json()));
-
-    const { data, error } = await supabase.from("learning_projects").select(`id,
-              name,
-              sets(
-                name,
-                exercises(
-                  id,
-                  question,
-                  answers_exercises(
-                    id,
-                    answer,
-                    is_correct
-                  )
-                ),
-                flashcards(
-                  id,
-                  question,
-                  answer
-                )
-              )`); // .eq("id",projectId)
-
-    if (error) {
-      throw error;
-    }
-
-    return new Response(JSON.stringify({ data }), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
   } catch (err) {
     return new Response(String(err?.message ?? err), { status: 500 });
   }
