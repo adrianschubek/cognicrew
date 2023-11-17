@@ -73,7 +73,7 @@ export default function RoomsList({ navigation }) {
               confirm({
                 icon: "location-enter",
                 title: room.name,
-                message: `Do you want to join this room hosted by ${room.host}?`,
+                message: `Do you want to join this room hosted by ${room.hostname}?`,
                 okText: "Join",
                 okAction: async (vars) => {
                   const { data, error } = await supabase.rpc("join_room", {
