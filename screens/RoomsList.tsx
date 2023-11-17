@@ -129,7 +129,7 @@ export default function RoomsList({ navigation }) {
                   <Icon size={16} source={room.protected && "key"} />
                 </Text>
                 <Text style={{ marginLeft: 5 }}>
-                  <Icon size={16} source={"shield-crown"} /> {room.host}
+                  <Icon size={16} source={"shield-crown"} /> {room.hostname}
                 </Text>
                 <Text style={{ marginLeft: 5 }}>
                   <Icon size={16} source={"account"} /> {room.cursize}/
