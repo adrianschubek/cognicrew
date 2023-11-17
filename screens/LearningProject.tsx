@@ -130,8 +130,8 @@ export default function LearningProject({ navigation, route }) {
                 p_name: params[0] ?? null,
                 p_code: parseInt(params[1]) ?? null,
                 p_share_code: parseInt(params[2]) ?? null,
-                // TODO: max_size
                 // TODO: is_private friends only
+                p_size: parseInt(params[4]) ?? null,
               });
               navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
@@ -169,12 +169,11 @@ export default function LearningProject({ navigation, route }) {
                 disabled: true,
               },
               {
-                label: "Size",
+                label: "Size (1-100)",
                 type: "number",
                 helperText: "The maximum amount of players in this room.",
                 icon: "account-group",
                 defaultValue: "2",
-                disabled: true,
               },
             ],
           });
