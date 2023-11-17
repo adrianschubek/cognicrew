@@ -21,7 +21,8 @@ const getFriendIconUrl = (friendName) =>
 export default function FriendItem(props: {
   icon: string;
   secondIcon?: string;
-  friend: string;
+  friendId?: string;
+  friendName?: string;
   onIconPress;
   onSecondIconPress?;
   showCheckbox?: boolean;
@@ -30,7 +31,9 @@ export default function FriendItem(props: {
 }) {
   const theme = useTheme();
   const [checked, setChecked] = useState(false);
-  const friendName = useUsername(props.friend).data;
+  const friendName = props.friendName
+    ? props.friendName
+    : useUsername(props.friendId).data;
   return (
     <View
       style={[
@@ -44,12 +47,12 @@ export default function FriendItem(props: {
       {props.showCheckbox && (
         <Checkbox
           status={checked ? "checked" : "unchecked"}
-          onPress={props.onCheck? props.onCheck : () => {}}
+          onPress={props.onCheck ? props.onCheck : () => {}}
           color={theme.colors.primary}
         />
       )}
       <Image
-        source={{ uri: getFriendIconUrl(props.friend) }}
+        source={{ uri: getFriendIconUrl(props.friendId) }}
         style={styles.profileIcon}
       />
       <Text style={styles.itemText}>{friendName}</Text>

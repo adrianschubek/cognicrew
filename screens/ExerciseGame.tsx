@@ -54,17 +54,17 @@ const fetchQuestions = () => {
 export default function ExerciseGame({}) {
   const {data, error, isLoading} = useExercisesAndAnswers(141) // setID is hardcoded 
   
-  const [questions, setQuestions] = React.useState(
+  const [questions, setQuestions] = useState(
     shuffleArray(fetchQuestions()),
   );
-  const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-  const [checked, setChecked] = React.useState(null);
-  const [score, setScore] = React.useState(0);
-  const [answeredQuestions, setAnsweredQuestions] = React.useState(
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [checked, setChecked] = useState(null);
+  const [score, setScore] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState(
     new Array(questions.length).fill(null),
   );
-  const [reviewTime, setReviewTime] = React.useState("10m");
-  const [quizComplete, setQuizComplete] = React.useState(false);
+  const [reviewTime, setReviewTime] = useState("10m");
+  const [quizComplete, setQuizComplete] = useState(false);
 
   const handleNextQuestion = () => {
     if (checked) {

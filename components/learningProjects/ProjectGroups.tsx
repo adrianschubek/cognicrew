@@ -36,7 +36,6 @@ export default function ProjectGroups() {
     },
   );
   // const [data, setData] = useState(null);
-  // FIXME: useSubscription
 
   useEffect(() => {
     const realtimeProjects = supabase
@@ -46,7 +45,7 @@ export default function ProjectGroups() {
         { event: "*", schema: "public", table: "user_learning_projects" },
         (payload) => {
           console.log("Change received!", payload);
-          mutate(); // eskalation
+          mutate(); // escalation
         },
       )
       .on(
