@@ -9,11 +9,13 @@ import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
+import { useAuth } from "../providers/AuthProvider";
 
 function Room({ room }) {
   const theme = useTheme();
   const focus = useIsFocused();
   const { data: username } = useUsername();
+  const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
   return (
