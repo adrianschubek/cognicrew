@@ -20,20 +20,24 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../common/TextWithPlusButton";
 import InviteFriendDialog from "./InviteFriendDialog";
-import { useAlerts, useFriendsList } from "../../utils/hooks";
+import {
+  friendIdsAndNames,
+  useAlerts,
+  useFriendsList,
+} from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../manageFriends/FriendItem";
-import { use } from "chai";
-
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
+  const { info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const [friends, setFriends] = useState([]);
   const projectId = useProjectStore((state) => state.projectId);
   const { error: errorAlert, success } = useAlerts();
   const [projectMembers, setProjectMembers] = useState([]);
+  const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
   async function getProjectMembers() {
     let { data, error } = await supabase.rpc("project_members", {
       p_project_id: projectId,
@@ -41,7 +45,8 @@ export default function InviteFriends({ navigation }) {
     if (error) console.log(error);
     console.log("data", data);
     return data;
-  } 
+  }
+  /*
   const { data, error, isLoading } = useFriendsList();
   useEffect(() => {
     if (!data) return;
@@ -49,7 +54,7 @@ export default function InviteFriends({ navigation }) {
   }, [data]);
  useEffect(() => {
   
- }, []);
+ }, []);*/
 
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -73,13 +78,9 @@ export default function InviteFriends({ navigation }) {
     />
   );
 
-  const filteredFriends = !friends
-    ? []
-    : searchQuery
-    ? friends.filter((friend) =>
-        friend.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    : friends;
+  const filteredFriends = friendIdsAndNamesData.filter((friend) =>
+    friend.username.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -139,8 +140,30 @@ export default function InviteFriends({ navigation }) {
     else success({ message: "User invited to project." });
   };
 
-  if (isLoading || error) return <LoadingOverlay visible />;
-  console.log("friends", friends);
+  const fetchData = async () => {
+    const { data } = await friendIdsAndNames();
+    setFriendIdsAndNamesData(data);
+  };
+
+  useEffect(() => {
+    const realtimeFriends = supabase
+      .channel("friends_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "friends" },
+        (payload) => {
+          console.log("Change received!", payload);
+          fetchData();
+        },
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
+    fetchData().then(() => {
+      console.log("friends", friendIdsAndNamesData);
+    });
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
@@ -164,29 +187,22 @@ export default function InviteFriends({ navigation }) {
           />
           <ScrollView style={styles.friendsListContainer}>
             {filteredFriends.map((friend, index) => (
-              <View
+              <FriendItem
                 key={index}
-                style={[
-                  styles.friendItem2,
-                  invitedFriends[friend] ? styles.invitedFriendItem : null,
-                ]}
-              >
-                <FriendItem
-                  key={index}
-                  friend={friend.user_from_id}
-                  onCheck={() => handleCheckboxChange(friend)}
-                  icon="email-plus-outline"
-                  onIconPress={() =>
-                    // !invitedFriends[friend] && inviteFriend(friend)
-                    invite(friend.user_from_id)
-                  }
-                  secondIcon="close"
-                  onSecondIconPress={() =>
-                     remove(friend.user_from_id)
-                    //getProjectMembers()
-                  }
-                />
-              </View>
+                friendId={friend.id}
+                friendName={friend.username}
+                //onCheck={() => handleCheckboxChange(friend)}
+                icon="email-plus-outline"
+                onIconPress={() =>
+                  // !invitedFriends[friend] && inviteFriend(friend)
+                  invite(friend.id)
+                }
+                secondIcon="close"
+                onSecondIconPress={
+                  () => remove(friend.id)
+                  //getProjectMembers()
+                }
+              />
             ))}
           </ScrollView>
 
