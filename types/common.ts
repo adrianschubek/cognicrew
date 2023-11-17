@@ -18,6 +18,7 @@ export const enum NAVIGATION {
   CREATEEDIT_PROJECT = "CreateEditProject",
   INVITE_FRIENDS = "InviteFriends",
   DISCOVER = "Discover",
+  GUEST_LOBBY = "GuestLobby",
   LOBBY = "Lobby",
   ROOMS_LIST = "RoomsList",
   ACCOUNT = "Account",

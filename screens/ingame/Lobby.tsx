@@ -79,9 +79,9 @@ export default function Lobby() {
   // Check if the current user is the host
   const isHost = room?.host === user?.id;
 
-  // TODO: is user is owner show host lobby view (list users, select game, close)
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
+  //TODO: Live Loading of users (useSubscription)
   return (
     <SafeAreaView
       style={{
@@ -92,7 +92,6 @@ export default function Lobby() {
         backgroundColor: theme.colors.primaryContainer,
       }}
     >
-      {isHost && (
         <View style={{ flex: 1, marginTop: 20 }}>
           <FlatList
             contentContainerStyle={{
@@ -172,42 +171,6 @@ export default function Lobby() {
             </Button>
           </View>
         </View>
-      )}
-      {!isHost && (
-        <View>
-          <LoadingAnimation
-            size={96}
-            style={{ flex: 0, background: "red", marginBottom: 30 }}
-            color={theme.colors.primary}
-          />
-          <Text
-            variant="bodyLarge"
-            style={{ flex: 0, color: theme.colors.primary }}
-          >
-            Waiting for host to start a game
-          </Text>
-          <Button
-            style={{ marginTop: 20 }}
-            onPress={() =>
-              confirm({
-                icon: "location-exit",
-                title: "Leave room?",
-                message: "Are you sure you want to leave this room?",
-                okText: "Leave",
-                okAction: () => {
-                  setTimeout(async () => {
-                    const { error } = await supabase.rpc("leave_room");
-                    if (error) return error.message;
-                    setRoom(null);
-                  }, 0);
-                },
-              })
-            }
-          >
-            Leave
-          </Button>
-        </View>
-      )}
     </SafeAreaView>
   );
 }

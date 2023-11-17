@@ -29,9 +29,8 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../manageFriends/FriendItem";
-import { set } from "cypress/types/lodash";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { mutate } from "swr";
+
+
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
   const { info } = useAlerts();
