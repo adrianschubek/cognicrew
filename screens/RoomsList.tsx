@@ -8,11 +8,14 @@ import React from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useUsername } from "../utils/hooks";
+import { useRoomStore } from "../stores/RoomStore";
+import { useAuth } from "../providers/AuthProvider";
 
 export default function RoomsList({ navigation }) {
   const theme = useTheme();
   const focus = useIsFocused();
   const { data: username } = useUsername();
+  const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const {
     data: rooms,
@@ -21,6 +24,8 @@ export default function RoomsList({ navigation }) {
   } = useQuery(supabase.rpc("list_rooms"), {
     refreshInterval: focus ? 3000 : 0,
   });
+
+  const setRoom = useRoomStore((state) => state.setRoom);
 
   if (isLoading) return <LoadingOverlay visible />;
 
@@ -48,7 +53,7 @@ export default function RoomsList({ navigation }) {
         {rooms?.map((room) => (
           <TouchableOpacity
             onPress={() => {
-              if (room.host === username)
+               if (room.host === user.id)
                 return info({
                   title: "Already connected",
                   message: "You already joined this room.",
@@ -60,6 +65,7 @@ export default function RoomsList({ navigation }) {
                 okText: "Join",
                 okAction: (vars) => {
                   // info({ message: JSON.stringify(vars) });
+                  setRoom(room);
                   navigation.navigate(NAVIGATION.LOBBY);
                 },
                 inputs: room.protected && [

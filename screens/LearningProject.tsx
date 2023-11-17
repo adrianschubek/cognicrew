@@ -26,11 +26,16 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
+import { useAuth } from "../providers/AuthProvider";
+import { useRoomStore } from "../stores/RoomStore";
 
 export default function LearningProject({ navigation, route }) {
+  const { user } = useAuth();
   const { project } = route.params;
   const { confirm, info, error: errorAlert } = useAlerts();
   const theme = useTheme();
+
+  const setRoom = useRoomStore((state) => state.setRoom);
 
   const reset = useProjectStore((state) => state.reset);
   useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
@@ -126,8 +131,9 @@ export default function LearningProject({ navigation, route }) {
                 p_code: parseInt(params[1]) ?? null,
                 p_share_code: parseInt(params[2]) ?? null,
               });
+              navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
-              // TODO: save new room data to to zustand
+              setRoom(data);
               info({ message: JSON.stringify(data) });
             },
             inputs: [
