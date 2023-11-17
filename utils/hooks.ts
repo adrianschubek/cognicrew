@@ -90,7 +90,7 @@ export function useInsertFriend() {
     ),
     (error) => {
       if (error.includes("duplicate key value violates unique constraint")) {
-        return "You are already friends with this user.";
+        return "You already sent a friend request or are already friends with this user.";
       } else return error;
     },
   );
