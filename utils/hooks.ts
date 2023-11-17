@@ -70,22 +70,7 @@ export function useFriends(refetchIndex?: number) {
   useEffect(() => {
     mutate();
   }, [refetchIndex]);
-  return { data, isLoading, error };
-}
-export function useSubscriptionFriends() {
-  return handleErrors(
-    useSubscription(
-      supabase,
-      `subscription_friends`,
-      {
-        event: "*",
-        table: "friends",
-        schema: "public",
-      },
-      ["user_from_id,user_to_id"],
-      { callback: (payload) => console.log(payload) },
-    ),
-  );
+  return { data, isLoading, error, mutate };
 }
 export function useDeleteFriend() {
   return handleErrors(
