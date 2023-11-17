@@ -10,18 +10,33 @@ import AddVideoLink from "../../components/dialogues/AddVideoLink";
 import { useLinks } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
+import { supabase } from "../../supabase";
 
 export default function LinkManagement() {
   const [showVideoLinkDialog, setShowVideoLinkDialog] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
 
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error } = useLinks(projectId);
+  const { data, isLoading, error, mutate } = useLinks(projectId);
 
   useEffect(() => {
     if (!data) return;
     setLinkItems(data);
   }, [data]);
+
+  useEffect(() => {
+    const realtimeLinks = supabase
+      .channel("sets_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "links" },
+        (payload) => {
+          console.log("Change received!", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
 
   const [linkItems, setLinkItems] = useState([]);
   const handleEditVideo = (video) => {

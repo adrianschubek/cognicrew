@@ -307,14 +307,15 @@ export function useUpsertAnswersExercise() {
 }
 
 export function useLinks(projectId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("links")
-        .select("id,link_url,learning_project,title,subtitle,description")
-        .eq("learning_project", projectId),
-    ),
-  );
+  const query = supabase
+    .from("links")
+    .select("id,link_url,learning_project,title,subtitle,description")
+    .eq("learning_project", projectId);
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, []);
+  return { data, isLoading, error, mutate };
 }
 
 export function useDeleteLink() {
