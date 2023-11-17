@@ -5,11 +5,12 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts, useUsernamesByRoom } from "../../utils/hooks";
 import { NAVIGATION } from "../../types/common";
-import { useRoomStore } from "../../stores/RoomStore";
+import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View, Image } from "react-native";
 import CreateFlashCardGame from "../../components/dialogues/CreateFlashcardGame";
 import { responsiveFontSize, responsiveHeight, responsiveWidth } from "react-native-responsive-dimensions";
 import { useAuth } from "../../providers/AuthProvider";
+import { supabase } from "../../supabase";
 
 export default function Lobby() {
   const theme = useTheme();
@@ -19,6 +20,8 @@ export default function Lobby() {
   const roomState = useRoomStateStore((state) => state.roomState);
   const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const navigation = useNavigation();
 
@@ -194,7 +197,7 @@ export default function Lobby() {
                 message: "Are you sure you want to leave this room?",
                 okText: "Leave",
                 okAction: () => {
-                  setTimeout(() => {
+                  setTimeout(async () => {
                     const { error } = await supabase.rpc("leave_room");
                     if (error) return error.message;
                     setRoom(null);

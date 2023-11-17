@@ -41,8 +41,6 @@ export default function RoomsList({ navigation }) {
       .subscribe();
   }, []);
 
-  const setRoom = useRoomStore((state) => state.setRoom);
-
   if (isLoading) return <LoadingOverlay visible />;
 
   return (
