@@ -162,7 +162,9 @@ export default function ManageFriends({ navigation }) {
                         //@ts-expect-error
                         user_from_id: user.id,
                         user_to_id: friend["id"],
-                      });
+                      }).then(() =>
+                      setRefetchIndex((i) => i + 1),
+                    );
                     else return "There is no friend with this nickname";
                   },
                   inputs: [
@@ -235,7 +237,9 @@ export default function ManageFriends({ navigation }) {
                       //@ts-expect-error
                       user_from_id: friend.user_to_id,
                       user_to_id: friend.user_from_id,
-                    })
+                    }).then(() =>
+                    setRefetchIndex((i) => i + 1),
+                  )
                   }
                   onSecondIconPress={() => {
                     info({
@@ -244,7 +248,9 @@ export default function ManageFriends({ navigation }) {
                       message: "Are you sure you want to delete this friend?",
                       okText: "Delete Friend",
                       okAction: () => {
-                        deleteFriendRequest(friend);
+                        deleteFriendRequest(friend).then(() =>
+                        setRefetchIndex((i) => i + 1),
+                      );
                       },
                     });
                   }}
@@ -272,7 +278,9 @@ export default function ManageFriends({ navigation }) {
                       message: "Are you sure you want to delete this friend?",
                       okText: "Delete Friend",
                       okAction: () => {
-                        deleteFriendRequest(friend);
+                        deleteFriendRequest(friend).then(() =>
+                        setRefetchIndex((i) => i + 1),
+                      );
                       },
                     });
                   }}
