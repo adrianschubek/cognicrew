@@ -9,6 +9,7 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {
+  friendIdsAndNames,
   useAlerts,
   useDeleteFriend,
   useFriends,
@@ -39,11 +40,6 @@ export default function ManageFriends({ navigation }) {
     });
     if (error) console.log(error);
     return data;
-  }
-  async function friendIdsAndNames() {
-    let { data, error } = await supabase.rpc("list_friends_ids_and_names");
-    if (error) console.log(error);
-    return { data, error };
   }
   async function searchUser(username) {
     let { data, error } = await supabase.rpc("search_user", {
@@ -190,7 +186,7 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriend(friend);
+                      deleteFriend(friend.id);
                     },
                   });
                 }}
