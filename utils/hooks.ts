@@ -47,6 +47,23 @@ export function useUsername(uid?: string) {
     ),
   );
 }
+
+export async function useUsernamesByRoom(roomId?: string) { 
+let { data, error } = await supabase
+.rpc('list_room_members');
+
+if (error) console.error(error)
+else console.log(data)
+return {data, error};
+}
+
+export function useRoomByUserId(userId?: string) {
+  console.log("UserId: " + userId);
+  return handleErrors(
+    useQuery(supabase.from("profiles").select("room_id").eq("id", userId)),
+  );
+}
+
 export function useUserNames(userIds: string[], refetchIndex?: number) {
   const query = supabase.rpc("get_usernames", {
     user_ids: userIds,

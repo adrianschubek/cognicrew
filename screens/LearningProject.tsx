@@ -26,12 +26,15 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
+import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
 
 export default function LearningProject({ navigation, route }) {
+  const { user } = useAuth();
   const { project } = route.params;
   const { confirm, info, error: errorAlert } = useAlerts();
   const theme = useTheme();
+
   const setRoom = useRoomStore((state) => state.setRoom);
 
   const reset = useProjectStore((state) => state.reset);
@@ -130,8 +133,10 @@ export default function LearningProject({ navigation, route }) {
                 // TODO: max_size
                 // TODO: is_private friends only
               });
+              navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
               setRoom(data);
+              info({ message: JSON.stringify(data) });
             },
             inputs: [
               {
