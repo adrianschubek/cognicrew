@@ -75,9 +75,7 @@ export default function Lobby() {
     });
   }, [confirm, navigation]);
 
-  const user = useAuth().user;
-  // Check if the current user is the host
-  const isHost = room?.host === user?.id;
+    
 
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
@@ -104,7 +102,7 @@ export default function Lobby() {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Image
+                {/* <Image
                   source={{
                     uri:
                       "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
@@ -117,10 +115,10 @@ export default function Lobby() {
                     overflow: "hidden",
                     alignItems: "flex-end",
                   }}
-                />
+                /> */}
                 <View>
                   {/* Wrap the Text component in a View */}
-                  <Text style={{ fontSize: responsiveFontSize(3), marginRight: 3 }}>{item}</Text>
+                  <Text >{item}</Text>
                 </View>
               </View>
             )}
@@ -128,7 +126,6 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               navigation.navigate(NAVIGATION.WHITEBOARD);
             }}
@@ -138,7 +135,6 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               setShowCreateFlashcardGame(true);
             }}
@@ -148,7 +144,6 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               navigation.navigate(NAVIGATION.EXERCISE_GAME);
             }}
@@ -161,7 +156,6 @@ export default function Lobby() {
           />
           <View style={{ flexDirection: "row", justifyContent: "space-between", padding: 5 }}>
             <Button
-              style={{ width: responsiveWidth(30), padding: 5, margin: 3 }}
               mode="contained"
               onPress={() => {
                 navigation.navigate(NAVIGATION.HOME);
