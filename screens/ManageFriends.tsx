@@ -17,7 +17,6 @@ import {
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
-import { useSubscription } from "@supabase-cache-helpers/postgrest-swr";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -30,11 +29,9 @@ export default function ManageFriends({ navigation }) {
   //const [friendPairs, setFriendPairs] = useState([]);
   //const { friendPairs } = useSubscriptionFriends();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
-  const [refetchIndex, setRefetchIndex] = useState(0);
   const { data, error, isLoading, mutate } = useFriends();
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
-  //const {status} = useSubscriptionFriends();
 
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
@@ -65,7 +62,6 @@ export default function ManageFriends({ navigation }) {
       .filter((e) => {
         return e.username.toLowerCase().includes(searchQuery.toLowerCase());
       })
-      .map((e) => e.id);
 
   function filterForPendingFriends(
     friendPairs,
@@ -188,7 +184,8 @@ export default function ManageFriends({ navigation }) {
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friend={friend}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() => {
                   info({
                     //icon: "account-off",
@@ -217,7 +214,7 @@ export default function ManageFriends({ navigation }) {
                 key={index}
                 icon="check"
                 secondIcon="close-circle"
-                friend={friend.user_from_id}
+                friendId={friend.user_from_id}
                 onIconPress={() =>
                   addFriend({
                     //@ts-expect-error
@@ -250,7 +247,7 @@ export default function ManageFriends({ navigation }) {
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friend={friend.user_to_id}
+                friendId={friend.user_to_id}
                 onIconPress={() => {
                   info({
                     //icon: "information-outline",
