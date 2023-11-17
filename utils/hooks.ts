@@ -60,6 +60,11 @@ export function useUserNames(userIds: string[], refetchIndex?: number) {
 export function useFriendsList() {
   return handleErrors(useQuery(supabase.rpc("list_friends")));
 }
+export async function friendIdsAndNames() {
+  let { data, error } = await supabase.rpc("list_friends_ids_and_names");
+  if (error) console.log(error);
+  return { data, error };
+}
 /**
  * Returns all Friends.
  * @see Use {@link useFriendsList} instead if you only want tuples non pending friends.
