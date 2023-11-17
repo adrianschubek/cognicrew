@@ -13,6 +13,7 @@ import {
   useDeleteFriend,
   useFriends,
   useInsertFriend,
+  useSubscriptionFriends,
 } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
@@ -34,6 +35,7 @@ export default function ManageFriends({ navigation }) {
   const { data, error, isLoading } = useFriends(refetchIndex);
   const { trigger: deleteFriendRequest } = useDeleteFriend();
   const { trigger: addFriend } = useInsertFriend();
+  const {status} = useSubscriptionFriends();
 
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
