@@ -75,7 +75,8 @@ export default function Lobby() {
     });
   }, [confirm, navigation]);
 
-    
+  // TODO: add subscribe tracker where key=rooms
+
 
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
