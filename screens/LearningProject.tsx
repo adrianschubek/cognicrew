@@ -136,7 +136,6 @@ export default function LearningProject({ navigation, route }) {
               navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
               setRoom(data);
-              info({ message: JSON.stringify(data) });
             },
             inputs: [
               {
