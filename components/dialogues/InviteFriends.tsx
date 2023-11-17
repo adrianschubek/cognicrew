@@ -25,7 +25,7 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../manageFriends/FriendItem";
-import { use } from "chai";
+
 
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();

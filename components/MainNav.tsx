@@ -26,6 +26,7 @@ import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStore } from "../stores/RoomStore";
 import { useEffect } from "react";
+import GuestLobby from "../screens/ingame/GuestLobby";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -137,10 +138,13 @@ function LearningProjectsTab() {
 
 function MainTabs({ navigation }) {
   const room = useRoomStore((state) => state.room);
+  const uid = useAuth().user?.id;
   // redirect to lobby if user is currently ingame
   useEffect(() => {
-    if (room) navigation.navigate(NAVIGATION.LOBBY);
-    else navigation.navigate(NAVIGATION.HOME);
+    if (room) {
+      if (room.host === uid) navigation.navigate(NAVIGATION.LOBBY);
+      else navigation.navigate(NAVIGATION.GUEST_LOBBY);
+    } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
   return (
     <Tab.Navigator initialRouteName="Home" shifting={true}>
@@ -177,6 +181,7 @@ export default function MainNav() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={"_main_"} component={MainTabs} />
       <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
+      <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
     </Stack.Navigator>
   );
 }
