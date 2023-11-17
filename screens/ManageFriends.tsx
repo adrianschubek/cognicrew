@@ -132,7 +132,6 @@ export default function ManageFriends({ navigation }) {
             <TextWithPlusButton
               text=""
               function={() =>
-                //toggleAddFriendPopup()
                 confirm({
                   icon: "account-multiple-plus",
                   title: "Get in touch with your colleagues",
@@ -140,11 +139,9 @@ export default function ManageFriends({ navigation }) {
                   messageStyle: { textAlign: "left" },
                   okText: "Add Friend",
                   okAction: async (vars) => {
-                    let friend = await searchUser(vars[0]);
-                    //console.log("friendFromDatabase: " , friend);
-                    if ((friend && friend["username"]) === vars[0])
-                      //console.log("friendFromDatabase: " , friend),
-                      //console.log([vars[0]]),
+                    let input = vars[0].trim();
+                    let friend = await searchUser(input);
+                    if ((friend && friend["username"]) === input)
                       addFriend({
                         //@ts-expect-error
                         user_from_id: user.id,
