@@ -140,7 +140,7 @@ function MainTabs({ navigation }) {
   // redirect to lobby if user is currently ingame
   useEffect(() => {
     if (room) navigation.navigate(NAVIGATION.LOBBY);
-    else navigation.navigate(NAVIGATION.HOME);
+    else navigation.navigate(NAVIGATION.ROOMS_LIST);
   }, [room]);
   return (
     <Tab.Navigator initialRouteName="Home" shifting={true}>
