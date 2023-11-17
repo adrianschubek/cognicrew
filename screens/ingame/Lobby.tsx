@@ -96,8 +96,6 @@ export default function Lobby() {
         <View style={{ flex: 1, marginTop: 20 }}>
           <FlatList
             contentContainerStyle={{
-              borderColor: "red",
-              borderWidth: 1,
               marginTop: 3,
               flexDirection: "column",
               alignItems: "flex-end",
@@ -131,7 +129,7 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9) }}
+            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               navigation.navigate(NAVIGATION.WHITEBOARD);
             }}
@@ -141,7 +139,7 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9) }}
+            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               setShowCreateFlashcardGame(true);
             }}
@@ -151,7 +149,7 @@ export default function Lobby() {
           <Button
             icon="home"
             mode="contained"
-            style={{ marginTop: responsiveHeight(2.9) }}
+            style={{ marginTop: responsiveHeight(2.9), margin: 3 }}
             onPress={() => {
               navigation.navigate(NAVIGATION.EXERCISE_GAME);
             }}
