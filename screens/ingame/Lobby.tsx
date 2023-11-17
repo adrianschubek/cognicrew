@@ -82,6 +82,7 @@ export default function Lobby() {
   // TODO: is user is owner show host lobby view (list users, select game, close)
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
+  //TODO: Live Loading of users (useSubscription)
   return (
     <SafeAreaView
       style={{
