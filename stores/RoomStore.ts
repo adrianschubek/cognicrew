@@ -11,20 +11,12 @@ type RoomStore = {
 
 /**
  * Current room info without any room state.
+ * //FIXME: removed persist bc it was creating bug project -> null on rejin startup.
  */
-export const useRoomStore = create<RoomStore>()(
-  persist(
-    (set, get) => ({
-      room: null,
-      setRoom: (room) => set({ room }),
-    }),
-    {
-      name: "room",
-      storage: createJSONStorage(() => AsyncStorage),
-      // potential bottleneck? when roomState is updated often. Solution: split stores
-    },
-  ),
-);
+export const useRoomStore = create<RoomStore>((set, get) => ({
+  room: null,
+  setRoom: (room) => set({ room }),
+}));
 
 type RoomState = {
   roomState: PublicRoomState | null;
