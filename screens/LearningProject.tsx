@@ -34,6 +34,8 @@ export default function LearningProject({ navigation, route }) {
 
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
 
+  console.log(project);
+  
   useEffect(() => {
     navigation.setOptions({
       title: project.name,
@@ -49,7 +51,7 @@ export default function LearningProject({ navigation, route }) {
               }}
             ></IconButton>
           </Tooltip>
-          <Tooltip title="Invite users">
+          {user.id === project.owner_id && <Tooltip title="Invite users">
             <IconButton
               icon="account-plus"
               onPress={() => {
@@ -58,7 +60,7 @@ export default function LearningProject({ navigation, route }) {
                 });
               }}
             ></IconButton>
-          </Tooltip>
+          </Tooltip>}
         </>
       ),
     });
@@ -141,6 +143,7 @@ export default function LearningProject({ navigation, route }) {
               },
               {
                 label: "Friends only",
+                icon: "account-heart",
                 type: "checkbox",
                 helperText: "Only friends can join this room.",
               },
