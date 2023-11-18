@@ -1,18 +1,8 @@
 import * as React from "react";
-import { Dialog, Portal, TextInput, Text, Card } from "react-native-paper";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { Button } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { useState } from "react";
-import { useAuth } from "../../providers/AuthProvider";
-import { supabase } from "../../supabase";
-
+import { Text } from "react-native-paper";
+import { StyleSheet } from "react-native";
 import AccordionSection from "../../components/learningRoom/AccordionCreateRoom";
-import { NAVIGATION } from "../../types/common";
+
 
 export default function CreateRoom({ navigation }) {
   return (
@@ -23,38 +13,6 @@ export default function CreateRoom({ navigation }) {
 
       <AccordionSection />
 
-      <Button
-        icon="home"
-        mode="contained"
-        style={[{ marginTop: responsiveHeight(2.9) }]}
-        onPress={() => {
-          navigation.navigate(NAVIGATION.WHITEBOARD);
-        }}
-      >
-        WHITEBOARD
-      </Button>
-
-      <Button
-        icon="home"
-        mode="contained"
-        style={[{ marginTop: responsiveHeight(2.9) }]}
-        onPress={() => {
-          navigation.navigate(NAVIGATION.FLASHCARD_GAME);
-        }}
-      >
-        FLASHCARDS
-      </Button>
-
-      <Button
-        icon="home"
-        mode="contained"
-        style={[{ marginTop: responsiveHeight(2.9) }]}
-        onPress={() => {
-          navigation.navigate(NAVIGATION.EXERCISE_GAME);
-        }}
-      >
-        QUIZ
-      </Button>
     </React.Fragment>
   );
 }
