@@ -4,10 +4,10 @@
  */
 
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, VirtualizedList } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import FileCategoryComponent from "../../components/learningProject/FileCategory";
+import FileCategory from "../../components/learningProject/FileCategory";
 import UploadFileDialog from "../../components/dialogues/UploadFile";
 
 export default function FilesManagement() {
@@ -73,32 +73,42 @@ export default function FilesManagement() {
           function={() => setUploadDialogVisible(true)}
         />
       </View>
-      <ScrollView style={styles.scrollView}>
-        <FileCategoryComponent
-          title="PDF Documents (.pdf)"
-          files={categorizeFiles(".pdf")}
-          onDelete={confirmDelete}
-        />
-        <Divider style={styles.divider} />
-        <FileCategoryComponent
-          title="Word Documents (.docx)"
-          files={categorizeFiles(".docx")}
-          onDelete={confirmDelete}
-        />
-        <Divider style={styles.divider} />
-        <FileCategoryComponent
-          title="Excel (.xlsx)"
-          files={categorizeFiles(".xlsx")}
-          onDelete={confirmDelete}
-        />
-        <Divider style={styles.divider} />
-        {/* Assuming 'misc' category for files that don't match known extensions */}
-        <FileCategoryComponent
-          title="Miscellaneous"
-          files={categorizeFiles(".txt")}
-          onDelete={confirmDelete}
-        />
-      </ScrollView>
+
+      <VirtualizedList
+        renderItem={() => null}
+        getItemCount={() => 0}
+        ListHeaderComponent={() => {
+          return (
+            <View style={styles.scrollView}>
+              <FileCategory
+                title="PDF Documents (.pdf)"
+                files={categorizeFiles(".pdf")}
+                onDelete={confirmDelete}
+              />
+              <Divider style={styles.divider} />
+              <FileCategory
+                title="Word Documents (.docx)"
+                files={categorizeFiles(".docx")}
+                onDelete={confirmDelete}
+              />
+              <Divider style={styles.divider} />
+              <FileCategory
+                title="Excel (.xlsx)"
+                files={categorizeFiles(".xlsx")}
+                onDelete={confirmDelete}
+              />
+              <Divider style={styles.divider} />
+              {/* Assuming 'misc' category for files that don't match known extensions */}
+              <FileCategory
+                title="Miscellaneous"
+                files={categorizeFiles(".txt")}
+                onDelete={confirmDelete}
+              />
+            </View>
+          );
+        }}
+      ></VirtualizedList>
+
       <FAB
         style={styles.fab}
         small

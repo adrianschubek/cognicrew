@@ -94,11 +94,10 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
-    color: "#333",
   },
   headerIcon: {
-    height: 40,
-    width: 40,
+    height: 42,
+    width: 41,
   },
   avatar: {
   },

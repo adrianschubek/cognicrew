@@ -101,8 +101,9 @@ export default function AddExercises({ showAddExercises, close }) {
           />
           <TextInput
             style={[styles.textInputStyle]}
-            multiline={true}
             label="Question:"
+            multiline={true}
+            blurOnSubmit={true}
             onChangeText={(question) => {
               setQuestion(question);
             }}
@@ -111,6 +112,7 @@ export default function AddExercises({ showAddExercises, close }) {
             number="1"
             sendAnswer={getAnswer1}
             width={responsiveWidth(70)}
+            
           />
           <TextInputWithCheckbox
             number="2"
@@ -130,7 +132,7 @@ export default function AddExercises({ showAddExercises, close }) {
           <Dialog.Actions>
           
             <Button
-              style={{ width: responsiveWidth(70) }}
+              style={{ width: responsiveWidth(70), marginTop: 10 }}
               onPress={() => {
                 addExercise(), close(), Keyboard.dismiss();
               }}
@@ -149,5 +151,6 @@ const styles = StyleSheet.create({
   textInputStyle: {
     marginBottom: responsiveHeight(1),
     width: responsiveWidth(70),
+    maxHeight: responsiveHeight(10.5),
   },
 });

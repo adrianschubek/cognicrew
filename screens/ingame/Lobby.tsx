@@ -17,6 +17,7 @@ import {
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
+import { MD3Colors } from "react-native-paper/lib/typescript/types";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -30,8 +31,8 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      await useUsernamesByRoom().then((userNames) => {
-        setUserList(userNames.data.map((user) => user.username));
+      room && await useUsernamesByRoom().then((userNames) => {
+         setUserList(userNames.data.map((user) => user.username));
       });
     };
     fetchData();
@@ -74,26 +75,32 @@ export default function Lobby({ navigation }) {
   //TODO: add functionality with acutal user icon
   //TODO: Live Loading of users (useSubscription)
   return (
-    <SafeAreaView
-      style={{
-        flexDirection: "column",
-        flex: 1,
-        backgroundColor: theme.colors.primaryContainer,
-      }}
-    >
-      <View style={{ marginTop: 20 }}>
-        <FlatList
-          contentContainerStyle={{
-            marginTop: 3,
-            flexDirection: "column",
-            alignItems: "flex-end",
-            alignSelf: "flex-end",
-          }}
-          data={userList}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              {/* <Image
+    <>
+      <CreateFlashCardGame
+        showCreateFlashcardGame={showCreateFlashcardGame}
+        close={() => setShowCreateFlashcardGame(false)}
+      />
+      <SafeAreaView
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundColor: theme.colors.primaryContainer,
+        }}
+      >
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <View style={{ flex: 1 }}>
+            <FlatList
+              contentContainerStyle={{
+                marginTop: 3,
+                flexDirection: "column",
+                alignItems: "flex-end",
+                alignSelf: "flex-end",
+              }}
+              data={userList}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  {/* <Image
                   source={{
                     uri:
                       "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
@@ -107,78 +114,87 @@ export default function Lobby({ navigation }) {
                     alignItems: "flex-end",
                   }}
                 /> */}
-              <View>
-                {/* Wrap the Text component in a View */}
-                <Text>{item}</Text>
-              </View>
-            </View>
-          )}
-        />
-        <View style={{}}>
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/completed_task_symbol.png")}
-            name={"Cogniquiz"}
-            function={() => {
-              navigation.navigate(NAVIGATION.EXERCISE_GAME);
-              console.log("Quiz Game Pressed");
-            }}
-          />
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/cards_symbol.png")}
-            name={"Cognicards"}
-            flexDirection="row-reverse"
-            function={() => {
-              setShowCreateFlashcardGame(true);
-              console.log("Flashcard Game Pressed");
-            }}
-          />
+                  <View>
+                    {/* Wrap the Text component in a View */}
+                    <Text>{item}</Text>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+          <View style={{ flex: 6 }}>
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/completed_task_symbol.png")}
+              name={"Cogniquiz"}
+              function={() => {
+                navigation.navigate(NAVIGATION.EXERCISE_GAME);
+                console.log("Quiz Game Pressed");
+              }}
+            />
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/cards_symbol.png")}
+              name={"Cognicards"}
+              flexDirection="row-reverse"
+              function={() => {
+                setShowCreateFlashcardGame(true);
+                console.log("Flashcard Game Pressed");
+              }}
+            />
 
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/teamwork_symbol.png")}
-            name={"Cogniboard"}
-            function={() => {
-              navigation.navigate(NAVIGATION.WHITEBOARD);
-              console.log("Whiteboard pressed");
-            }}
-          />
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/teamwork_symbol.png")}
+              name={"Cogniboard"}
+              function={() => {
+                navigation.navigate(NAVIGATION.WHITEBOARD);
+                console.log("Whiteboard pressed");
+              }}
+            />
+          </View>
+
+          <View style={{ flex: 4, alignItems: "center" }}>
+            <Button
+              mode="contained"
+              style={{ width: 300 }}
+              onPress={async () => {
+                const { error } = await supabase.rpc("leave_room");
+                if (error) return error.message;
+                setRoom(null);
+                navigation.navigate(NAVIGATION.HOME);
+              }}
+            >
+              Close
+            </Button>
+          </View>
         </View>
-        <CreateFlashCardGame
-          showCreateFlashcardGame={showCreateFlashcardGame}
-          close={() => setShowCreateFlashcardGame(false)}
-        />
-        <View style={{}}>
-          <Button
-            mode="contained"
-            style={{ width: 200 }}
-            onPress={async () => {
-              const { error } = await supabase.rpc("leave_room");
-              if (error) return error.message;
-              setRoom(null);
-              navigation.navigate(NAVIGATION.HOME);
-            }}
-          >
-            Close
-          </Button>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  learningProjectCategory: {
-    backgroundColor: "red",
-  },
+  learningProjectCategory: {},
 });

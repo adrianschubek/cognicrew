@@ -29,10 +29,10 @@ type CommonInput = {
   icon: string;
   /**
    * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
-   * @param inputValue The value of the input.
+   * @param values The value of the input.
    * @param allValues All input values in the alert.
    */
-  validator: (inputValue: string, allValues: string[]) => boolean;
+  validator: (values: string, allValues: string[]) => boolean;
   /**
    * The error text to display if the input is invalid.
    */
@@ -60,16 +60,37 @@ type ButtonInput = CommonInput & {
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
-   * 
-   * @param inputValues All input values in the alert.
+   *
+   * @param values All input values in the alert.
    */
-  action: (inputValues: string[]) => string | void | Promise<string | void>;
+  action: (values: string[]) => string | void | Promise<string | void>;
 };
 type SearchSelectInput = CommonInput & {
   type: "search-select";
+  /**
+   * key-value pairs of options to display in the select.
+   */
+  data: { key: string; value: string }[];
+  /**
+   * Number of options to display in the (virtualized) list.
+   */
+  visibleOptions: number;
 };
 
-type AlertField = TextInput | CheckboxInput | ButtonInput | SearchSelectInput;
+type DropdownInput = CommonInput & {
+  type: "dropdown";
+  /**
+   * key-value pairs of options to display in the select.
+   */
+  data: { key: string; value: string }[];
+};
+
+type AlertField =
+  | TextInput
+  | CheckboxInput
+  | ButtonInput
+  | SearchSelectInput
+  | DropdownInput;
 
 /* export function isTextInput(input: AlertField): input is TextInput {
   return input.type === "text" || input.type === "number" || input.type === "password";
@@ -123,22 +144,20 @@ export type Alert = {
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
-   * 
-   * @param inputValues All input values in the alert.
+   *
+   * @param values All input values in the alert.
    */
-  okAction: (inputValues: string[]) => string | void | Promise<string | void>;
+  okAction: (values: string[]) => string | void | Promise<string | void>;
   /**
    * The action to perform when the "Cancel" button is clicked.
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
-   * 
-   * @param inputValues All input values in the alert.
+   *
+   * @param values All input values in the alert.
    */
-  cancelAction: (
-    inputValues: string[],
-  ) => string | void | Promise<string | void>;
+  cancelAction: (values: string[]) => string | void | Promise<string | void>;
   /**
    * The fields to display in the alert.
    * @see AlertField
@@ -160,7 +179,7 @@ export const DEFAULT_ALERT: Alert = {
   fields: [],
 };
 
-export const DEFAULT_ALERT_INPUT:  AlertField = {
+export const DEFAULT_ALERT_INPUT: AlertField = {
   validator: () => true,
   label: "",
   helperText: "",
@@ -173,6 +192,8 @@ export const DEFAULT_ALERT_INPUT:  AlertField = {
   disabled: false,
   // @ts-expect-error FIXME
   action: () => {},
+  visibleOptions: 5,
+  data: [],
 };
 
 type AlertsStoreType = {

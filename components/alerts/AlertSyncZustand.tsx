@@ -1,17 +1,29 @@
 import {
   Button,
   Card,
+  Checkbox,
   Dialog,
   HelperText,
   Portal,
+  Searchbar,
   Switch,
   Text,
   TextInput,
   useTheme,
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
-import { Fragment, useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import {
+  Fragment,
+  memo,
+  startTransition,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { FlatList, ScrollView, VirtualizedList } from "react-native";
+import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
+import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 
 /**
  * Universal alert component that can be used to display alerts.
@@ -22,8 +34,10 @@ export default function AlertSyncZustand() {
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
 
-  const [inputValues, setInputValues] = useState<string[]>([]); // fixed by [""]
+  const [values, setValues] = useState<string[]>([]); // fixed by [""]
   const [tempError, setTempError] = useState<string | null>(null);
+
+  const [tempValues, setTempValues] = useState<string[]>([]);
 
   useEffect(() => {
     if (!activeAlert && alerts?.length > 0) {
@@ -33,240 +47,369 @@ export default function AlertSyncZustand() {
 
   useEffect(() => {
     if (activeAlert) {
-      setInputValues(() =>
+      setValues(() =>
         activeAlert?.fields?.length !== 0
           ? activeAlert.fields.map((field) => field.defaultValue ?? "")
           : [],
       );
       setTempError(() => null);
+      setTempValues(() => activeAlert?.fields?.map(() => "") ?? []);
     }
   }, [activeAlert]);
 
   const theme = useTheme();
 
+  const getBody = () => {
+    if (
+      !activeAlert ||
+      (activeAlert?.fields?.length !== 0 && values.length === 0)
+    )
+      return null;
+    const {
+      icon,
+      title,
+      titleStyle,
+      message,
+      messageStyle,
+      okAction,
+      cancelAction,
+      okText,
+      cancelText,
+      dismissable,
+      fields: inputs,
+    } = activeAlert;
+    return (
+      <>
+        {icon && (
+          <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
+        )}
+        {title && (
+          <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
+            <Text
+              style={{
+                color: theme.colors.primary,
+                ...(titleStyle as {}),
+              }}
+              variant="titleLarge"
+            >
+              {title}
+            </Text>
+          </Dialog.Title>
+        )}
+        {(message || inputs?.length !== 0) && (
+          <>
+            <Dialog.Content
+              style={{
+                marginTop: !title ? (icon ? 15 : 40) : undefined,
+              }}
+            >
+              {message && (
+                <Text
+                  style={{
+                    textAlign: "center",
+                    ...(messageStyle as {}),
+                  }}
+                  variant="bodyMedium"
+                >
+                  {message}
+                </Text>
+              )}
+              {inputs.map((field, i) => (
+                <Fragment key={i}>
+                  {field.type === "checkbox" ? (
+                    <>
+                      <TextInput
+                        style={{ marginVertical: 2, marginTop: 10 }}
+                        theme={{ roundness: 10 }}
+                        value={field.label}
+                        editable={false}
+                        disabled={field.disabled}
+                        left={
+                          field.icon && <TextInput.Icon icon={field.icon} />
+                        }
+                        right={
+                          <TextInput.Icon
+                            icon={() => (
+                              <Switch
+                                disabled={field.disabled}
+                                value={values[i] === "true"}
+                                onValueChange={() => {
+                                  const newValues = [...values];
+                                  newValues[i] =
+                                    values[i] === "true" ? "false" : "true";
+                                  setValues(newValues);
+                                }}
+                              />
+                            )}
+                          />
+                        }
+                      />
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                      {field.errorText &&
+                        !field.validator(values[i], values) && (
+                          <HelperText type="error" visible={true}>
+                            {field.errorText}
+                          </HelperText>
+                        )}
+                    </>
+                  ) : field.type === "button" ? (
+                    <>
+                      <Button
+                        onPress={async () => {
+                          const ret = await field.action(values);
+                          if (typeof ret === "string") {
+                            setTempError(ret);
+                            return;
+                          }
+                          next();
+                        }}
+                        disabled={field.disabled}
+                        style={{ marginTop: 10 }}
+                        mode="contained-tonal"
+                      >
+                        {field.label}
+                      </Button>
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                    </>
+                  ) : field.type === "number" ||
+                    field.type === "password" ||
+                    field.type === "text" ? (
+                    <>
+                      <TextInput
+                        style={{ marginVertical: 2, marginTop: 10 }}
+                        label={field.label}
+                        placeholder={field.placeholder}
+                        secureTextEntry={field.type === "password"}
+                        left={
+                          field.icon && <TextInput.Icon icon={field.icon} />
+                        }
+                        keyboardType={
+                          field.type === "number" ? "number-pad" : "default"
+                        }
+                        value={values[i]}
+                        onChangeText={(text) => {
+                          const newValues = [...values];
+                          newValues[i] = text;
+                          setValues(newValues);
+                        }}
+                        error={
+                          field.validator && !field.validator(values[i], values)
+                        }
+                        disabled={field.disabled}
+                      ></TextInput>
+                      {field.helperText && (
+                        <HelperText type="info" visible={true}>
+                          {field.helperText}
+                        </HelperText>
+                      )}
+                      {field.errorText &&
+                        !field.validator(values[i], values) && (
+                          <HelperText type="error" visible={true}>
+                            {field.errorText}
+                          </HelperText>
+                        )}
+                    </>
+                  ) : field.type === "search-select" ? ( // TODO: add toggle search field
+                    <>
+                      <TextInput
+                        style={{ marginTop: 10 }}
+                        placeholder={
+                          field.placeholder ? field.placeholder : "Search"
+                        }
+                        left={
+                          <TextInput.Icon
+                            icon={field.icon ? field.icon : "magnify"}
+                          />
+                        }
+                        value={tempValues[i]}
+                        onChangeText={(text) => {
+                          const newValues = [...tempValues];
+                          newValues[i] = text;
+                          setTempValues(newValues);
+                        }}
+                        error={
+                          field.data
+                            .filter(({ key }) => key.includes(tempValues[i]))
+                            .filter((_, i) => i < field.visibleOptions)
+                            .length === 0
+                        }
+                      />
+                      <FlatList
+                        nestedScrollEnabled={true}
+                        data={field.data
+                          .filter(({ key }) => key.includes(tempValues[i]))
+                          .filter((_, i) => i < field.visibleOptions)}
+                        renderItem={({ item }) => {
+                          const { key, value } = item;
+                          return (
+                            <TextInput
+                              key={key}
+                              theme={{ roundness: 0 }}
+                              value={key}
+                              editable={false}
+                              disabled={field.disabled}
+                              left={
+                                field.icon && (
+                                  <TextInput.Icon icon={field.icon} />
+                                )
+                              }
+                              right={
+                                <TextInput.Icon
+                                  icon={() => (
+                                    // TODO: support RadioButtons
+                                    <Checkbox
+                                      disabled={field.disabled}
+                                      status={
+                                        values[i].split("|").includes(value)
+                                          ? "checked"
+                                          : "unchecked"
+                                      }
+                                      onPress={() => {
+                                        startTransition(() => {
+                                          const newValues = [...values];
+                                          // if value is already in array, remove it else add it
+                                          if (
+                                            values[i].split("|").includes(value)
+                                          ) {
+                                            newValues[i] = values[i]
+                                              .split("|")
+                                              .filter((v) => v !== value)
+                                              .join("|");
+                                          } else {
+                                            newValues[i] =
+                                              value +
+                                              (values[i]
+                                                ? "|" + values[i]
+                                                : "");
+                                          }
+                                          setValues(newValues);
+                                        });
+                                      }}
+                                    />
+                                  )}
+                                />
+                              }
+                            />
+                          );
+                        }}
+                      />
+                      {field.data
+                        .filter(({ key }) => key.includes(tempValues[i]))
+                        .filter((_, i) => i < field.visibleOptions).length ===
+                      0 ? (
+                        <HelperText type={"error"}>No results</HelperText>
+                      ) : (
+                        <HelperText type="info">
+                          {field.helperText
+                            ? field.helperText
+                            : "Specify your query for more results."}
+                        </HelperText>
+                      )}
+                    </>
+                  ) : field.type === "dropdown" ? (
+                    <Text>Unknown field type: {field.type}</Text>
+                  ) : (
+                    <Text>Unknown field type: {field.type}</Text>
+                  )}
+                </Fragment>
+              ))}
+            </Dialog.Content>
+          </>
+        )}
+        {tempError && (
+          <Dialog.Content>
+            <Card
+              mode="outlined"
+              theme={{
+                colors: {
+                  outline: theme.colors.onError,
+                  surface: theme.colors.error,
+                },
+              }}
+            >
+              <Card.Content>
+                <Text style={{ color: theme.colors.onError }}>{tempError}</Text>
+              </Card.Content>
+            </Card>
+          </Dialog.Content>
+        )}
+        {(okText !== "" || cancelText !== "") && (
+          <Dialog.Actions>
+            {cancelText !== "" && (
+              <Button
+                onPress={async () => {
+                  const ret = await cancelAction(values);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
+                  next();
+                }}
+              >
+                {cancelText}
+              </Button>
+            )}
+            {okText !== "" && (
+              <Button
+                onPress={async () => {
+                  const ret = await okAction(values);
+                  if (typeof ret === "string") {
+                    setTempError(ret);
+                    return;
+                  }
+                  next();
+                }}
+                disabled={inputs?.some(
+                  (field, i) =>
+                    field.required &&
+                    (values[i]?.length === 0 ||
+                      (field.validator && !field.validator(values[i], values))),
+                )}
+              >
+                {okText}
+              </Button>
+            )}
+          </Dialog.Actions>
+        )}
+      </>
+    );
+  };
+
+  const memoBody = useMemo(getBody, [
+    activeAlert,
+    values,
+    tempError,
+    tempValues,
+  ]);
+
   // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined
   if (
     !activeAlert ||
-    (activeAlert?.fields?.length !== 0 && inputValues.length === 0)
+    (activeAlert?.fields?.length !== 0 && values.length === 0)
   )
     return null;
-
-  const {
-    icon,
-    title,
-    titleStyle,
-    message,
-    messageStyle,
-    okAction,
-    cancelAction,
-    okText,
-    cancelText,
-    dismissable,
-    fields: inputs,
-  } = activeAlert;
 
   return (
     <Portal>
       <Dialog
         visible={true}
-        onDismiss={() => dismissable && next()}
-        testID={icon + "_alert"}
+        onDismiss={() => activeAlert && activeAlert.dismissable && next()}
+        testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
         style={{ zIndex: 999999, overflow: "scroll" }}
       >
-        <ScrollView>
-          {icon && (
-            <Dialog.Icon color={theme.colors.primary} size={40} icon={icon} />
-          )}
-          {title && (
-            <Dialog.Title style={{ textAlign: "center", marginTop: 8 }}>
-              <Text
-                style={{ color: theme.colors.primary, ...(titleStyle as {}) }}
-                variant="titleLarge"
-              >
-                {title}
-              </Text>
-            </Dialog.Title>
-          )}
-          {(message || inputs?.length !== 0) && (
-            <>
-              <Dialog.Content
-                style={{ marginTop: !title ? (icon ? 15 : 40) : undefined }}
-              >
-                {message && (
-                  <Text
-                    style={{ textAlign: "center", ...(messageStyle as {}) }}
-                    variant="bodyMedium"
-                  >
-                    {message}
-                  </Text>
-                )}
-                {inputs.map((field, i) => (
-                  <Fragment key={i}>
-                    {field.type === "checkbox" ? (
-                      <>
-                        <TextInput
-                          style={{ marginVertical: 2, marginTop: 10 }}
-                          theme={{ roundness: 10 }}
-                          value={field.label}
-                          editable={false}
-                          disabled={field.disabled}
-                          left={
-                            field.icon && <TextInput.Icon icon={field.icon} />
-                          }
-                          right={
-                            <TextInput.Icon
-                              icon={() => (
-                                <Switch
-                                  disabled={field.disabled}
-                                  value={inputValues[i] === "true"}
-                                  onValueChange={() => {
-                                    const newValues = [...inputValues];
-                                    newValues[i] =
-                                      inputValues[i] === "true"
-                                        ? "false"
-                                        : "true";
-                                    setInputValues(newValues);
-                                  }}
-                                />
-                              )}
-                            />
-                          }
-                        />
-                        {field.helperText && (
-                          <HelperText type="info" visible={true}>
-                            {field.helperText}
-                          </HelperText>
-                        )}
-                        {field.errorText &&
-                          !field.validator(inputValues[i], inputValues) && (
-                            <HelperText type="error" visible={true}>
-                              {field.errorText}
-                            </HelperText>
-                          )}
-                      </>
-                    ) : field.type === "button" ? (
-                      <>
-                        <Button
-                          onPress={async () => {
-                            const ret = await field.action(inputValues);
-                            if (typeof ret === "string") {
-                              setTempError(ret);
-                              return;
-                            }
-                            next();
-                          }}
-                          disabled={field.disabled}
-                          style={{ marginTop: 10 }}
-                          mode="contained-tonal"
-                        >
-                          {field.label}
-                        </Button>
-                        {field.helperText && (
-                          <HelperText type="info" visible={true}>
-                            {field.helperText}
-                          </HelperText>
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        <TextInput
-                          style={{ marginVertical: 2, marginTop: 10 }}
-                          label={field.label}
-                          placeholder={field.placeholder}
-                          secureTextEntry={field.type === "password"}
-                          left={
-                            field.icon && <TextInput.Icon icon={field.icon} />
-                          }
-                          keyboardType={
-                            field.type === "number" ? "number-pad" : "default"
-                          }
-                          value={inputValues[i]}
-                          onChangeText={(text) => {
-                            const newValues = [...inputValues];
-                            newValues[i] = text;
-                            setInputValues(newValues);
-                          }}
-                          error={
-                            field.validator && !field.validator(inputValues[i], inputValues)
-                          }
-                          disabled={field.disabled}
-                        ></TextInput>
-                        {field.helperText && (
-                          <HelperText type="info" visible={true}>
-                            {field.helperText}
-                          </HelperText>
-                        )}
-                        {field.errorText &&
-                          !field.validator(inputValues[i], inputValues) && (
-                            <HelperText type="error" visible={true}>
-                              {field.errorText}
-                            </HelperText>
-                          )}
-                      </>
-                    )}
-                  </Fragment>
-                ))}
-              </Dialog.Content>
-            </>
-          )}
-          {tempError && (
-            <Dialog.Content>
-              <Card
-                mode="outlined"
-                theme={{
-                  colors: {
-                    outline: theme.colors.onError,
-                    surface: theme.colors.error,
-                  },
-                }}
-              >
-                <Card.Content>
-                  <Text style={{ color: theme.colors.onError }}>
-                    {tempError}
-                  </Text>
-                </Card.Content>
-              </Card>
-            </Dialog.Content>
-          )}
-          {(okText !== "" || cancelText !== "") && (
-            <Dialog.Actions>
-              {cancelText !== "" && (
-                <Button
-                  onPress={async () => {
-                    const ret = await cancelAction(inputValues);
-                    if (typeof ret === "string") {
-                      setTempError(ret);
-                      return;
-                    }
-                    next();
-                  }}
-                >
-                  {cancelText}
-                </Button>
-              )}
-              {okText !== "" && (
-                <Button
-                  onPress={async () => {
-                    const ret = await okAction(inputValues);
-                    if (typeof ret === "string") {
-                      setTempError(ret);
-                      return;
-                    }
-                    next();
-                  }}
-                  disabled={inputs?.some(
-                    (field, i) =>
-                      field.required &&
-                      (inputValues[i]?.length === 0 ||
-                        (field.validator && !field.validator(inputValues[i], inputValues))),
-                  )}
-                >
-                  {okText}
-                </Button>
-              )}
-            </Dialog.Actions>
-          )}
-        </ScrollView>
+        <VirtualizedList
+          renderItem={() => null}
+          getItemCount={() => 0}
+          ListHeaderComponent={memoBody}
+        />
       </Dialog>
     </Portal>
   );
