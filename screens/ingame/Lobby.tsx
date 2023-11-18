@@ -17,6 +17,7 @@ import {
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
+import { MD3Colors } from "react-native-paper/lib/typescript/types";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -125,7 +126,11 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                { backgroundColor: theme.colors.backdrop },
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
               ]}
               path={require("../../assets/completed_task_symbol.png")}
               name={"Cogniquiz"}
@@ -137,7 +142,11 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                { backgroundColor: theme.colors.backdrop },
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
               ]}
               path={require("../../assets/cards_symbol.png")}
               name={"Cognicards"}
@@ -151,7 +160,11 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                { backgroundColor: theme.colors.backdrop },
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
               ]}
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
@@ -162,7 +175,7 @@ export default function Lobby({ navigation }) {
             />
           </View>
 
-          <View style={{ flex: 4, alignItems:"center"}}>
+          <View style={{ flex: 4, alignItems: "center" }}>
             <Button
               mode="contained"
               style={{ width: 300 }}
@@ -184,6 +197,6 @@ export default function Lobby({ navigation }) {
 
 const styles = StyleSheet.create({
   learningProjectCategory: {
-    backgroundColor: "red",
+
   },
 });
