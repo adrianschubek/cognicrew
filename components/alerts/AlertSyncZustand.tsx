@@ -34,8 +34,8 @@ export default function AlertSyncZustand() {
   useEffect(() => {
     if (activeAlert) {
       setInputValues(() =>
-        activeAlert?.inputs?.length !== 0
-          ? activeAlert.inputs.map((field) => field.defaultValue ?? "")
+        activeAlert?.fields?.length !== 0
+          ? activeAlert.fields.map((field) => field.defaultValue ?? "")
           : [],
       );
       setTempError(() => null);
@@ -47,7 +47,7 @@ export default function AlertSyncZustand() {
   // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined
   if (
     !activeAlert ||
-    (activeAlert?.inputs?.length !== 0 && inputValues.length === 0)
+    (activeAlert?.fields?.length !== 0 && inputValues.length === 0)
   )
     return null;
 
@@ -62,7 +62,7 @@ export default function AlertSyncZustand() {
     okText,
     cancelText,
     dismissable,
-    inputs,
+    fields: inputs,
   } = activeAlert;
 
   return (
@@ -138,7 +138,7 @@ export default function AlertSyncZustand() {
                           </HelperText>
                         )}
                         {field.errorText &&
-                          !field.validator(inputValues[i]) && (
+                          !field.validator(inputValues[i], inputValues) && (
                             <HelperText type="error" visible={true}>
                               {field.errorText}
                             </HelperText>
@@ -187,7 +187,7 @@ export default function AlertSyncZustand() {
                             setInputValues(newValues);
                           }}
                           error={
-                            field.validator && !field.validator(inputValues[i])
+                            field.validator && !field.validator(inputValues[i], inputValues)
                           }
                           disabled={field.disabled}
                         ></TextInput>
@@ -197,7 +197,7 @@ export default function AlertSyncZustand() {
                           </HelperText>
                         )}
                         {field.errorText &&
-                          !field.validator(inputValues[i]) && (
+                          !field.validator(inputValues[i], inputValues) && (
                             <HelperText type="error" visible={true}>
                               {field.errorText}
                             </HelperText>
@@ -258,7 +258,7 @@ export default function AlertSyncZustand() {
                     (field, i) =>
                       field.required &&
                       (inputValues[i]?.length === 0 ||
-                        (field.validator && !field.validator(inputValues[i]))),
+                        (field.validator && !field.validator(inputValues[i], inputValues))),
                   )}
                 >
                   {okText}

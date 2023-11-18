@@ -47,36 +47,16 @@ export default function JoinRoom({ navigation }) {
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
           onPress={async () => {
-            info({ message: "Joining room...", inputs:[
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-            ] });
-            // TODO: debug
-            const { data, error } = await supabase.functions.invoke(
-              "room-init",
-              {
-                body: {
-                  foo: "bar",
+            alert({
+              title: "Select set",
+              fields: [
+                {
+                  type: "search-select", // wie create flashcard game
+                  
                 },
-                method: "POST",
-              },
-            );
-            if (error) errorAlert({ message: JSON.stringify(error) });
-            else console.log(JSON.stringify(data, null, 2));
-            // else info({ message: JSON.stringify(data) });
-            // if (data) alert({ message: JSON.stringify(data.message) });
-            // else alert({ title: "Error", message: JSON.stringify(error) });
-
-            // useSWR
+              ],
+            });
+           
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >

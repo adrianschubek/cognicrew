@@ -34,8 +34,6 @@ export default function LearningProject({ navigation, route }) {
 
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
 
-  console.log(project);
-  
   useEffect(() => {
     navigation.setOptions({
       title: project.name,
@@ -117,7 +115,7 @@ export default function LearningProject({ navigation, route }) {
               if (error) return error.message;
               setRoom(data);
             },
-            inputs: [
+            fields: [
               {
                 label: "Name",
                 icon: "tag-text",

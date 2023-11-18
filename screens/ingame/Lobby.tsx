@@ -153,7 +153,10 @@ export default function Lobby({ navigation }) {
           <Button
             mode="contained"
             style={{ width: 200 }}
-            onPress={() => {
+            onPress={async () => {
+              const { error } = await supabase.rpc("leave_room");
+              if (error) return error.message;
+              setRoom(null);
               navigation.navigate(NAVIGATION.HOME);
             }}
           >
