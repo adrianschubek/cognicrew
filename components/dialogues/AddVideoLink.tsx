@@ -13,9 +13,10 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
   const [title, setTitle] = useState(video?.title || "");
   const [subtitle, setSubtitle] = useState(video?.subtitle || "");
   const [description, setDescription] = useState(video?.description || "");
-  const [videoURL, setVideoURL] = useState(video?.link_url || "");
+  const [videoURL, setVideoURL] = useState<string>(video?.link_url || "");
   const projectId = useProjectStore((state) => state.projectId);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
+  const ensuredHttpURL = videoURL.match(/^(https?:\/\/)/) ? videoURL : `http://${videoURL}`;
   const addOrEdit = () => {
     upsertLink({
       // @ts-expect-error
@@ -24,7 +25,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
       title: title,
       subtitle: subtitle,
       description: description,
-      link_url: videoURL,
+      link_url: ensuredHttpURL,
     });
     close();
     setTitle("");
