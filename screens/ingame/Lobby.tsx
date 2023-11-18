@@ -17,7 +17,6 @@ import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 
 export default function Lobby({ navigation }) {
-  
   const theme = useTheme();
   const { confirm } = useAlerts();
 
@@ -29,32 +28,35 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      await useUsernamesByRoom().then((e) => setUserList(e.data.username));
+      await useUsernamesByRoom().then((userNames) => {
+        setUserList(userNames.data.map((user) => user.username));
+      }
+      );
     };
     fetchData();
   }, []);
 
-useEffect(() => {
-  navigation.setOptions({
-    headerShown: false,
-  });
-  navigation.addListener("beforeRemove", (e) => {
-    // Prevent default behavior of leaving the screen
-    e.preventDefault();
-    // Prompt the user before leaving the screen
-    confirm({
-      icon: "location-exit",
-      title: "Leave room?",
-      message: "Are you sure you want to leave this room?",
-      okText: "Leave",
-      okAction: async () => {
-        const { error } = await supabase.rpc("leave_room");
-        if (error) return error.message;
-        setRoom(null);
-      },
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
     });
-  });
-}, [confirm, navigation]);
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+      // Prompt the user before leaving the screen
+      confirm({
+        icon: "location-exit",
+        title: "Leave room?",
+        message: "Are you sure you want to leave this room?",
+        okText: "Leave",
+        okAction: async () => {
+          const { error } = await supabase.rpc("leave_room");
+          if (error) return error.message;
+          setRoom(null);
+        },
+      });
+    });
+  }, [confirm, navigation]);
 
   // TODO: add subscribe tracker where key=rooms
 

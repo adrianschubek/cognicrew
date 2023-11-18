@@ -51,7 +51,7 @@ export function useUsername(uid?: string) {
 export async function useUsernamesByRoom() {
   let { data, error } = await supabase.rpc("list_room_members");
   if (error) console.error(error);
-  console.log(data);
+  //console.log(data);
   return { data, error };
 }
 
