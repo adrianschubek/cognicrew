@@ -6,10 +6,17 @@ import JoinRoom from "../components/learningRoom/JoinRoom";
 import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
 import { NAVIGATION } from "../types/common";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AudioPlayer from "../components/AudioPlayer";
+
+
+
+
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
+
+  const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
 
   useEffect(() => {
     navigation.setOptions({
@@ -44,7 +51,8 @@ export default function HomeScreen({ navigation }) {
           <JoinRoom navigation={navigation} />
         </Card>
         <Card style={styles.card}>
-          <CreateRoom navigation={navigation} />
+        <AudioPlayer audioSource={audioSource}/>
+        {/*<CreateRoom navigation={navigation} /> */}
         </Card>
       </View>
     </View>
