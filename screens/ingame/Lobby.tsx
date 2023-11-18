@@ -180,9 +180,7 @@ export default function Lobby({ navigation }) {
                   title: "Choose sets",
                   icon: "cards",
                   dismissable: false,
-                  okAction(values) {
-                    console.log(values);
-                  },
+                  okText: "",
                   fields: [
                     {
                       type: "search-select",
@@ -191,6 +189,37 @@ export default function Lobby({ navigation }) {
                         key: cards.name,
                         value: cards.id,
                       })),
+                    },
+                    {
+                      type: "button",
+                      label: "Continue",
+                      action(values) {
+                        console.log(values);
+                        confirm({
+                          title: "Configure game",
+                          icon: "cog",
+                          dismissable: false,
+                          okText: "",
+                          fields: [
+                            {
+                              type: "number",
+                              label: "Round duration (seconds)",
+                              icon: "timer-outline",
+                              defaultValue: "30",
+                            },
+                            {
+                              type: "number",
+                              label: "Number of rounds",
+                              icon: "timer-outline",
+                              defaultValue: "10",
+                            },
+                            {
+                              type: "button",
+                              label: "Start Game",
+                            },
+                          ],
+                        });
+                      },
                     },
                   ],
                 });

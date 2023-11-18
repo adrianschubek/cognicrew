@@ -78,6 +78,7 @@ export default function AlertSyncZustand() {
       dismissable,
       fields: inputs,
     } = activeAlert;
+     // TODO: add X close button
     return (
       <>
         {icon && (
@@ -412,6 +413,7 @@ export default function AlertSyncZustand() {
     <Portal>
       <Dialog
         visible={true}
+        dismissable={activeAlert && activeAlert.dismissable}
         onDismiss={() => activeAlert && activeAlert.dismissable && next()}
         testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
         style={{ zIndex: 999999, overflow: "scroll" }}
