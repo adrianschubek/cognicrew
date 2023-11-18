@@ -64,7 +64,7 @@ export default function CreateFlashcardGame({
   const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] =
     useState([]);
 
-  //TODO test
+  //FIXME test projectId is null when not navigation from learning project list.! BUG
   const projectId = useProjectStore((state) => state.projectId);
   const { data } = useSets(ManagementType.FLASHCARD, projectId);
 
