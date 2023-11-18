@@ -7,6 +7,7 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
+import { TextInput } from 'react-native-paper';
 import { Text } from "react-native-paper";
 import { supabase } from "../supabase";
 import { styles } from "../components/learningRoom/DrawingStyle";
@@ -28,6 +29,7 @@ export default function Discover() {
   );
     
 
+  const [text, setText] = React.useState("");
 
   type ItemProps = { title: string };
   const Item = ({ title }: ItemProps) => (
@@ -53,6 +55,11 @@ export default function Discover() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TextInput
+      label="Search"
+      value={text}
+      onChangeText={text => setText(text)}
+    />
       <FlatList
         data={data}
         renderItem={({ item }) => <Item title={item.name} />}
