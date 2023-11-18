@@ -6,6 +6,7 @@ import {
   View,
   Image,
   TouchableOpacity,
+  ImageSourcePropType,
 } from "react-native";
 import { Button, Text, Divider } from "react-native-paper";
 import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
@@ -18,10 +19,16 @@ import {
 function doNothing() {
   return;
 }
-export default function LearningProjectCategory(props) {
+export default function LearningProjectCategory(props: {
+  name: string;
+  path: ImageSourcePropType;
+  function?: any;
+  flexDirection?: any;
+  [name: string]: any;
+}) {
   return (
-    <>
-      <TouchableOpacity onPress={props.function || doNothing()}>
+    <React.Fragment>
+      <TouchableOpacity style={props.style} onPress={props.function || doNothing()}>
         <View
           style={[
             styles.category,
@@ -38,7 +45,7 @@ export default function LearningProjectCategory(props) {
         </View>
       </TouchableOpacity>
       <Divider style={styles.dividerStyle} />
-    </>
+    </React.Fragment>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useNavigation } from "@react-navigation/native";
@@ -15,6 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
+import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -30,8 +32,7 @@ export default function Lobby({ navigation }) {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
-      }
-      );
+      });
     };
     fetchData();
   }, []);
@@ -66,14 +67,12 @@ export default function Lobby({ navigation }) {
   return (
     <SafeAreaView
       style={{
-        justifyContent: "center",
-        alignContent: "center",
-        alignItems: "center",
+        flexDirection: "column",
         flex: 1,
         backgroundColor: theme.colors.primaryContainer,
       }}
     >
-      <View style={{ flex: 1, marginTop: 20 }}>
+      <View style={{ marginTop: 20 }}>
         <FlatList
           contentContainerStyle={{
             marginTop: 3,
@@ -106,46 +105,54 @@ export default function Lobby({ navigation }) {
             </View>
           )}
         />
-        <Button
-          icon="home"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate(NAVIGATION.WHITEBOARD);
-          }}
-        >
-          WHITEBOARD
-        </Button>
-        <Button
-          icon="home"
-          mode="contained"
-          onPress={() => {
-            setShowCreateFlashcardGame(true);
-          }}
-        >
-          FLASHCARDS
-        </Button>
-        <Button
-          icon="home"
-          mode="contained"
-          onPress={() => {
-            navigation.navigate(NAVIGATION.EXERCISE_GAME);
-          }}
-        >
-          QUIZ
-        </Button>
+        <View style={{}}>
+          <LearningProjectCategory
+            style={[
+              styles.learningProjectCategory,
+              { backgroundColor: theme.colors.backdrop },
+            ]}
+            path={require("../../assets/completed_task_symbol.png")}
+            name={"Cogniquiz"}
+            function={() => {
+              navigation.navigate(NAVIGATION.EXERCISE_GAME);
+              console.log("Quiz Game Pressed");
+            }}
+          />
+          <LearningProjectCategory
+            style={[
+              styles.learningProjectCategory,
+              { backgroundColor: theme.colors.backdrop },
+            ]}
+            path={require("../../assets/cards_symbol.png")}
+            name={"Cognicards"}
+            flexDirection="row-reverse"
+            function={() => {
+              setShowCreateFlashcardGame(true);
+              console.log("Flashcard Game Pressed");
+            }}
+          />
+
+          <LearningProjectCategory
+            style={[
+              styles.learningProjectCategory,
+              { backgroundColor: theme.colors.backdrop },
+            ]}
+            path={require("../../assets/teamwork_symbol.png")}
+            name={"Cogniboard"}
+            function={() => {
+              navigation.navigate(NAVIGATION.WHITEBOARD);
+              console.log("Whiteboard pressed");
+            }}
+          />
+        </View>
         <CreateFlashCardGame
           showCreateFlashcardGame={showCreateFlashcardGame}
           close={() => setShowCreateFlashcardGame(false)}
         />
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            padding: 5,
-          }}
-        >
+        <View style={{}}>
           <Button
             mode="contained"
+            style={{ width: 200 }}
             onPress={() => {
               navigation.navigate(NAVIGATION.HOME);
             }}
@@ -157,3 +164,9 @@ export default function Lobby({ navigation }) {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  learningProjectCategory: {
+    backgroundColor: "red",
+  },
+});

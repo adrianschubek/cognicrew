@@ -23,7 +23,6 @@ export default function LearningRoom({ navigation }) {
       <CreateFlashCardGame
         showCreateFlashcardGame={showCreateFlashcardGame}
         close={() => setShowCreateFlashcardGame(false)}
-        
       />
 
       <View style={styles.container}>
