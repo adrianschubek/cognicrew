@@ -92,7 +92,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
         />
         <Dialog.Actions>
           <Button
-            style={{ width: responsiveWidth(70) }}
+            style={{ width: responsiveWidth(70), marginTop: 10 }}
             onPress={() => {
               addOrEdit();
             }}

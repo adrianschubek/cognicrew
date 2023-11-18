@@ -132,7 +132,7 @@ export default function AddExercises({ showAddExercises, close }) {
           <Dialog.Actions>
           
             <Button
-              style={{ width: responsiveWidth(70) }}
+              style={{ width: responsiveWidth(70), marginTop: 10 }}
               onPress={() => {
                 addExercise(), close(), Keyboard.dismiss();
               }}

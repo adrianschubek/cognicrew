@@ -84,7 +84,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         />
         <Dialog.Actions>
           <Button
-            style={{ width: responsiveWidth(70) }}
+            style={{ width: responsiveWidth(70), marginTop: 10}}
             disabled={isMutating}
             onPress={() => {
               addFlashcard(), close(), Keyboard.dismiss();
