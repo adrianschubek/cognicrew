@@ -8,26 +8,29 @@ import {
   Text,
   Button,
   Checkbox,
-  Searchbar
+  Searchbar,
 } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
-import { useNavigation } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { useEffect, useRef, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useSets } from "../../utils/hooks";
 import { useProjectStore } from "../../stores/ProjectStore";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
-export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
+export default function CreateFlashcardGame({
+  showCreateFlashcardGame,
+  close,
+}) {
   const navigation = useNavigation<any>();
-  const minutesRef = React.useRef(null);
-  const secondsRef = React.useRef(null);
+  const minutesRef = useRef(null);
+  const secondsRef = useRef(null);
 
   // Use separate states for minutes and seconds
   const [minutes, setMinutes] = useState("");
@@ -37,12 +40,12 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
     // Convert the minutes and seconds to integers (default to 0 if empty)
     const minutesInt = parseInt(minutes) || 0;
     const secondsInt = parseInt(seconds) || 0;
-  
+
     // Calculate the total time in seconds
     const totalTimeInSeconds = minutesInt * 60 + secondsInt || 120;
-    
+
     return totalTimeInSeconds;
-  }
+  };
 
   const handleTimeChange = (field, text) => {
     // Ensure that the input is in the format "00:00"
@@ -55,32 +58,35 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
     }
   };
 
-  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Initialize filteredAccordionSectionItems with an empty array
-  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] = useState([]);
+  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] =
+    useState([]);
 
   //TODO test
   const projectId = useProjectStore((state) => state.projectId);
   const { data } = useSets(ManagementType.FLASHCARD, projectId);
-  
+
   useEffect(() => {
-    if (data !== undefined && data !== null) {
-      const formattedSetsData = (data ?? []).map((item) => ({ ...item, checked: false }));
-      setFilteredAccordionSectionItems(formattedSetsData);
-    }
+    if (!data) return;
+    const formattedSetsData = (data ?? []).map((item) => ({
+      ...item,
+      checked: false,
+    }));
+    setFilteredAccordionSectionItems(formattedSetsData);
   }, [data]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const filteredItems = data.map((item) => ({
-      ...item,
-      checked: false
-    })).filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
-    );
+    const filteredItems = data
+      .map((item) => ({
+        ...item,
+        checked: false,
+      }))
+      .filter((item) => item.name.toLowerCase().includes(query.toLowerCase()));
     setFilteredAccordionSectionItems(filteredItems);
-  }
+  };
 
   const [checkedItems, setCheckedItems] = useState([]);
 
@@ -118,32 +124,32 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
         <Dialog visible={showCreateFlashcardGame} onDismiss={close}>
           <Dialog.Title>Flashcard game</Dialog.Title>
           <Dialog.Content>
-          <Text style={styles.roundDurationStyle}> Round duration</Text>
+            <Text style={styles.roundDurationStyle}> Round duration</Text>
             <View style={styles.timerContainer}>
-            <TextInput
-              label="Minutes"
-              style={styles.timerInput}
-              value={minutes}
-              onChangeText={(text) => {
-                handleTimeChange("minutes", text);
-                if (text.length === 2) {
+              <TextInput
+                label="Minutes"
+                style={styles.timerInput}
+                value={minutes}
+                onChangeText={(text) => {
+                  handleTimeChange("minutes", text);
+                  if (text.length === 2) {
+                    secondsRef.current.focus();
+                  }
+                }}
+                ref={minutesRef}
+                onSubmitEditing={() => {
                   secondsRef.current.focus();
-                }
-              }}
-              ref={minutesRef}
-              onSubmitEditing={() => {
-                secondsRef.current.focus();
-              }}
-              returnKeyType="next"
-            />
-            <Text style={styles.timerSeparator}>:</Text>
-            <TextInput
-              label="Seconds"
-              style={styles.timerInput}
-              value={seconds}
-              onChangeText={(text) => handleTimeChange("seconds", text)}
-              ref={secondsRef}
-            />
+                }}
+                returnKeyType="next"
+              />
+              <Text style={styles.timerSeparator}>:</Text>
+              <TextInput
+                label="Seconds"
+                style={styles.timerInput}
+                value={seconds}
+                onChangeText={(text) => handleTimeChange("seconds", text)}
+                ref={secondsRef}
+              />
             </View>
             <View style={styles.searchContainer}>
               <Searchbar
@@ -168,21 +174,22 @@ export default function CreateFlashcardGame({showCreateFlashcardGame, close}) {
             </ScrollView>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button 
-              onPress={close}
-              style={{ marginRight: 'auto' }}>Cancel</Button>
-            <Button 
-                  onPress={() => {
-                    const totalTimeInSeconds = computeTimeInSeconds();
-                    close();
-                    handleNavigation(totalTimeInSeconds);
-                  }}
-              >Done</Button>
+            <Button onPress={close} style={{ marginRight: "auto" }}>
+              Cancel
+            </Button>
+            <Button
+              onPress={() => {
+                const totalTimeInSeconds = computeTimeInSeconds();
+                close();
+                handleNavigation(totalTimeInSeconds);
+              }}
+            >
+              Done
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <View style={styles.container}>
-      </View>
+      <View style={styles.container}></View>
     </>
   );
 }
