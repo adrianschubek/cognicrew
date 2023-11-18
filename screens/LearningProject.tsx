@@ -2,30 +2,20 @@ import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import {
-  Button,
   FAB,
-  IconButton,
-  Text,
-  Tooltip,
-  useTheme,
+  IconButton, Tooltip,
+  useTheme
 } from "react-native-paper";
 import {
   responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
+  responsiveWidth
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts } from "../utils/hooks";
-import { useRefetchIndexStore } from "../stores/BackendCommunicationStore";
-import {
-  useInsertMutation,
-  useUpsertMutation,
-} from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
-import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
 
@@ -104,18 +94,6 @@ export default function LearningProject({ navigation, route }) {
         function={() => {
           navigation.navigate(NAVIGATION.FILES_MANAGEMENT);
         }}
-      />
-      <Button
-        style={[{ marginTop: responsiveHeight(2.9) }]}
-        onPress={() => {
-          setShowCreateFlashcardGame(true);
-        }}
-      >
-        Test FlashcardGame
-      </Button>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
       />
       <FAB
         icon={"play"}
