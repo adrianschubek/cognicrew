@@ -35,8 +35,17 @@ export default function Lobby({ navigation }) {
       });
     };
     fetchData();
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker" },
+        (payload) => {
+          fetchData();
+        },
+      )
+      .subscribe();
   }, []);
-
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -153,7 +162,10 @@ export default function Lobby({ navigation }) {
           <Button
             mode="contained"
             style={{ width: 200 }}
-            onPress={() => {
+            onPress={async () => {
+              const { error } = await supabase.rpc("leave_room");
+              if (error) return error.message;
+              setRoom(null);
               navigation.navigate(NAVIGATION.HOME);
             }}
           >

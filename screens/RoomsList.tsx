@@ -41,7 +41,7 @@ function Room({ room }) {
               console.log(data);
               setRoom(data);
             },
-            inputs: room.protected && [
+            fields: room.protected && [
               {
                 label: "Room Code",
                 helperText: "This room is protected",

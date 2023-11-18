@@ -146,7 +146,7 @@ export default function ManageFriends({ navigation }) {
                       });
                     else return "There is no friend with this nickname";
                   },
-                  inputs: [
+                  fields: [
                     {
                       label: "Your friend's nickname",
                       type: "text",

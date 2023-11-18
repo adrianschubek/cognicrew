@@ -1,7 +1,8 @@
+import { type } from "cypress/types/jquery";
 import { StyleProp, TextStyle } from "react-native";
 import { create } from "zustand";
 
-type AlertInput = {
+type CommonInput = {
   /**
    * The label to display for the input.
    */
@@ -27,13 +28,11 @@ type AlertInput = {
    */
   icon: string;
   /**
-   * The type of the input.
-   */
-  type: "text" | "number" | "password" | "checkbox" | "button";
-  /**
    * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
+   * @param inputValue The value of the input.
+   * @param allValues All input values in the alert.
    */
-  validator: (inputValue: string) => boolean;
+  validator: (inputValue: string, allValues: string[]) => boolean;
   /**
    * The error text to display if the input is invalid.
    */
@@ -42,17 +41,48 @@ type AlertInput = {
    * Whether or not the input is disabled.
    */
   disabled?: boolean;
+};
+
+type TextInput = CommonInput & {
+  /**
+   * The type of the input.
+   */
+  type: "text" | "number" | "password";
+};
+type CheckboxInput = CommonInput & {
+  type: "checkbox";
+};
+type ButtonInput = CommonInput & {
+  type: "button";
   /**
    * The action to perform when the button is clicked.
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
-   *
-   * Only applicable if `type` is `button`.
+   * 
+   * @param inputValues All input values in the alert.
    */
   action: (inputValues: string[]) => string | void | Promise<string | void>;
 };
+type SearchSelectInput = CommonInput & {
+  type: "search-select";
+};
+
+type AlertField = TextInput | CheckboxInput | ButtonInput | SearchSelectInput;
+
+/* export function isTextInput(input: AlertField): input is TextInput {
+  return input.type === "text" || input.type === "number" || input.type === "password";
+}
+export function isCheckboxInput(input: AlertField): input is CheckboxInput {
+  return input.type === "checkbox";
+}
+export function isButtonInput(input: AlertField): input is ButtonInput {
+  return input.type === "button";
+}
+export function isSearchSelectInput(input: AlertField): input is SearchSelectInput {
+  return input.type === "search-select";
+} */
 
 export type Alert = {
   /**
@@ -93,6 +123,8 @@ export type Alert = {
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
+   * 
+   * @param inputValues All input values in the alert.
    */
   okAction: (inputValues: string[]) => string | void | Promise<string | void>;
   /**
@@ -101,15 +133,17 @@ export type Alert = {
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
    * Return an empty string to keep the input open without displaying an error.
+   * 
+   * @param inputValues All input values in the alert.
    */
   cancelAction: (
     inputValues: string[],
   ) => string | void | Promise<string | void>;
   /**
-   * The inputs to display in the alert.
-   * @see AlertInput
+   * The fields to display in the alert.
+   * @see AlertField
    */
-  inputs: Partial<AlertInput>[];
+  fields: Partial<AlertField>[];
 };
 
 export const DEFAULT_ALERT: Alert = {
@@ -123,10 +157,10 @@ export const DEFAULT_ALERT: Alert = {
   dismissable: true,
   okAction: () => {},
   cancelAction: () => {},
-  inputs: [],
+  fields: [],
 };
 
-export const DEFAULT_ALERT_INPUT: AlertInput = {
+export const DEFAULT_ALERT_INPUT:  AlertField = {
   validator: () => true,
   label: "",
   helperText: "",
@@ -137,6 +171,7 @@ export const DEFAULT_ALERT_INPUT: AlertInput = {
   type: "text",
   errorText: "",
   disabled: false,
+  // @ts-expect-error FIXME
   action: () => {},
 };
 
@@ -161,7 +196,7 @@ type AlertsStoreType = {
 
 /**
  * internal. do not use.
- * 
+ *
  * @see Use `const { alert } = useAlerts();` instead.
  */
 export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
@@ -188,8 +223,8 @@ export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
           ...DEFAULT_ALERT,
           ...{
             ...alert,
-            inputs: alert.inputs
-              ? alert.inputs.map((input) => ({
+            fields: alert.fields
+              ? alert.fields.map((input) => ({
                   ...DEFAULT_ALERT_INPUT,
                   ...input,
                 }))
