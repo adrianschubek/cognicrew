@@ -35,8 +35,17 @@ export default function Lobby({ navigation }) {
       });
     };
     fetchData();
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker" },
+        (payload) => {
+          fetchData();
+        },
+      )
+      .subscribe();
   }, []);
-
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
