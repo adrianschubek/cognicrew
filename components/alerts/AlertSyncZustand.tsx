@@ -78,7 +78,7 @@ export default function AlertSyncZustand() {
       dismissable,
       fields: inputs,
     } = activeAlert;
-     // TODO: add X close button
+    // TODO: add X close button
     return (
       <>
         {icon && (
@@ -412,6 +412,7 @@ export default function AlertSyncZustand() {
   return (
     <Portal>
       <Dialog
+        dismissableBackButton={activeAlert && activeAlert.dismissable}
         visible={true}
         dismissable={activeAlert && activeAlert.dismissable}
         onDismiss={() => activeAlert && activeAlert.dismissable && next()}
