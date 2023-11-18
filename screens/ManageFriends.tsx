@@ -160,7 +160,7 @@ export default function ManageFriends({ navigation }) {
                 })
               }
             />
-            {icon({ style: styles.iconStyle })}
+            {icon({})}
           </View>
         </View>
 
@@ -259,15 +259,6 @@ export default function ManageFriends({ navigation }) {
             <Divider style={styles.divider} />
           </View>
         )}
-        {/* Project search */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Projects</Text>
-          <TextInput
-            onChangeText={(query) => handleSearch(query, "projects")}
-            value={projectQuery}
-            placeholder="Search Projects"
-          />
-        </View>
       </View>
     </ScrollView>
   );
@@ -276,7 +267,6 @@ export default function ManageFriends({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: '#f8f8f8',
   },
   innerContainer: {
     padding: 20,
@@ -284,7 +274,6 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: responsiveFontSize(3.5),
     fontWeight: "bold",
-    //color: '#333',
     paddingBottom: 10,
   },
   section: {
@@ -293,14 +282,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: responsiveFontSize(2.75),
     fontWeight: "bold",
-    //color: '#333',
     paddingBottom: 10,
-  },
-  deleteButtonText: {
-    //color: 'red',
-  },
-  acceptButtonText: {
-    //color: 'green',
   },
   dropdownItemText: {
     fontSize: responsiveFontSize(2.25),
@@ -308,7 +290,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    //backgroundColor: "#e0e0e0",
     marginVertical: 8,
   },
   titleContainer: {
@@ -316,9 +297,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingBottom: 10,
-  },
-  iconStyle: {
-    // can style the icon later if we want to
   },
   iconsContainer: {
     flexDirection: "row",
