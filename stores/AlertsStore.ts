@@ -71,8 +71,10 @@ type SearchSelectInput = CommonInput & {
    * key-value pairs of options to display in the select.
    */
   data: { key: string; value: string }[];
+  /**
+   * Number of options to display in the (virtualized) list.
+   */
   visibleOptions: number;
-
 };
 
 type AlertField = TextInput | CheckboxInput | ButtonInput | SearchSelectInput;
