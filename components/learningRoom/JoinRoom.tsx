@@ -48,15 +48,34 @@ export default function JoinRoom({ navigation }) {
           mode="contained"
           onPress={async () => {
             alert({
-              title: "Select set",
+              title: "New Flashcardgame",
+              dismissable: false,
+              cancelText: "Cancel",
+              okAction(values) {
+                console.log(values);
+              },
               fields: [
                 {
+                  label: "Round duration (seconds)",
+                  type: "number",
+                  icon: "timer-outline",
+                  defaultValue: "30",
+                },
+                {
                   type: "search-select", // wie create flashcard game
-                  
+                  data: [
+                    { key: "Foo", value: "f1" },
+                    { key: "xxx", value: "f2" },
+                    { key: "aa", value: "f35" },
+                    ...Array.from({ length: 100 }, (_, i) => ({
+                      key: `xxx${i}`,
+                      value: `yyy${i}`,
+                    })),
+                  ],
+                  visibleOptions: 20
                 },
               ],
             });
-           
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >
