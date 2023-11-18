@@ -14,9 +14,7 @@ import { styles } from "../components/learningRoom/DrawingStyle";
 export default function Discover() {
   const { data } = useQuery(
     supabase
-      .from("learning_projects")
-      .select("id,name,description,is_published,created_at,tags,group,owner_id")
-      .eq("is_published", true),
+      .rpc("public_projects"),
     {
       onSuccess(data, key, config) {
         // errorAlert(JSON.stringify(data));
@@ -28,6 +26,8 @@ export default function Discover() {
       },
     },
   );
+    
+
 
   type ItemProps = { title: string };
   const Item = ({ title }: ItemProps) => (
