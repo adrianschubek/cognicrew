@@ -31,8 +31,8 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      await useUsernamesByRoom().then((userNames) => {
-        setUserList(userNames.data.map((user) => user.username));
+      room && await useUsernamesByRoom().then((userNames) => {
+         setUserList(userNames.data.map((user) => user.username));
       });
     };
     fetchData();
@@ -196,7 +196,5 @@ export default function Lobby({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  learningProjectCategory: {
-
-  },
+  learningProjectCategory: {},
 });
