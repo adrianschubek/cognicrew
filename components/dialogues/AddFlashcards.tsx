@@ -63,6 +63,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
+          blurOnSubmit={true}
           disabled={isMutating}
           label="Question:"
           onChangeText={(question) => {
@@ -73,6 +74,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           style={styles.textInputStyle}
           label="Answer:"
           multiline={true}
+          blurOnSubmit={true}
           disabled={isMutating}
           onChangeText={(answer) => {
             setAnswer(answer);
@@ -101,5 +103,6 @@ const styles = StyleSheet.create({
   textInputStyle: {
     marginBottom: responsiveHeight(1),
     width: responsiveWidth(70),
+    maxHeight: responsiveHeight(10.5),
   },
 });
