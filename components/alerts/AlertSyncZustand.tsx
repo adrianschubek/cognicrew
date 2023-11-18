@@ -217,7 +217,7 @@ export default function AlertSyncZustand() {
                           </HelperText>
                         )}
                     </>
-                  ) : field.type === "search-select" ? (
+                  ) : field.type === "search-select" ? ( // TODO: add toggle search field
                     <>
                       <TextInput
                         style={{ marginTop: 10 }}
@@ -264,6 +264,7 @@ export default function AlertSyncZustand() {
                               right={
                                 <TextInput.Icon
                                   icon={() => (
+                                    // TODO: support RadioButtons
                                     <Checkbox
                                       disabled={field.disabled}
                                       status={
@@ -313,6 +314,8 @@ export default function AlertSyncZustand() {
                         </HelperText>
                       )}
                     </>
+                  ) : field.type === "dropdown" ? (
+                    <Text>Unknown field type: {field.type}</Text>
                   ) : (
                     <Text>Unknown field type: {field.type}</Text>
                   )}

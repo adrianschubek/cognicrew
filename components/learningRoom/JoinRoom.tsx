@@ -62,6 +62,10 @@ export default function JoinRoom({ navigation }) {
                   defaultValue: "30",
                 },
                 {
+                  type: "button",
+                  label: "Create",
+                },
+                {
                   type: "search-select", // wie create flashcard game
                   data: [
                     { key: "Foo", value: "f1" },
@@ -72,7 +76,7 @@ export default function JoinRoom({ navigation }) {
                       value: `yyy${i}`,
                     })),
                   ],
-                  visibleOptions: 20
+                  visibleOptions: 5
                 },
               ],
             });

@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   headerIcon: {
-    height: 40,
-    width: 40,
+    height: 42,
+    width: 41,
   },
   avatar: {
   },

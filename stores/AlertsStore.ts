@@ -77,7 +77,20 @@ type SearchSelectInput = CommonInput & {
   visibleOptions: number;
 };
 
-type AlertField = TextInput | CheckboxInput | ButtonInput | SearchSelectInput;
+type DropdownInput = CommonInput & {
+  type: "dropdown";
+  /**
+   * key-value pairs of options to display in the select.
+   */
+  data: { key: string; value: string }[];
+};
+
+type AlertField =
+  | TextInput
+  | CheckboxInput
+  | ButtonInput
+  | SearchSelectInput
+  | DropdownInput;
 
 /* export function isTextInput(input: AlertField): input is TextInput {
   return input.type === "text" || input.type === "number" || input.type === "password";
