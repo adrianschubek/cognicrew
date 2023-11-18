@@ -195,6 +195,7 @@ export default function Lobby({ navigation }) {
                       label: "Continue",
                       action(values) {
                         console.log(values);
+                        if (values[0].length === 0) return "Please select a set";
                         confirm({
                           title: "Configure game",
                           icon: "cog",
