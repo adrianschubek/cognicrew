@@ -7,16 +7,18 @@ import CreateRoom from "../components/learningRoom/CreateRoom";
 import { useUsername } from "../utils/hooks";
 import { NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
-import AudioPlayer from "../components/AudioPlayer";
+import { Audio } from 'expo-av';
 
 
-
+import { useFocusEffect } from '@react-navigation/native';
+import { useSoundsStore } from "../stores/SoundsStore";
 
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
 
-  const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+  const [sound, setSound] = useState(new Audio.Sound())
 
   useEffect(() => {
     navigation.setOptions({
@@ -29,6 +31,28 @@ export default function HomeScreen({ navigation }) {
       ),
     });
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded, isLoaded2 } = useSoundsStore.getState();
+  
+      if (!isLoaded) {
+        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+        
+      } else {
+        console.log("play musicmusicmusic")
+        playSound();
+      }
+  
+      return () => {
+        console.log("Component unmounted");
+        stopSound();
+      };
+    }, [])
+  );
+  
+  
 
   return (
     <View style={styles.container}>
@@ -49,10 +73,6 @@ export default function HomeScreen({ navigation }) {
             onPress={() => console.log('Pressed')}
           />
           <JoinRoom navigation={navigation} />
-        </Card>
-        <Card style={styles.card}>
-        <AudioPlayer audioSource={audioSource}/>
-        {/*<CreateRoom navigation={navigation} /> */}
         </Card>
       </View>
     </View>

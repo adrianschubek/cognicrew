@@ -10,12 +10,35 @@ import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import Slider from "@react-native-community/slider";
-import AudioPlayer from "../components/AudioPlayer";
+import { useFocusEffect } from "@react-navigation/native";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 export default function Whiteboard({ navigation }) {
   const { setShapeSize, shapeSize } = useWhiteboardStore();
 
-  const audioSource2 = require('../assets/sounds/Tetris.mp3');
+  const { sound, playSound, stopSound, loadSound2 }= useSoundsStore();
+  
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded2, isLoaded } = useSoundsStore.getState();
+      
+      if (!isLoaded2) {
+        const audioSource = require('../assets/sounds/Tetris.mp3');
+        loadSound2(audioSource);
+      } else {
+        console.log("play tetris")
+        playSound();
+      }
+  
+      return () => {
+        console.log("Component unmounted");
+        stopSound();
+      };
+    }, [])
+  );
+  
+
 
   const { resetPath, undoLastPath, redoLastPath, setSelectedShape } =
     useWhiteboardStore();
@@ -133,7 +156,7 @@ export default function Whiteboard({ navigation }) {
             />
           </View>
         </View>
-        <AudioPlayer audioSource={audioSource2}/>
+        
       </View>
     </React.Fragment>
   );
