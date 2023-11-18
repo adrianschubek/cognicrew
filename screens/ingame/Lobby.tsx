@@ -4,8 +4,8 @@ import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useUsernamesByRoom } from "../../utils/hooks";
-import { NAVIGATION } from "../../types/common";
+import { useAlerts, useSets, useUsernamesByRoom } from "../../utils/hooks";
+import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View, Image } from "react-native";
 import CreateFlashCardGame from "../../components/dialogues/CreateFlashcardGame";
@@ -18,6 +18,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { MD3Colors } from "react-native-paper/lib/typescript/types";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -31,9 +32,10 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      room && await useUsernamesByRoom().then((userNames) => {
-         setUserList(userNames.data.map((user) => user.username));
-      });
+      room &&
+        (await useUsernamesByRoom().then((userNames) => {
+          setUserList(userNames.data.map((user) => user.username));
+        }));
     };
     fetchData();
     const roomsTracker = supabase
@@ -68,6 +70,12 @@ export default function Lobby({ navigation }) {
       });
     });
   }, [confirm, navigation]);
+
+  const projectId = useProjectStore((state) => state.projectId);
+  const { data: flashcards } = useSets(ManagementType.FLASHCARD, projectId);
+  const { data: quizzes } = useSets(ManagementType.EXERCISE, projectId);
+
+  console.log(quizzes)
 
   // TODO: add subscribe tracker where key=rooms
 
@@ -135,8 +143,23 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/completed_task_symbol.png")}
               name={"Cogniquiz"}
               function={() => {
-                navigation.navigate(NAVIGATION.EXERCISE_GAME);
-                console.log("Quiz Game Pressed");
+                confirm({
+                  title: "Choose sets",
+                  icon: "cards",
+                  dismissable: false,
+                  okAction(values) {
+                    console.log(values);
+                  },
+                  fields: [
+                    { 
+                      type: "search-select",
+                      data: quizzes.map((quiz) => ({
+                        key: quiz.name,
+                        value: quiz.id,
+                      })),
+                    },
+                  ],
+                });
               }}
             />
             <LearningProjectCategory

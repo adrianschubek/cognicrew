@@ -246,7 +246,11 @@ export default function AlertSyncZustand() {
                         nestedScrollEnabled={true}
                         data={field.data
                           .filter(({ key }) => key.includes(tempValues[i]))
-                          .filter((_, i) => i < field.visibleOptions)}
+                          .filter((_, i) => i < field.visibleOptions)
+                          .map(({ key, value }) => ({
+                            key: String(key),
+                            value: String(value),
+                          }))}
                         renderItem={({ item }) => {
                           const { key, value } = item;
                           return (
@@ -275,6 +279,12 @@ export default function AlertSyncZustand() {
                                       onPress={() => {
                                         startTransition(() => {
                                           const newValues = [...values];
+                                          console.log(values[i].split("|"));
+                                          console.log(
+                                            values[i]
+                                              .split("|")
+                                              .includes(value),
+                                          );
                                           // if value is already in array, remove it else add it
                                           if (
                                             values[i].split("|").includes(value)
@@ -289,6 +299,7 @@ export default function AlertSyncZustand() {
                                               (values[i]
                                                 ? "|" + values[i]
                                                 : "");
+                                            console.log(newValues[i]);
                                           }
                                           setValues(newValues);
                                         });
