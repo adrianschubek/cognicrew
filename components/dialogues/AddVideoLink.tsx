@@ -63,24 +63,32 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
           label="Title:"
           value={title}
           onChangeText={setTitle}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="Subtitle:"
           value={subtitle}
           onChangeText={setSubtitle}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="Description:"
           value={description}
           onChangeText={setDescription}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="URL:"
           value={videoURL}
           onChangeText={setVideoURL}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <Dialog.Actions>
           <Button
