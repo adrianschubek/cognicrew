@@ -54,11 +54,18 @@ export default function Discover() {
     searchbar: {
       marginBottom: 5,
     },
-    WI23: {},
-    SO23: {},
+    WI23: {
+      height: 40,
+      backgroundColor: "white",
+    },
     buttonsScrollview: {
       height: 0,
+      backgroundColor: "sky blue",
     },
+    wrapScrollview:{
+      height:40,
+    }
+
   });
 
   return (
@@ -75,26 +82,38 @@ export default function Discover() {
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      <ScrollView
-        /*TODO: WHY A HUGE GAP???? */
-        horizontal={true}
-        style={styles.buttonsScrollview}
-        showsHorizontalScrollIndicator={false}
-        pagingEnabled={true}
-      >
-        <Button icon="" mode="outlined" onPress={() => console.log("*TODO*")}>
-          WI 23/24
-        </Button>
-        <Text> </Text>
-        <Button icon="" mode="outlined" onPress={() => console.log("*TODO*")}>
-          SO 23
-        </Button>
-        <Text> </Text>
-        <Button icon="" mode="outlined" onPress={() => console.log("*TODO*")}>
-          WI 22/23
-        </Button>
-      </ScrollView>
-
+      <View style = {styles.wrapScrollview}>
+        <ScrollView
+          horizontal={true}
+          style={styles.buttonsScrollview}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled={true}
+        >
+          <Button style={styles.WI23} mode="outlined"
+            onPress={() => console.log("*TODO*")}
+          >
+            WI 23/24
+          </Button>
+          <Text> </Text>
+          <Button style={styles.WI23} mode="outlined"
+            onPress={() => console.log("*TODO*")}
+          >
+            SO 23
+          </Button>
+          <Text> </Text>
+          <Button style={styles.WI23} mode="outlined"
+            onPress={() => console.log("*TODO*")}
+          >
+            WI 22/23
+          </Button>
+          <Text> </Text>
+          <Button style={styles.WI23} mode="outlined"
+            onPress={() => console.log("*TODO*")}
+          >
+            other
+          </Button>
+        </ScrollView>
+      </View>
       <FlatList
         style={styles.flatList}
         data={data}
