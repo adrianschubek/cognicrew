@@ -75,7 +75,7 @@ export default function Lobby({ navigation }) {
   const { data: flashcards } = useSets(ManagementType.FLASHCARD, projectId);
   const { data: quizzes } = useSets(ManagementType.EXERCISE, projectId);
 
-  console.log(quizzes)
+  console.log(quizzes);
 
   // TODO: add subscribe tracker where key=rooms
 
@@ -151,8 +151,9 @@ export default function Lobby({ navigation }) {
                     console.log(values);
                   },
                   fields: [
-                    { 
+                    {
                       type: "search-select",
+                      placeholder: "Search cogniquiz sets",
                       data: quizzes.map((quiz) => ({
                         key: quiz.name,
                         value: quiz.id,
@@ -175,8 +176,24 @@ export default function Lobby({ navigation }) {
               name={"Cognicards"}
               flexDirection="row-reverse"
               function={() => {
-                setShowCreateFlashcardGame(true);
-                console.log("Flashcard Game Pressed");
+                confirm({
+                  title: "Choose sets",
+                  icon: "cards",
+                  dismissable: false,
+                  okAction(values) {
+                    console.log(values);
+                  },
+                  fields: [
+                    {
+                      type: "search-select",
+                      placeholder: "Search cognicard sets",
+                      data: flashcards.map((cards) => ({
+                        key: cards.name,
+                        value: cards.id,
+                      })),
+                    },
+                  ],
+                });
               }}
             />
 
