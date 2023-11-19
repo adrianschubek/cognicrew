@@ -149,7 +149,13 @@ export default function Lobby({ navigation }) {
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction: (values) => {
+                      okAction: async (values) => {
+                        const { data, error } = await supabase.functions.invoke(
+                          "room-init",
+                          { body: { type: "quiz" } },
+                        );
+                        if (error) return JSON.stringify(error);
+                        console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME)
                       },
                       fields: [
@@ -159,7 +165,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -169,7 +176,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -216,8 +224,14 @@ export default function Lobby({ navigation }) {
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction: (values) => {
-                       navigation.navigate(NAVIGATION.FLASHCARD_GAME);
+                      okAction: async (values) => {
+                        const { data, error } = await supabase.functions.invoke(
+                          "room-init",
+                          { body: { type: "quiz" } },
+                        );
+                        if (error) return JSON.stringify(error);
+                        console.log(data);
+                        navigation.navigate(NAVIGATION.FLASHCARD_GAME);
                       },
                       fields: [
                         {
@@ -226,7 +240,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -236,7 +251,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -269,7 +285,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-               navigation.navigate(NAVIGATION.WHITEBOARD);
+                navigation.navigate(NAVIGATION.WHITEBOARD);
               }}
             />
           </View>

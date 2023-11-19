@@ -16,10 +16,30 @@ export default function GuestLobby() {
   // TODO: maybe delte immediately after lobby started from rooms table. and use room_code in profiles table?
 
   const room = useRoomStore((state) => state.room);
-  const roomState = useRoomStateStore((state) => state.roomState);
   const setRoom = useRoomStore((state) => state.setRoom);
+  const roomState = useRoomStateStore((state) => state.roomState);
+  const setRoomState = useRoomStateStore((state) => state.setRoomState);
 
-  // TODO: Realtime subscription filter -> = room.id
+  // TODO: Realtime subscription filter -> = room.id neeeee !
+  // TODO: Realtime subscription filter -> public_room_state = 'lobby'
+  useEffect(() => {
+    const publicRoomStates = supabase
+      .channel("guest-lobby")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "public_room_states",
+          filter: "room_id=eq." + room.id,
+        },
+        (payload) => {
+          console.log("Room state update ", payload);
+          // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
+        },
+      )
+      .subscribe();
+  }, []);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -65,7 +85,10 @@ export default function GuestLobby() {
         variant="bodyLarge"
         style={{ flex: 0, color: theme.colors.primary }}
       >
-        Waiting for host to start a game
+        {/* TODO: if state = 'lobby' then: */}
+        {/* Waiting for host to start a game */}
+        {/* else: */}
+        Connecting to server...
       </Text>
       <Button
         style={{ marginTop: 20 }}

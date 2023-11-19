@@ -22,6 +22,9 @@ export type PublicRoomState = {
     id: string;
     name: string;
   }[];
+
+  playerCount: number;
+  
   numRounds: number;
   // current: {
   /**
