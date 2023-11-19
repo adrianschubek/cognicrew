@@ -22,7 +22,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
 import { View } from "react-native";
 
-export default function CreateProject({
+export default function CreateEditProject({
   navigation,
   route,
 }: {

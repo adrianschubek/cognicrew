@@ -16,7 +16,7 @@ import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
-import CreateProject from "../screens/projectManagement/CreateProject";
+import CreateEditProject from "../screens/projectManagement/CreateEditProject";
 import InviteFriends from "./dialogues/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
@@ -119,7 +119,7 @@ function LearningProjectsTab() {
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
-        component={CreateProject}
+        component={CreateEditProject}
       />
     </Stack.Navigator>
   );
