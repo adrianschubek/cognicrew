@@ -317,8 +317,15 @@ export default function CreateEditProject({
             }}
             mode="elevated"
             onPress={() => {
-              deleteProject({ id: project.id });
-              navigation.navigate(NAVIGATION.LEARNING_PROJECTS)
+              confirm({
+                icon:"delete",
+                title: "Delete project?",
+                message: "Deleted projects cannot be restored.\nDo you want to continue?",
+                okAction: () => {
+                  deleteProject({ id: project.id });
+                  navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
+                },
+              });
             }}
           >
             <Text>Delete project</Text>
