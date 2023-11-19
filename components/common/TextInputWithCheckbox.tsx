@@ -24,7 +24,7 @@ export default function TextInputWithCheckbox(props: {
   return (
     <TextInput
       style={{
-        marginBottom: responsiveHeight(1),
+        marginBottom: 8,
         width: props.width || "auto",
       }}
       right={
