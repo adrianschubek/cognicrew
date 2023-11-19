@@ -140,9 +140,9 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction: (values) => {
-                    console.log(values);
-                    if (values[0].length === 0)
+                  okAction: (setValues) => {
+                    console.log(setValues);
+                    if (setValues[0].length === 0)
                       return "Please select at least one set.";
                     confirm({
                       title: "Configure game",
@@ -152,11 +152,16 @@ export default function Lobby({ navigation }) {
                       okAction: async (values) => {
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
-                          { body: { type: ManagementType.EXERCISE } },
+                          { body: { 
+                            type: ManagementType.EXERCISE,
+                            sets: setValues[0].split("|"),
+                            roundDuration: values[0],
+                            numberOfRounds: values[1],
+                           } },
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
-                        navigation.navigate(NAVIGATION.EXERCISE_GAME)
+                        navigation.navigate(NAVIGATION.EXERCISE_GAME);
                       },
                       fields: [
                         {
@@ -215,9 +220,9 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction: (values) => {
-                    console.log(values);
-                    if (values[0].length === 0)
+                  okAction: (setValues) => {
+                    console.log(setValues);
+                    if (setValues[0].length === 0)
                       return "Please select at least one set.";
                     confirm({
                       title: "Configure game",
@@ -227,7 +232,14 @@ export default function Lobby({ navigation }) {
                       okAction: async (values) => {
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
-                          { body: { type: ManagementType.FLASHCARD } },
+                          {
+                            body: {
+                              type: ManagementType.FLASHCARD,
+                              sets: setValues[0].split("|"),
+                              roundDuration: values[0],
+                              numberOfRounds: values[1],
+                            },
+                          },
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
