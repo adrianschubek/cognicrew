@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   ScrollView,
   View,
-  TouchableOpacity,
   StyleSheet,
   Alert,
 } from "react-native";
@@ -17,15 +16,11 @@ import {
   ProgressBar,
 } from "react-native-paper";
 import {
-  responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useAchievements, useAnswersExercises, useExercises, useExercisesAndAnswers, useUnlockAchievement } from "../utils/hooks";
+import { useAchievements, useExercisesAndAnswers, useSoundSystem2, useUnlockAchievement } from "../utils/hooks";
 import { useEffect, useState } from "react";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
-import { useFocusEffect } from "@react-navigation/native";
-import { useSoundsStore } from "../stores/SoundsStore";
-
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -57,23 +52,7 @@ const fetchQuestions = () => {
 
 export default function ExerciseGame({}) {
 
-  const { playSound, stopSound, loadSound2 } = useSoundsStore();
-
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded2 } = useSoundsStore.getState();
-      if (!isLoaded2) {
-        const audioSource = require('../assets/sounds/Tetris.mp3');
-        loadSound2(audioSource); 
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
-
+  useSoundSystem2();
 
   const {data, error, isLoading} = useExercisesAndAnswers(141) // setID is hardcoded 
   

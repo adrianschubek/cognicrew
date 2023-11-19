@@ -4,29 +4,13 @@ import AccountSettings from "./AccountSettings";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ManageFriends from "./ManageFriends";
 import Achievements from "./Achievements";
-import { useSoundsStore } from "../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
+import { useSoundSystem1 } from "../utils/hooks";
 
 const Top = createMaterialTopTabNavigator();
 export default function AccountManage({ navigation }) {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
+  useSoundSystem1();
 
   return (
     <Top.Navigator

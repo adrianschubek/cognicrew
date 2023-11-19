@@ -24,33 +24,17 @@ import {
   friendIdsAndNames,
   useAlerts,
   useFriendsList,
+  useSoundSystem1,
 } from "../../utils/hooks";
-import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../../components/manageFriends/FriendItem";
-import { useSoundsStore } from "../../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
 
 
 export default function InviteFriends({ navigation }) {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
-
+  useSoundSystem1();
+  
   const theme = useTheme();
   const { info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");

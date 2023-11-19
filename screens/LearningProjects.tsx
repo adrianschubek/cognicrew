@@ -3,34 +3,17 @@ import { StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
 import { Tooltip, IconButton } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts, useSoundSystem1 } from "../utils/hooks";
 import { useEffect } from "react";
 import Discover from "./Discover";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useSoundsStore } from "../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
+
 const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
-  
-
+  useSoundSystem1();
 
   const { info } = useAlerts();
 

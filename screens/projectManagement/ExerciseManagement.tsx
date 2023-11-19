@@ -13,28 +13,13 @@ import AddExercises from "../../components/dialogues/AddExercises";
 import { useState } from "react";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
-import { useSoundsStore } from "../../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
+import { useSoundSystem1 } from "../../utils/hooks";
 
 export default function ExerciseManagement() {
   const [showAddExercises, setShowAddExercises] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
+  useSoundSystem1();
   
   return (
     <View style={styles.container}>

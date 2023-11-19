@@ -10,31 +10,14 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts, useSoundSystem1 } from "../utils/hooks";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
-import { useSoundsStore } from "../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function LearningProject({ navigation, route }) {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
-  
+  useSoundSystem1();
 
   const { user } = useAuth();
   const { project } = route.params;

@@ -7,30 +7,14 @@ import {
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
 import AddVideoLink from "../../components/dialogues/AddVideoLink";
-import { useLinks } from "../../utils/hooks";
+import { useLinks, useSoundSystem1 } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
-import { useSoundsStore } from "../../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function LinkManagement() {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
+  useSoundSystem1();
 
   const [showVideoLinkDialog, setShowVideoLinkDialog] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);

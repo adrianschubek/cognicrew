@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useSets, useUsernamesByRoom } from "../../utils/hooks";
+import { useAlerts, useSets, useSoundSystem1, useUsernamesByRoom } from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View } from "react-native";
@@ -16,22 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
 
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, [])
-  );
+  useSoundSystem1();
 
   const theme = useTheme();
   const { confirm } = useAlerts();
