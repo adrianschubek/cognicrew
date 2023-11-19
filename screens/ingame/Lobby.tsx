@@ -285,8 +285,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-                navigation.navigate(NAVIGATION.WHITEBOARD);
-                console.log("Whiteboard pressed");
+               setLoading(true);
               }}
             />
           </View>
