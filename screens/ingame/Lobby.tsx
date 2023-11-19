@@ -159,7 +159,7 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: (values) => {
-                        setLoading(true);
+                      
                       },
                       fields: [
                         {
@@ -226,7 +226,7 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: (values) => {
-                        setLoading(true);
+                       
                       },
                       fields: [
                         {
@@ -278,7 +278,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-                setLoading(true);
+               
               }}
             />
           </View>
