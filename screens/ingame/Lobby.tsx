@@ -152,7 +152,7 @@ export default function Lobby({ navigation }) {
                       okAction: async (values) => {
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
-                          { body: { type: "quiz" } },
+                          { body: { type: ManagementType.EXERCISE } },
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
@@ -227,7 +227,7 @@ export default function Lobby({ navigation }) {
                       okAction: async (values) => {
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
-                          { body: { type: "quiz" } },
+                          { body: { type: ManagementType.FLASHCARD } },
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
