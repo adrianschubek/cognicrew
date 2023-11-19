@@ -17,7 +17,7 @@ import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import CreateEditProject from "../screens/projectManagement/CreateEditProject";
-import InviteFriends from "./dialogues/InviteFriends";
+import InviteFriends from "../screens/projectManagement/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";

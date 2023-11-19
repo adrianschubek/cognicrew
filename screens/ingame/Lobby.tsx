@@ -11,8 +11,28 @@ import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const theme = useTheme();
   const { confirm } = useAlerts();
 

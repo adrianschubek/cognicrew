@@ -1,14 +1,33 @@
 import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts } from "../../utils/hooks";
 import { NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import React from "react";
 
 export default function GuestLobby() {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const theme = useTheme();
   const { confirm } = useAlerts();
   // TODO: if owner exists this screen. delete room rpc(delete_room) !!!

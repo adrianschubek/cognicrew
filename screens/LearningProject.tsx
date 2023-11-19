@@ -14,8 +14,28 @@ import { useAlerts } from "../utils/hooks";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
+import { useSoundsStore } from "../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function LearningProject({ navigation, route }) {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+  
+
   const { user } = useAuth();
   const { project } = route.params;
   const { confirm, info, error: errorAlert } = useAlerts();
@@ -27,8 +47,6 @@ export default function LearningProject({ navigation, route }) {
   useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
-
-  const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({

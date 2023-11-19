@@ -8,9 +8,30 @@ import { useEffect } from "react";
 import Discover from "./Discover";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useSoundsStore } from "../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+  
+
+
   const { info } = useAlerts();
 
   useEffect(() => {

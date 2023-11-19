@@ -14,8 +14,29 @@ import CountDown from 'react-native-countdown-component';
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import { useFlashcards, useFlashcardsMultipleSets } from "../utils/hooks";
+import { useSoundsStore } from "../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FlashcardGame({route}) {
+
+  const { playSound, stopSound, loadSound2 } = useSoundsStore();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const {isLoaded2 } = useSoundsStore.getState();
+      if (!isLoaded2) {
+        const audioSource = require('../assets/sounds/Tetris.mp3');
+        loadSound2(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
+
 const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;
 const checkedItems = route.params?.checkedItems || [];
 

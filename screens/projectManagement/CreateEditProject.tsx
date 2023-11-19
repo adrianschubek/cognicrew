@@ -21,6 +21,8 @@ import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
 import { View } from "react-native";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 export default function CreateEditProject({
   navigation,
   route,
@@ -36,6 +38,22 @@ export default function CreateEditProject({
    * edit == null => create new project
    * edit = project objekt
    */
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);

@@ -18,7 +18,6 @@ export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
 
-  const [sound, setSound] = useState(new Audio.Sound())
 
   useEffect(() => {
     navigation.setOptions({
@@ -34,19 +33,14 @@ export default function HomeScreen({ navigation }) {
 
   useFocusEffect(
     React.useCallback(() => {
-      const { isLoaded, isLoaded2 } = useSoundsStore.getState();
-  
+      const { isLoaded} = useSoundsStore.getState();
       if (!isLoaded) {
         const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
         loadSound1(audioSource);
-        
       } else {
-        console.log("play musicmusicmusic")
         playSound();
       }
-  
       return () => {
-        console.log("Component unmounted");
         stopSound();
       };
     }, [])

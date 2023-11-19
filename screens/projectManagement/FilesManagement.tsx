@@ -9,8 +9,27 @@ import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import FileCategory from "../../components/learningProject/FileCategory";
 import UploadFileDialog from "../../components/dialogues/UploadFile";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FilesManagement() {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const [visible, setVisible] = useState(false);
 
   const [files, setFiles] = useState([

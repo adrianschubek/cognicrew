@@ -11,8 +11,27 @@ import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FlashcardManagement() {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
   return (

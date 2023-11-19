@@ -2,15 +2,33 @@ import { Card, Divider, FAB, Icon, Text, useTheme } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { useAlerts, useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 function Room({ room }) {
+
+  const { playSound, stopSound, loadSound1 } = useSoundsStore();
+  useFocusEffect(
+    React.useCallback(() => {
+      const { isLoaded} = useSoundsStore.getState();
+      if (!isLoaded) {
+        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+        loadSound1(audioSource);
+      } else {
+        playSound();
+      }
+      return () => {
+        stopSound();
+      };
+    }, [])
+  );
+
   const theme = useTheme();
   const focus = useIsFocused();
   const { data: username } = useUsername();
