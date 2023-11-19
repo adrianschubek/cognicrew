@@ -1,86 +1,76 @@
-import * as React from "react";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { StyleSheet, View, Image } from "react-native";
-import { Text, List, Divider } from "react-native-paper";
-import { useAuth } from "../../providers/AuthProvider";
-import {
-  useAchievementsByUser,
-  useNotAchievementsByUser,
-} from "../../utils/hooks";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Image, Text,  } from 'react-native';
+import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
+import { useAuth } from '../../providers/AuthProvider';
+import { useAchievementsByUser, useNotAchievementsByUser, useUnlockAchievement } from '../../utils/hooks';
+import { Snackbar, Divider, List} from 'react-native-paper';
 
 export default function Achievement() {
   const { user } = useAuth();
   const { data: achievements, isLoading } = useAchievementsByUser(user.id);
-  const { data: notAchievements, isLoading: isLoadingNotAchievements } =
-    useNotAchievementsByUser(user.id);
-
-  if (isLoading || isLoadingNotAchievements) {
-    return <Text>Loading...</Text>;
-  }
+  const { data: notAchievements, isLoading: isLoadingNotAchievements } = useNotAchievementsByUser(user.id);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   return (
-    <List.Section style={styles.achievementStyle}>
-      {/* Display achievements achieved by the user */}
-      {achievements &&
-        achievements.map((achievement, index) => (
-          <React.Fragment key={achievement.id}>
+    <View>
+      {/* Snackbar for notifications */}
+      {snackbarVisible && (
+        <Snackbar
+          visible={snackbarVisible}
+          onDismiss={() => setSnackbarVisible(false)}
+          duration={3000}
+        >
+          {snackbarMessage}
+        </Snackbar>
+      )}
+
+      {/* Achievement list */}
+      <List.Section style={styles.achievementStyle}>
+        {/* Display achievements achieved by the user */}
+        {achievements?.map((achievement, index) => (
+          <View key={achievement.id} style={styles.achieved}>
             <List.Item
               title={achievement.name}
-              titleStyle={styles.title}
               description={achievement.description}
               left={() => (
-                <View style={styles.achievementItem}>
-                  <Image
-                    source={{
-                      uri:
-                        "https://iptk.w101.de/storage/v1/object/public/achievements/" +
-                        achievement.icon_name,
-                    }}
-                    style={styles.image}
-                  />
-                </View>
+                <Image
+                  source={{ uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}` }}
+                  style={styles.image}
+                />
               )}
             />
-            {index < achievements.length && <Divider />}
-          </React.Fragment>
+            {index < achievements.length - 1 && <Divider />}
+          </View>
         ))}
 
-      {/* Display achievements not achieved by the user */}
-      {notAchievements &&
-        notAchievements.map((achievement, index) => (
-          <React.Fragment key={achievement.id}>
+        {/* Display achievements not achieved by the user */}
+        {notAchievements?.map((achievement, index) => (
+          <View key={achievement.id} style={styles.notAchieved}>
             <List.Item
-              style={styles.notAchieved}
               title={achievement.name}
-              titleStyle={styles.title}
               description={achievement.description}
               left={() => (
-                <View style={styles.achievementItem}>
-                  <Image
-                    source={{
-                      uri:
-                        "https://iptk.w101.de/storage/v1/object/public/achievements/" +
-                        achievement.icon_name,
-                    }}
-                    style={styles.image}
-                  />
-                </View>
+                <Image
+                  source={{ uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}` }}
+                  style={styles.image}
+                />
               )}
             />
-            {index < notAchievements.length && <Divider />}
-          </React.Fragment>
+            {index < notAchievements.length - 1 && <Divider />}
+          </View>
         ))}
-    </List.Section>
+      </List.Section>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   notAchieved: {
     opacity: 0.5,
+  },
+  achieved: {
+    opacity: 1.0,
   },
   achievementStyle: {
     width: responsiveWidth(100),
@@ -101,7 +91,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginRight: 3,
-    borderRadius: 35, // Half of the width and height to make it round
+    borderRadius: 35,
     overflow: "hidden",
   },
 });

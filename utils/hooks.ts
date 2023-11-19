@@ -127,6 +127,7 @@ export function useAchievements() {
   );
 }
 
+
 /**
  * Returns all achievements for a specific user.
  */
@@ -150,6 +151,7 @@ export function useAchievementsByUser(userId: string) {
         .in("id", userAchievementIds)
         .order("id"),
     );
+    
 
   const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
 
@@ -189,6 +191,33 @@ export function useNotAchievementsByUser(userId: string) {
 
   return { data: notAchieved, isLoading };
 }
+
+export function useUnlockAchievement() {
+  const { user } = useAuth();
+
+  
+
+  const unlockAchievement = async (achievementId) => {
+    const { data, error } = await supabase
+      .from("user_achievements")
+      .upsert({
+        user_id: user?.id,
+        achievement_id: achievementId
+      }, 
+      );
+
+    if (error) {
+      console.error("Error unlocking achievement: ", error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, data };
+  };
+
+  return unlockAchievement;
+}
+
+
 
 //Returns all Sets
 export function useSets(

@@ -20,8 +20,10 @@ import {
   responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useAnswersExercises, useExercises, useExercisesAndAnswers } from "../utils/hooks";
+import { useAchievements, useAnswersExercises, useExercises, useExercisesAndAnswers, useUnlockAchievement } from "../utils/hooks";
 import { useEffect, useState } from "react";
+import AchievementNotification from "../components/dialogues/AchievementNotification";
+
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -65,6 +67,13 @@ export default function ExerciseGame({}) {
   );
   const [reviewTime, setReviewTime] = useState("10m");
   const [quizComplete, setQuizComplete] = useState(false);
+  const unlockAchievement = useUnlockAchievement();
+  const [achievementVisible, setAchievementVisible] = useState(false);
+
+  const { data: achievements } = useAchievements();
+  const [achievementName, setAchievementName] = useState("");
+  const [achievementIcon, setAchievementIcon] = useState("");
+
 
   const handleNextQuestion = () => {
     if (checked) {
@@ -77,6 +86,18 @@ export default function ExerciseGame({}) {
       });
 
       if (isCorrect) setScore((prevScore) => prevScore + 1);
+
+      if (currentQuestionIndex === questions.length - 1) {
+        setQuizComplete(true);
+        if (score + (isCorrect ? 1 : 0) === questions.length) {
+          completeQuiz();
+        }
+      } else {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setChecked(null);
+      }
+
+
 
       Alert.alert(
         isCorrect ? "Correct!" : "Incorrect!",
@@ -132,7 +153,23 @@ export default function ExerciseGame({}) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progressBar = (currentQuestionIndex + 1) / questions.length;
-  
+
+  const completeQuiz = async () => {
+    const achievementId = 11; // ggf. abändern
+    const { success } = await unlockAchievement(achievementId);
+    if (success) {
+      // Find the achievement with the specific ID and update the state
+      const achievement = achievements?.find(ach => ach.id === achievementId);
+      setAchievementName(achievement?.name || 'Achievement');
+      setAchievementIcon(achievement?.icon_name);
+      
+      console.log(`Achievement Unlocked: ${achievement?.name}`);
+      setAchievementVisible(true);
+      setTimeout(() => setAchievementVisible(false), 5000); // Hide after 5 seconds
+    } else {
+      console.log(`Failed to unlock achievement: ID ${achievementId}`);
+    }
+  };
   const [exercises, setExercises] = useState([]);
   useEffect(() => {
     if (!data) return;
@@ -143,6 +180,9 @@ export default function ExerciseGame({}) {
   return quizComplete ? (
     <Portal>
       <Dialog visible={quizComplete} onDismiss={() => setQuizComplete(false)}>
+        
+      <AchievementNotification isVisible={achievementVisible} achievementName={achievementName} achievementIconName={achievementIcon} />
+
         <Dialog.Title>Quiz Summary</Dialog.Title>
         <Dialog.Content>
           <Text>
@@ -249,11 +289,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   scrollView: {
-    //
     paddingVertical: 20,
   },
   question: {
-    //
     fontSize: responsiveFontSize(2.5),
     textAlign: "center",
     alignSelf: "center",
