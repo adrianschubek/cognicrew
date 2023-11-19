@@ -34,7 +34,8 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      room && roomState &&
+      room &&
+        roomState &&
         (await useUsernamesByRoom().then((userNames) => {
           setUserList(userNames.data.map((user) => user.username));
         }));
@@ -148,7 +149,7 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction(values) {
+                  okAction: (values) => {
                     console.log(values);
                     if (values[0].length === 0)
                       return "Please select at least one set.";
@@ -157,7 +158,7 @@ export default function Lobby({ navigation }) {
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction(values) {
+                      okAction: (values) => {
                         setLoading(true);
                       },
                       fields: [
@@ -167,9 +168,7 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator(value, allValues) {
-                            return +value > 0 && +value < 60 * 10;
-                          },
+                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -179,9 +178,7 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator(value, allValues) {
-                            return +value > 0 && +value < 100;
-                          },
+                          validator: (value, allValues) => +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -219,7 +216,7 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction(values) {
+                  okAction: (values) => {
                     console.log(values);
                     if (values[0].length === 0)
                       return "Please select at least one set.";
@@ -228,7 +225,7 @@ export default function Lobby({ navigation }) {
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction(values) {
+                      okAction: (values) => {
                         setLoading(true);
                       },
                       fields: [
@@ -238,9 +235,7 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator(value, allValues) {
-                            return +value > 0 && +value < 60 * 10;
-                          },
+                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -250,9 +245,7 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator(value, allValues) {
-                            return +value > 0 && +value < 100;
-                          },
+                          validator: (value, allValues) => +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -285,7 +278,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-               setLoading(true);
+                setLoading(true);
               }}
             />
           </View>
