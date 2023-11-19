@@ -70,7 +70,6 @@ serve(async (req) => {
     
     const body = await req.json(); // <-- erro already read?
     console.log(body)
-    console.log(req)
 
     return new Response("OK", { status: 200 });
     // body.record.id is the room id
