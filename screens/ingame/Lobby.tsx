@@ -19,6 +19,7 @@ import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { MD3Colors } from "react-native-paper/lib/typescript/types";
 import { useProjectStore } from "../../stores/ProjectStore";
+import { useLoadingStore } from "../../stores/LoadingStore";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -29,6 +30,7 @@ export default function Lobby({ navigation }) {
   const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState([]);
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,8 +76,6 @@ export default function Lobby({ navigation }) {
   const projectId = useProjectStore((state) => state.projectId);
   const { data: flashcards } = useSets(ManagementType.FLASHCARD, projectId);
   const { data: quizzes } = useSets(ManagementType.EXERCISE, projectId);
-
-  console.log(quizzes);
 
   // TODO: add subscribe tracker where key=rooms
 
@@ -147,16 +147,54 @@ export default function Lobby({ navigation }) {
                   title: "Choose sets",
                   icon: "cards",
                   dismissable: false,
+                  okText: "Select",
                   okAction(values) {
                     console.log(values);
+                    if (values[0].length === 0)
+                      return "Please select at least one set.";
+                    confirm({
+                      title: "Configure game",
+                      icon: "cog",
+                      dismissable: false,
+                      okText: "Start Game",
+                      okAction(values) {
+                        setLoading(true);
+                      },
+                      fields: [
+                        {
+                          type: "number",
+                          label: "Round duration (seconds)",
+                          helperText: "How long should a round last?",
+                          icon: "timer-sand",
+                          defaultValue: "30",
+                          validator(value, allValues) {
+                            return +value > 0 && +value < 60 * 10;
+                          },
+                          errorText: "Please enter a value between 0 and 600",
+                          required: true,
+                        },
+                        {
+                          type: "number",
+                          label: "Number of rounds",
+                          helperText: "How many cards should be played?",
+                          icon: "counter",
+                          defaultValue: "10",
+                          validator(value, allValues) {
+                            return +value > 0 && +value < 100;
+                          },
+                          errorText: "Please enter a value between 0 and 100",
+                          required: true,
+                        },
+                      ],
+                    });
                   },
                   fields: [
                     {
                       type: "search-select",
                       placeholder: "Search cogniquiz sets",
-                      data: quizzes.map((quiz) => ({
-                        key: quiz.name,
-                        value: quiz.id,
+                      data: quizzes.map((set) => ({
+                        key: set.name,
+                        value: set.id,
                       })),
                     },
                   ],
@@ -180,16 +218,54 @@ export default function Lobby({ navigation }) {
                   title: "Choose sets",
                   icon: "cards",
                   dismissable: false,
+                  okText: "Select",
                   okAction(values) {
                     console.log(values);
+                    if (values[0].length === 0)
+                      return "Please select at least one set.";
+                    confirm({
+                      title: "Configure game",
+                      icon: "cog",
+                      dismissable: false,
+                      okText: "Start Game",
+                      okAction(values) {
+                        setLoading(true);
+                      },
+                      fields: [
+                        {
+                          type: "number",
+                          label: "Round duration (seconds)",
+                          helperText: "How long should a round last?",
+                          icon: "timer-sand",
+                          defaultValue: "30",
+                          validator(value, allValues) {
+                            return +value > 0 && +value < 60 * 10;
+                          },
+                          errorText: "Please enter a value between 0 and 600",
+                          required: true,
+                        },
+                        {
+                          type: "number",
+                          label: "Number of rounds",
+                          helperText: "How many cards should be played?",
+                          icon: "counter",
+                          defaultValue: "10",
+                          validator(value, allValues) {
+                            return +value > 0 && +value < 100;
+                          },
+                          errorText: "Please enter a value between 0 and 100",
+                          required: true,
+                        },
+                      ],
+                    });
                   },
                   fields: [
                     {
                       type: "search-select",
                       placeholder: "Search cognicard sets",
-                      data: flashcards.map((cards) => ({
-                        key: cards.name,
-                        value: cards.id,
+                      data: flashcards.map((set) => ({
+                        key: set.name,
+                        value: set.id,
                       })),
                     },
                   ],

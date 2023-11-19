@@ -1,48 +1,18 @@
 import React, { useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  Dialog,
-  IconButton,
-  Portal,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Avatar, Card, IconButton, Text, useTheme } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
-import { useUsername } from "../../utils/hooks";
+import { useAlerts, useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 
 const Account = (props) => <Avatar.Icon {...props} icon="account" />;
 
 export const LogoutButton = () => {
   const theme = useTheme();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const { confirm } = useAlerts();
 
   return (
     <>
-      <Portal>
-        <Dialog visible={showConfirm} onDismiss={() => setShowConfirm(false)}>
-          <Dialog.Title>Confirm</Dialog.Title>
-          <Dialog.Content>
-            <Text variant="bodyMedium">Are you sure you want to logout?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowConfirm(false)}>Cancel</Button>
-            <Button
-              onPress={async () => {
-                setShowConfirm(false);
-                await supabase.auth.signOut();
-                mutate(/* match all keys */ () => true, undefined, false);
-              }}
-              testID="logout-confirm-button"
-            >
-              Logout
-            </Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
       <IconButton
         mode="contained"
         style={{
@@ -52,7 +22,16 @@ export const LogoutButton = () => {
         }}
         icon="logout"
         onPress={() => {
-          setShowConfirm(true);
+          confirm({
+            title: "Logout",
+            icon: "logout",
+            message: "Are you sure you want to logout?",
+            okText: "Logout",
+            okAction: async () => {
+              await supabase.auth.signOut();
+              mutate(/* match all keys */ () => true, undefined, false);
+            },
+          });
         }}
         testID="logout-button"
       />

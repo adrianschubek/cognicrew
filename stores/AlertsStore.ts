@@ -29,10 +29,10 @@ type CommonInput = {
   icon: string;
   /**
    * The validator function to use for the input. It should return true if the input is valid, and false otherwise.
-   * @param values The value of the input.
+   * @param value The value of the input.
    * @param allValues All input values in the alert.
    */
-  validator: (values: string, allValues: string[]) => boolean;
+  validator: (value: string, allValues: string[]) => boolean;
   /**
    * The error text to display if the input is invalid.
    */

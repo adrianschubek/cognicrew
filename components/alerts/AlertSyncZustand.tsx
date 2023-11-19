@@ -78,6 +78,7 @@ export default function AlertSyncZustand() {
       dismissable,
       fields: inputs,
     } = activeAlert;
+    // TODO: add X close button
     return (
       <>
         {icon && (
@@ -169,7 +170,7 @@ export default function AlertSyncZustand() {
                         }}
                         disabled={field.disabled}
                         style={{ marginTop: 10 }}
-                        mode="contained-tonal"
+                        mode="contained"
                       >
                         {field.label}
                       </Button>
@@ -356,6 +357,8 @@ export default function AlertSyncZustand() {
           <Dialog.Actions>
             {cancelText !== "" && (
               <Button
+                style={{ paddingHorizontal: 10 }}
+                mode="contained-tonal"
                 onPress={async () => {
                   const ret = await cancelAction(values);
                   if (typeof ret === "string") {
@@ -370,6 +373,8 @@ export default function AlertSyncZustand() {
             )}
             {okText !== "" && (
               <Button
+                style={{ paddingHorizontal: 10 }}
+                mode="contained"
                 onPress={async () => {
                   const ret = await okAction(values);
                   if (typeof ret === "string") {
@@ -411,7 +416,9 @@ export default function AlertSyncZustand() {
   return (
     <Portal>
       <Dialog
+        dismissableBackButton={activeAlert && activeAlert.dismissable}
         visible={true}
+        dismissable={activeAlert && activeAlert.dismissable}
         onDismiss={() => activeAlert && activeAlert.dismissable && next()}
         testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
         style={{ zIndex: 999999, overflow: "scroll" }}
