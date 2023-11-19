@@ -4,8 +4,8 @@ import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useUsernamesByRoom } from "../../utils/hooks";
-import { NAVIGATION } from "../../types/common";
+import { useAlerts, useSets, useUsernamesByRoom } from "../../utils/hooks";
+import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View, Image } from "react-native";
 import CreateFlashCardGame from "../../components/dialogues/CreateFlashcardGame";
@@ -17,6 +17,9 @@ import {
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
+import { MD3Colors } from "react-native-paper/lib/typescript/types";
+import { useProjectStore } from "../../stores/ProjectStore";
+import { useLoadingStore } from "../../stores/LoadingStore";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -27,16 +30,28 @@ export default function Lobby({ navigation }) {
   const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState([]);
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
+  const setLoading = useLoadingStore((state) => state.setLoading);
 
   useEffect(() => {
     const fetchData = async () => {
-      await useUsernamesByRoom().then((userNames) => {
-        setUserList(userNames.data.map((user) => user.username));
-      });
+      room &&
+        roomState &&
+        (await useUsernamesByRoom().then((userNames) => {
+          setUserList(userNames.data.map((user) => user.username));
+        }));
     };
     fetchData();
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker" },
+        (payload) => {
+          fetchData();
+        },
+      )
+      .subscribe();
   }, []);
-
   useEffect(() => {
     navigation.setOptions({
       headerShown: false,
@@ -59,32 +74,42 @@ export default function Lobby({ navigation }) {
     });
   }, [confirm, navigation]);
 
+  const projectId = useProjectStore((state) => state.projectId);
+  const { data: flashcards } = useSets(ManagementType.FLASHCARD, projectId);
+  const { data: quizzes } = useSets(ManagementType.EXERCISE, projectId);
+
   // TODO: add subscribe tracker where key=rooms
 
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
   //TODO: Live Loading of users (useSubscription)
   return (
-    <SafeAreaView
-      style={{
-        flexDirection: "column",
-        flex: 1,
-        backgroundColor: theme.colors.primaryContainer,
-      }}
-    >
-      <View style={{ marginTop: 20 }}>
-        <FlatList
-          contentContainerStyle={{
-            marginTop: 3,
-            flexDirection: "column",
-            alignItems: "flex-end",
-            alignSelf: "flex-end",
-          }}
-          data={userList}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              {/* <Image
+    <>
+      <CreateFlashCardGame
+        showCreateFlashcardGame={showCreateFlashcardGame}
+        close={() => setShowCreateFlashcardGame(false)}
+      />
+      <SafeAreaView
+        style={{
+          width: "100%",
+          height: "100%",
+          backgroundColor: theme.colors.primaryContainer,
+        }}
+      >
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <View style={{ flex: 1 }}>
+            <FlatList
+              contentContainerStyle={{
+                marginTop: 3,
+                flexDirection: "column",
+                alignItems: "flex-end",
+                alignSelf: "flex-end",
+              }}
+              data={userList}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={({ item }) => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  {/* <Image
                   source={{
                     uri:
                       "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
@@ -98,75 +123,186 @@ export default function Lobby({ navigation }) {
                     alignItems: "flex-end",
                   }}
                 /> */}
-              <View>
-                {/* Wrap the Text component in a View */}
-                <Text>{item}</Text>
-              </View>
-            </View>
-          )}
-        />
-        <View style={{}}>
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/completed_task_symbol.png")}
-            name={"Cogniquiz"}
-            function={() => {
-              navigation.navigate(NAVIGATION.EXERCISE_GAME);
-              console.log("Quiz Game Pressed");
-            }}
-          />
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/cards_symbol.png")}
-            name={"Cognicards"}
-            flexDirection="row-reverse"
-            function={() => {
-              setShowCreateFlashcardGame(true);
-              console.log("Flashcard Game Pressed");
-            }}
-          />
+                  <View>
+                    {/* Wrap the Text component in a View */}
+                    <Text>{item}</Text>
+                  </View>
+                </View>
+              )}
+            />
+          </View>
+          <View style={{ flex: 6 }}>
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/completed_task_symbol.png")}
+              name={"Cogniquiz"}
+              function={() => {
+                confirm({
+                  title: "Choose sets",
+                  icon: "cards",
+                  dismissable: false,
+                  okText: "Select",
+                  okAction: (values) => {
+                    console.log(values);
+                    if (values[0].length === 0)
+                      return "Please select at least one set.";
+                    confirm({
+                      title: "Configure game",
+                      icon: "cog",
+                      dismissable: false,
+                      okText: "Start Game",
+                      okAction: (values) => {
+                        setLoading(true);
+                      },
+                      fields: [
+                        {
+                          type: "number",
+                          label: "Round duration (seconds)",
+                          helperText: "How long should a round last?",
+                          icon: "timer-sand",
+                          defaultValue: "30",
+                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          errorText: "Please enter a value between 0 and 600",
+                          required: true,
+                        },
+                        {
+                          type: "number",
+                          label: "Number of rounds",
+                          helperText: "How many cards should be played?",
+                          icon: "counter",
+                          defaultValue: "10",
+                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          errorText: "Please enter a value between 0 and 100",
+                          required: true,
+                        },
+                      ],
+                    });
+                  },
+                  fields: [
+                    {
+                      type: "search-select",
+                      placeholder: "Search cogniquiz sets",
+                      data: quizzes.map((set) => ({
+                        key: set.name,
+                        value: set.id,
+                      })),
+                    },
+                  ],
+                });
+              }}
+            />
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/cards_symbol.png")}
+              name={"Cognicards"}
+              flexDirection="row-reverse"
+              function={() => {
+                confirm({
+                  title: "Choose sets",
+                  icon: "cards",
+                  dismissable: false,
+                  okText: "Select",
+                  okAction: (values) => {
+                    console.log(values);
+                    if (values[0].length === 0)
+                      return "Please select at least one set.";
+                    confirm({
+                      title: "Configure game",
+                      icon: "cog",
+                      dismissable: false,
+                      okText: "Start Game",
+                      okAction: (values) => {
+                        setLoading(true);
+                      },
+                      fields: [
+                        {
+                          type: "number",
+                          label: "Round duration (seconds)",
+                          helperText: "How long should a round last?",
+                          icon: "timer-sand",
+                          defaultValue: "30",
+                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          errorText: "Please enter a value between 0 and 600",
+                          required: true,
+                        },
+                        {
+                          type: "number",
+                          label: "Number of rounds",
+                          helperText: "How many cards should be played?",
+                          icon: "counter",
+                          defaultValue: "10",
+                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          errorText: "Please enter a value between 0 and 100",
+                          required: true,
+                        },
+                      ],
+                    });
+                  },
+                  fields: [
+                    {
+                      type: "search-select",
+                      placeholder: "Search cognicard sets",
+                      data: flashcards.map((set) => ({
+                        key: set.name,
+                        value: set.id,
+                      })),
+                    },
+                  ],
+                });
+              }}
+            />
 
-          <LearningProjectCategory
-            style={[
-              styles.learningProjectCategory,
-              { backgroundColor: theme.colors.backdrop },
-            ]}
-            path={require("../../assets/teamwork_symbol.png")}
-            name={"Cogniboard"}
-            function={() => {
-              navigation.navigate(NAVIGATION.WHITEBOARD);
-              console.log("Whiteboard pressed");
-            }}
-          />
+            <LearningProjectCategory
+              style={[
+                styles.learningProjectCategory,
+                {
+                  backgroundColor:
+                    //@ts-expect-error
+                    theme.colors.backdropWithLowerOpacity,
+                },
+              ]}
+              path={require("../../assets/teamwork_symbol.png")}
+              name={"Cogniboard"}
+              function={() => {
+                setLoading(true);
+              }}
+            />
+          </View>
+
+          <View style={{ flex: 4, alignItems: "center" }}>
+            <Button
+              mode="contained"
+              style={{ width: 300 }}
+              onPress={async () => {
+                const { error } = await supabase.rpc("leave_room");
+                if (error) return error.message;
+                setRoom(null);
+                navigation.navigate(NAVIGATION.HOME);
+              }}
+            >
+              Close
+            </Button>
+          </View>
         </View>
-        <CreateFlashCardGame
-          showCreateFlashcardGame={showCreateFlashcardGame}
-          close={() => setShowCreateFlashcardGame(false)}
-        />
-        <View style={{}}>
-          <Button
-            mode="contained"
-            style={{ width: 200 }}
-            onPress={() => {
-              navigation.navigate(NAVIGATION.HOME);
-            }}
-          >
-            Close
-          </Button>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  learningProjectCategory: {
-    backgroundColor: "red",
-  },
+  learningProjectCategory: {},
 });

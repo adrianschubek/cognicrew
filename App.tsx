@@ -19,6 +19,8 @@ import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
 import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
 import { SWRConfig } from "swr";
+import LoadingOverlay from "./components/alerts/LoadingOverlay";
+import { useLoadingStore } from "./stores/LoadingStore";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -55,11 +57,13 @@ export default function App() {
     [toggleTheme, darkmode],
   );
 
+  const loading = useLoadingStore((state) => state.loading);
+
   return (
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
         <NavigationContainer theme={theme}>
-          <AuthProvider >
+          <AuthProvider>
             <SWRConfig
               value={{
                 // FIXME:
@@ -67,10 +71,11 @@ export default function App() {
                 // revalidateOnFocus: false,
                 provider: () => new Map(),
                 isVisible: () => true,
-                isOnline: () => true
+                isOnline: () => true,
               }}
             >
               <AlertSyncZustand />
+              <LoadingOverlay visible={loading} />
               <MainNav />
             </SWRConfig>
           </AuthProvider>

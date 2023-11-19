@@ -1,5 +1,5 @@
 import { max, update } from "cypress/types/lodash";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Text,
@@ -9,6 +9,8 @@ import {
   Card,
   TextInput,
   Checkbox,
+  IconButton,
+  HelperText,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -18,6 +20,7 @@ import {
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import {
   useAnswersExercises,
+  useDeleteExercise,
   useUpsertAnswersExercise,
   useUpsertExercise,
 } from "../../utils/hooks";
@@ -26,14 +29,23 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [priority, setPriority] = useState(5);
+  const [priority, setPriority] = useState<number>(0);
+  const [priorityStringified, setPriorityStringified] = useState<string>("00");
   const [question, setQuestion] = useState(listItem.question);
   const { data, error, isLoading } = useAnswersExercises(listItem.id);
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
+  const { trigger: deleteExercise } = useDeleteExercise();
+  function isBetweenZeroAndTen(number: number) {
+    return number >= 0 && number <= 10;
+  }
+  const priorityInvalid = () => {
+    return !isBetweenZeroAndTen(parseInt(priorityStringified));
+  };
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
     setIsInitialized(true);
+    console.log("updateExercise");
     upsertExercise({
       //@ts-expect-error
       id: listItem.id,
@@ -52,7 +64,6 @@ export default function EditExercise({ listItem }) {
       });
     });
   };
-
   useEffect(() => {
     if (!data || isInitialized) return;
     setAnswers([
@@ -122,15 +133,84 @@ export default function EditExercise({ listItem }) {
     [], // dependencies array is empty because debounce and editFlashcard do not change
   );
   useEffect(() => {
-    if (question !== null && answers !== null) {
+    if (question && answers) {
       // Call the debounced function
       debouncedEditExercise(question, answers, priority);
     }
   }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
+
+  useEffect(() => {
+    if (!listItem.priority) return;
+    setPriority(listItem.priority);
+    listItem.priority < 10
+      ? setPriorityStringified("0" + listItem.priority.toString())
+      : setPriorityStringified(listItem.priority.toString());
+  }, [listItem.priority]);
+
   if (error) return <LoadingOverlay visible={isLoading} />;
   return (
     <Card elevation={1} style={styles.cardStyle}>
-      <Card.Title title="Edit here:" />
+      <Card.Title
+        title="Edit here:"
+        titleStyle={{}}
+        style={{}}
+        right={() => (
+          <Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                marginBottom: 8,
+                marginTop: 8,
+                justifyContent: "flex-end",
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "column",
+                  alignSelf: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text style={{ opacity: 0.5, marginRight: 8 }}>Priority:</Text>
+                <Text
+                  style={{
+                    opacity: 0.5,
+                    marginRight: 8,
+                  }}
+                >
+                  0-10
+                </Text>
+              </View>
+              <TextInput
+                label=""
+                mode="outlined"
+                value={priorityStringified}
+                multiline={false}
+                maxLength={2}
+                error={priorityInvalid()}
+                outlineColor={theme.colors.primary}
+                inputMode="numeric"
+                style={{ backgroundColor: null, width: 50, height: 50 }}
+                contentStyle={{}}
+                onChangeText={(prio) => {
+                  setPriorityStringified(prio);
+                  prio !== "" && !priorityInvalid() && prio.length === 2
+                    ? setPriority(parseInt(prio[1]))
+                    : setPriority(parseInt(prio));
+                }}
+                onBlur={() => {
+                  priority < 10 ? setPriorityStringified("0" + priority) : null;
+                }}
+              />
+              <IconButton
+                icon="delete"
+                onPress={() => deleteExercise({ id: listItem.id })}
+                style={{ alignSelf: "center" }}
+              />
+            </View>
+          </Fragment>
+        )}
+      />
       <Card.Content style={styles.cardContentStyle}>
         <TextInput
           style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}

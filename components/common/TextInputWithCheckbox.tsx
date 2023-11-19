@@ -41,7 +41,8 @@ export default function TextInputWithCheckbox(props: {
         />
       }
       label={"Answer " + props.number}
-      multiline={true}
+      //multiline={true}
+      blurOnSubmit={true}
       value={answer[0]}
       onChangeText={(text) => {
         setAnswer([text, answer[1]]);

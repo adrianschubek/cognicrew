@@ -13,9 +13,10 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
   const [title, setTitle] = useState(video?.title || "");
   const [subtitle, setSubtitle] = useState(video?.subtitle || "");
   const [description, setDescription] = useState(video?.description || "");
-  const [videoURL, setVideoURL] = useState(video?.link_url || "");
+  const [videoURL, setVideoURL] = useState<string>(video?.link_url || "");
   const projectId = useProjectStore((state) => state.projectId);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
+  const ensuredHttpURL = videoURL.match(/^(https?:\/\/)/) ? videoURL : `http://${videoURL}`;
   const addOrEdit = () => {
     upsertLink({
       // @ts-expect-error
@@ -24,7 +25,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
       title: title,
       subtitle: subtitle,
       description: description,
-      link_url: videoURL,
+      link_url: ensuredHttpURL,
     });
     close();
     setTitle("");
@@ -63,28 +64,36 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
           label="Title:"
           value={title}
           onChangeText={setTitle}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="Subtitle:"
           value={subtitle}
           onChangeText={setSubtitle}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="Description:"
           value={description}
           onChangeText={setDescription}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <TextInput
           style={styles.textInputStyle}
           label="URL:"
           value={videoURL}
           onChangeText={setVideoURL}
+          //multiline={true}
+          blurOnSubmit={true}
         />
         <Dialog.Actions>
           <Button
-            style={{ width: responsiveWidth(70) }}
+            style={{ width: responsiveWidth(70), marginTop: 10 }}
             onPress={() => {
               addOrEdit();
             }}

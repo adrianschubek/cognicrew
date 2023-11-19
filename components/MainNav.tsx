@@ -25,13 +25,16 @@ import { IconButton, useTheme } from "react-native-paper";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStore } from "../stores/RoomStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+
+
 function MainTab() {
   const theme = useTheme();
+
   return (
     <Stack.Navigator>
       <Stack.Screen name={NAVIGATION.HOME} component={HomeScreen} />

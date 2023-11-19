@@ -49,7 +49,7 @@ export default function LearningProject({ navigation, route }) {
               }}
             ></IconButton>
           </Tooltip>
-          <Tooltip title="Invite users">
+          {user.id === project.owner_id && <Tooltip title="Invite users">
             <IconButton
               icon="account-plus"
               onPress={() => {
@@ -58,7 +58,7 @@ export default function LearningProject({ navigation, route }) {
                 });
               }}
             ></IconButton>
-          </Tooltip>
+          </Tooltip>}
         </>
       ),
     });
@@ -115,7 +115,7 @@ export default function LearningProject({ navigation, route }) {
               if (error) return error.message;
               setRoom(data);
             },
-            inputs: [
+            fields: [
               {
                 label: "Name",
                 icon: "tag-text",
@@ -141,6 +141,7 @@ export default function LearningProject({ navigation, route }) {
               },
               {
                 label: "Friends only",
+                icon: "account-heart",
                 type: "checkbox",
                 helperText: "Only friends can join this room.",
               },

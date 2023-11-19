@@ -47,36 +47,39 @@ export default function JoinRoom({ navigation }) {
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
           onPress={async () => {
-            info({ message: "Joining room...", inputs:[
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-              {},
-            ] });
-            // TODO: debug
-            const { data, error } = await supabase.functions.invoke(
-              "room-init",
-              {
-                body: {
-                  foo: "bar",
-                },
-                method: "POST",
+            alert({
+              title: "New Flashcardgame",
+              dismissable: false,
+              cancelText: "Cancel",
+              okAction(values) {
+                console.log(values);
               },
-            );
-            if (error) errorAlert({ message: JSON.stringify(error) });
-            else console.log(JSON.stringify(data, null, 2));
-            // else info({ message: JSON.stringify(data) });
-            // if (data) alert({ message: JSON.stringify(data.message) });
-            // else alert({ title: "Error", message: JSON.stringify(error) });
-
-            // useSWR
+              fields: [
+                {
+                  label: "Round duration (seconds)",
+                  type: "number",
+                  icon: "timer-outline",
+                  defaultValue: "30",
+                },
+                {
+                  type: "button",
+                  label: "Create",
+                },
+                {
+                  type: "search-select", // wie create flashcard game
+                  data: [
+                    { key: "Foo", value: "f1" },
+                    { key: "xxx", value: "f2" },
+                    { key: "aa", value: "f35" },
+                    ...Array.from({ length: 100 }, (_, i) => ({
+                      key: `xxx${i}`,
+                      value: `yyy${i}`,
+                    })),
+                  ],
+                  visibleOptions: 5
+                },
+              ],
+            });
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >

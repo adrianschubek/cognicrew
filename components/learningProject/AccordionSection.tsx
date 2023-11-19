@@ -57,7 +57,7 @@ export default function AccordionSection(props: {
               title={learningSet.name}
               left={(props) => <List.Icon {...props} icon="folder" />}
             >
-              <AccordionListItems setId={learningSet.id} type={props.type} />
+              <AccordionListItems setId={learningSet.id} type={props.type}/>
             </List.Accordion>
             <Divider />
           </React.Fragment>

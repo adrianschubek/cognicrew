@@ -40,7 +40,7 @@ export default function ManageSets({ showManageSets, close, type }) {
         />
         <Dialog.Actions>
           <Button
-            style={{ width: responsiveWidth(70) }}
+            style={{ width: responsiveWidth(70), marginTop: 10 }}
             onPress={() => {
               close(), Keyboard.dismiss();
             }}

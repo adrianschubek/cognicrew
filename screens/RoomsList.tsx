@@ -41,7 +41,7 @@ function Room({ room }) {
               console.log(data);
               setRoom(data);
             },
-            inputs: room.protected && [
+            fields: room.protected && [
               {
                 label: "Room Code",
                 helperText: "This room is protected",
@@ -185,13 +185,6 @@ export default function RoomsList({ navigation }) {
           }}
         >
           <LoadingAnimation color={theme.colors.secondaryContainer} />
-          {/* <Text
-            variant="labelSmall"
-            style={{ color: theme.colors.secondary, textAlign: "center" }}
-          >
-            Only rooms of projects you are a member of will be shown here.
-            TEMPORARY REMOVE THIS LATER. Everyone should be able to play!
-          </Text> */}
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
