@@ -369,6 +369,9 @@ export function useUpsertLink() {
     ),
   );
 }
+export function useDeleteProject() {
+  return handleErrors(useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"));
+}
 
 /**
  * Display alerts.

@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
+  Button,
   Card,
   Divider,
   FAB,
@@ -14,11 +15,12 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts, useUsername } from "../../utils/hooks";
+import { useAlerts, useDeleteProject, useUsername } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
+import { View } from "react-native";
 
 export default function CreateProject({
   navigation,
@@ -54,14 +56,13 @@ export default function CreateProject({
 
       confirm({
         title: "Discard changes?",
-        message:
-          "All unsaved changes will be lost. Do you want to continue?",
+        message: "All unsaved changes will be lost. Do you want to continue?",
         okText: "Continue",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
   }, []);
-
+  const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [group, setGroup] = useState(project?.group ?? "");
@@ -303,10 +304,27 @@ export default function CreateProject({
           Only the owner can edit the project settings.
         </HelperText>
         <Divider />
-        <HelperText type="info" style={{ marginBottom: 5 }}>
+        <HelperText type="info" style={{ marginBottom: 8 }}>
           You may invite other users to join your project on the learning
           project page.
         </HelperText>
+        {project && (
+          <Button
+            style={{
+              alignSelf: "flex-start",
+              marginBottom: 24,
+              backgroundColor: theme.colors.errorContainer,
+            }}
+            mode="elevated"
+            onPress={() => {
+              deleteProject({ id: project.id });
+              navigation.navigate(NAVIGATION.LEARNING_PROJECTS)
+            }}
+          >
+            <Text>Delete project</Text>
+          </Button>
+        )}
+        {!project && <View style={{ marginBottom: 60 }}></View>}
       </ScrollView>
       <FAB
         icon={project === null ? "plus" : "check"}
