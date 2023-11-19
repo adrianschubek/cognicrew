@@ -26,7 +26,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
       masterVolume: 1,
       musicVolume: 1,
       effectsVolume: 1,
-      setMasterVolume: (volume: number) => set({ masterVolume: volume }),
+      setMasterVolume: (volume: number) => {set({ masterVolume: volume }); console.log(volume);},
       setMusicVolume: (volume: number) => set({ musicVolume: volume }),
       setEffectsVolume: (volume: number) => set({ effectsVolume: volume }),
       email: "",
