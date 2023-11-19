@@ -59,12 +59,14 @@ serve(async (req) => {
       .select("*")
       .eq("host", user?.id)
       .eq("id", rid)
+      .eq("is_ingame", false)
       .single();
 
     console.log(data);
 
     if (error) return new Response("User is not host of room", { status: 401 });
 
+    // TODO: create supabase db fucntino that schedules cronjob. use for round duration (30s) then let it call "room-init ipdate" !
     
     const body = await req.json(); // <-- erro already read?
     console.log(body)
