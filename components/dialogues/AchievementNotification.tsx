@@ -44,7 +44,6 @@ const AchievementNotification = ({ isVisible, achievementName, achievementIconNa
 const styles = StyleSheet.create({
   notification: {
     position: "absolute",
-    bottom: '-70%',
     right: -10,
     padding: 10,
     borderRadius: 10,
