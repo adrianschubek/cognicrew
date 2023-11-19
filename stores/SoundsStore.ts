@@ -17,18 +17,21 @@ export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
   sound: null,
   loadSound1: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 1")
+      console.log("LOADED SOUND 1");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded: true, isLoaded2: false });
+      get().playSound(); 
     } catch (error) {
       console.error("Error loading sound:", error);
     }
   },
+
   loadSound2: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 2")
+      console.log("LOADED SOUND 2");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded2: true, isLoaded: false });
+      get().playSound();
     } catch (error) {
       console.error("Error loading sound:", error);
     }
