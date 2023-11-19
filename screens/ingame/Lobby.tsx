@@ -1,23 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
-import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useNavigation } from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts, useSets, useUsernamesByRoom } from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
-import { FlatList, View, Image } from "react-native";
+import { FlatList, View } from "react-native";
 import CreateFlashCardGame from "../../components/dialogues/CreateFlashcardGame";
-import {
-  responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
-import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
-import { MD3Colors } from "react-native-paper/lib/typescript/types";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
 
@@ -159,7 +150,7 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: (values) => {
-                        setLoading(true);
+                        navigation.navigate(NAVIGATION.EXERCISE_GAME)
                       },
                       fields: [
                         {
@@ -226,7 +217,7 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: (values) => {
-                        setLoading(true);
+                       navigation.navigate(NAVIGATION.FLASHCARD_GAME);
                       },
                       fields: [
                         {
@@ -278,7 +269,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-                setLoading(true);
+               navigation.navigate(NAVIGATION.WHITEBOARD);
               }}
             />
           </View>
