@@ -30,11 +30,12 @@ export default function PrioritySelector(props: {priority: number, setPriority: 
           justifyContent: "center",
         }}
       >
-        <Text style={{ opacity: 0.5, marginRight: 8 }}>Priority:</Text>
+        <Text style={{ opacity: 0.7, marginRight: 8, color: theme.colors.onBackground, }}>Priority:</Text>
         <Text
           style={{
-            opacity: 0.5,
+            opacity: 0.7,
             marginRight: 8,
+            color: theme.colors.onBackground
           }}
         >
           0-10

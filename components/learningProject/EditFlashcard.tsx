@@ -1,6 +1,6 @@
 import { max } from "cypress/types/lodash";
 import * as React from "react";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   useTheme,
@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useDeleteFlashcard, useUpsertFlashcard } from "../../utils/hooks";
 import { use } from "chai";
+import PrioritySelector from "./PrioritySelector";
 
 export default function EditFlashcard({ listItem }) {
   const debounce = (func, delay) => {
@@ -57,15 +58,38 @@ export default function EditFlashcard({ listItem }) {
       debouncedEditFlashcard(question, answer, priority);
     }
   }, [question, answer, priority, debouncedEditFlashcard]); // add debouncedEditFlashcard to dependencies
+  useEffect(() => {
+    if (!listItem.priority) return;
+    setPriority(listItem.priority);
+  }, [listItem.priority]);
+
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title
         title="Edit here:"
         right={() => (
-          <IconButton
-            icon="delete"
-            onPress={() => deleteFlashcard({ id: listItem.id })}
-          />
+          <Fragment>
+            <View
+              style={{
+                flexDirection: "row",
+                marginBottom: 8,
+                marginTop: 8,
+                justifyContent: "flex-end",
+              }}
+            >
+              <PrioritySelector
+                priority={priority}
+                setPriority={(val) => {
+                  setPriority(val);
+                }}
+              />
+              <IconButton
+                icon="delete"
+                onPress={() => deleteFlashcard({ id: listItem.id })}
+                style={{ alignSelf: "center" }}
+              />
+            </View>
+          </Fragment>
         )}
       />
       <Card.Content style={styles.cardContentStyle}>
