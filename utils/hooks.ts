@@ -252,6 +252,11 @@ export function useUpsertFlashcard() {
     ),
   );
 }
+export function useDeleteFlashcard() {
+  return handleErrors(
+    useDeleteMutation(supabase.from("flashcards"), ["id"], "id"),
+  );
+}
 export function useExercises(setId: number) {
   const query = supabase
     .from("exercises")
@@ -271,6 +276,11 @@ export function useUpsertExercise() {
       ["id"],
       "id,question,priority,set_id",
     ),
+  );
+}
+export function useDeleteExercise() {
+  return handleErrors(
+    useDeleteMutation(supabase.from("exercises"), ["id"], "id"),
   );
 }
 export function useAnswersExercises(exerciseId: number) {

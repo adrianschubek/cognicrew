@@ -1,5 +1,5 @@
 import { max, update } from "cypress/types/lodash";
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Text,
@@ -9,6 +9,7 @@ import {
   Card,
   TextInput,
   Checkbox,
+  IconButton,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -18,6 +19,7 @@ import {
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import {
   useAnswersExercises,
+  useDeleteExercise,
   useUpsertAnswersExercise,
   useUpsertExercise,
 } from "../../utils/hooks";
@@ -26,10 +28,11 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
   const [isInitialized, setIsInitialized] = useState(false);
-  const [priority, setPriority] = useState(5);
+  const [priority, setPriority] = useState(listItem.prority);
   const [question, setQuestion] = useState(listItem.question);
   const { data, error, isLoading } = useAnswersExercises(listItem.id);
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
+  const { trigger: deleteExercise } = useDeleteExercise();
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
@@ -130,7 +133,31 @@ export default function EditExercise({ listItem }) {
   if (error) return <LoadingOverlay visible={isLoading} />;
   return (
     <Card elevation={1} style={styles.cardStyle}>
-      <Card.Title title="Edit here:" />
+      <Card.Title
+        title="Edit here:"
+        right={() => (
+          <View style={{ flexDirection: "row", marginBottom:8, marginTop:8 }}>
+            <Text style={{ alignSelf: "center", opacity: 0.5, marginRight: 8 }}>
+              Choose priority:
+            </Text>
+            <TextInput
+              label=""
+              mode="outlined"
+              placeholder="9"
+              multiline={false}
+              outlineColor={null}
+              inputMode="numeric"
+              style={{ backgroundColor: null, }}
+              contentStyle={{ }}
+            />
+
+            <IconButton
+              icon="delete"
+              onPress={() => deleteExercise({ id: listItem.id })}
+            />
+          </View>
+        )}
+      />
       <Card.Content style={styles.cardContentStyle}>
         <TextInput
           style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}

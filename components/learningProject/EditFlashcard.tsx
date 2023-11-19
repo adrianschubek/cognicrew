@@ -2,13 +2,19 @@ import { max } from "cypress/types/lodash";
 import * as React from "react";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { useTheme, Card, TextInput } from "react-native-paper";
+import {
+  useTheme,
+  Card,
+  TextInput,
+  Icon,
+  IconButton,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useUpsertFlashcard } from "../../utils/hooks";
+import { useDeleteFlashcard, useUpsertFlashcard } from "../../utils/hooks";
 import { use } from "chai";
 
 export default function EditFlashcard({ listItem }) {
@@ -26,7 +32,7 @@ export default function EditFlashcard({ listItem }) {
   const [answer, setAnswer] = useState(listItem.answer);
   const [priority, setPriority] = useState(listItem.priority);
   const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
-
+  const { trigger: deleteFlashcard } = useDeleteFlashcard();
   const editFlashcard = (question, answer, priority) => {
     upsertFlashcard({
       //@ts-expect-error
@@ -53,7 +59,15 @@ export default function EditFlashcard({ listItem }) {
   }, [question, answer, priority, debouncedEditFlashcard]); // add debouncedEditFlashcard to dependencies
   return (
     <Card elevation={1} style={styles.cardStyle}>
-      <Card.Title title="Edit here:" />
+      <Card.Title
+        title="Edit here:"
+        right={() => (
+          <IconButton
+            icon="delete"
+            onPress={() => deleteFlashcard({ id: listItem.id })}
+          />
+        )}
+      />
       <Card.Content style={styles.cardContentStyle}>
         <TextInput
           style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}
