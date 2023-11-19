@@ -21,7 +21,6 @@ import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
 import { View } from "react-native";
-
 export default function CreateEditProject({
   navigation,
   route,
@@ -40,20 +39,25 @@ export default function CreateEditProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-
+  const [showDiscard, setShowDiscard] = useState(true);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
   const myid = useAuth().user.id;
+
   useEffect(() => {
     navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
     });
+  }, []);
+  
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (!showDiscard) {
+        return;
+      }
 
-    navigation.addListener("beforeRemove", (e) => {
-      // Prevent default behavior of leaving the screen
       e.preventDefault();
-
       confirm({
         title: "Discard changes?",
         message: "All unsaved changes will be lost. Do you want to continue?",
@@ -61,7 +65,9 @@ export default function CreateEditProject({
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
-  }, []);
+    return unsubscribe;
+  }, [navigation, showDiscard]);
+
   const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
@@ -318,10 +324,12 @@ export default function CreateEditProject({
             mode="elevated"
             onPress={() => {
               confirm({
-                icon:"delete",
+                icon: "delete",
                 title: "Delete project?",
-                message: "Deleted projects cannot be restored.\nDo you want to continue?",
+                message:
+                  "Deleted projects cannot be restored.\nDo you want to continue?",
                 okAction: () => {
+                  setShowDiscard(false);
                   deleteProject({ id: project.id });
                   navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
                 },
@@ -342,7 +350,10 @@ export default function CreateEditProject({
           bottom: 0,
         }}
         label={project === null ? "Create" : "Save"}
-        onPress={save}
+        onPress={() => {
+          setShowDiscard(false);
+          save();
+        }}
         disabled={isMutating}
       />
     </>
