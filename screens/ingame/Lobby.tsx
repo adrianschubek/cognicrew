@@ -154,9 +154,9 @@ export default function Lobby({ navigation }) {
                           "room-init",
                           { body: { 
                             type: ManagementType.EXERCISE,
-                            sets: setValues[0].split("|"),
-                            roundDuration: values[0],
-                            numberOfRounds: values[1],
+                            sets: setValues[0].split("|").map((set) => +set),
+                            roundDuration: +values[0],
+                            numberOfRounds: +values[1],
                            } },
                         );
                         if (error) return JSON.stringify(error);
@@ -235,9 +235,9 @@ export default function Lobby({ navigation }) {
                           {
                             body: {
                               type: ManagementType.FLASHCARD,
-                              sets: setValues[0].split("|"),
-                              roundDuration: values[0],
-                              numberOfRounds: values[1],
+                              sets: setValues[0].split("|").map((set) => +set),
+                              roundDuration: +values[0],
+                              numberOfRounds: +values[1],
                             },
                           },
                         );
