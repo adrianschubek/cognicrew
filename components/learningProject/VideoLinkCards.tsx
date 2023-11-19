@@ -50,10 +50,10 @@ export default function VideoLinkCards({ videos, onEdit }) {
         console.error("Error in opening URL: ", err);
       });
   };
-  const onShare = async (videoTitle) => {
+  const onShare = async (videoTitle, videoURL) => {
     try {
       await Share.share({
-        message: `Check this out: ${videoTitle}`,
+        message: `Check ${videoTitle}out: ${videoURL}`,
       });
     } catch (error) {
       alert(error.message);
@@ -82,7 +82,7 @@ export default function VideoLinkCards({ videos, onEdit }) {
         )}
         right={() => (
           <>
-            <IconButton icon="share" onPress={() => onShare(video.title)} />
+            <IconButton icon="share" onPress={() => onShare(video.title, video.link_url)} />
             <Menu
               visible={menuVisible === video.id}
               onDismiss={() => setMenuVisible(false)}

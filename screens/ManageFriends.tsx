@@ -1,7 +1,14 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { Divider, Avatar, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Divider,
+  Avatar,
+  Text,
+  TextInput,
+  useTheme,
+  IconButton,
+} from "react-native-paper";
 import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
 import {
@@ -50,14 +57,13 @@ export default function ManageFriends({ navigation }) {
     return data;
   }
   const icon = (props) => (
-    <Avatar.Icon {...props} icon="account-group" size={responsiveFontSize(5)} />
+    <Avatar.Icon {...props} icon="account-group" size={40} />
   );
   const searchFilterFriends =
     friendIdsAndNamesData &&
-    friendIdsAndNamesData
-      .filter((e) => {
-        return e.username.toLowerCase().includes(searchQuery.toLowerCase());
-      })
+    friendIdsAndNamesData.filter((e) => {
+      return e.username.toLowerCase().includes(searchQuery.toLowerCase());
+    });
 
   function filterForPendingFriends(
     friendPairs,
@@ -119,16 +125,17 @@ export default function ManageFriends({ navigation }) {
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
-    <ScrollView style={styles.container}
-    nestedScrollEnabled={true}>
+    <ScrollView style={styles.container} nestedScrollEnabled={true}>
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Manage Friends</Text>
 
           <View style={styles.iconsContainer}>
-            <TextWithPlusButton
-              text=""
-              function={() =>
+            <IconButton
+              size={28}
+              icon="plus"
+              iconColor={theme.colors.primary}
+              onPress={() =>
                 confirm({
                   icon: "account-multiple-plus",
                   title: "Get in touch with your colleagues",
@@ -173,8 +180,10 @@ export default function ManageFriends({ navigation }) {
             value={searchQuery}
             placeholder="Search friends"
           />
-          <ScrollView style={styles.friendsListContainer}
-           nestedScrollEnabled={true}>
+          <ScrollView
+            style={styles.friendsListContainer}
+            nestedScrollEnabled={true}
+          >
             {searchFilterFriends.map((friend, index) => (
               <FriendItem
                 key={index}
@@ -272,7 +281,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   titleText: {
-    fontSize: responsiveFontSize(3.5),
+    fontSize: 28,
     fontWeight: "bold",
     paddingBottom: 10,
   },
@@ -280,12 +289,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: responsiveFontSize(2.75),
+    fontSize: 22,
     fontWeight: "bold",
     paddingBottom: 10,
   },
   dropdownItemText: {
-    fontSize: responsiveFontSize(2.25),
+    fontSize: 16,
     paddingVertical: 10,
   },
   divider: {
