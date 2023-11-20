@@ -3,22 +3,13 @@ import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Avatar, Button, Text, Card, IconButton } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
-import CreateRoom from "../components/learningRoom/CreateRoom";
-import { useUsername } from "../utils/hooks";
-import { NAVIGATION } from "../types/common";
+import { useSoundSystem1, useUsername } from "../utils/hooks";
 import { useEffect, useState } from "react";
-import { Audio } from 'expo-av';
-
-
-import { useFocusEffect } from '@react-navigation/native';
-import { useSoundsStore } from "../stores/SoundsStore";
 
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
 
-  const [sound, setSound] = useState(new Audio.Sound())
 
   useEffect(() => {
     navigation.setOptions({
@@ -32,26 +23,7 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded, isLoaded2 } = useSoundsStore.getState();
-  
-      if (!isLoaded) {
-        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
-        loadSound1(audioSource);
-        
-      } else {
-        console.log("play musicmusicmusic")
-        playSound();
-      }
-  
-      return () => {
-        console.log("Component unmounted");
-        stopSound();
-      };
-    }, [])
-  );
-  
+  useSoundSystem1();
   
 
   return (

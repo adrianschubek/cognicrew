@@ -1,14 +1,19 @@
 import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
 import { NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import React from "react";
 
 export default function GuestLobby() {
+
+  useSoundSystem1();
+
   const theme = useTheme();
   const { confirm } = useAlerts();
   // TODO: if owner exists this screen. delete room rpc(delete_room) !!!
@@ -16,10 +21,30 @@ export default function GuestLobby() {
   // TODO: maybe delte immediately after lobby started from rooms table. and use room_code in profiles table?
 
   const room = useRoomStore((state) => state.room);
-  const roomState = useRoomStateStore((state) => state.roomState);
   const setRoom = useRoomStore((state) => state.setRoom);
+  const roomState = useRoomStateStore((state) => state.roomState);
+  const setRoomState = useRoomStateStore((state) => state.setRoomState);
 
-  // TODO: Realtime subscription filter -> = room.id
+  // TODO: Realtime subscription filter -> = room.id neeeee !
+  // TODO: Realtime subscription filter -> public_room_state = 'lobby'
+  useEffect(() => {
+    const publicRoomStates = supabase
+      .channel("guest-lobby")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "public_room_states",
+          filter: "room_id=eq." + room.id,
+        },
+        (payload) => {
+          console.log("Room state update ", payload);
+          // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
+        },
+      )
+      .subscribe();
+  }, []);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -65,7 +90,10 @@ export default function GuestLobby() {
         variant="bodyLarge"
         style={{ flex: 0, color: theme.colors.primary }}
       >
-        Waiting for host to start a game
+        {/* TODO: if state = 'lobby' then: */}
+        {/* Waiting for host to start a game */}
+        {/* else: */}
+        Connecting to server...
       </Text>
       <Button
         style={{ marginTop: 20 }}

@@ -8,14 +8,17 @@ import {
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import CountDown from 'react-native-countdown-component';
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import { useFlashcards, useFlashcardsMultipleSets } from "../utils/hooks";
+import { useFlashcardsMultipleSets, useSoundSystem2 } from "../utils/hooks";
 
 export default function FlashcardGame({route}) {
+
+  useSoundSystem2();
+
+
 const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;
 const checkedItems = route.params?.checkedItems || [];
 

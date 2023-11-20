@@ -9,8 +9,12 @@ import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import FileCategory from "../../components/learningProject/FileCategory";
 import UploadFileDialog from "../../components/dialogues/UploadFile";
+import { useSoundSystem1 } from "../../utils/hooks";
 
 export default function FilesManagement() {
+
+  useSoundSystem1();
+
   const [visible, setVisible] = useState(false);
 
   const [files, setFiles] = useState([

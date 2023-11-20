@@ -2,6 +2,7 @@ import { Slider } from "@miblanchard/react-native-slider";
 import { useState } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
 import { usePreferencesStore } from "../../stores/PreferencesStore";
+import { useSoundsStore } from "../../stores/SoundsStore";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
@@ -14,6 +15,7 @@ export default function MusicSettings(props) {
     masterVolume,
     setMasterVolume,
   } = usePreferencesStore();
+
 
   return (
     <Card {...props} mode="contained">

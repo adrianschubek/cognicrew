@@ -1,25 +1,24 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import {
-  FAB,
-  IconButton, Tooltip,
-  useTheme
-} from "react-native-paper";
+import { FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
-  responsiveWidth
+  responsiveWidth,
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts, useSoundSystem1 } from "../utils/hooks";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
 
 export default function LearningProject({ navigation, route }) {
+
+  useSoundSystem1();
+
   const { user } = useAuth();
   const { project } = route.params;
   const { confirm, info, error: errorAlert } = useAlerts();
@@ -32,33 +31,35 @@ export default function LearningProject({ navigation, route }) {
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
 
-  const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
-
   useEffect(() => {
     navigation.setOptions({
       title: project.name,
       headerRight: () => (
         <>
-          <Tooltip title="Project settings">
-            <IconButton
-              icon="cog"
-              onPress={() => {
-                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                  edit: project,
-                });
-              }}
-            ></IconButton>
-          </Tooltip>
-          {user.id === project.owner_id && <Tooltip title="Invite users">
-            <IconButton
-              icon="account-plus"
-              onPress={() => {
-                navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
-                  edit: null, // TODO
-                });
-              }}
-            ></IconButton>
-          </Tooltip>}
+          {user.id === project.owner_id && (
+            <>
+              <Tooltip title="Project settings">
+                <IconButton
+                  icon="cog"
+                  onPress={() => {
+                    navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                      edit: project,
+                    });
+                  }}
+                ></IconButton>
+              </Tooltip>
+              <Tooltip title="Invite users">
+                <IconButton
+                  icon="account-plus"
+                  onPress={() => {
+                    navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
+                      edit: null, // TODO
+                    });
+                  }}
+                ></IconButton>
+              </Tooltip>
+            </>
+          )}
         </>
       ),
     });

@@ -7,12 +7,15 @@ import {
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
 import AddVideoLink from "../../components/dialogues/AddVideoLink";
-import { useLinks } from "../../utils/hooks";
+import { useLinks, useSoundSystem1 } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 
 export default function LinkManagement() {
+
+  useSoundSystem1();
+
   const [showVideoLinkDialog, setShowVideoLinkDialog] = useState(false);
   const [editingVideo, setEditingVideo] = useState(null);
 

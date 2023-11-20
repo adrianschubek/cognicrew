@@ -16,8 +16,8 @@ import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
 import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
-import CreateProject from "../screens/projectManagement/CreateProject";
-import InviteFriends from "./dialogues/InviteFriends";
+import CreateEditProject from "../screens/projectManagement/CreateEditProject";
+import InviteFriends from "../screens/projectManagement/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";
@@ -29,8 +29,6 @@ import { useEffect, useState } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-
 
 function MainTab() {
   const theme = useTheme();
@@ -63,18 +61,10 @@ function MainTab() {
             },
           }}
         /> */}
-        <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
-        <Stack.Screen
-          name={NAVIGATION.EXERCISE_GAME}
-          component={ExerciseGame}
-        />
+
         <Stack.Screen
           name={NAVIGATION.LEARNING_ROOM}
           component={LearningRoom}
-        />
-        <Stack.Screen
-          name={NAVIGATION.FLASHCARD_GAME}
-          component={FlashcardGame}
         />
       </Stack.Group>
     </Stack.Navigator>
@@ -115,10 +105,6 @@ function LearningProjectsTab() {
         component={FlashcardManagement}
       />
       <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-      />
-      <Stack.Screen
         name={NAVIGATION.LINK_MANAGEMENT}
         component={LinkManagement}
       />
@@ -133,7 +119,7 @@ function LearningProjectsTab() {
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
-        component={CreateProject}
+        component={CreateEditProject}
       />
     </Stack.Navigator>
   );
@@ -185,6 +171,12 @@ export default function MainNav() {
       <Stack.Screen name={"_main_"} component={MainTabs} />
       <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
       <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
+      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
+      <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_GAME}
+        component={FlashcardGame}
+      />
     </Stack.Navigator>
   );
 }

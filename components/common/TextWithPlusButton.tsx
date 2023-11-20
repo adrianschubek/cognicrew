@@ -16,12 +16,12 @@ export default function TextWithPlusButton(props) {
       mode="text"
       labelStyle={{
         textAlignVertical: "center",
-        fontSize: responsiveFontSize(3.5),
+        fontSize: 28,
       }}
       contentStyle={{ flexDirection: "row-reverse" }}
       onPress={props.function || doNothing()}
     >
-      <Text style={{ fontSize: responsiveFontSize(2.2) }}>
+      <Text style={{ fontSize: 16 }}>
         {props.text}
       </Text>
     </Button>

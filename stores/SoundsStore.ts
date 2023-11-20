@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import { Audio } from 'expo-av';
+import { usePreferencesStore } from "./PreferencesStore";
+
 
 type SoundsStoreType = {
   isLoaded: boolean;
@@ -12,23 +14,30 @@ type SoundsStoreType = {
 };
 
 export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
+  
   isLoaded: false,
   isLoaded2: false,
   sound: null,
+
+  getValueAFromStoreA: () => usePreferencesStore.getState().masterVolume,
+  
   loadSound1: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 1")
+      console.log("LOADED SOUND 1");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded: true, isLoaded2: false });
+      get().playSound(); 
     } catch (error) {
       console.error("Error loading sound:", error);
     }
   },
+
   loadSound2: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 2")
+      console.log("LOADED SOUND 2");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded2: true, isLoaded: false });
+      get().playSound();
     } catch (error) {
       console.error("Error loading sound:", error);
     }
@@ -36,6 +45,8 @@ export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
   playSound: async () => {
     const { sound, isLoaded, isLoaded2 } = get();
     if (isLoaded && sound || isLoaded2 && sound) {
+      console.log(usePreferencesStore.getState().masterVolume)
+      await sound.setVolumeAsync(usePreferencesStore.getState().musicVolume[0]);
       await sound.playAsync();
     } 
   },

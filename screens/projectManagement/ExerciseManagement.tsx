@@ -13,10 +13,14 @@ import AddExercises from "../../components/dialogues/AddExercises";
 import { useState } from "react";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
+import { useSoundSystem1 } from "../../utils/hooks";
 
 export default function ExerciseManagement() {
   const [showAddExercises, setShowAddExercises] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
+
+  useSoundSystem1();
+  
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />

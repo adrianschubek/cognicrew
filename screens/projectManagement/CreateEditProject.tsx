@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
+  Button,
   Card,
   Divider,
   FAB,
@@ -14,13 +15,13 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts, useUsername } from "../../utils/hooks";
+import { useAlerts, useDeleteProject, useSoundSystem1, useUsername } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
-
-export default function CreateProject({
+import { View } from "react-native";
+export default function CreateEditProject({
   navigation,
   route,
 }: {
@@ -35,33 +36,41 @@ export default function CreateProject({
    * edit == null => create new project
    * edit = project objekt
    */
+  useSoundSystem1();
+
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-
+  const [showDiscard, setShowDiscard] = useState(true);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
   const myid = useAuth().user.id;
+
   useEffect(() => {
     navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
     });
+  }, []);
+  
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      if (!showDiscard) {
+        return;
+      }
 
-    navigation.addListener("beforeRemove", (e) => {
-      // Prevent default behavior of leaving the screen
       e.preventDefault();
-
       confirm({
         title: "Discard changes?",
-        message:
-          "All unsaved changes will be lost. Do you want to continue?",
+        message: "All unsaved changes will be lost. Do you want to continue?",
         okText: "Continue",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
-  }, []);
+    return unsubscribe;
+  }, [navigation, showDiscard]);
 
+  const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [group, setGroup] = useState(project?.group ?? "");
@@ -303,10 +312,36 @@ export default function CreateProject({
           Only the owner can edit the project settings.
         </HelperText>
         <Divider />
-        <HelperText type="info" style={{ marginBottom: 5 }}>
+        <HelperText type="info" style={{ marginBottom: 8 }}>
           You may invite other users to join your project on the learning
           project page.
         </HelperText>
+        {project && (
+          <Button
+            style={{
+              alignSelf: "flex-start",
+              marginBottom: 24,
+              backgroundColor: theme.colors.errorContainer,
+            }}
+            mode="elevated"
+            onPress={() => {
+              confirm({
+                icon: "delete",
+                title: "Delete project?",
+                message:
+                  "Deleted projects cannot be restored.\nDo you want to continue?",
+                okAction: () => {
+                  setShowDiscard(false);
+                  deleteProject({ id: project.id });
+                  navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
+                },
+              });
+            }}
+          >
+            <Text>Delete project</Text>
+          </Button>
+        )}
+        {!project && <View style={{ marginBottom: 60 }}></View>}
       </ScrollView>
       <FAB
         icon={project === null ? "plus" : "check"}
@@ -317,7 +352,10 @@ export default function CreateProject({
           bottom: 0,
         }}
         label={project === null ? "Create" : "Save"}
-        onPress={save}
+        onPress={() => {
+          setShowDiscard(false);
+          save();
+        }}
         disabled={isMutating}
       />
     </>

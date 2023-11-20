@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useSets, useUsernamesByRoom } from "../../utils/hooks";
+import { useAlerts, useSets, useSoundSystem1, useUsernamesByRoom } from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View } from "react-native";
@@ -11,8 +11,13 @@ import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
+import { useSoundsStore } from "../../stores/SoundsStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
+
+  useSoundSystem1();
+
   const theme = useTheme();
   const { confirm } = useAlerts();
 
@@ -140,17 +145,28 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction: (values) => {
-                    console.log(values);
-                    if (values[0].length === 0)
+                  okAction: (setValues) => {
+                    console.log(setValues);
+                    if (setValues[0].length === 0)
                       return "Please select at least one set.";
                     confirm({
                       title: "Configure game",
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction: (values) => {
-                        navigation.navigate(NAVIGATION.EXERCISE_GAME)
+                      okAction: async (values) => {
+                        const { data, error } = await supabase.functions.invoke(
+                          "room-init",
+                          { body: { 
+                            type: ManagementType.EXERCISE,
+                            sets: setValues[0].split("|").map((set) => +set),
+                            roundDuration: +values[0],
+                            numberOfRounds: +values[1],
+                           } },
+                        );
+                        if (error) return JSON.stringify(error);
+                        console.log(data);
+                        navigation.navigate(NAVIGATION.EXERCISE_GAME);
                       },
                       fields: [
                         {
@@ -159,7 +175,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -169,7 +186,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -207,17 +225,30 @@ export default function Lobby({ navigation }) {
                   icon: "cards",
                   dismissable: false,
                   okText: "Select",
-                  okAction: (values) => {
-                    console.log(values);
-                    if (values[0].length === 0)
+                  okAction: (setValues) => {
+                    console.log(setValues);
+                    if (setValues[0].length === 0)
                       return "Please select at least one set.";
                     confirm({
                       title: "Configure game",
                       icon: "cog",
                       dismissable: false,
                       okText: "Start Game",
-                      okAction: (values) => {
-                       navigation.navigate(NAVIGATION.FLASHCARD_GAME);
+                      okAction: async (values) => {
+                        const { data, error } = await supabase.functions.invoke(
+                          "room-init",
+                          {
+                            body: {
+                              type: ManagementType.FLASHCARD,
+                              sets: setValues[0].split("|").map((set) => +set),
+                              roundDuration: +values[0],
+                              numberOfRounds: +values[1],
+                            },
+                          },
+                        );
+                        if (error) return JSON.stringify(error);
+                        console.log(data);
+                        navigation.navigate(NAVIGATION.FLASHCARD_GAME);
                       },
                       fields: [
                         {
@@ -226,7 +257,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How long should a round last?",
                           icon: "timer-sand",
                           defaultValue: "30",
-                          validator: (value, allValues) => +value > 0 && +value < 60 * 10,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 60 * 10,
                           errorText: "Please enter a value between 0 and 600",
                           required: true,
                         },
@@ -236,7 +268,8 @@ export default function Lobby({ navigation }) {
                           helperText: "How many cards should be played?",
                           icon: "counter",
                           defaultValue: "10",
-                          validator: (value, allValues) => +value > 0 && +value < 100,
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 100,
                           errorText: "Please enter a value between 0 and 100",
                           required: true,
                         },
@@ -269,7 +302,7 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-               navigation.navigate(NAVIGATION.WHITEBOARD);
+                navigation.navigate(NAVIGATION.WHITEBOARD);
               }}
             />
           </View>

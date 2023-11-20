@@ -4,7 +4,6 @@ import * as React from "react";
 import {
   ScrollView,
   View,
-  TouchableOpacity,
   StyleSheet,
   Alert,
 } from "react-native";
@@ -17,13 +16,11 @@ import {
   ProgressBar,
 } from "react-native-paper";
 import {
-  responsiveHeight,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useAchievements, useAnswersExercises, useExercises, useExercisesAndAnswers, useUnlockAchievement } from "../utils/hooks";
+import { useAchievements, useExercisesAndAnswers, useSoundSystem2, useUnlockAchievement } from "../utils/hooks";
 import { useEffect, useState } from "react";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
-
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -54,6 +51,9 @@ const fetchQuestions = () => {
 
 
 export default function ExerciseGame({}) {
+
+  useSoundSystem2();
+
   const {data, error, isLoading} = useExercisesAndAnswers(141) // setID is hardcoded 
   
   const [questions, setQuestions] = useState(

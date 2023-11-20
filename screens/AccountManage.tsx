@@ -4,9 +4,14 @@ import AccountSettings from "./AccountSettings";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import ManageFriends from "./ManageFriends";
 import Achievements from "./Achievements";
+import React from "react";
+import { useSoundSystem1 } from "../utils/hooks";
 
 const Top = createMaterialTopTabNavigator();
 export default function AccountManage({ navigation }) {
+
+  useSoundSystem1();
+
   return (
     <Top.Navigator
       screenOptions={{
