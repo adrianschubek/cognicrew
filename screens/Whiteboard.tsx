@@ -22,6 +22,7 @@ import { useSoundsStore } from "../stores/SoundsStore";
 import { useAchievements, useUnlockAchievement } from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 import TextInputDialog from "../components/dialogues/TextInputDialog";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Whiteboard({ navigation }) {
   const {
@@ -46,7 +47,6 @@ export default function Whiteboard({ navigation }) {
   const [isTextToolSelected, setTextToolSelected] = useState(false);
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [tempTextPosition, setTempTextPosition] = useState({ x: 0, y: 0 });
-  const [textInput, setTextInput] = useState("");
 
 
   // Function to handle canvas click when text tool is selected
@@ -118,7 +118,7 @@ export default function Whiteboard({ navigation }) {
         showDrawing={showDrawing}
         close={() => setDrawing(false)}
       />
-      <View
+      <SafeAreaView
         style={{
           flexDirection: "column",
           justifyContent: "space-between",
@@ -252,7 +252,7 @@ export default function Whiteboard({ navigation }) {
             />
           </View>
         </View>
-      </View>
+      </SafeAreaView>
       <AchievementNotification
         isVisible={achievementVisible}
         achievementName={achievementName}
