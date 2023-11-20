@@ -1,109 +1,118 @@
 import React from "react";
 import { View } from "react-native";
-import Svg, { Path, Polygon, Rect, Circle } from "react-native-svg";
+import Svg, { Path, Circle, Text as SvgText } from "react-native-svg";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
-export const Canvas = () => {
-  const { color, stroke, setPaths, paths, selectedShape, shapeSize } =
-    useWhiteboardStore();
+export const Canvas = ({ onClick, isTextToolSelected }) => {
+  const {
+    actions,
+    color,
+    stroke,
+    addAction,
+    selectedShape,
+    shapeSize,
+    setIsDrawing,
+    isDrawing,
+    updatePath,
+  } = useWhiteboardStore();
 
-  // Function to start a new path for freehand drawing
-  const setNewPath = (x: number, y: number) => {
-    if (selectedShape === "none") {
-      setPaths((prev) => {
-        const result = [
-          ...prev,
-          { path: [`M${x} ${y}`], color, stroke, size: shapeSize },
-        ];
-        return result;
-      });
-    }
-  };
-
-  // Function to update the current path for freehand drawing
-  const updatePath = (x: number, y: number) => {
-    if (selectedShape === "none") {
-      setPaths((prev) => {
-        const currentPath = paths[paths.length - 1];
-        currentPath && currentPath.path.push(`L${x} ${y}`);
-        return currentPath ? [...prev.slice(0, -1), currentPath] : prev;
-      });
-    }
+  const setNewPath = (x, y) => {
+    // moved to handleResponderStart
   };
 
   // Function to draw a selected shape
-  const drawShape = (x: number, y: number) => {
+  const drawShape = (x, y) => {
     if (selectedShape !== "none") {
       const shapePath = getShapePath(x, y, selectedShape, shapeSize);
-      setPaths((prev) => [
-        ...prev,
-        { path: [shapePath], color, stroke, size: shapeSize },
-      ]);
+      addAction({
+        type: "path",
+        path: [shapePath],
+        color,
+        stroke,
+        size: shapeSize,
+      });
     }
   };
 
   // Function to generate SVG path for the selected shape
   const getShapePath = (x, y, shape, size) => {
     const halfSize = size / 2;
-
     switch (shape) {
       case "triangle":
         return `M${x - halfSize} ${y + halfSize} L${x} ${y - halfSize} L${
           x + halfSize
         } ${y + halfSize} Z`;
       case "square":
-        return `M${x - halfSize} ${
-          y - halfSize
-        } h${shapeSize} v${shapeSize} h${-shapeSize} Z`;
+        return `M${x - halfSize} ${y - halfSize} h${size} v${size} h${-size} Z`;
       case "circle":
-        return `M${x},${y},circle`;
+        return `M${x},${y} m-${halfSize},0 a${halfSize},${halfSize} 0 1,0 ${size},0 a${halfSize},${halfSize} 0 1,0 -${size},0`;
       default:
         return "";
     }
+  };
+
+  const handleResponderStart = (e) => {
+    const x = e.nativeEvent.locationX;
+    const y = e.nativeEvent.locationY;
+    onClick(x, y);
+    if (!isTextToolSelected) {
+      if (selectedShape === "none") {
+        setNewPath(x, y);
+        addAction({
+          type: "path",
+          path: [`M${x} ${y}`],
+          color,
+          stroke,
+          size: shapeSize,
+        });
+        setIsDrawing(true);
+      } else {
+        drawShape(x, y);
+      }
+    }
+  };
+  const handleResponderMove = (e) => {
+    if (!isTextToolSelected && isDrawing) {
+      updatePath(e.nativeEvent.locationX, e.nativeEvent.locationY);
+    }
+  };
+
+  const handleResponderEnd = () => {
+    setIsDrawing(false);
   };
 
   return (
     <View
       onStartShouldSetResponder={() => true}
       onMoveShouldSetResponder={() => true}
-      onResponderStart={(e) => {
-        const x = e.nativeEvent.locationX;
-        const y = e.nativeEvent.locationY;
-        if (selectedShape === "none") {
-          setNewPath(x, y);
-        } else {
-          drawShape(x, y);
-        }
-      }}
-      onResponderMove={(e) => {
-        updatePath(e.nativeEvent.locationX, e.nativeEvent.locationY);
-      }}
+      onResponderStart={handleResponderStart}
+      onResponderMove={handleResponderMove}
+      onResponderEnd={handleResponderEnd}
     >
       <Svg>
-        {paths.map(({ path, color: c, stroke: s, size }, i) => {
-          if (path[0].startsWith("M") && path[0].includes("circle")) {
-            const [mx, my] = path[0].substring(1).split(",").map(Number);
-            const radius = size / 2;
-            return (
-              <Circle
-                key={i}
-                cx={mx}
-                cy={my}
-                r={radius}
-                stroke={c}
-                strokeWidth={s}
-                fill="none"
-              />
-            );
-          } else {
+        {actions.map((action, i) => {
+          if (action.type === "path") {
             return (
               <Path
                 key={i}
-                d={path.join(" ")}
+                d={action.path.join(" ")}
                 fill="none"
-                strokeWidth={`${s}px`}
-                stroke={c}
+                strokeWidth={`${action.stroke}px`}
+                stroke={action.color}
               />
+            );
+          } else if (action.type === "text") {
+            return (
+              <SvgText
+                key={i}
+                x={action.x}
+                y={action.y}
+                fill={action.color}
+                fontSize="20"
+                fontWeight="bold"
+              >
+                {action.text}
+              </SvgText>
             );
           }
         })}

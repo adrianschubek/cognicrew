@@ -14,26 +14,25 @@ export default function Visual(props) {
   const unlockAchievement = useUnlockAchievement();
   const [achievementVisible, setAchievementVisible] = useState(false);
   const { data: achievementsData } = useAchievements();
-  const [achievementName, setAchievementName] = useState('');
-  const [achievementIcon, setAchievementIcon] = useState('');
-  
+  const [achievementName, setAchievementName] = useState("");
+  const [achievementIcon, setAchievementIcon] = useState("");
+
   const handleToggleTheme = async () => {
     toggleTheme();
     const achievementId = 9;
     const { success, data } = await unlockAchievement(achievementId);
 
-    if (success) {
-      console.log("JA")
-      const achievement = achievementsData?.find((ach) => ach.id === achievementId);
-      setAchievementName(achievement?.name || '');
-      setAchievementIcon(achievement?.icon_name || '');
+    if (success && !darkmode) {
+      console.log("JA");
+      const achievement = achievementsData?.find(
+        (ach) => ach.id === achievementId,
+      );
+      setAchievementName(achievement?.name || "");
+      setAchievementIcon(achievement?.icon_name || "");
       setAchievementVisible(true);
       setTimeout(() => setAchievementVisible(false), 5000);
-    } else {
-      console.error('Failed to unlock achievement');
     }
   };
-
 
   return (
     <>
