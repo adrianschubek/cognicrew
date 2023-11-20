@@ -50,7 +50,7 @@ export default function VideoLinkCards({ videos, onEdit }) {
         console.error("Error in opening URL: ", err);
       });
   };
-  const onShare = async (video, videoURL) => {
+  const onShare = async (video) => {
     try {
       const message = `Check this out: ${video.title}\n${video.link_url}`;
       await Share.share({
