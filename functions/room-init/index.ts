@@ -29,18 +29,6 @@ serve(async (req) => {
       data: { user },
     } = await supabaseUser.auth.getUser();
 
-    // if not called from webhook, return 403 (check ?secret=...)
-    // FIXME: put secret somewhere safe into env var.
-
-    // => host should invoke it on game satrt from frontend!
-
-    /*  const SECRET = "Ur7diwgmWzT7g8er9LV6PM3HAURXM6vJ";
-    if (!(await req.url.includes(`secret=${SECRET}`))) {
-      return new Response("Function was not called by database", {
-        status: 403,
-      });
-    } */
-
     // get current room user is in
     const { data: roomData, error: roomError } = await supabase
       .from("profiles")
@@ -66,9 +54,7 @@ serve(async (req) => {
 
     if (error) return new Response("User is not host of room", { status: 401 });
 
-    // TODO: create supabase db fucntino that schedules cronjob. use for round duration (30s) then let it call "room-init ipdate" !
-    
-    const body = await req.json(); // <-- erro already read?
+    const body = await req.json(); 
     console.log(body)
 
     return new Response("OK", { status: 200 });
