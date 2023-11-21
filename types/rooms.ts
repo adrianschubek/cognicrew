@@ -1,3 +1,5 @@
+import { Database } from "./supabase";
+
 export const enum ScreenState {
   LOBBY,
   INGAME,
@@ -27,10 +29,6 @@ export type PublicRoomState = {
   
   numRounds: number;
   // current: {
-  /**
-   * is current round completed/already submitted answer?
-   */
-  completedRound: number;
   /**
    * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
    */
@@ -66,10 +64,9 @@ export type PrivateRoomState = {
     //   question: string;
     //   answer: string;
     // }[];
-    sets: any; /**
+    sets: Database["public"]["Tables"]["exercises"]["Row"],
 
 
-    **/
     /**
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
