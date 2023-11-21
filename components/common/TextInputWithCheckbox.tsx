@@ -1,11 +1,5 @@
-import { use } from "chai";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput, Checkbox } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
-import { useUpsertAnswersExercise } from "../../utils/hooks";
 
 //takes some time to load for exercises, maybe there is a more efficient way to do this?
 export default function TextInputWithCheckbox(props: {
@@ -20,7 +14,7 @@ export default function TextInputWithCheckbox(props: {
     if (answer[0] !== "" && answer[1] !== false) return;
     setAnswer([props.listItemAnswer[0], props.listItemAnswer[1]]);
   }, [props.listItemAnswer]);
-  
+
   return (
     <TextInput
       style={{

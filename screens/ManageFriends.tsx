@@ -9,7 +9,6 @@ import {
   useTheme,
   IconButton,
 } from "react-native-paper";
-import TextWithPlusButton from "../components/common/TextWithPlusButton";
 import FriendItem from "../components/manageFriends/FriendItem";
 import {
   responsiveFontSize,

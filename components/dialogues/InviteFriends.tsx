@@ -2,17 +2,14 @@ import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import {
-  Dialog,
   Portal,
-  Button,
   Divider,
   Avatar,
   Text,
   TextInput,
   useTheme,
-  IconButton,
 } from "react-native-paper";
-import { Snackbar, Checkbox } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -23,7 +20,6 @@ import InviteFriendDialog from "./InviteFriendDialog";
 import {
   friendIdsAndNames,
   useAlerts,
-  useFriendsList,
 } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
@@ -166,7 +162,7 @@ export default function InviteFriends({ navigation }) {
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Invite Friends</Text>
           <View style={styles.iconsContainer}>
-            <TextWithPlusButton text="" function={handleMultipleInvites} />
+            <TextWithPlusButton text="" onPress={handleMultipleInvites} />
             {icon({ style: styles.iconStyle })}
           </View>
         </View>

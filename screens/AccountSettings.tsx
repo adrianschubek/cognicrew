@@ -1,18 +1,6 @@
-import { Slider } from "@miblanchard/react-native-slider";
 import { StatusBar } from "expo-status-bar";
-import { useState } from "react";
-import { ScrollView, View } from "react-native";
-import {
-  Avatar,
-  Button,
-  Card,
-  Dialog,
-  Divider,
-  IconButton,
-  Portal,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { ScrollView } from "react-native";
+import { Divider, useTheme } from "react-native-paper";
 import MusicSettings from "../components/settings/Music";
 import PasswordChange from "../components/settings/PasswordChange";
 import EmailChange from "../components/settings/EmailChange";

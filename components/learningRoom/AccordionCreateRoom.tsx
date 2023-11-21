@@ -1,6 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { Text, List, Divider, Card } from "react-native-paper";
+import { StyleSheet, ScrollView } from "react-native";
+import { List } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,

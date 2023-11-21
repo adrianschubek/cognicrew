@@ -1,15 +1,13 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { Button, Text } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
 function doNothing() {
   return;
 }
-export default function TextWithPlusButton(props) {
+export default function TextWithPlusButton(props: {
+  text: string;
+  onPress?: () => any;
+}) {
   return (
     <Button
       icon="plus"
@@ -19,13 +17,10 @@ export default function TextWithPlusButton(props) {
         fontSize: 28,
       }}
       contentStyle={{ flexDirection: "row-reverse" }}
-      onPress={props.function || doNothing()}
+      onPress={props.onPress() || doNothing()}
     >
-      <Text style={{ fontSize: 16 }}>
-        {props.text}
-      </Text>
+      <Text style={{ fontSize: 16 }}>{props.text}</Text>
     </Button>
   );
 }
 const styles = StyleSheet.create({});
- 

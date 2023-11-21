@@ -1,4 +1,3 @@
-import { type } from "cypress/types/jquery";
 import { StyleProp, TextStyle } from "react-native";
 import { create } from "zustand";
 
@@ -104,7 +103,7 @@ type AlertField =
   | SearchSelectInput
   | SelectInput
   | RadioInput
-  | SearchRadioInput
+  | SearchRadioInput;
 // | DropdownInput;
 
 /* export function isTextInput(input: AlertField): input is TextInput {

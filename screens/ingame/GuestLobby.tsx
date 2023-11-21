@@ -11,7 +11,6 @@ import { useSoundsStore } from "../../stores/SoundsStore";
 import React from "react";
 
 export default function GuestLobby() {
-
   useSoundSystem1();
 
   const theme = useTheme();

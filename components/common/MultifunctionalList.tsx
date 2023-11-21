@@ -1,29 +1,14 @@
 import * as React from "react";
 import { useState } from "react";
 import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
-import {
-  Button,
-  Card,
-  HelperText,
-  Icon,
-  RadioButton,
-  Searchbar,
-  Text,
-  TextInput,
-  TouchableRipple,
-  useTheme,
-} from "react-native-paper";
+import { RadioButton, TextInput, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { SearchBar } from "react-native-screens";
 import { ManagementType, Mode } from "../../types/common";
-import { supabase } from "../../supabase";
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import { useAlerts, useDeleteSet, useUpsertSet } from "../../utils/hooks";
-import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useUpsertSet } from "../../utils/hooks";
 import TextInputListItem from "./ListItems/TextInputListItem";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";

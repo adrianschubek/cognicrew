@@ -1,15 +1,13 @@
 import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Avatar, Button, Text, Card, IconButton } from "react-native-paper";
+import { Avatar, Text, Card, IconButton } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import { useSoundSystem1, useUsername } from "../utils/hooks";
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
-
 
   useEffect(() => {
     navigation.setOptions({
@@ -24,13 +22,14 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useSoundSystem1();
-  
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.header}>
-        <Text style={styles.headerText}>Hello, {isLoading ? "...." : data}</Text>
+        <Text style={styles.headerText}>
+          Hello, {isLoading ? "...." : data}
+        </Text>
         <Avatar.Text
           size={48}
           label={(isLoading ? "" : data).substring(0, 2)}
@@ -42,7 +41,7 @@ export default function HomeScreen({ navigation }) {
           <IconButton
             icon="door-open"
             size={20}
-            onPress={() => console.log('Pressed')}
+            onPress={() => console.log("Pressed")}
           />
           <JoinRoom navigation={navigation} />
         </Card>
@@ -71,8 +70,7 @@ const styles = StyleSheet.create({
     height: 42,
     width: 41,
   },
-  avatar: {
-  },
+  avatar: {},
   body: {
     flex: 1,
     justifyContent: "space-around",

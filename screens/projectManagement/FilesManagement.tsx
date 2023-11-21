@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, VirtualizedList } from "react-native";
+import { View, StyleSheet, VirtualizedList } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import FileCategory from "../../components/learningProject/FileCategory";
@@ -74,7 +74,7 @@ export default function FilesManagement() {
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="Upload File"
-          function={() => setUploadDialogVisible(true)}
+          onPress={() => setUploadDialogVisible(true)}
         />
       </View>
 

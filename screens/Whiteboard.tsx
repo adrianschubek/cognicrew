@@ -1,12 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  Modal,
-  TextInput,
-  Button,
-} from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 import { Text, IconButton, useTheme, Divider } from "react-native-paper";
 import {
   responsiveHeight,
@@ -47,7 +40,6 @@ export default function Whiteboard({ navigation }) {
   const [isTextToolSelected, setTextToolSelected] = useState(false);
   const [textInputVisible, setTextInputVisible] = useState(false);
   const [tempTextPosition, setTempTextPosition] = useState({ x: 0, y: 0 });
-
 
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x, y) => {
@@ -226,7 +218,7 @@ export default function Whiteboard({ navigation }) {
               size={40}
               onPress={() => {
                 setSelectedShape("circle");
-                setTextToolSelected(false); 
+                setTextToolSelected(false);
               }}
             />
             <IconButton
@@ -234,8 +226,8 @@ export default function Whiteboard({ navigation }) {
               iconColor={isTextToolSelected ? "#007bff" : theme.colors.primary}
               size={40}
               onPress={() => {
-                setSelectedShape("none"); 
-                setTextToolSelected(!isTextToolSelected); 
+                setSelectedShape("none");
+                setTextToolSelected(!isTextToolSelected);
               }}
             />
           </View>
