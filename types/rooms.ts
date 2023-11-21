@@ -58,6 +58,9 @@ export type PublicRoomState = {
  * //TODO On Update Trigger -> execute Webhook -> Edge Function -> Update PublicRoomState
  */
 export type PrivateRoomState = {
+  /**
+   * Complete game data (incl. solutions)
+   */
   gameData: {
     exercises: {
       id: number;
