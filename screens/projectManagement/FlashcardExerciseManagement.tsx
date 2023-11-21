@@ -9,10 +9,16 @@ import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
 import { useSoundSystem1 } from "../../utils/hooks";
 import { type } from "cypress/types/jquery";
+import AddExercises from "../../components/dialogues/AddExercises";
 
-export default function FlashcardExerciseManagement(props: { type: ManagementType }) {
+export default function FlashcardExerciseManagement({
+  route,
+}: {
+  route: { params: { type: ManagementType } };
+}) {
   useSoundSystem1();
-  const [showAddFlashcards, setShowAddFlashcards] = useState(false);
+  const type = route.params.type;
+  const [showAddItem, setShowAddItem] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
@@ -20,18 +26,24 @@ export default function FlashcardExerciseManagement(props: { type: ManagementTyp
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      {props.type === ManagementType.FLASHCARD && <Text> hallo</Text>}
-      <AddFlashcards
-        showAddingFlashcards={showAddFlashcards}
-        close={() => setShowAddFlashcards(false)}
-      />
+      {type === ManagementType.FLASHCARD ? (
+        <AddFlashcards
+          showAddingFlashcards={showAddItem}
+          close={() => setShowAddItem(false)}
+        />
+      ) : (
+        <AddExercises
+          showAddExercises={showAddItem}
+          close={() => setShowAddItem(false)}
+        />
+      )}
       <ManageSets
         showManageSets={showManageSets}
         close={() => setShowManageSets(false)}
-        type={ManagementType.FLASHCARD}
+        type={type}
       />
       <ScrollView>
-        <AccordionSection type={ManagementType.FLASHCARD} />
+        <AccordionSection type={type} />
       </ScrollView>
       <FAB.Group
         open={open}
@@ -40,8 +52,9 @@ export default function FlashcardExerciseManagement(props: { type: ManagementTyp
         actions={[
           {
             icon: "plus",
-            label: "Add new flashcards",
-            onPress: () => setShowAddFlashcards(true),
+            label:
+              "Add new" + (type === ManagementType.FLASHCARD ? " flashcards" : " exercises"),
+            onPress: () => setShowAddItem(true),
           },
           {
             icon: "table-settings",
