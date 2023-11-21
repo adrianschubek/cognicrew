@@ -121,6 +121,15 @@ export type PrivateRoomState = {
   }[];
 };
 
+type FlashcardClientUpdate = { answer: string };
+type ExerciseClientUpdate = { answerIndex: number[] };
+/**
+ * format for client -> server edge function push
+ */
+export type RoomClientUpdate =
+  | { type: "flashcard-answer"; data: FlashcardClientUpdate }
+  | { type: "exercise-answer"; data: ExerciseClientUpdate };
+
 /**
  * sets
  * 
