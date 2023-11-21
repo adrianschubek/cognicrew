@@ -127,6 +127,7 @@ function LearningProjectsTab() {
 
 function MainTabs({ navigation }) {
   const room = useRoomStore((state) => state.room);
+  const setRoom = useRoomStore((state) => state.setRoom);
   const uid = useAuth().user?.id;
   // redirect to lobby if user is currently ingame
   useEffect(() => {
@@ -135,7 +136,7 @@ function MainTabs({ navigation }) {
       else navigation.navigate(NAVIGATION.GUEST_LOBBY);
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
-  const { alert } = useAlerts();
+  const { alert, warning } = useAlerts();
   useEffect(() => {
     const publicRoomStates = supabase
       .channel("ingame")
@@ -159,7 +160,16 @@ function MainTabs({ navigation }) {
             message: JSON.stringify(payload, null, 2),
             messageStyle: { textAlign: "left" },
           });
-          // switch (payload.)
+          switch (payload.eventType) {
+            case "INSERT":
+              break;
+            case "UPDATE":
+              break;
+            case "DELETE":
+              warning({ message: "Room was closed by host" });
+              setRoom(null);
+              break;
+          }
         },
       )
       .subscribe();

@@ -34,7 +34,6 @@ export default function Lobby({ navigation }) {
   useEffect(() => {
     const fetchData = async () => {
       room &&
-        roomState &&
         (await useUsernamesByRoom().then((userNames) => {
           setUserList(userNames.data.map((user) => user.username));
         }));
