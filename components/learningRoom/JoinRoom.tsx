@@ -66,7 +66,7 @@ export default function JoinRoom({ navigation }) {
                   label: "Create",
                 },
                 {
-                  type: "search-select", // wie create flashcard game
+                  type: "radio", // wie create flashcard game
                   data: [
                     { key: "Foo", value: "f1" },
                     { key: "xxx", value: "f2" },

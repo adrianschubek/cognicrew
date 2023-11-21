@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import dayjs from "https://esm.sh/dayjs@1.11.10";
 
 console.log("main function started");
 
@@ -41,9 +42,7 @@ setInterval(async () => {
   // store timestamp for remaingroundtime
   // TODO: main game state loop here
 
-  const { data, error } = await supabase
-  .from("learning_projects")
-  .select(
+  const { data, error } = await supabase.from("learning_projects").select(
     `id,
           name,
           sets(
@@ -63,9 +62,7 @@ setInterval(async () => {
               answer
             )
           )`,
-  )
-
-
+  );
 
   const end = performance.now();
   console.log(

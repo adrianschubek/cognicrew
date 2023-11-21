@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useSets, useSoundSystem1, useUsernamesByRoom } from "../../utils/hooks";
+import {
+  useAlerts,
+  useSets,
+  useSoundSystem1,
+  useUsernamesByRoom,
+} from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { FlatList, View } from "react-native";
@@ -15,7 +20,6 @@ import { useSoundsStore } from "../../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
-
   useSoundSystem1();
 
   const theme = useTheme();
@@ -146,6 +150,14 @@ export default function Lobby({ navigation }) {
                   dismissable: false,
                   okText: "Select",
                   okAction: (setValues) => {
+                    /**
+                     * //TODO: add choose game style
+                     * 
+                     * Vanilla: 
+                     * 
+                     * 
+                     * // TODO: Radio button
+                     */
                     console.log(setValues);
                     if (setValues[0].length === 0)
                       return "Please select at least one set.";
@@ -157,12 +169,14 @@ export default function Lobby({ navigation }) {
                       okAction: async (values) => {
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
-                          { body: { 
-                            type: ManagementType.EXERCISE,
-                            sets: setValues[0].split("|").map((set) => +set),
-                            roundDuration: +values[0],
-                            numberOfRounds: +values[1],
-                           } },
+                          {
+                            body: {
+                              type: ManagementType.EXERCISE,
+                              sets: setValues[0].split("|").map((set) => +set),
+                              roundDuration: +values[0],
+                              numberOfRounds: +values[1],
+                            },
+                          },
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
@@ -235,7 +249,9 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: async (values) => {
-                        console.log("Sets: " + setValues[0].split("|").map((set) => +set));
+                        console.log(
+                          "Sets: " + setValues[0].split("|").map((set) => +set),
+                        );
                         console.log("Round Duration: " + +values[0]);
                         console.log("Number of Rounds: " + +values[1]);
                         const { data, error } = await supabase.functions.invoke(
