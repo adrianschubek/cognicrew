@@ -62,7 +62,6 @@ export default function EditExercise({ listItem }) {
   };
   useEffect(() => {
     if (!data || isInitialized) return;
-    console.log(isInitialized);
     setAnswers([
       [data[0].answer, data[0].is_correct, data[0].id],
       [data[1].answer, data[1].is_correct, data[1].id],

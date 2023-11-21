@@ -10,7 +10,6 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import { Snackbar } from "react-native-paper";
 import { responsiveFontSize, responsiveHeight } from "react-native-responsive-dimensions";
 
 export default function AddFriend({showAddFriendPopup, close, addFriend}){
