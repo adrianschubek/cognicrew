@@ -29,6 +29,8 @@ import GuestLobby from "../screens/ingame/GuestLobby";
 import { StackActions } from "@react-navigation/native";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
+import { Database } from "../types/supabase";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -153,7 +155,11 @@ function MainTabs({ navigation }) {
           //     user: 'jane',
           //   })
           // );
-          alert({ message: JSON.stringify(payload) });
+          alert({
+            message: JSON.stringify(payload, null, 2),
+            messageStyle: { textAlign: "left" },
+          });
+          // switch (payload.)
         },
       )
       .subscribe();
