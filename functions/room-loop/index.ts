@@ -22,7 +22,7 @@
 
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { PublicRoomState } from "../../types/rooms.ts";
+import { PublicRoomState } from "../rooms.js";
 
 serve(async (req) => {
   try {

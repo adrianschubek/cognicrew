@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { Database } from "../types/supabase";
-import { PublicRoomState } from "../types/rooms";
+import { PublicRoomState } from "../functions/rooms";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

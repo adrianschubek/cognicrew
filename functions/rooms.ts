@@ -1,3 +1,5 @@
+// This file must be in /functions!!! DONT MOVE
+
 export const enum ScreenState {
   LOBBY = "lobby",
   INGAME = "ingame",
@@ -26,8 +28,8 @@ export type PublicRoomState = {
    */
   players: {
     id: string;
-    name: string;
-    points: number;
+    username: string;
+    score: number;
   }[];
   /**
    * Total rounds in this game

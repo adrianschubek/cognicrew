@@ -6,9 +6,15 @@
 
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { PrivateRoomState, PublicRoomState } from "../../types/rooms.ts";
+import {
+  GameState,
+  PrivateRoomState,
+  PublicRoomState,
+  ScreenState,
+} from "../rooms.ts";
 
 serve(async (req) => {
+  const start = performance.now();
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -68,6 +74,16 @@ serve(async (req) => {
       numberOfRounds: number;
     };
     console.log(body);
+
+    // validate body
+    if (body.type !== 0 && body.type !== 1)
+      return new Response("Invalid type", { status: 400 });
+    if (body.sets.length === 0)
+      return new Response("No sets selected", { status: 400 });
+    if (body.roundDuration <= 0 || body.roundDuration > 600)
+      return new Response("Invalid round duration", { status: 400 });
+    if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
+      return new Response("Invalid number of rounds", { status: 400 });
 
     // private game state
     const { data: gamedata, error: errorGamedata } = await supabase
@@ -136,9 +152,23 @@ serve(async (req) => {
     };
     console.log(privateState);
 
-    // const publicState: PublicRoomState = {};
+    const publicState: PublicRoomState = {
+      players: users.map((user) => ({
+        id: user.id,
+        username: user.username,
+        score: 0,
+      })),
+      screen: ScreenState.LOBBY,
+      game: GameState.FLASHCARDS,
+      totalRounds: 0,
+      round: 0,
+      question: "",
+      possibleAnswers: [],
+      roundEndsAt: undefined,
+    };
+    console.log(publicState);
 
-
+    console.log("room-init: took " + (performance.now() - start) + "ms");
     return new Response("OK", { status: 200 });
   } catch (err) {
     return new Response(String(err?.message ?? err), { status: 504 });
