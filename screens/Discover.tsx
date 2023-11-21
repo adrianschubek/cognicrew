@@ -31,7 +31,7 @@ export default function Discover() {
   });
 
   const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
   const hideDialog = () => setVisible(false);
 
   type ItemProps = { title: string };

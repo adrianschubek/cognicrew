@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { ScrollView, View, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Dialog, Portal, RadioButton, Button, Text, ProgressBar } from "react-native-paper";
 import { responsiveHeight, responsiveFontSize } from "react-native-responsive-dimensions";
@@ -25,13 +26,13 @@ const fetchQuestions = () => {
 };
 
 export default function CreateQuizGame({ showCreateQuizGame, close }) {
-  const [questions, setQuestions] = React.useState(shuffleArray(fetchQuestions()));
-  const [currentQuestionIndex, setCurrentQuestionIndex] = React.useState(0);
-  const [checked, setChecked] = React.useState(null);
-  const [score, setScore] = React.useState(0);
-  const [answeredQuestions, setAnsweredQuestions] = React.useState(new Array(questions.length).fill(null));
-  const [reviewTime, setReviewTime] = React.useState('10m');
-  const [quizComplete, setQuizComplete] = React.useState(false);
+  const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [checked, setChecked] = useState(null);
+  const [score, setScore] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState(new Array(questions.length).fill(null));
+  const [reviewTime, setReviewTime] = useState('10m');
+  const [quizComplete, setQuizComplete] = useState(false);
 
   const handleNextQuestion = () => {
     if (checked) {
