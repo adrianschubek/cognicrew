@@ -27,6 +27,7 @@ import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
 import { View } from "react-native";
+import { HeaderBackButton } from "@react-navigation/elements";
 export default function CreateEditProject({
   navigation,
   route,
@@ -61,17 +62,19 @@ export default function CreateEditProject({
 
   useEffect(() => {
     navigation.setOptions({
-      headerLeft: () => (
+      title: project === null ? "Create Project" : "Edit Project",
+      headerLeft: (...props) => (
         <IconButton
+        {...props}
           icon="arrow-left"
+          style={{ marginLeft: -8, marginRight: 24  }}
           onPress={() => {
-            confirm({
-              title: "Discard changes?",
-              message:
-                "All unsaved changes will be lost. Do you want to continue?",
-              okText: "Continue",
-              okAction: () => navigation.goBack(),
-            });
+              confirm({
+                title: "Discard changes?",
+                message: "All unsaved changes will be lost. Do you want to continue?",
+                okText: "Continue",
+                okAction: () => navigation.goBack(),
+              });
           }}
         />
       ),
