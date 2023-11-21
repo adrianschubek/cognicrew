@@ -144,7 +144,18 @@ export default function Discover() {
         renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index.toString()}
-            onPress={() => console.log("Dialog not working")}
+            onPress={() => {
+              Alert.alert("Project Catalog", "\n"+"Course Name: " + item.name+"\n\n" +"Description: "+item.description+"\n\n" +"Semester: "+item.group,[
+                {
+                  text: "Clone to My Project",
+                  onPress: () => console.log('Cancel Pressed'),//TODO
+                  style: "cancel",
+                },
+                {
+                  text: 'OK', onPress: () => console.log('OK Pressed'),
+                },
+              ])
+              console.log("Dialog not working")}}
           >
             <Item title={item.name} />
           </TouchableOpacity>
