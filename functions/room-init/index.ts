@@ -6,7 +6,7 @@
 
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { PublicRoomState } from "../../types/rooms.ts";
+import { PrivateRoomState, PublicRoomState } from "../../types/rooms.ts";
 
 serve(async (req) => {
   try {
@@ -38,7 +38,7 @@ serve(async (req) => {
     if (roomError)
       return new Response("User is not in a room", { status: 400 });
 
-    const rid = roomData.room_id;
+    const rid: string = roomData.room_id;
     console.log(rid);
 
     // check host is owner of room
@@ -49,77 +49,97 @@ serve(async (req) => {
       .eq("id", rid)
       .eq("is_ingame", false)
       .single();
-
-    console.log(data);
-
     if (error) return new Response("User is not host of room", { status: 401 });
 
-    const body = await req.json(); 
-    console.log(body)
+    const pid: number = data.project_id;
+    console.log(data);
+
+    // get all connected users in room
+    const { data: users, error: errorUsers } = await supabase
+      .from("profiles")
+      .select("id,username")
+      .eq("room_id", rid);
+    if (errorUsers) throw errorUsers;
+
+    const body = (await req.json()) as {
+      type: 0 /* quiz */ | 1 /* flashcard */;
+      sets: number[];
+      roundDuration: number;
+      numberOfRounds: number;
+    };
+    console.log(body);
+
+    // private game state
+    const { data: gamedata, error: errorGamedata } = await supabase
+      .from("learning_projects")
+      .select(
+        `id,
+            name,
+            sets(
+              name,
+              exercises(
+                id,
+                question,
+                priority,
+                answers_exercises(
+                  id,
+                  answer,
+                  is_correct
+                )
+              ),
+              flashcards(
+                id,
+                question,
+                priority,
+                answer
+              )
+            )`,
+      )
+      .eq("id", pid)
+      .single();
+    if (errorGamedata || !gamedata) {
+      throw errorGamedata;
+    }
+
+    const privateState: PrivateRoomState = {
+      gameData: {
+        exercises: gamedata.sets
+          .map((set) => set.exercises)
+          .flat()
+          .map((exercise) => ({
+            id: exercise.id,
+            question: exercise.question,
+            answers: exercise.answers_exercises.map((answer) => answer.answer),
+            priority: exercise.priority,
+            /* get correct answer index */
+            correct: exercise.answers_exercises.reduce(
+              (acc, answer, index) =>
+                answer.is_correct ? [...acc, index] : acc,
+              [] as number[],
+            ),
+          })),
+        flashcards: gamedata.sets
+          .map((set) => set.flashcards)
+          .flat()
+          .map((flashcard) => ({
+            id: flashcard.id,
+            question: flashcard.question,
+            priority: flashcard.priority,
+            answer: flashcard.answer,
+          })),
+      },
+      playerAnswers: users.map((user) => ({
+        id: user.id,
+        exercises: [],
+        flashcards: [],
+      })),
+    };
+    console.log(privateState);
+
+    // const publicState: PublicRoomState = {};
+
 
     return new Response("OK", { status: 200 });
-    // body.record.id is the room id
-    // TODO: if option INSERT, DELETE, UPDATE do ....
-    switch (body.type) {
-      /**
-       * new room created. copy all project data into private_state.
-       */
-      case "INSERT": {
-        const { data, error } = await supabase
-          .from("learning_projects")
-          .select(
-            `id,
-                  name,
-                  sets(
-                    name,
-                    exercises(
-                      id,
-                      question,
-                      answers_exercises(
-                        id,
-                        answer,
-                        is_correct
-                      )
-                    ),
-                    flashcards(
-                      id,
-                      question,
-                      answer
-                    )
-                  )`,
-          )
-          .eq("id", body.record.project_id);
-
-        if (error) {
-          throw error;
-        }
-
-        const publicState: PublicRoomState = {};
-
-        // TODO: save data to private_state
-        // TODO: save data to public_state
-        // TODO: set is_ingame to true (close lobby)
-
-        return new Response(JSON.stringify({ data }), {
-          headers: { "Content-Type": "application/json" },
-          status: 200,
-        });
-      }
-      /**
-       * if is_ingame updated -> start game
-       */
-      case "UPDATE":
-        return new Response("Not implemented yet UPDATE", { status: 501 });
-        break;
-      /**
-       * old_record.project_id is the room id
-       */
-      case "DELETE":
-        return new Response("Not implemented yet DELETE", { status: 501 });
-        break;
-      default:
-        return new Response("Error Invalid body type!", { status: 400 });
-    }
   } catch (err) {
     return new Response(String(err?.message ?? err), { status: 504 });
   }

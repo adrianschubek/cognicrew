@@ -6,30 +6,14 @@ import {
   HelperText,
   Portal,
   RadioButton,
-  Searchbar,
   Switch,
   Text,
   TextInput,
   useTheme,
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
-import {
-  Fragment,
-  memo,
-  startTransition,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  FlatList,
-  ScrollView,
-  TouchableHighlight,
-  VirtualizedList,
-} from "react-native";
-import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
-import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
+import { Fragment, startTransition, useEffect, useMemo, useState } from "react";
+import { FlatList, TouchableHighlight, VirtualizedList } from "react-native";
 
 /**
  * Universal alert component that can be used to display alerts.
@@ -40,8 +24,9 @@ export default function AlertSyncZustand() {
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
 
-  const [values, setValues] = useState<string[]>([]); // fixed by [""]
+  const [values, setValues] = useState<string[]>([]);
   const [tempError, setTempError] = useState<string | null>(null);
+  const [busy, setBusy] = useState<boolean>(false); // FIXME performance bottleneck. too many states
 
   const [tempValues, setTempValues] = useState<string[]>([]);
 
@@ -60,6 +45,7 @@ export default function AlertSyncZustand() {
       );
       setTempError(() => null);
       setTempValues(() => activeAlert?.fields?.map(() => "") ?? []);
+      setBusy(() => false);
     }
   }, [activeAlert]);
 
@@ -168,14 +154,19 @@ export default function AlertSyncZustand() {
                     <>
                       <Button
                         onPress={async () => {
-                          const ret = await field.action(values);
-                          if (typeof ret === "string") {
-                            setTempError(ret);
-                            return;
+                          try {
+                            setBusy(() => true);
+                            const ret = await field.action(values);
+                            if (typeof ret === "string") {
+                              setTempError(ret);
+                              return;
+                            }
+                            next();
+                          } finally {
+                            setBusy(() => false);
                           }
-                          next();
                         }}
-                        disabled={field.disabled}
+                        disabled={field.disabled || busy}
                         style={{ marginTop: 10 }}
                         mode="contained"
                       >
@@ -392,8 +383,6 @@ export default function AlertSyncZustand() {
                         </HelperText>
                       )}
                     </>
-                  ) : field.type === "dropdown" ? (
-                    <Text>Unknown field type: {field.type}</Text>
                   ) : (
                     <Text>Unknown field type: {field.type}</Text>
                   )}
@@ -425,13 +414,19 @@ export default function AlertSyncZustand() {
               <Button
                 style={{ paddingHorizontal: 10 }}
                 mode="contained-tonal"
+                disabled={busy}
                 onPress={async () => {
-                  const ret = await cancelAction(values);
-                  if (typeof ret === "string") {
-                    setTempError(ret);
-                    return;
+                  try {
+                    setBusy(() => true);
+                    const ret = await cancelAction(values);
+                    if (typeof ret === "string") {
+                      setTempError(ret);
+                      return;
+                    }
+                    next();
+                  } finally {
+                    setBusy(() => false);
                   }
-                  next();
                 }}
               >
                 {cancelText}
@@ -442,19 +437,30 @@ export default function AlertSyncZustand() {
                 style={{ paddingHorizontal: 10 }}
                 mode="contained"
                 onPress={async () => {
-                  const ret = await okAction(values);
-                  if (typeof ret === "string") {
-                    setTempError(ret);
-                    return;
+                  try {
+                    setBusy(() => true);
+                    console.log("busy");
+                    const ret = await okAction(values);
+                    if (typeof ret === "string") {
+                      setTempError(ret);
+                      return;
+                    }
+                    next();
+                  } finally {
+                    setBusy(() => false);
+                    console.log("not busy");
                   }
-                  next();
                 }}
-                disabled={inputs?.some(
-                  (field, i) =>
-                    field.required &&
-                    (values[i]?.length === 0 ||
-                      (field.validator && !field.validator(values[i], values))),
-                )}
+                disabled={
+                  busy ||
+                  inputs?.some(
+                    (field, i) =>
+                      field.required &&
+                      (values[i]?.length === 0 ||
+                        (field.validator &&
+                          !field.validator(values[i], values))),
+                  )
+                }
               >
                 {okText}
               </Button>
@@ -470,6 +476,7 @@ export default function AlertSyncZustand() {
     values,
     tempError,
     tempValues,
+    busy,
   ]);
 
   // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined

@@ -42,7 +42,7 @@ export type PublicRoomState = {
    */
   question: string;
   /**
-   * possible answers for current question (quiz only) 
+   * possible answers for current question (quiz only)
    * //TODO: randomize question order in frontend
    */
   possibleAnswers: string[];
@@ -79,7 +79,7 @@ export type PrivateRoomState = {
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
-    whiteboard: {};
+    // whiteboard: {};
   };
   /**
    * submitted answers by players
@@ -119,7 +119,7 @@ export type PrivateRoomState = {
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
-    whiteboard: {}; //
+    // whiteboard: {}; //
   }[];
 };
 
