@@ -135,7 +135,8 @@ type ExerciseClientUpdate = { answerIndex: number[] };
  */
 export type RoomClientUpdate =
   | { type: "flashcard-answer"; data: FlashcardClientUpdate }
-  | { type: "exercise-answer"; data: ExerciseClientUpdate };
+  | { type: "exercise-answer"; data: ExerciseClientUpdate }
+  | { type: "reset-lobby" }; /* TOOD: in db set is_ingame back to false */
 
 /**
  * sets
