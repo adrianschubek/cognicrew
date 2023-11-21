@@ -1,13 +1,14 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView, StyleSheet } from "react-native";
 import {
   Button,
   Card,
   Divider,
   FAB,
   HelperText,
+  IconButton,
   SegmentedButtons,
   Switch,
   Text,
@@ -15,12 +16,18 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts, useDeleteProject, useSoundSystem1, useUsername } from "../../utils/hooks";
+import {
+  useAlerts,
+  useDeleteProject,
+  useSoundSystem1,
+  useUsername,
+} from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { NAVIGATION } from "../../types/common";
 import { View } from "react-native";
+import { HeaderBackButton } from "@react-navigation/elements";
 export default function CreateEditProject({
   navigation,
   route,
@@ -41,7 +48,6 @@ export default function CreateEditProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-  const [showDiscard, setShowDiscard] = useState(true);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
@@ -52,23 +58,26 @@ export default function CreateEditProject({
       title: project === null ? "Create Project" : "Edit Project",
     });
   }, []);
-  
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-      if (!showDiscard) {
-        return;
-      }
 
-      e.preventDefault();
-      confirm({
-        title: "Discard changes?",
-        message: "All unsaved changes will be lost. Do you want to continue?",
-        okText: "Continue",
-        okAction: () => navigation.dispatch(e.data.action),
-      });
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          style={styles.fixHeaderStyles}
+          onPress={() => {
+            confirm({
+              title: "Discard changes?",
+              message:
+                "All unsaved changes will be lost. Do you want to continue?",
+              okText: "Continue",
+              okAction: () => navigation.goBack(),
+            });
+          }}
+        />
+      ),
     });
-    return unsubscribe;
-  }, [navigation, showDiscard]);
+  }, [navigation]);
 
   const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
@@ -331,7 +340,6 @@ export default function CreateEditProject({
                 message:
                   "Deleted projects cannot be restored.\nDo you want to continue?",
                 okAction: () => {
-                  setShowDiscard(false);
                   deleteProject({ id: project.id });
                   navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
                 },
@@ -355,7 +363,6 @@ export default function CreateEditProject({
         }}
         label={project === null ? "Create" : "Save"}
         onPress={() => {
-          setShowDiscard(false);
           save();
         }}
         disabled={isMutating}
@@ -363,3 +370,13 @@ export default function CreateEditProject({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  fixHeaderStyles: {
+    ...Platform.select({
+      android: {
+        marginLeft: -3, marginRight: 29
+      },
+    }),
+  },
+});
