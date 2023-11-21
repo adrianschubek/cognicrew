@@ -156,9 +156,12 @@ export default function EditExercise({ listItem }) {
                 justifyContent: "flex-end",
               }}
             >
-              <PrioritySelector priority={priority} setPriority={(val) => {
-                setPriority(val)
-              }}/>
+              <PrioritySelector
+                priority={priority}
+                setPriority={(val) => {
+                  setPriority(val);
+                }}
+              />
               <IconButton
                 icon="delete"
                 onPress={() => deleteExercise({ id: listItem.id })}
@@ -170,7 +173,7 @@ export default function EditExercise({ listItem }) {
       />
       <Card.Content style={styles.cardContentStyle}>
         <TextInput
-          style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}
+          style={[styles.textInputStyle, { marginBottom: 8 }]}
           multiline={true}
           label="Question:"
           value={question}
@@ -206,8 +209,8 @@ export default function EditExercise({ listItem }) {
 const styles = StyleSheet.create({
   cardStyle: {
     width: responsiveWidth(100) - responsiveHeight(2),
-    marginTop: responsiveHeight(1),
-    marginBottom: responsiveHeight(1),
+    marginTop: 8,
+    marginBottom: 8,
     alignSelf: "center",
   },
   cardContentStyle: {},
