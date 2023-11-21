@@ -345,11 +345,13 @@ export default function CreateEditProject({
       </ScrollView>
       <FAB
         icon={project === null ? "plus" : "check"}
+        color={theme.colors.onPrimary}
         style={{
           position: "absolute",
           margin: 16,
           right: 0,
           bottom: 0,
+          backgroundColor: theme.colors.primary,
         }}
         label={project === null ? "Create" : "Save"}
         onPress={() => {
