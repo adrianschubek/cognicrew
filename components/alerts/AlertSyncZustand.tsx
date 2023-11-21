@@ -439,7 +439,6 @@ export default function AlertSyncZustand() {
                 onPress={async () => {
                   try {
                     setBusy(() => true);
-                    console.log("busy");
                     const ret = await okAction(values);
                     if (typeof ret === "string") {
                       setTempError(ret);
@@ -448,7 +447,6 @@ export default function AlertSyncZustand() {
                     next();
                   } finally {
                     setBusy(() => false);
-                    console.log("not busy");
                   }
                 }}
                 disabled={
