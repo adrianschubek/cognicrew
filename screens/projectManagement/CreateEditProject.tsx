@@ -48,7 +48,6 @@ export default function CreateEditProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-  //const [showDiscard, setShowDiscard] = useState(true);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
@@ -79,42 +78,6 @@ export default function CreateEditProject({
       ),
     });
   }, [navigation]);
-  /*useEffect(() => {
-    navigation.setOptions({
-      title: project === null ? "Create Project" : "Edit Project",
-      headerLeft: (...props) => (
-        <IconButton
-        {...props}
-          icon="arrow-left"
-          style={{ marginLeft: -8, marginRight: 24  }}
-          onPress={() => {
-              confirm({
-                title: "Discard changes?",
-                message: "All unsaved changes will be lost. Do you want to continue?",
-                okText: "Continue",
-                okAction: () => navigation.goBack(),
-              });
-          }}
-        />
-      ),
-    });
-  }, [navigation]);*/
-  /*  useEffect(() => {
-    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
-      if (!showDiscard) {
-        return;
-      }
-
-      e.preventDefault();
-      confirm({
-        title: "Discard changes?",
-        message: "All unsaved changes will be lost. Do you want to continue?",
-        okText: "Continue",
-        okAction: () => navigation.dispatch(e.data.action),
-      });
-    });
-    return unsubscribe;
-  }, [navigation, showDiscard]); */
 
   const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
@@ -377,7 +340,6 @@ export default function CreateEditProject({
                 message:
                   "Deleted projects cannot be restored.\nDo you want to continue?",
                 okAction: () => {
-                  //setShowDiscard(false);
                   deleteProject({ id: project.id });
                   navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
                 },
@@ -399,7 +361,6 @@ export default function CreateEditProject({
         }}
         label={project === null ? "Create" : "Save"}
         onPress={() => {
-          //setShowDiscard(false);
           save();
         }}
         disabled={isMutating}
