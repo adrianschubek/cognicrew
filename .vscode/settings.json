@@ -1,5 +1,7 @@
 {
   "deno.lint": true,
   "deno.unstable": true,
-  "deno.enablePaths": ["./functions"],
+  "deno.enablePaths": [
+    "./functions"
+  ],
 }

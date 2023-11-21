@@ -14,7 +14,6 @@ import Achievements from "../screens/Achievements";
 import Whiteboard from "../screens/Whiteboard";
 import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
-import ExerciseManagement from "../screens/projectManagement/ExerciseManagement";
 import { NAVIGATION } from "../types/common";
 import CreateEditProject from "../screens/projectManagement/CreateEditProject";
 import InviteFriends from "../screens/projectManagement/InviteFriends";
