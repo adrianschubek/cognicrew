@@ -63,6 +63,7 @@ export type PrivateRoomState = {
       id: number;
       question: string;
       answers: string[];
+      priority: number;
       correct: number[];
     }[];
     flashcards: {
