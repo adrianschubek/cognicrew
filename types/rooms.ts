@@ -1,5 +1,3 @@
-import { Database } from "./supabase";
-
 export const enum ScreenState {
   LOBBY = "lobby",
   INGAME = "ingame",
