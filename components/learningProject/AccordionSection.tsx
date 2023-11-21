@@ -24,7 +24,7 @@ export default function AccordionSection(props: {
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useSets(
     props.type,
-    projectId /*refetchIndex */,
+    projectId,
   );
   const [sets, setSets] = useState([]);
   useEffect(() => {

@@ -39,7 +39,6 @@ export default function EditExercise({ listItem }) {
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
-    setIsInitialized(true);
     console.log("updateExercise");
     upsertExercise({
       //@ts-expect-error
@@ -68,6 +67,7 @@ export default function EditExercise({ listItem }) {
       [data[2].answer, data[2].is_correct, data[2].id],
       [data[3].answer, data[3].is_correct, data[3].id],
     ]);
+    setIsInitialized(true);
   }, [data]);
 
   const [answers, setAnswers] = useState<[string, boolean, number][]>([
@@ -129,14 +129,14 @@ export default function EditExercise({ listItem }) {
     [], // dependencies array is empty because debounce and editFlashcard do not change
   );
   useEffect(() => {
-    if (question && answers && priority) {
+    if (question && answers && priority && isInitialized) {
       // Call the debounced function
       debouncedEditExercise(question, answers, priority);
     }
   }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
 
   useEffect(() => {
-    if(isInitialized) return;
+    if (isInitialized) return;
     if (!listItem.priority) return;
     setPriority(listItem.priority);
   }, [listItem.priority]);
