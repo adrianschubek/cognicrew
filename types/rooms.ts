@@ -3,7 +3,7 @@ import { Database } from "./supabase";
 export const enum ScreenState {
   LOBBY = "lobby",
   INGAME = "ingame",
-  RESULTS = "results",
+  RESULTS = "results", // game end
 }
 export const enum GameState {
   EXERCISES = "exercises",
