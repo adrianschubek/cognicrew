@@ -48,35 +48,19 @@ export default function JoinRoom({ navigation }) {
           mode="contained"
           onPress={async () => {
             alert({
-              title: "New Flashcardgame",
+              title: "blabla",
               dismissable: false,
               cancelText: "Cancel",
               okAction(values) {
-                console.log(values);
+                alert({message: JSON.stringify(values)})
               },
               fields: [
                 {
-                  label: "Round duration (seconds)",
-                  type: "number",
-                  icon: "timer-outline",
-                  defaultValue: "30",
-                },
-                {
-                  type: "button",
-                  label: "Create",
-                },
-                {
-                  type: "radio", // wie create flashcard game
+                  type: "search-radio",
                   data: [
-                    { key: "Foo", value: "f1" },
-                    { key: "xxx", value: "f2" },
-                    { key: "aa", value: "f35" },
-                    ...Array.from({ length: 100 }, (_, i) => ({
-                      key: `xxx${i}`,
-                      value: `yyy${i}`,
-                    })),
+                    { key: "Quiz", value: "q" },
+                    { key: "Flashcard", value: "f" },
                   ],
-                  visibleOptions: 5
                 },
               ],
             });
