@@ -11,9 +11,5 @@ serve(async (req) => {
   return new Response(JSON.stringify(await req.json()), {
     headers: { "Content-Type": "application/json" },
   });
-// TODO: use immer to update state
-  return new Response(
-    `"Hello from Edge Functions! xxxxxyyyyyyyyyyyyyyyyyyyyyyyy"`,
-    { headers: { "Content-Type": "application/json" } },
-  );
+
 });

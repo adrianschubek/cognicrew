@@ -77,6 +77,18 @@ type SearchSelectInput = CommonInput & {
   visibleOptions: number;
 };
 
+type SelectInput = Omit<SearchSelectInput, "type"> & {
+  type: "select";
+};
+
+type RadioInput = Omit<SearchSelectInput, "type"> & {
+  type: "radio";
+};
+
+type SearchRadioInput = Omit<SearchSelectInput, "type"> & {
+  type: "search-radio";
+};
+
 type DropdownInput = CommonInput & {
   type: "dropdown";
   /**
@@ -90,7 +102,10 @@ type AlertField =
   | CheckboxInput
   | ButtonInput
   | SearchSelectInput
-  | DropdownInput;
+  | SelectInput
+  | RadioInput
+  | SearchRadioInput
+// | DropdownInput;
 
 /* export function isTextInput(input: AlertField): input is TextInput {
   return input.type === "text" || input.type === "number" || input.type === "password";

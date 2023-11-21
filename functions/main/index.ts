@@ -1,5 +1,7 @@
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import dayjs from "https://esm.sh/dayjs@1.11.10";
 
 console.log("main function started");
 
@@ -31,10 +33,41 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 }
 // TODO: Whiteboard realtime use Presence!!
 // TODO: https://supabase.com/docs/guides/realtime/presence#sending-state
-setInterval(() => {
-  console.log(new Date().toISOString() + " | main_loop");
+const supabase = createClient(
+  Deno.env.get("SUPABASE_URL") ?? "",
+  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+);
+setInterval(async () => {
+  const start = performance.now();
   // store timestamp for remaingroundtime
   // TODO: main game state loop here
+
+  const { data, error } = await supabase.from("learning_projects").select(
+    `id,
+          name,
+          sets(
+            name,
+            exercises(
+              id,
+              question,
+              answers_exercises(
+                id,
+                answer,
+                is_correct
+              )
+            ),
+            flashcards(
+              id,
+              question,
+              answer
+            )
+          )`,
+  );
+
+  const end = performance.now();
+  console.log(
+    new Date().toISOString() + " | main_loop time: " + (end - start) + "ms",
+  );
 }, 2000);
 
 serve(async (req: Request) => {

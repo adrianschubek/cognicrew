@@ -5,6 +5,7 @@ import {
   Dialog,
   HelperText,
   Portal,
+  RadioButton,
   Searchbar,
   Switch,
   Text,
@@ -219,32 +220,44 @@ export default function AlertSyncZustand() {
                           </HelperText>
                         )}
                     </>
-                  ) : field.type === "search-select" ? ( // TODO: add toggle search field
+                  ) : field.type === "search-select" ||
+                    field.type === "select" ||
+                    field.type === "radio" ||
+                    field.type === "search-radio" ? (
                     <>
-                      <TextInput
-                        style={{ marginTop: 10 }}
-                        placeholder={
-                          field.placeholder ? field.placeholder : "Search"
-                        }
-                        left={
-                          <TextInput.Icon
-                            icon={field.icon ? field.icon : "magnify"}
-                          />
-                        }
-                        value={tempValues[i]}
-                        onChangeText={(text) => {
-                          const newValues = [...tempValues];
-                          newValues[i] = text;
-                          setTempValues(newValues);
-                        }}
-                        error={
-                          field.data
-                            .filter(({ key }) => key.includes(tempValues[i]))
-                            .filter((_, i) => i < field.visibleOptions)
-                            .length === 0
-                        }
-                      />
+                      {(field.type === "search-select" ||
+                        field.type === "search-radio") && (
+                        <TextInput
+                          style={{ marginTop: 10 }}
+                          placeholder={
+                            field.placeholder ? field.placeholder : "Search"
+                          }
+                          left={
+                            <TextInput.Icon
+                              icon={field.icon ? field.icon : "magnify"}
+                            />
+                          }
+                          value={tempValues[i]}
+                          onChangeText={(text) => {
+                            const newValues = [...tempValues];
+                            newValues[i] = text;
+                            setTempValues(newValues);
+                          }}
+                          error={
+                            field.data
+                              .filter(({ key }) => key.includes(tempValues[i]))
+                              .filter((_, i) => i < field.visibleOptions)
+                              .length === 0
+                          }
+                        />
+                      )}
                       <FlatList
+                        style={{
+                          marginTop:
+                            field.type === "radio" || field.type === "select"
+                              ? 10
+                              : undefined,
+                        }}
                         nestedScrollEnabled={true}
                         data={field.data
                           .filter(({ key }) => key.includes(tempValues[i]))
@@ -256,7 +269,8 @@ export default function AlertSyncZustand() {
                         renderItem={({ item }) => {
                           const { key, value } = item;
                           return (
-                            <TextInput
+                            /* TODO: add touchable input */
+                            <TextInput 
                               key={key}
                               theme={{ roundness: 0 }}
                               value={key}
@@ -269,45 +283,59 @@ export default function AlertSyncZustand() {
                               }
                               right={
                                 <TextInput.Icon
-                                  icon={() => (
-                                    // TODO: support RadioButtons
-                                    <Checkbox
-                                      disabled={field.disabled}
-                                      status={
-                                        values[i].split("|").includes(value)
-                                          ? "checked"
-                                          : "unchecked"
-                                      }
-                                      onPress={() => {
-                                        startTransition(() => {
-                                          const newValues = [...values];
-                                          console.log(values[i].split("|"));
-                                          console.log(
-                                            values[i]
-                                              .split("|")
-                                              .includes(value),
-                                          );
-                                          // if value is already in array, remove it else add it
-                                          if (
-                                            values[i].split("|").includes(value)
-                                          ) {
-                                            newValues[i] = values[i]
-                                              .split("|")
-                                              .filter((v) => v !== value)
-                                              .join("|");
-                                          } else {
-                                            newValues[i] =
-                                              value +
-                                              (values[i]
-                                                ? "|" + values[i]
-                                                : "");
-                                            console.log(newValues[i]);
-                                          }
-                                          setValues(newValues);
-                                        });
-                                      }}
-                                    />
-                                  )}
+                                  icon={() =>
+                                    field.type === "radio" ||
+                                    field.type === "search-radio" ? (
+                                      <RadioButton
+                                        disabled={field.disabled}
+                                        status={
+                                          values[i].split("|").includes(value)
+                                            ? "checked"
+                                            : "unchecked"
+                                        }
+                                        value={value}
+                                        onPress={() => {
+                                          startTransition(() => {
+                                            const newValues = [...values];
+                                            newValues[i] = value;
+                                            setValues(newValues);
+                                          });
+                                        }}
+                                      />
+                                    ) : (
+                                      <Checkbox
+                                        disabled={field.disabled}
+                                        status={
+                                          values[i].split("|").includes(value)
+                                            ? "checked"
+                                            : "unchecked"
+                                        }
+                                        onPress={() => {
+                                          startTransition(() => {
+                                            const newValues = [...values];
+                                            // if value is already in array, remove it else add it
+                                            if (
+                                              values[i]
+                                                .split("|")
+                                                .includes(value)
+                                            ) {
+                                              newValues[i] = values[i]
+                                                .split("|")
+                                                .filter((v) => v !== value)
+                                                .join("|");
+                                            } else {
+                                              newValues[i] =
+                                                value +
+                                                (values[i]
+                                                  ? "|" + values[i]
+                                                  : "");
+                                            }
+                                            setValues(newValues);
+                                          });
+                                        }}
+                                      />
+                                    )
+                                  }
                                 />
                               }
                             />
