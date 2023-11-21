@@ -1,21 +1,27 @@
 import { Database } from "./supabase";
 
 export const enum ScreenState {
-  LOBBY,
-  INGAME,
-  RESULTS,
+  LOBBY = "lobby",
+  INGAME = "ingame",
+  RESULTS = "results",
 }
 export const enum GameState {
-  QUIZ,
-  FLASHCARDS,
-  WHITEBOARD,
+  EXERCISES = "exercises",
+  FLASHCARDS = "flashcards",
+  WHITEBOARD = "whiteboard",
 }
 /**
- * (Realtime enabled) + timer + current game + current question [visible to client,  SELECT only]
- * Stored/updated inside public_rooms_state table. Will be send to lcient on each update.
- */ // TODO: Supabase on insert send webhook -> edge function!!!
+ * (Realtime enabled) [visible to client, SELECT only]
+ * Stored/updated inside public_rooms_state table. Will be send to client on each update. Client uses this to display everything.
+ */
 export type PublicRoomState = {
+  /**
+   * Display this screen
+   */
   screen: ScreenState;
+  /**
+   * Current game type
+   */
   game: GameState;
   /**
    * Connected players
@@ -23,28 +29,28 @@ export type PublicRoomState = {
   players: {
     id: string;
     name: string;
+    points: number;
   }[];
-
-  playerCount: number;
-  
-  numRounds: number;
-  // current: {
   /**
-   * An index number / round number. Starts at 1. Not a reference to quiz/exercise id.
+   * Total rounds in this game
+   */
+  totalRounds: number;
+  /**
+   * Current round (starts at 1)
    */
   round: number;
+  /**
+   * Current question (quiz and flashcard)
+   */
   question: string;
   /**
-   * Only for quiz. answer options
+   * possible answers for current question (quiz only)
    */
-  options: string[];
-
+  possibleAnswers: string[];
   /**
-   * Remaining time in seconds.
-   * // TODO: Alternative use Timestamp day.js
+   * Round ends at timestamp
    */
-  remainingSeconds: number;
-  // };
+  roundEndsAt: EpochTimeStamp;
 };
 
 /**
@@ -53,19 +59,18 @@ export type PublicRoomState = {
  */
 export type PrivateRoomState = {
   gameData: {
-    // questions: {
-    //   id: number;
-    //   question: string;
-    //   answers: string[];
-    //   correct: number[];
-    // }[];
-    // flashcards: {
-    //   id: number;
-    //   question: string;
-    //   answer: string;
-    // }[];
-    sets: Database["public"]["Tables"]["exercises"]["Row"],
-
+    exercises: {
+      id: number;
+      question: string;
+      answers: string[];
+      correct: number[];
+    }[];
+    flashcards: {
+      id: number;
+      question: string;
+      priority: number;
+      answer: string;
+    }[];
 
     /**
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
@@ -73,22 +78,38 @@ export type PrivateRoomState = {
      */
     whiteboard: {};
   };
-  userAnswers: {
-    /**
-     * References the question/flashcard id
-     */
-    id: number;
+  /**
+   * submitted answers by players
+   */
+  playerAnswers: {
     /**
      * user uuid
      */
-    user: string;
-
-    questions: {
+    id: string;
+    /**
+     * exercise game
+     */
+    exercises: {
+      /**
+       * question id
+       */
       id: number;
-      answerIndex: number;
+      /**
+       * which indices from possible answers were selected by user
+       */
+      answerIndex: number[];
     }[];
+    /*+
+     * flashcard game
+     */
     flashcards: {
+      /**
+       * flashcard id
+       */
       id: number;
+      /**
+       * answer by user
+       */
       answer: string;
     }[];
     /**
@@ -98,8 +119,6 @@ export type PrivateRoomState = {
     whiteboard: {}; //
   }[];
 };
-
-
 
 /**
  * sets
