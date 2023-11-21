@@ -42,7 +42,8 @@ export type PublicRoomState = {
    */
   question: string;
   /**
-   * possible answers for current question (quiz only)
+   * possible answers for current question (quiz only) 
+   * //TODO: randomize question order in frontend
    */
   possibleAnswers: string[];
   /**
