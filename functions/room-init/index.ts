@@ -164,11 +164,40 @@ serve(async (req) => {
       round: 0,
       question: "",
       possibleAnswers: [],
-      roundEndsAt: undefined,
+      roundEndsAt: null,
     };
     console.log(publicState);
 
-    console.log("room-init: took " + (performance.now() - start) + "ms");
+    // save to db
+    const { error: errSavePriv } = await supabase
+      .from("private_room_states")
+      .upsert({
+        room_id: rid,
+        data: privateState,
+        updated_at: new Date(),
+      });
+    if (errSavePriv) throw errSavePriv;
+
+    const { error: errSavePub } = await supabase
+      .from("public_room_states")
+      .upsert({
+        room_id: rid,
+        data: publicState,
+        updated_at: new Date(),
+      });
+    if (errSavePub) throw errSavePub;
+
+    // set room to ingame
+    const { error: errSetIngame } = await supabase
+      .from("rooms")
+      .update({ is_ingame: true })
+      .eq("id", rid);
+    if (errSetIngame) throw errSetIngame;
+
+    console.log(
+      `room-init: created game states for room ${rid} "${gamedata.name}"`,
+    );
+    console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (err) {
     return new Response(String(err?.message ?? err), { status: 504 });
