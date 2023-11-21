@@ -1,28 +1,14 @@
 // Edge function to be deployed on the server directly.
 
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
-
-// loop through all rooms and update their state
-
-// https://supabase.com/docs/guides/functions/auth
-
 /**
- * maybe https://supabase.com/docs/guides/functions/schedule-functions
+ * Called by databse webhook only.
+ * 
+ * - Player joins/leaves -> update game state
  */
-
-// verify this is called by webhook. Should only be called by database trigger on room creation.
-
-// every 5 seconds or so.
-
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
 
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
-import { PublicRoomState } from "../rooms.js";
+import { PublicRoomState } from "../rooms.ts";
 
 serve(async (req) => {
   try {
@@ -58,9 +44,7 @@ serve(async (req) => {
       case "INSERT": {
         const publicState: PublicRoomState = {};
 
-        // TODO: save data to private_state
-        // TODO: save data to public_state
-        // TODO: set is_ingame to true (close lobby)
+
 
         return new Response(JSON.stringify({ data }), {
           headers: { "Content-Type": "application/json" },
