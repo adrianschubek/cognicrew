@@ -8,6 +8,7 @@ import {
   Divider,
   FAB,
   HelperText,
+  IconButton,
   SegmentedButtons,
   Switch,
   Text,
@@ -15,7 +16,12 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts, useDeleteProject, useSoundSystem1, useUsername } from "../../utils/hooks";
+import {
+  useAlerts,
+  useDeleteProject,
+  useSoundSystem1,
+  useUsername,
+} from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
@@ -41,7 +47,7 @@ export default function CreateEditProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-  const [showDiscard, setShowDiscard] = useState(true);
+  //const [showDiscard, setShowDiscard] = useState(true);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
@@ -52,8 +58,26 @@ export default function CreateEditProject({
       title: project === null ? "Create Project" : "Edit Project",
     });
   }, []);
-  
+
   useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="arrow-left"
+          onPress={() => {
+            confirm({
+              title: "Discard changes?",
+              message:
+                "All unsaved changes will be lost. Do you want to continue?",
+              okText: "Continue",
+              okAction: () => navigation.goBack(),
+            });
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
+  /*  useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (!showDiscard) {
         return;
@@ -68,7 +92,7 @@ export default function CreateEditProject({
       });
     });
     return unsubscribe;
-  }, [navigation, showDiscard]);
+  }, [navigation, showDiscard]); */
 
   const { trigger: deleteProject } = useDeleteProject();
   const [title, setTitle] = useState(project?.name ?? "");
@@ -331,7 +355,7 @@ export default function CreateEditProject({
                 message:
                   "Deleted projects cannot be restored.\nDo you want to continue?",
                 okAction: () => {
-                  setShowDiscard(false);
+                  //setShowDiscard(false);
                   deleteProject({ id: project.id });
                   navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
                 },
@@ -353,7 +377,7 @@ export default function CreateEditProject({
         }}
         label={project === null ? "Create" : "Save"}
         onPress={() => {
-          setShowDiscard(false);
+          //setShowDiscard(false);
           save();
         }}
         disabled={isMutating}
