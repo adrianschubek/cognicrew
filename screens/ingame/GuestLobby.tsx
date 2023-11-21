@@ -1,6 +1,6 @@
 import { Button, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { StackActions, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
@@ -26,24 +26,32 @@ export default function GuestLobby() {
 
   // TODO: Realtime subscription filter -> = room.id neeeee !
   // TODO: Realtime subscription filter -> public_room_state = 'lobby'
-  useEffect(() => {
-    const publicRoomStates = supabase
-      .channel("guest-lobby")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "public_room_states",
-          filter: "room_id=eq." + room.id,
-        },
-        (payload) => {
-          console.log("Room state update ", payload);
-          // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
-        },
-      )
-      .subscribe();
-  }, []);
+  // useEffect(() => {
+  //   const publicRoomStates = supabase
+  //     .channel("guest-lobby")
+  //     .on(
+  //       "postgres_changes",
+  //       {
+  //         event: "*",
+  //         schema: "public",
+  //         table: "public_room_states",
+  //         filter: "room_id=eq." + room?.id,
+  //       },
+  //       (payload) => {
+  //         console.log("Room state update ", payload);
+  //         // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
+  //         navigation.dispatch(
+  //           StackActions.replace('Profile', {
+  //             user: 'jane',
+  //           })
+  //         );
+  //       },
+  //     )
+  //     .subscribe();
+  //   return () => {
+  //     publicRoomStates.unsubscribe();
+  //   };
+  // }, [room]);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -68,8 +76,6 @@ export default function GuestLobby() {
     });
   }, []);
 
-  // TODO: is user is owner show host lobby view (list users, select game, close)
-  // TODO: oncreate room call db fucntion to insert public_room_state
   return (
     <SafeAreaView
       style={{
@@ -89,10 +95,7 @@ export default function GuestLobby() {
         variant="bodyLarge"
         style={{ flex: 0, color: theme.colors.primary }}
       >
-        {/* TODO: if state = 'lobby' then: */}
-        {/* Waiting for host to start a game */}
-        {/* else: */}
-        Connecting to server...
+        Waiting for host to start a game
       </Text>
       <Button
         style={{ marginTop: 20 }}

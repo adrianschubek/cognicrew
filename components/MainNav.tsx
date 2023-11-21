@@ -26,6 +26,9 @@ import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStore } from "../stores/RoomStore";
 import { useEffect, useState } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
+import { StackActions } from "@react-navigation/native";
+import { supabase } from "../supabase";
+import { useAlerts } from "../utils/hooks";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -130,6 +133,35 @@ function MainTabs({ navigation }) {
       else navigation.navigate(NAVIGATION.GUEST_LOBBY);
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
+  const { alert } = useAlerts();
+  useEffect(() => {
+    const publicRoomStates = supabase
+      .channel("ingame")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "public_room_states",
+          filter: "room_id=eq." + room?.id,
+        },
+        (payload) => {
+          console.log("Room state update ", payload);
+          // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
+          // navigation.dispatch(
+          //   StackActions.replace('Profile', {
+          //     user: 'jane',
+          //   })
+          // );
+          alert({ message: JSON.stringify(payload) });
+        },
+      )
+      .subscribe();
+    return () => {
+      publicRoomStates.unsubscribe();
+    };
+  }, [room]);
+
   return (
     <Tab.Navigator initialRouteName="Home" shifting={true}>
       <Tab.Screen
