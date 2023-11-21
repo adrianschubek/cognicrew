@@ -7,7 +7,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
-import { NAVIGATION } from "../types/common";
+import { ManagementType, NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts, useSoundSystem1 } from "../utils/hooks";
@@ -72,14 +72,14 @@ export default function LearningProject({ navigation, route }) {
         path={require("../assets/cards_symbol.png")}
         name={"Cognicards"}
         function={() => {
-          navigation.navigate(NAVIGATION.FLASHCARD_MANAGEMENT);
+          navigation.navigate(NAVIGATION.FLASHCARD_EXERCISE_MANAGEMENT, {type: ManagementType.FLASHCARD});
         }}
       />
       <LearningProjectCategory
         path={require("../assets/completed_task_symbol.png")}
         name={"Cognicises"}
         function={() => {
-          navigation.navigate(NAVIGATION.EXERCISE_MANAGEMENT);
+          navigation.navigate(NAVIGATION.FLASHCARD_EXERCISE_MANAGEMENT, {type: ManagementType.EXERCISE});
         }}
       />
       <LearningProjectCategory

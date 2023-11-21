@@ -1,8 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Text } from "react-native";
 import { FAB } from "react-native-paper";
-import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
@@ -11,7 +10,7 @@ import { ManagementType } from "../../types/common";
 import { useSoundSystem1 } from "../../utils/hooks";
 import { type } from "cypress/types/jquery";
 
-export default function FlashcardManagement() {
+export default function FlashcardExerciseManagement(props: { type: ManagementType }) {
   useSoundSystem1();
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
@@ -21,6 +20,7 @@ export default function FlashcardManagement() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
+      {props.type === ManagementType.FLASHCARD && <Text> hallo</Text>}
       <AddFlashcards
         showAddingFlashcards={showAddFlashcards}
         close={() => setShowAddFlashcards(false)}

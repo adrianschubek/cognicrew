@@ -7,7 +7,7 @@ import LearningProjects from "../screens/LearningProjects";
 import LearningProject from "../screens/LearningProject";
 import Login from "../screens/Login";
 import LearningRoom from "../screens/LearningRoom";
-import FlashcardManagement from "../screens/projectManagement/FlashcardManagement";
+import FlashcardExerciseManagement from "../screens/projectManagement/FlashcardExerciseManagement";
 import FilesManagement from "../screens/projectManagement/FilesManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
@@ -101,16 +101,12 @@ function LearningProjectsTab() {
         component={LearningProject}
       />
       <Stack.Screen
-        name={NAVIGATION.FLASHCARD_MANAGEMENT}
-        component={FlashcardManagement}
+        name={NAVIGATION.FLASHCARD_EXERCISE_MANAGEMENT}
+        component={FlashcardExerciseManagement}
       />
       <Stack.Screen
         name={NAVIGATION.LINK_MANAGEMENT}
         component={LinkManagement}
-      />
-      <Stack.Screen
-        name={NAVIGATION.EXERCISE_MANAGEMENT}
-        component={ExerciseManagement}
       />
       <Stack.Screen
         name={NAVIGATION.FILES_MANAGEMENT}

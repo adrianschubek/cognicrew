@@ -9,7 +9,7 @@ export const enum NAVIGATION {
   SETTINGS = "Settings",
   LEARNING_PROJECT = "LearningProject",
   LEARNING_PROJECTS = "LearningProjects",
-  FLASHCARD_MANAGEMENT = "FlashcardManagement",
+  FLASHCARD_EXERCISE_MANAGEMENT = "FlashcardExerciseManagement",
   FLASHCARD_GAME = "FlashcardGame",
   EXERCISE_MANAGEMENT = "ExerciseManagement",
   EXERCISE_GAME = "ExerciseGame",
