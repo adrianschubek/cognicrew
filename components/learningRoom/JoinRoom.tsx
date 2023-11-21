@@ -58,9 +58,10 @@ export default function JoinRoom({ navigation }) {
                 {
                   type: "search-radio",
                   data: [
-                    { key: "Quiz\n\nxx yy zz", value: "q", label: "blabla" },
+                    { key: "Quiz", value: "q", label: "blabla" },
                     { key: "Flashcard", value: "f" },
                   ],
+                  required: true,
                 },
               ],
             });
