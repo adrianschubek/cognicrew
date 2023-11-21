@@ -48,19 +48,21 @@ export default function EditExercise({ listItem }) {
       priority: priority,
       set_id: listItem.set_id,
     }).then((res) => {
-      answers.forEach((e) => {
+      answers.forEach((e, index) => {
         upsertAnswersExercise({
           //@ts-expect-error
           id: e[2],
           answer: e[0],
           exercise: res[0].id,
           is_correct: e[1],
+          order_position: index + 1,
         });
       });
     });
   };
   useEffect(() => {
     if (!data || isInitialized) return;
+    console.log(isInitialized);
     setAnswers([
       [data[0].answer, data[0].is_correct, data[0].id],
       [data[1].answer, data[1].is_correct, data[1].id],
@@ -128,13 +130,14 @@ export default function EditExercise({ listItem }) {
     [], // dependencies array is empty because debounce and editFlashcard do not change
   );
   useEffect(() => {
-    if (question && answers) {
+    if (question && answers && priority) {
       // Call the debounced function
       debouncedEditExercise(question, answers, priority);
     }
   }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
 
   useEffect(() => {
+    if(isInitialized) return;
     if (!listItem.priority) return;
     setPriority(listItem.priority);
   }, [listItem.priority]);
@@ -164,7 +167,9 @@ export default function EditExercise({ listItem }) {
               />
               <IconButton
                 icon="delete"
-                onPress={() => deleteExercise({ id: listItem.id })}
+                onPress={() => {
+                  deleteExercise({ id: listItem.id });
+                }}
                 style={{ alignSelf: "center" }}
               />
             </View>
