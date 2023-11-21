@@ -61,7 +61,7 @@ export default function LinkManagement() {
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="add new link"
-          function={() => {
+          onPress={() => {
             setEditingVideo(null);
             setShowVideoLinkDialog(true);
           }}

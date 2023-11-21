@@ -10,9 +10,7 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { useState } from "react";
 import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
 import CreateQuizGame from "../components/dialogues/CreateQuizGame";
-
 import { NAVIGATION } from "../types/common";
-import ExerciseGame from "./ExerciseGame";
 
 export default function LearningRoom({ navigation }) {
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);

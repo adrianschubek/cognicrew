@@ -1,11 +1,4 @@
-import {
-  Button,
-  Divider,
-  HelperText,
-  List,
-  Searchbar,
-  useTheme,
-} from "react-native-paper";
+import { Divider, HelperText, Searchbar, useTheme } from "react-native-paper";
 import { Keyboard, View } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, Mode } from "../../types/common";
@@ -13,9 +6,7 @@ import React, { useEffect, useState } from "react";
 import MultifunctionalList from "./MultifunctionalList";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useSets } from "../../utils/hooks";
-import { get } from "cypress/types/lodash";
 import { useProjectStore } from "../../stores/ProjectStore";
-import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function SearchWithList(props: {
   type: ManagementType;
@@ -50,7 +41,7 @@ export default function SearchWithList(props: {
     props.sendSetId(setId);
   };
   return (
-    <View style={{width: responsiveWidth(70), marginBottom: 8}}>
+    <View style={{ width: responsiveWidth(70), marginBottom: 8 }}>
       <Searchbar
         value={searchQuery}
         style={{ elevation: 1 }}
@@ -71,14 +62,16 @@ export default function SearchWithList(props: {
           /*setIsSearching(false);*/ Keyboard.dismiss();
         }}
       />
-      { props.noSetSelected && <HelperText
-        type="error"
-        visible={props.noSetSelected}
-        padding="none"
-        style={{ alignSelf: "flex-start", marginLeft: 16}}
-      >
-        You have to select a set
-      </HelperText>}
+      {props.noSetSelected && (
+        <HelperText
+          type="error"
+          visible={props.noSetSelected}
+          padding="none"
+          style={{ alignSelf: "flex-start", marginLeft: 16 }}
+        >
+          You have to select a set
+        </HelperText>
+      )}
       {/*)}*/}
     </View>
   );

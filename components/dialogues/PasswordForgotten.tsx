@@ -7,7 +7,7 @@ import {
 
 export default function PasswordForgotten({ showPasswordForgotten, close }) {
   const [emailInputPasswordForgotten, setEmailInputPasswordForgotten] =
-    React.useState("");
+    useState("");
   return (
     <Portal>
       <Dialog

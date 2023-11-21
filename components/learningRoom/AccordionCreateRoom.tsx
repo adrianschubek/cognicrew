@@ -1,6 +1,7 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
-import { Text, List, Divider, Card } from "react-native-paper";
+import { useState } from "react";
+import { StyleSheet, ScrollView } from "react-native";
+import { List } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -16,8 +17,8 @@ export const accordionSectionItems = [
 ];
 
 export default function AccordionSection(props) {
-  const [expanded, setExpanded] = React.useState(true);
-  const [getLearningProject, setLearningProject] = React.useState(
+  const [expanded, setExpanded] = useState(true);
+  const [getLearningProject, setLearningProject] = useState(
     "Search project for room creation",
   );
 

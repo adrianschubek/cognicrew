@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
-import { useQuery, useSubscription } from "@supabase-cache-helpers/postgrest-swr";
+import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../../supabase";
 import { useAlerts } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
@@ -135,7 +135,9 @@ export default function ProjectGroups() {
                       style={styles.avatar}
                       size={responsiveFontSize(10)}
                       label={project.name.substring(0, 2)}
-                      theme={{ colors: { primary: getRandomColor(project.name) } }}
+                      theme={{
+                        colors: { primary: getRandomColor(project.name) },
+                      }}
                     />
                     <Text style={styles.textStyle}>
                       {project.name.length > 32

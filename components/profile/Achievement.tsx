@@ -1,16 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Image, Text,  } from 'react-native';
-import { responsiveHeight, responsiveWidth, responsiveFontSize } from 'react-native-responsive-dimensions';
-import { useAuth } from '../../providers/AuthProvider';
-import { useAchievementsByUser, useNotAchievementsByUser, useUnlockAchievement } from '../../utils/hooks';
-import { Snackbar, Divider, List} from 'react-native-paper';
+import React, { useState } from "react";
+import { StyleSheet, View, Image, Text } from "react-native";
+import {
+  responsiveHeight,
+  responsiveWidth,
+  responsiveFontSize,
+} from "react-native-responsive-dimensions";
+import { useAuth } from "../../providers/AuthProvider";
+import {
+  useAchievementsByUser,
+  useNotAchievementsByUser,
+  useUnlockAchievement,
+} from "../../utils/hooks";
+import { Snackbar, Divider, List } from "react-native-paper";
 
 export default function Achievement() {
   const { user } = useAuth();
   const { data: achievements, isLoading } = useAchievementsByUser(user.id);
-  const { data: notAchievements, isLoading: isLoadingNotAchievements } = useNotAchievementsByUser(user.id);
+  const { data: notAchievements, isLoading: isLoadingNotAchievements } =
+    useNotAchievementsByUser(user.id);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
 
   return (
     <View>
@@ -35,7 +44,9 @@ export default function Achievement() {
               description={achievement.description}
               left={() => (
                 <Image
-                  source={{ uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}` }}
+                  source={{
+                    uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}`,
+                  }}
                   style={styles.image}
                 />
               )}
@@ -52,7 +63,9 @@ export default function Achievement() {
               description={achievement.description}
               left={() => (
                 <Image
-                  source={{ uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}` }}
+                  source={{
+                    uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}`,
+                  }}
                   style={styles.image}
                 />
               )}

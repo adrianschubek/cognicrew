@@ -10,13 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import {
-  Dialog,
-  PaperProvider,
-  Portal,
-  Surface,
-  Text,
-} from "react-native-paper";
+import { Dialog, PaperProvider, Portal, Text } from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
@@ -37,7 +31,7 @@ export default function Discover() {
   });
 
   const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
   const hideDialog = () => setVisible(false);
 
   type ItemProps = { title: string };
@@ -145,17 +139,31 @@ export default function Discover() {
           <TouchableOpacity
             key={index.toString()}
             onPress={() => {
-              Alert.alert("Project Catalog", "\n"+"Course Name: " + item.name+"\n\n" +"Description: "+item.description+"\n\n" +"Semester: "+item.group,[
-                {
-                  text: "Clone to My Project",
-                  onPress: () => console.log('Cancel Pressed'),//TODO
-                  style: "cancel",
-                },
-                {
-                  text: 'OK', onPress: () => console.log('OK Pressed'),
-                },
-              ])
-              console.log("Dialog not working")}}
+              Alert.alert(
+                "Project Catalog",
+                "\n" +
+                  "Course Name: " +
+                  item.name +
+                  "\n\n" +
+                  "Description: " +
+                  item.description +
+                  "\n\n" +
+                  "Semester: " +
+                  item.group,
+                [
+                  {
+                    text: "Clone to My Project",
+                    onPress: () => console.log("Cancel Pressed"), //TODO
+                    style: "cancel",
+                  },
+                  {
+                    text: "OK",
+                    onPress: () => console.log("OK Pressed"),
+                  },
+                ],
+              );
+              console.log("Dialog not working");
+            }}
           >
             <Item title={item.name} />
           </TouchableOpacity>

@@ -1,14 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  TextInput,
-  Text,
-} from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
+import { TextInput, Text } from "react-native-paper";
 import { useState } from "react";
 
 export default function TimeSelection() {
@@ -78,5 +70,5 @@ const styles = StyleSheet.create({
   timerSeparator: {
     fontSize: 20,
     fontWeight: "bold",
-  }
+  },
 });

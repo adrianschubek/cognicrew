@@ -2,7 +2,7 @@ import { Card, Divider, FAB, Icon, Text, useTheme } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
@@ -11,7 +11,6 @@ import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
 
 function Room({ room }) {
-
   useSoundSystem1();
 
   const theme = useTheme();

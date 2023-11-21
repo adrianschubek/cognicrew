@@ -1,12 +1,5 @@
-import CreateQuizGame from "../components/dialogues/CreateQuizGame";
-
 import * as React from "react";
-import {
-  ScrollView,
-  View,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { ScrollView, View, StyleSheet, Alert } from "react-native";
 import {
   Dialog,
   Portal,
@@ -15,10 +8,13 @@ import {
   Text,
   ProgressBar,
 } from "react-native-paper";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { useAchievements, useExercisesAndAnswers, useSoundSystem2, useUnlockAchievement } from "../utils/hooks";
+  useAchievements,
+  useExercisesAndAnswers,
+  useSoundSystem2,
+  useUnlockAchievement,
+} from "../utils/hooks";
 import { useEffect, useState } from "react";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 
@@ -49,16 +45,12 @@ const fetchQuestions = () => {
   ];
 };
 
-
 export default function ExerciseGame({}) {
-
   useSoundSystem2();
 
-  const {data, error, isLoading} = useExercisesAndAnswers(141) // setID is hardcoded 
-  
-  const [questions, setQuestions] = useState(
-    shuffleArray(fetchQuestions()),
-  );
+  const { data, error, isLoading } = useExercisesAndAnswers(141); // setID is hardcoded
+
+  const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [checked, setChecked] = useState(null);
   const [score, setScore] = useState(0);
@@ -73,7 +65,6 @@ export default function ExerciseGame({}) {
   const { data: achievements } = useAchievements();
   const [achievementName, setAchievementName] = useState("");
   const [achievementIcon, setAchievementIcon] = useState("");
-
 
   const handleNextQuestion = () => {
     if (checked) {
@@ -96,8 +87,6 @@ export default function ExerciseGame({}) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setChecked(null);
       }
-
-
 
       Alert.alert(
         isCorrect ? "Correct!" : "Incorrect!",
@@ -159,10 +148,10 @@ export default function ExerciseGame({}) {
     const { success } = await unlockAchievement(achievementId);
     if (success) {
       // Find the achievement with the specific ID and update the state
-      const achievement = achievements?.find(ach => ach.id === achievementId);
-      setAchievementName(achievement?.name || 'Achievement');
+      const achievement = achievements?.find((ach) => ach.id === achievementId);
+      setAchievementName(achievement?.name || "Achievement");
       setAchievementIcon(achievement?.icon_name);
-      
+
       console.log(`Achievement Unlocked: ${achievement?.name}`);
       setAchievementVisible(true);
       setTimeout(() => setAchievementVisible(false), 5000); // Hide after 5 seconds
@@ -180,8 +169,11 @@ export default function ExerciseGame({}) {
   return quizComplete ? (
     <Portal>
       <Dialog visible={quizComplete} onDismiss={() => setQuizComplete(false)}>
-        
-      <AchievementNotification isVisible={achievementVisible} achievementName={achievementName} achievementIconName={achievementIcon} />
+        <AchievementNotification
+          isVisible={achievementVisible}
+          achievementName={achievementName}
+          achievementIconName={achievementIcon}
+        />
 
         <Dialog.Title>Quiz Summary</Dialog.Title>
         <Dialog.Content>

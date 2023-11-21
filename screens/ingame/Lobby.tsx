@@ -16,8 +16,6 @@ import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
-import { useSoundsStore } from "../../stores/SoundsStore";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -152,10 +150,10 @@ export default function Lobby({ navigation }) {
                   okAction: (setValues) => {
                     /**
                      * //TODO: add choose game style
-                     * 
-                     * Vanilla: 
-                     * 
-                     * 
+                     *
+                     * Vanilla:
+                     *
+                     *
                      * // TODO: Radio button
                      */
                     console.log(setValues);

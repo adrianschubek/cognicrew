@@ -1,4 +1,3 @@
-import { Icon } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import AccountSettings from "./AccountSettings";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -9,7 +8,6 @@ import { useSoundSystem1 } from "../utils/hooks";
 
 const Top = createMaterialTopTabNavigator();
 export default function AccountManage({ navigation }) {
-
   useSoundSystem1();
 
   return (
@@ -22,9 +20,11 @@ export default function AccountManage({ navigation }) {
       <Top.Screen
         name={NAVIGATION.ACHIEVEMENTS}
         component={Achievements}
-        options={{
-          // tabBarIcon: () => <Icon size={24} source="trophy" />,
-        }}
+        options={
+          {
+            // tabBarIcon: () => <Icon size={24} source="trophy" />,
+          }
+        }
       />
       <Top.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
@@ -37,9 +37,11 @@ export default function AccountManage({ navigation }) {
       <Top.Screen
         name={NAVIGATION.SETTINGS}
         component={AccountSettings}
-        options={{
-          // tabBarIcon: () => <Icon size={24} source="cogs" />,
-        }}
+        options={
+          {
+            // tabBarIcon: () => <Icon size={24} source="cogs" />,
+          }
+        }
       />
     </Top.Navigator>
   );

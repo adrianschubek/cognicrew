@@ -1,4 +1,4 @@
-import { Portal, TextInput } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
 import { useState } from "react";
 import LoadingOverlay from "../../alerts/LoadingOverlay";
@@ -10,7 +10,7 @@ export default function TextInputListItem({ item }) {
   const { isMutating, trigger: deleteSet } = useDeleteSet();
   const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
   const [title, setTitle] = useState(item.name);
-  const projectId = useProjectStore(state => state.projectId)
+  const projectId = useProjectStore((state) => state.projectId);
   const save = () => {
     upsertSet({
       //@ts-expect-error

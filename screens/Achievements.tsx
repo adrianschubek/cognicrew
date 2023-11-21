@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Button, Text } from "react-native-paper";
 import Achievement from "../components/profile/Achievement";
 import { ScrollView } from "react-native";
 import {
@@ -10,7 +9,6 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { Snackbar } from "react-native-paper";
-
 
 export default function Achievements({ navigation }) {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
