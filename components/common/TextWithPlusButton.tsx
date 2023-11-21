@@ -1,12 +1,11 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
 import { Button, Text } from "react-native-paper";
 function doNothing() {
   return;
 }
 export default function TextWithPlusButton(props: {
   text: string;
-  onPress?: () => any;
+  onPress?: any;
 }) {
   return (
     <Button
@@ -17,10 +16,9 @@ export default function TextWithPlusButton(props: {
         fontSize: 28,
       }}
       contentStyle={{ flexDirection: "row-reverse" }}
-      onPress={props.onPress() || doNothing()}
+      onPress={props.onPress !== undefined ? props.onPress : doNothing()}
     >
       <Text style={{ fontSize: 16 }}>{props.text}</Text>
     </Button>
   );
 }
-const styles = StyleSheet.create({});
