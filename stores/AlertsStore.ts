@@ -69,7 +69,7 @@ type SearchSelectInput = CommonInput & {
   /**
    * key-value pairs of options to display in the select.
    */
-  data: { key: string; value: string }[];
+  data: { key: string; value: string, label?: string }[];
   /**
    * Number of options to display in the (virtualized) list.
    */
