@@ -15,14 +15,13 @@ import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
 
-
-export function useSoundSystem1 () {
+export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
   useFocusEffect(
     React.useCallback(() => {
-      const { isLoaded} = useSoundsStore.getState();
+      const { isLoaded } = useSoundsStore.getState();
       if (!isLoaded) {
-        const audioSource = require('../assets/sounds/musicmusicmusic.mp3');
+        const audioSource = require("../assets/sounds/musicmusicmusic.mp3");
         loadSound1(audioSource);
       } else {
         playSound();
@@ -30,17 +29,17 @@ export function useSoundSystem1 () {
       return () => {
         stopSound();
       };
-    }, [])
+    }, []),
   );
 }
 
-export function useSoundSystem2 () {
+export function useSoundSystem2() {
   const { playSound, stopSound, loadSound2 } = useSoundsStore();
   useFocusEffect(
     React.useCallback(() => {
-      const { isLoaded2} = useSoundsStore.getState();
+      const { isLoaded2 } = useSoundsStore.getState();
       if (!isLoaded2) {
-        const audioSource = require('../assets/sounds/Tetris.mp3');
+        const audioSource = require("../assets/sounds/Tetris.mp3");
         loadSound2(audioSource);
       } else {
         playSound();
@@ -48,10 +47,9 @@ export function useSoundSystem2 () {
       return () => {
         stopSound();
       };
-    }, [])
+    }, []),
   );
 }
-
 
 /**
  * Handles errors thrown by the given supabase query.
@@ -113,6 +111,15 @@ export function useUserNames(userIds: string[], refetchIndex?: number) {
   }, [refetchIndex]);
   return { data, isLoading, error };
 }
+export function useRemoveUserFromLearningProject() {
+  return handleErrors(
+    useDeleteMutation(
+      supabase.from("user_learning_projects"),
+      ["learning_project_id", "user_id"],
+      "learning_project_id,user_id"
+    ),
+  );
+}
 export function useFriendsList() {
   return handleErrors(useQuery(supabase.rpc("list_friends")));
 }
@@ -168,7 +175,6 @@ export function useAchievements() {
   );
 }
 
-
 /**
  * Returns all achievements for a specific user.
  */
@@ -192,7 +198,6 @@ export function useAchievementsByUser(userId: string) {
         .in("id", userAchievementIds)
         .order("id"),
     );
-    
 
   const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
 
@@ -236,16 +241,11 @@ export function useNotAchievementsByUser(userId: string) {
 export function useUnlockAchievement() {
   const { user } = useAuth();
 
-  
-
   const unlockAchievement = async (achievementId) => {
-    const { data, error } = await supabase
-      .from("user_achievements")
-      .upsert({
-        user_id: user?.id,
-        achievement_id: achievementId
-      }, 
-      );
+    const { data, error } = await supabase.from("user_achievements").upsert({
+      user_id: user?.id,
+      achievement_id: achievementId,
+    });
 
     if (error) {
       console.error("Error unlocking achievement: ", error);
@@ -257,8 +257,6 @@ export function useUnlockAchievement() {
 
   return unlockAchievement;
 }
-
-
 
 //Returns all Sets
 export function useSets(
@@ -298,9 +296,7 @@ export function useFlashcards(setId: number) {
   return { data, isLoading, error, mutate };
 }
 
-export function useFlashcardsMultipleSets(
-  sets: { id: number }[],
-) {
+export function useFlashcardsMultipleSets(sets: { id: number }[]) {
   return handleErrors(
     useQuery(
       supabase
@@ -409,7 +405,9 @@ export function useUpsertLink() {
   );
 }
 export function useDeleteProject() {
-  return handleErrors(useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"));
+  return handleErrors(
+    useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"),
+  );
 }
 
 /**

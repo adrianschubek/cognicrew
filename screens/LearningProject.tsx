@@ -35,29 +35,27 @@ export default function LearningProject({ navigation, route }) {
       title: project.name,
       headerRight: () => (
         <>
+          <Tooltip title="Project settings">
+            <IconButton
+              icon="cog"
+              onPress={() => {
+                navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                  edit: project,
+                });
+              }}
+            ></IconButton>
+          </Tooltip>
           {user.id === project.owner_id && (
-            <>
-              <Tooltip title="Project settings">
-                <IconButton
-                  icon="cog"
-                  onPress={() => {
-                    navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                      edit: project,
-                    });
-                  }}
-                ></IconButton>
-              </Tooltip>
-              <Tooltip title="Invite users">
-                <IconButton
-                  icon="account-plus"
-                  onPress={() => {
-                    navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
-                      edit: null, // TODO
-                    });
-                  }}
-                ></IconButton>
-              </Tooltip>
-            </>
+            <Tooltip title="Invite users">
+              <IconButton
+                icon="account-plus"
+                onPress={() => {
+                  navigation.navigate(NAVIGATION.INVITE_FRIENDS, {
+                    edit: null, // TODO
+                  });
+                }}
+              ></IconButton>
+            </Tooltip>
           )}
         </>
       ),

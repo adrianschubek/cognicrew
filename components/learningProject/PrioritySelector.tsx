@@ -50,7 +50,7 @@ export default function PrioritySelector(props: {priority: number, setPriority: 
         error={isInvalid(parseInt(priorityStringified))}
         outlineColor={theme.colors.primary}
         inputMode="numeric"
-        style={{ backgroundColor: null, width: 50, height: 50 }}
+        style={{ backgroundColor: null, width: 50, height: 52}}
         contentStyle={{}}
         onChangeText={(prio) => {
           setPriorityStringified(prio);
