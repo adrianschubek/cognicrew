@@ -1,5 +1,5 @@
 import * as React from "react";
-import { View, Keyboard, StyleSheet } from "react-native";
+import { Keyboard, StyleSheet } from "react-native";
 import { Dialog, Button, TextInput, Portal } from "react-native-paper";
 import {
   responsiveWidth,

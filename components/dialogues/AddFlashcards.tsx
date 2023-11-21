@@ -1,12 +1,9 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
+import { StyleSheet, Keyboard } from "react-native";
 import {
   Button,
   Dialog,
-  HelperText,
-  List,
   Portal,
-  Text,
   TextInput,
   useTheme,
 } from "react-native-paper";
@@ -19,8 +16,6 @@ import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import { ManagementType } from "../../types/common";
 import { useUpsertFlashcard } from "../../utils/hooks";
-import ts from "typescript";
-import { set } from "cypress/types/lodash";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();

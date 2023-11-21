@@ -1,17 +1,12 @@
 import * as React from "react";
 import {
   StyleSheet,
-  View,
-  ScrollView,
   Keyboard,
-  KeyboardAvoidingView,
 } from "react-native";
 import {
   Button,
   Dialog,
-  List,
   Portal,
-  Text,
   TextInput,
   useTheme,
 } from "react-native-paper";
@@ -26,7 +21,6 @@ import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { ManagementType } from "../../types/common";
 import { useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
-import { set } from "cypress/types/lodash";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
