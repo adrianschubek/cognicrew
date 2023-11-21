@@ -235,6 +235,9 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: async (values) => {
+                        console.log("Sets: " + setValues[0].split("|").map((set) => +set));
+                        console.log("Round Duration: " + +values[0]);
+                        console.log("Number of Rounds: " + +values[1]);
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
                           {
@@ -248,7 +251,11 @@ export default function Lobby({ navigation }) {
                         );
                         if (error) return JSON.stringify(error);
                         console.log(data);
-                        navigation.navigate(NAVIGATION.FLASHCARD_GAME);
+                        navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
+                          sets: setValues[0].split("|").map((set) => +set),
+                          roundDuration: +values[0],
+                          numberOfRounds: +values[1],
+                        });
                       },
                       fields: [
                         {

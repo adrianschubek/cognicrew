@@ -18,12 +18,12 @@ export default function FlashcardGame({route}) {
 
   useSoundSystem2();
 
-
-const totalTimeInSeconds = route.params?.totalTimeInSeconds || 0;
-const checkedItems = route.params?.checkedItems || [];
+const roundDuration = route.params?.roundDuration || 0;
+const sets = route.params?.sets || [];
+const numberOfRounds = route.params?.numberOfRounds || 0;
 
   // Fetch flashcards data using the useFlashcards hook when the component mounts
-  const { data: flashcards } = useFlashcardsMultipleSets(checkedItems);
+  const { data: flashcards } = useFlashcardsMultipleSets(sets);
 
   // Shuffle the flashcards array when it is first loaded
   const [shuffledFlashcards, setShuffledFlashcards] = useState([]);
@@ -52,16 +52,16 @@ const checkedItems = route.params?.checkedItems || [];
 
   function checkAnswer() {
     if (currentFlashcard) {
-      const userAnswer = userInput; // Get the value from the TextInput component here;
+      const userAnswer = userInput;
       const correctAnswer = currentFlashcard.answer;
     
       if (userAnswer === correctAnswer) {
-        // The answer is correct. You can show a success message or perform any other action.
+        // The answer is correct
         setIsAnswerCorrect(true);
         setShowNextButton(true);
         alert('Correct answer!');
       } else {
-        // The answer is incorrect. You can show an error message or perform any other action.
+        // The answer is incorrect
         setIsAnswerCorrect(false);
         setShowNextButton(false);
         alert('Incorrect answer. Try again.');
@@ -84,7 +84,13 @@ const checkedItems = route.params?.checkedItems || [];
       const j = Math.floor(Math.random() * (i + 1));
       [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    return newArray;
+    // shorten the array according to numberOfRounds if numberOfRounds is smaller 
+    // than newArray.length otherwise just take the whole array
+    if (numberOfRounds < newArray.length) {
+      return newArray.slice(0, numberOfRounds);
+    } else {
+      return newArray;
+    }
   };
 
   return (
@@ -95,7 +101,7 @@ const checkedItems = route.params?.checkedItems || [];
         <View style={styles.container}>
         <View style ={styles.topRow}>
           <CountDown style={styles.countDownStyle}
-            until={totalTimeInSeconds}
+            until={roundDuration}
             size={30}
             onFinish={() => alert('Finished')}
             digitStyle={{backgroundColor: null, borderWidth: 2, borderColor: 'grey'}}
