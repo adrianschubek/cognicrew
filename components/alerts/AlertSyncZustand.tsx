@@ -22,7 +22,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { FlatList, ScrollView, VirtualizedList } from "react-native";
+import {
+  FlatList,
+  ScrollView,
+  TouchableHighlight,
+  VirtualizedList,
+} from "react-native";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 
@@ -262,83 +267,115 @@ export default function AlertSyncZustand() {
                         data={field.data
                           .filter(({ key }) => key.includes(tempValues[i]))
                           .filter((_, i) => i < field.visibleOptions)
-                          .map(({ key, value }) => ({
+                          .map(({ key, value, label }) => ({
                             key: String(key),
                             value: String(value),
+                            label: label,
                           }))}
                         renderItem={({ item }) => {
-                          const { key, value } = item;
+                          const { key, value, label } = item;
                           return (
                             /* TODO: add touchable input */
-                            <TextInput 
-                              key={key}
-                              theme={{ roundness: 0 }}
-                              value={key}
-                              editable={false}
-                              disabled={field.disabled}
-                              left={
-                                field.icon && (
-                                  <TextInput.Icon icon={field.icon} />
-                                )
+                            <TouchableHighlight
+                              onPress={() =>
+                                field.type === "radio" ||
+                                field.type === "search-radio"
+                                  ? startTransition(() => {
+                                      const newValues = [...values];
+                                      newValues[i] = value;
+                                      setValues(newValues);
+                                    })
+                                  : startTransition(() => {
+                                      const newValues = [...values];
+                                      // if value is already in array, remove it else add it
+                                      if (
+                                        values[i].split("|").includes(value)
+                                      ) {
+                                        newValues[i] = values[i]
+                                          .split("|")
+                                          .filter((v) => v !== value)
+                                          .join("|");
+                                      } else {
+                                        newValues[i] =
+                                          value +
+                                          (values[i] ? "|" + values[i] : "");
+                                      }
+                                      setValues(newValues);
+                                    })
                               }
-                              right={
-                                <TextInput.Icon
-                                  icon={() =>
-                                    field.type === "radio" ||
-                                    field.type === "search-radio" ? (
-                                      <RadioButton
-                                        disabled={field.disabled}
-                                        status={
-                                          values[i].split("|").includes(value)
-                                            ? "checked"
-                                            : "unchecked"
-                                        }
-                                        value={value}
-                                        onPress={() => {
-                                          startTransition(() => {
-                                            const newValues = [...values];
-                                            newValues[i] = value;
-                                            setValues(newValues);
-                                          });
-                                        }}
-                                      />
-                                    ) : (
-                                      <Checkbox
-                                        disabled={field.disabled}
-                                        status={
-                                          values[i].split("|").includes(value)
-                                            ? "checked"
-                                            : "unchecked"
-                                        }
-                                        onPress={() => {
-                                          startTransition(() => {
-                                            const newValues = [...values];
-                                            // if value is already in array, remove it else add it
-                                            if (
-                                              values[i]
-                                                .split("|")
-                                                .includes(value)
-                                            ) {
-                                              newValues[i] = values[i]
-                                                .split("|")
-                                                .filter((v) => v !== value)
-                                                .join("|");
-                                            } else {
-                                              newValues[i] =
-                                                value +
-                                                (values[i]
-                                                  ? "|" + values[i]
-                                                  : "");
-                                            }
-                                            setValues(newValues);
-                                          });
-                                        }}
-                                      />
-                                    )
-                                  }
-                                />
-                              }
-                            />
+                            >
+                              <TextInput
+                                key={key}
+                                theme={{ roundness: 0 }}
+                                value={key}
+                                editable={false}
+                                disabled={field.disabled}
+                                left={
+                                  field.icon && (
+                                    <TextInput.Icon icon={field.icon} />
+                                  )
+                                }
+                                label={label}
+                                // multiline={true} //TODO: add multiline support
+                                right={
+                                  <TextInput.Icon
+                                    icon={() =>
+                                      field.type === "radio" ||
+                                      field.type === "search-radio" ? (
+                                        <RadioButton
+                                          disabled={field.disabled}
+                                          status={
+                                            values[i].split("|").includes(value)
+                                              ? "checked"
+                                              : "unchecked"
+                                          }
+                                          value={value}
+                                          onPress={() => {
+                                            startTransition(() => {
+                                              const newValues = [...values];
+                                              newValues[i] = value;
+                                              setValues(newValues);
+                                            });
+                                          }}
+                                        />
+                                      ) : (
+                                        <Checkbox
+                                          disabled={field.disabled}
+                                          status={
+                                            values[i].split("|").includes(value)
+                                              ? "checked"
+                                              : "unchecked"
+                                          }
+                                          onPress={() => {
+                                            startTransition(() => {
+                                              const newValues = [...values];
+                                              // if value is already in array, remove it else add it
+                                              if (
+                                                values[i]
+                                                  .split("|")
+                                                  .includes(value)
+                                              ) {
+                                                newValues[i] = values[i]
+                                                  .split("|")
+                                                  .filter((v) => v !== value)
+                                                  .join("|");
+                                              } else {
+                                                newValues[i] =
+                                                  value +
+                                                  (values[i]
+                                                    ? "|" + values[i]
+                                                    : "");
+                                              }
+                                              setValues(newValues);
+                                            });
+                                          }}
+                                        />
+                                      )
+                                    }
+                                  />
+                                }
+                              />
+                            </TouchableHighlight>
                           );
                         }}
                       />
