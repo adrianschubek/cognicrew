@@ -62,6 +62,25 @@ export default function CreateEditProject({
 
   useEffect(() => {
     navigation.setOptions({
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          style={{...props.style, marginLeft: -3, marginRight: 29}}
+          onPress={() => {
+            confirm({
+              title: "Discard changes?",
+              message:
+                "All unsaved changes will be lost. Do you want to continue?",
+              okText: "Continue",
+              okAction: () => navigation.goBack(),
+            });
+          }}
+        />
+      ),
+    });
+  }, [navigation]);
+  /*useEffect(() => {
+    navigation.setOptions({
       title: project === null ? "Create Project" : "Edit Project",
       headerLeft: (...props) => (
         <IconButton
@@ -79,7 +98,7 @@ export default function CreateEditProject({
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation]);*/
   /*  useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", (e) => {
       if (!showDiscard) {
