@@ -114,40 +114,42 @@ export default function ProjectGroups() {
           {/* TODO: filter projects. hide */}
           {/* <Card.Title title="Hide"></Card.Title>  */}
           <Card.Content style={styles.projectGroupContent}>
-            {projectGroups[semester].map((project) => (
-              <View style={styles.projectElement} key={project.id}>
-                <TouchableOpacity
-                  onPress={() => {
-                    // @ts-expect-error idk why
-                    navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
-                      project,
-                    });
-                  }}
-                  onLongPress={() => {
-                    // @ts-expect-error
-                    navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
-                      edit: project,
-                    });
-                  }}
-                >
-                  <>
-                    <Avatar.Text
-                      style={styles.avatar}
-                      size={responsiveFontSize(10)}
-                      label={project.name.substring(0, 2)}
-                      theme={{
-                        colors: { primary: getRandomColor(project.name) },
-                      }}
-                    />
-                    <Text style={styles.textStyle}>
-                      {project.name.length > 32
-                        ? project.name.substring(0, 32) + "..."
-                        : project.name.substring(0, 32)}
-                    </Text>
-                  </>
-                </TouchableOpacity>
-              </View>
-            ))}
+            {projectGroups[semester]
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map((project) => (
+                <View style={styles.projectElement} key={project.id}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      // @ts-expect-error idk why
+                      navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
+                        project,
+                      });
+                    }}
+                    onLongPress={() => {
+                      // @ts-expect-error
+                      navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {
+                        edit: project,
+                      });
+                    }}
+                  >
+                    <>
+                      <Avatar.Text
+                        style={styles.avatar}
+                        size={responsiveFontSize(10)}
+                        label={project.name.substring(0, 2)}
+                        theme={{
+                          colors: { primary: getRandomColor(project.name) },
+                        }}
+                      />
+                      <Text style={styles.textStyle}>
+                        {project.name.length > 32
+                          ? project.name.substring(0, 32) + "..."
+                          : project.name.substring(0, 32)}
+                      </Text>
+                    </>
+                  </TouchableOpacity>
+                </View>
+              ))}
           </Card.Content>
         </Card>
       ))}
