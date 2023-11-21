@@ -89,6 +89,7 @@ export default function AlertSyncZustand() {
             <Text
               style={{
                 color: theme.colors.primary,
+                textAlign: "center",
                 ...(titleStyle as {}),
               }}
               variant="titleLarge"

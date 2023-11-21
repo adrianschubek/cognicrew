@@ -1,5 +1,5 @@
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -7,17 +7,27 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
-import { Surface, Text } from "react-native-paper";
+import {
+  Dialog,
+  PaperProvider,
+  Portal,
+  Surface,
+  Text,
+} from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
-import { TextInput } from "react-native-paper";
 import { supabase } from "../supabase";
-import { styles } from "../components/learningRoom/DrawingStyle";
+import { mutate } from "swr";
 
 export default function Discover() {
+  const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { data } = useQuery(supabase.rpc("public_projects"), {
     onSuccess(data, key, config) {
-      // errorAlert(JSON.stringify(data));
+      console.log("Data fetched successfully:", data);
     },
     onError(err, key, config) {
       errorAlert({
@@ -26,9 +36,9 @@ export default function Discover() {
     },
   });
 
-  const [text, setText] = React.useState("");
-  const [searchQuery, setSearchQuery] = React.useState("");
   const onChangeSearch = (query) => setSearchQuery(query);
+  const [visible, setVisible] = React.useState(false);
+  const hideDialog = () => setVisible(false);
 
   type ItemProps = { title: string };
   const Item = ({ title }: ItemProps) => (
@@ -36,78 +46,91 @@ export default function Discover() {
       <Text style={styles.title}>{title}</Text>
     </View>
   );
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      marginTop: StatusBar.currentHeight || 5,
-    },
-    item: {
-      backgroundColor: "#C6D1DD",
-      padding: 10,
-      marginVertical: 4,
-      marginHorizontal: 10,
-    },
-    title: {
-      fontSize: 32,
-    },
-    flatList: {},
-    searchbar: {
-      marginBottom: 5,
-    },
-    WI23: {
-      height: 40,
-      backgroundColor: "white",
-    },
-    buttonsScrollview: {
-      height: 0,
-      backgroundColor: "sky blue",
-    },
-    wrapScrollview:{
-      height:40,
-    }
+  const refreshData = () => {
+    // Use the mutate function to refetch data
+    mutate(supabase.rpc("group"), {
+      args: { group: selectedSemester },
+    });
+  };
 
-  });
+  useEffect(() => {
+    refreshData();
+  }, [selectedSemester]);
+
+  const CourseDialog = () => {
+    const [visible, setVisible] = useState(false);
+
+    const showDialog = () => setVisible(true);
+
+    const hideDialog = () => setVisible(false);
+
+    return (
+      <PaperProvider>
+        <View>
+          <Button onPress={showDialog}>Show Dialog</Button>
+          <Portal>
+            <Dialog visible={visible} onDismiss={hideDialog}>
+              <Dialog.Title>Alert</Dialog.Title>
+              <Dialog.Content>
+                <Text variant="bodyMedium">This is simple dialog</Text>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={hideDialog}>Done</Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
+        </View>
+      </PaperProvider>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <TextInput
-      label="Search"
-      value={text}
-      mode="outlined"
-      onChangeText={text => setText(text)}
-    /> */}
       <Searchbar
         style={styles.searchbar}
         placeholder="Search"
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      <View style = {styles.wrapScrollview}>
+      <View>
         <ScrollView
           horizontal={true}
-          style={styles.buttonsScrollview}
           showsHorizontalScrollIndicator={false}
           pagingEnabled={true}
         >
-          <Button style={styles.WI23} mode="outlined"
-            onPress={() => console.log("*TODO*")}
+          <Button
+            style={styles.WI23}
+            mode="outlined"
+            onPress={() => {
+              setSelectedSemester("Winter 2023/24");
+              refreshData();
+              console.log("WI23-Button-Pressed");
+            }}
           >
             WI 23/24
           </Button>
           <Text> </Text>
-          <Button style={styles.WI23} mode="outlined"
-            onPress={() => console.log("*TODO*")}
+          <Button
+            style={styles.WI23}
+            mode="outlined"
+            onPress={() => {
+              console.log("*TODO*");
+            }}
           >
             SO 23
           </Button>
           <Text> </Text>
-          <Button style={styles.WI23} mode="outlined"
+          <Button
+            style={styles.WI23}
+            mode="outlined"
             onPress={() => console.log("*TODO*")}
           >
             WI 22/23
           </Button>
           <Text> </Text>
-          <Button style={styles.WI23} mode="outlined"
+          <Button
+            style={styles.WI23}
+            mode="outlined"
             onPress={() => console.log("*TODO*")}
           >
             other
@@ -115,9 +138,28 @@ export default function Discover() {
         </ScrollView>
       </View>
       <FlatList
+        /*TODO : ADDING DIALOG */
         style={styles.flatList}
         data={data}
-        renderItem={({ item }) => <Item title={item.name} />}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            key={index.toString()}
+            onPress={() => {
+              Alert.alert("Project Catalog", "\n"+"Course Name: " + item.name+"\n\n" +"Description: "+item.description+"\n\n" +"Semester: "+item.group,[
+                {
+                  text: "Clone to My Project",
+                  onPress: () => console.log('Cancel Pressed'),//TODO
+                  style: "cancel",
+                },
+                {
+                  text: 'OK', onPress: () => console.log('OK Pressed'),
+                },
+              ])
+              console.log("Dialog not working")}}
+          >
+            <Item title={item.name} />
+          </TouchableOpacity>
+        )}
         keyExtractor={(item) => item.id}
       />
     </SafeAreaView>
@@ -126,3 +168,27 @@ export default function Discover() {
 function errorAlert(arg0: { message: string }) {
   throw new Error("Function not implemented.");
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight || 5,
+  },
+  item: {
+    backgroundColor: "#C6D1DD",
+    padding: 10,
+    marginVertical: 4,
+    marginHorizontal: 10,
+  },
+  title: {
+    fontSize: 32,
+  },
+  flatList: {},
+  searchbar: {
+    marginBottom: 5,
+  },
+  WI23: {
+    height: 40,
+    backgroundColor: "white",
+  },
+});
