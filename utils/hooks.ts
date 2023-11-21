@@ -352,8 +352,8 @@ export function useAnswersExercises(exerciseId: number) {
     useQuery(
       supabase
         .from("answers_exercises")
-        .select("id,answer,exercise,is_correct")
-        .eq("exercise", exerciseId),
+        .select("id,answer,exercise,is_correct,order_position")
+        .eq("exercise", exerciseId).order("order_position"),
     ),
   );
 }
@@ -374,7 +374,7 @@ export function useUpsertAnswersExercise() {
     useUpsertMutation(
       supabase.from("answers_exercises"),
       ["id"],
-      "id,answer,exercise,is_correct",
+      "id,answer,exercise,is_correct,order_position",
     ),
   );
 }

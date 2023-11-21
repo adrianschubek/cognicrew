@@ -45,7 +45,6 @@ export default function AddExercises({ showAddExercises, close }) {
     useUpsertAnswersExercise();
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
-    console.log(setId);
   };
   function resetDialogue() {
     setSelectedSetId(null);
@@ -60,15 +59,16 @@ export default function AddExercises({ showAddExercises, close }) {
       priority: priority,
       set_id: selectedSetId,
     }).then((res) => {
-      answers.forEach((e) => {
+      answers.forEach((e, index) => {
         upsertAnswersExercise({
           //@ts-expect-error
           answer: e[0],
           exercise: res[0].id,
           is_correct: e[1],
+          order_position: index + 1,
         });
       });
-    }); //an array is expected
+    });
     setQuestion("");
     setAnswers([
       ["", false],
