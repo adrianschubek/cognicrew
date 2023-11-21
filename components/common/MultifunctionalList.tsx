@@ -4,6 +4,7 @@ import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
 import {
   Button,
   Card,
+  HelperText,
   Icon,
   RadioButton,
   Searchbar,
@@ -64,7 +65,6 @@ export default function MultifunctionalList(props: {
               props.mode === "edit"
                 ? responsiveHeight(50)
                 : responsiveHeight(25),
-            marginBottom: responsiveHeight(1),
           }}
           keyboardShouldPersistTaps="handled"
         >

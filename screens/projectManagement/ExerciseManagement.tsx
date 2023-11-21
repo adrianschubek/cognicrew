@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { Text } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -18,9 +18,11 @@ import { useSoundSystem1 } from "../../utils/hooks";
 export default function ExerciseManagement() {
   const [showAddExercises, setShowAddExercises] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
-
+  const [FABOpen, setFABOpen] = useState({ open: false });
+  const onStateChange = ({ open }) => setFABOpen({ open });
+  const { open } = FABOpen;
   useSoundSystem1();
-  
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -33,41 +35,34 @@ export default function ExerciseManagement() {
         close={() => setShowManageSets(false)}
         type={ManagementType.EXERCISE}
       />
-      <View style={styles.upperContainer}>
-        <TextWithPlusButton
-          text="add new Exercises"
-          function={() => {
-            setShowAddExercises(true);
-          }}
-        />
-        <TextWithPlusButton
-          text={"Manage exercise sets"}
-          function={() => {
-            setShowManageSets(true);
-          }}
-        />
-      </View>
       <ScrollView>
         <AccordionSection type={ManagementType.EXERCISE} />
       </ScrollView>
+      <FAB.Group
+        open={open}
+        visible
+        icon={open ? "card-text" : "plus"}
+        actions={[
+          {
+            icon: "plus",
+            label: "Add new exercises",
+            onPress: () => setShowAddExercises(true),
+          },
+          {
+            icon: "table-settings",
+            label: "Manage exercise sets",
+            onPress: () => setShowManageSets(true),
+          },
+        ]}
+        onStateChange={onStateChange}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(100),
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  upperContainer: {
-    flex: 0,
-    width: responsiveWidth(100),
-    //backgroundColor:"red",
-    flexDirection: "column",
-    alignItems: "flex-end",
+    marginTop: -8,
   },
 });

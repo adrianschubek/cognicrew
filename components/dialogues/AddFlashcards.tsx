@@ -3,6 +3,7 @@ import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
 import {
   Button,
   Dialog,
+  HelperText,
   List,
   Portal,
   Text,
@@ -19,39 +20,45 @@ import SearchWithList from "../common/SearchWithList";
 import { ManagementType } from "../../types/common";
 import { useUpsertFlashcard } from "../../utils/hooks";
 import ts from "typescript";
+import { set } from "cypress/types/lodash";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
   const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
   const addFlashcard = () => {
-    upsertFlashcard(
-      {
-        //@ts-expect-error
-        question: question,
-        answer: answer,
-        priority: priority,
-        set_id: selectedSetId,
-      },
-    );
+    upsertFlashcard({
+      //@ts-expect-error
+      question: question,
+      answer: answer,
+      priority: priority,
+      set_id: selectedSetId,
+    });
     setQuestion("");
     setAnswer("");
+    resetDialogue()
   };
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [priority, setPriority] = useState(5);
-  const [selectedSetId, setSelectedSetId] = useState();
+  const [selectedSetId, setSelectedSetId] = useState(null);
+  const [showError, setShowError] = useState(false);
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
     console.log(setId);
   };
+  function resetDialogue(){
+    setSelectedSetId(null);
+    close();
+    Keyboard.dismiss();
+    setShowError(false);
+  }
   return (
     <Portal>
       <Dialog
         style={{ alignItems: "center" }}
         visible={showAddingFlashcards}
         onDismiss={() => {
-          close();
-          Keyboard.dismiss();
+          resetDialogue()
         }}
       >
         <SearchWithList
@@ -59,7 +66,9 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           type={ManagementType.FLASHCARD}
           searchPlaceholder="Search for flashcard set"
           sendSetId={getSelectedSetId}
+          noSetSelected={showError}
         />
+
         <TextInput
           style={[styles.textInputStyle]}
           multiline={true}
@@ -78,16 +87,14 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           disabled={isMutating}
           onChangeText={(answer) => {
             setAnswer(answer);
-            //console.log(answer);
-            //update backend
           }}
         />
         <Dialog.Actions>
           <Button
-            style={{ width: responsiveWidth(70), marginTop: 10}}
+            style={{ width: responsiveWidth(70), marginTop: 10 }}
             disabled={isMutating}
             onPress={() => {
-              addFlashcard(), close(), Keyboard.dismiss();
+              selectedSetId === null ? setShowError(true) : addFlashcard();
             }}
             mode="contained"
           >

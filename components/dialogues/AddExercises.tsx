@@ -31,6 +31,7 @@ import { set } from "cypress/types/lodash";
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
   const [question, setQuestion] = useState("");
+  const [showError, setShowError] = useState(false);
   const [answers, setAnswers] = useState<[string, boolean][]>([
     ["", false],
     ["", false],
@@ -38,7 +39,7 @@ export default function AddExercises({ showAddExercises, close }) {
     ["", false],
   ]);
   const [priority, setPriority] = useState(5);
-  const [selectedSetId, setSelectedSetId] = useState();
+  const [selectedSetId, setSelectedSetId] = useState(null);
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
@@ -46,6 +47,12 @@ export default function AddExercises({ showAddExercises, close }) {
     setSelectedSetId(setId);
     console.log(setId);
   };
+  function resetDialogue() {
+    setSelectedSetId(null);
+    close();
+    Keyboard.dismiss();
+    setShowError(false);
+  }
   const addExercise = () => {
     upsertExercise({
       //@ts-expect-error
@@ -69,6 +76,7 @@ export default function AddExercises({ showAddExercises, close }) {
       ["", false],
       ["", false],
     ]);
+    resetDialogue();
   };
   const getAnswer1 = ([text, checked]) => {
     setAnswers([[text, checked], answers[1], answers[2], answers[3]]);
@@ -88,60 +96,56 @@ export default function AddExercises({ showAddExercises, close }) {
         style={{ alignItems: "center" }}
         visible={showAddExercises}
         onDismiss={() => {
-          close();
-          Keyboard.dismiss();
+          resetDialogue();
         }}
       >
-
-          <SearchWithList
-            mode="select"
-            type={ManagementType.EXERCISE}
-            searchPlaceholder="Search for exercise set"
-            sendSetId={getSelectedSetId}
-          />
-          <TextInput
-            style={[styles.textInputStyle]}
-            label="Question:"
-            multiline={true}
-            blurOnSubmit={true}
-            onChangeText={(question) => {
-              setQuestion(question);
+        <SearchWithList
+          mode="select"
+          type={ManagementType.EXERCISE}
+          searchPlaceholder="Search for exercise set"
+          sendSetId={getSelectedSetId}
+          noSetSelected={showError}
+        />
+        <TextInput
+          style={[styles.textInputStyle]}
+          label="Question:"
+          multiline={true}
+          blurOnSubmit={true}
+          onChangeText={(question) => {
+            setQuestion(question);
+          }}
+        />
+        <TextInputWithCheckbox
+          number="1"
+          sendAnswer={getAnswer1}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="2"
+          sendAnswer={getAnswer2}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="3"
+          sendAnswer={getAnswer3}
+          width={responsiveWidth(70)}
+        />
+        <TextInputWithCheckbox
+          number="4"
+          sendAnswer={getAnswer4}
+          width={responsiveWidth(70)}
+        />
+        <Dialog.Actions>
+          <Button
+            style={{ width: responsiveWidth(70), marginTop: 10 }}
+            onPress={() => {
+              selectedSetId === null ? setShowError(true) : addExercise();
             }}
-          />
-          <TextInputWithCheckbox
-            number="1"
-            sendAnswer={getAnswer1}
-            width={responsiveWidth(70)}
-            
-          />
-          <TextInputWithCheckbox
-            number="2"
-            sendAnswer={getAnswer2}
-            width={responsiveWidth(70)}
-          />
-          <TextInputWithCheckbox
-            number="3"
-            sendAnswer={getAnswer3}
-            width={responsiveWidth(70)}
-          />
-          <TextInputWithCheckbox
-            number="4"
-            sendAnswer={getAnswer4}
-            width={responsiveWidth(70)}
-          />
-          <Dialog.Actions>
-          
-            <Button
-              style={{ width: responsiveWidth(70), marginTop: 10 }}
-              onPress={() => {
-                addExercise(), close(), Keyboard.dismiss();
-              }}
-              mode="contained"
-            >
-              add new exercise
-            </Button>
-            
-          </Dialog.Actions>
+            mode="contained"
+          >
+            add new exercise
+          </Button>
+        </Dialog.Actions>
       </Dialog>
     </Portal>
   );

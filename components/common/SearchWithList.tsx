@@ -1,5 +1,12 @@
-import { Button, Divider, List, Searchbar, useTheme } from "react-native-paper";
-import { Keyboard } from "react-native";
+import {
+  Button,
+  Divider,
+  HelperText,
+  List,
+  Searchbar,
+  useTheme,
+} from "react-native-paper";
+import { Keyboard, View } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, Mode } from "../../types/common";
 import React, { useEffect, useState } from "react";
@@ -17,12 +24,13 @@ export default function SearchWithList(props: {
   creationOption?: boolean;
   mode?: Mode;
   sendSetId?: any;
+  noSetSelected?: boolean;
   [name: string]: any;
 }) {
   const theme = useTheme();
-  const projectId = useProjectStore(state => state.projectId)
+  const projectId = useProjectStore((state) => state.projectId);
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, isLoading ,error } = useSets(props.type, projectId);
+  const { data, isLoading, error } = useSets(props.type, projectId);
   useEffect(() => {
     if (!data) return;
     //console.log(data);
@@ -42,15 +50,16 @@ export default function SearchWithList(props: {
     props.sendSetId(setId);
   };
   return (
-    <React.Fragment>
+    <View style={{width: responsiveWidth(70), marginBottom: 8}}>
       <Searchbar
         value={searchQuery}
-        style={{ elevation: 1, width: responsiveWidth(70) }}
+        style={{ elevation: 1 }}
         placeholder={props.searchPlaceholder || "Search"}
         //onTouchStart={() => setIsSearching(true)}
         //onBlur={() => setIsSearching(false)}
         onChangeText={handleSearch}
       />
+      <Divider style={{}} bold={true} />
       {/*isSearching && (*/}
       <MultifunctionalList
         mode={props.mode}
@@ -62,7 +71,15 @@ export default function SearchWithList(props: {
           /*setIsSearching(false);*/ Keyboard.dismiss();
         }}
       />
+      { props.noSetSelected && <HelperText
+        type="error"
+        visible={props.noSetSelected}
+        padding="none"
+        style={{ alignSelf: "flex-start", marginLeft: 16}}
+      >
+        You have to select a set
+      </HelperText>}
       {/*)}*/}
-    </React.Fragment>
+    </View>
   );
 }

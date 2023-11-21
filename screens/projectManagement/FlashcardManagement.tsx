@@ -1,10 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
+import { FAB } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useState } from "react";
@@ -12,13 +9,15 @@ import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
 import { useSoundSystem1 } from "../../utils/hooks";
+import { type } from "cypress/types/jquery";
 
 export default function FlashcardManagement() {
-
   useSoundSystem1();
-
   const [showAddFlashcards, setShowAddFlashcards] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
+  const [FABOpen, setFABOpen] = useState({ open: false });
+  const onStateChange = ({ open }) => setFABOpen({ open });
+  const { open } = FABOpen;
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -31,41 +30,34 @@ export default function FlashcardManagement() {
         close={() => setShowManageSets(false)}
         type={ManagementType.FLASHCARD}
       />
-      <View style={styles.upperContainer}>
-        <TextWithPlusButton
-          text="add new flash cards"
-          function={() => {
-            setShowAddFlashcards(true);
-          }}
-        />
-        <TextWithPlusButton
-          text={"Manage flashcard sets"}
-          function={() => {
-            setShowManageSets(true);
-          }}
-        />
-      </View>
       <ScrollView>
         <AccordionSection type={ManagementType.FLASHCARD} />
       </ScrollView>
+      <FAB.Group
+        open={open}
+        visible
+        icon={open ? "card-text" : "plus"}
+        actions={[
+          {
+            icon: "plus",
+            label: "Add new flashcards",
+            onPress: () => setShowAddFlashcards(true),
+          },
+          {
+            icon: "table-settings",
+            label: "Manage flashcard sets",
+            onPress: () => setShowManageSets(true),
+          },
+        ]}
+        onStateChange={onStateChange}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(100),
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  upperContainer: {
-    flex: 0,
-    width: responsiveWidth(100),
-    //backgroundColor:"red",
-    flexDirection: "column",
-    alignItems: "flex-end",
+    marginTop: -8,
   },
 });
