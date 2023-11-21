@@ -1,7 +1,7 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView, StyleSheet } from "react-native";
 import {
   Button,
   Card,
@@ -65,7 +65,7 @@ export default function CreateEditProject({
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
-          style={{...props.style, marginLeft: -3, marginRight: 29}}
+          style={styles.fixHeaderStyles}
           onPress={() => {
             confirm({
               title: "Discard changes?",
@@ -407,3 +407,13 @@ export default function CreateEditProject({
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  fixHeaderStyles: {
+    ...Platform.select({
+      android: {
+        marginLeft: -3, marginRight: 29
+      },
+    }),
+  },
+});
