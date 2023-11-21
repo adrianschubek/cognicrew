@@ -121,6 +121,9 @@ export type PrivateRoomState = {
   }[];
 };
 
+/**
+ * Client messages to server
+ */
 type FlashcardClientUpdate = { answer: string };
 type ExerciseClientUpdate = { answerIndex: number[] };
 /**
