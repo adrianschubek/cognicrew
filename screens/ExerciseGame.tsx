@@ -21,7 +21,8 @@ import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
+import Timer from "./ingame/IngameComponents/Timer";
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -61,6 +62,8 @@ export default function ExerciseGame() {
       },
     });
   }
+
+
   const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [checked, setChecked] = useState(null);
@@ -197,16 +200,11 @@ export default function ExerciseGame() {
     </Portal>
   ) : (
     <>
-      {console.log("roomState", roomState.roundEndsAt)}
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
           Question {currentQuestionIndex + 1} of {questions.length}
         </Dialog.Title>
-        <ProgressBar
-          style={styles.progressBar}
-          progress={(currentQuestionIndex + 1) / questions.length}
-          color={"blue"}
-        />
+        <Timer roundEndsAt={roomState.roundEndsAt} />
         <Text style={styles.question}>{roomState.question}</Text>
         <View style={styles.optionsContainer}>
           <RadioButton.Group
@@ -249,7 +247,6 @@ export default function ExerciseGame() {
             />
           </View>
         </RadioButton.Group>
-        <Text>Round ends at: {dayjs(roomState.roundEndsAt).toString()}</Text>
       </ScrollView>
       <View>
         <Button onPress={handleSkipQuestion}>Skip question</Button>
