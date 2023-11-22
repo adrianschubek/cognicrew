@@ -16,6 +16,7 @@ export default function SearchWithList(props: {
   mode?: Mode;
   sendSetId?: any;
   noSetSelected?: boolean;
+  close?: any;
   [name: string]: any;
 }) {
   const theme = useTheme();
@@ -59,7 +60,7 @@ export default function SearchWithList(props: {
         type={props.type}
         sendSetId={getSetId}
         close={() => {
-          /*setIsSearching(false);*/ Keyboard.dismiss();
+          close(), Keyboard.dismiss();
         }}
       />
       {props.noSetSelected && (

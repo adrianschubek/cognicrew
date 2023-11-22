@@ -35,8 +35,13 @@ export default function ManageSets({ showManageSets, close, type }) {
         <SearchWithList
           type={type}
           mode="edit"
-          searchPlaceholder={"Search for " + (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") + " set"}
+          searchPlaceholder={
+            "Search for " +
+            (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+            " set"
+          }
           creationOption={true}
+          close={close}
         />
         <Dialog.Actions>
           <Button
