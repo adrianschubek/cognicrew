@@ -1,6 +1,6 @@
 import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -29,7 +29,7 @@ export default function GuestLobby() {
   const { warning } = useAlerts();
 
   const [userList, setUserList] = React.useState<string[]>([]);
-  useEffect(() => {
+  useFocusEffect(() => {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
@@ -60,7 +60,7 @@ export default function GuestLobby() {
     return () => {
       roomsTracker.unsubscribe();
     };
-  }, []);
+  });
 
   const navigation = useNavigation();
   useEffect(() => {
