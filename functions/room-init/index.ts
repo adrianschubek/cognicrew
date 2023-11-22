@@ -12,7 +12,7 @@ import {
   PublicRoomState,
   ScreenState,
 } from "../rooms.ts";
-import dayjs from "https://esm.sh/v134/dayjs@1.11.10/index.js";
+import dayjs from "https://esm.sh/dayjs@1.11.10";
 
 serve(async (req) => {
   const start = performance.now();
@@ -165,7 +165,7 @@ serve(async (req) => {
       round: 1,
       question: "What is the capital of Berlin?",
       possibleAnswers: ["Berlin", "Paris", "London", "New York"],
-      roundEndsAt: dayjs().add(body.roundDuration, "second").toDate(),
+      roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf() ,
     };
     console.log(publicState);
 

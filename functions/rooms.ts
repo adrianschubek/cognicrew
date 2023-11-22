@@ -49,9 +49,9 @@ export type PublicRoomState = {
    */
   possibleAnswers: string[];
   /**
-   * Round ends at timestamp
+   * Round ends at timestamp milliseconds 
    */
-  roundEndsAt: EpochTimeStamp;
+  roundEndsAt: number;
 };
 
 /**
