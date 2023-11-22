@@ -17,6 +17,9 @@ import {
 } from "../utils/hooks";
 import { useEffect, useState } from "react";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
+import { useRoomStateStore } from "../stores/RoomStore";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
+import { supabase } from "../supabase";
 
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
@@ -45,11 +48,17 @@ const fetchQuestions = () => {
   ];
 };
 
-export default function ExerciseGame({}) {
+export default function ExerciseGame() {
   useSoundSystem2();
-
-  const { data, error, isLoading } = useExercisesAndAnswers(141); // setID is hardcoded
-
+  const roomState = useRoomStateStore((state) => state.roomState);
+  async function answer() {
+    const { data, error } = await supabase.functions.invoke("room-update", {
+      body: {
+        type: "exercise_answer",
+        answerIndex: [0, 2], // between 0 and 3 // TODO: get selected Answers
+      },
+    });
+  }
   const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [checked, setChecked] = useState(null);
@@ -104,16 +113,12 @@ export default function ExerciseGame({}) {
     }
   };
 
+  /*function starts from the end of the array and works its way to the start, 
+  swapping each element with a random element that comes before it (including possibly itself).*/
   function shuffleArray(array) {
-    let currentIndex = array.length,
-      randomIndex;
-    while (currentIndex !== 0) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
   }
@@ -140,7 +145,6 @@ export default function ExerciseGame({}) {
     advanceQuestion();
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
   const progressBar = (currentQuestionIndex + 1) / questions.length;
 
   const completeQuiz = async () => {
@@ -159,13 +163,9 @@ export default function ExerciseGame({}) {
       console.log(`Failed to unlock achievement: ID ${achievementId}`);
     }
   };
-  const [exercises, setExercises] = useState([]);
-  useEffect(() => {
-    if (!data) return;
-    setExercises(data);
-    console.log(data);
-  }, [data]);
-
+  if (!roomState) {
+    return <LoadingOverlay visible />;
+  }
   return quizComplete ? (
     <Portal>
       <Dialog visible={quizComplete} onDismiss={() => setQuizComplete(false)}>
@@ -195,6 +195,7 @@ export default function ExerciseGame({}) {
     </Portal>
   ) : (
     <>
+      {console.log("roomState", roomState.roundEndsAt)}
       <ScrollView contentContainerStyle={styles.scrollView}>
         <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
           Question {currentQuestionIndex + 1} of {questions.length}
@@ -204,13 +205,13 @@ export default function ExerciseGame({}) {
           progress={(currentQuestionIndex + 1) / questions.length}
           color={"blue"}
         />
-        <Text style={styles.question}>{currentQuestion.question}</Text>
+        <Text style={styles.question}>{roomState.question}</Text>
         <View style={styles.optionsContainer}>
           <RadioButton.Group
             onValueChange={(newValue) => setChecked(newValue)}
             value={checked}
           >
-            {currentQuestion.options.map((option, index) => (
+            {roomState.possibleAnswers.map((option, index) => (
               <RadioButton.Item
                 key={index}
                 label={`${String.fromCharCode(65 + index)}) ${option}`}
@@ -246,6 +247,7 @@ export default function ExerciseGame({}) {
             />
           </View>
         </RadioButton.Group>
+        <Text>Round ends at: {roomState.roundEndsAt}</Text>
       </ScrollView>
       <View>
         <Button onPress={handleSkipQuestion}>Skip question</Button>

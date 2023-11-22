@@ -34,9 +34,9 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-        (await useUsernamesByRoom().then((userNames) => {
-          setUserList(userNames.data.map((user) => user.username));
-        }));
+      await useUsernamesByRoom().then((userNames) => {
+        setUserList(userNames.data.map((user) => user.username));
+      });
     };
     fetchData();
     const roomsTracker = supabase
@@ -45,7 +45,7 @@ export default function Lobby({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "tracker" },
         (payload) => {
-          console.log("refetching lobby members"); 
+          console.log("refetching lobby members");
           fetchData();
         },
       )
@@ -105,12 +105,12 @@ export default function Lobby({ navigation }) {
         showCreateFlashcardGame={showCreateFlashcardGame}
         close={() => setShowCreateFlashcardGame(false)}
       />
-    <SafeAreaView
-      style={{
-        width: "100%",
-        height: "100%",
-      }}
-    >
+      <SafeAreaView
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      >
         <View style={{ flex: 1, marginTop: 20 }}>
           <View style={{ flex: 1 }}>
             <FlatList
@@ -148,9 +148,7 @@ export default function Lobby({ navigation }) {
           </View>
           <View style={{ flex: 6 }}>
             <LearningProjectCategory
-              style={[
-                styles.learningProjectCategory,
-              ]}
+              style={[styles.learningProjectCategory]}
               path={require("../../assets/completed_task_symbol.png")}
               name={"Cogniquiz"}
               function={() => {
@@ -232,9 +230,7 @@ export default function Lobby({ navigation }) {
               }}
             />
             <LearningProjectCategory
-              style={[
-                styles.learningProjectCategory,
-              ]}
+              style={[styles.learningProjectCategory]}
               path={require("../../assets/cards_symbol.png")}
               name={"Cognicards"}
               flexDirection="row-reverse"
@@ -319,9 +315,7 @@ export default function Lobby({ navigation }) {
             />
 
             <LearningProjectCategory
-              style={[
-                styles.learningProjectCategory,
-              ]}
+              style={[styles.learningProjectCategory]}
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
@@ -331,15 +325,14 @@ export default function Lobby({ navigation }) {
           </View>
 
           <View style={{ flex: 4, alignItems: "center" }}>
-          <Button
-            mode="contained"
-            style={{
-              width: responsiveWidth(45),
-              alignSelf: "flex-start",
-              marginTop: 180,
-              margin: 20,
-              
-            }}
+            <Button
+              mode="contained"
+              style={{
+                width: responsiveWidth(45),
+                alignSelf: "flex-start",
+                marginTop: 180,
+                margin: 20,
+              }}
               onPress={async () => {
                 const { error } = await supabase.rpc("leave_room");
                 if (error) return error.message;
@@ -357,6 +350,5 @@ export default function Lobby({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  learningProjectCategory: {
-  },
+  learningProjectCategory: {},
 });
