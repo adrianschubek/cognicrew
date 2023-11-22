@@ -21,6 +21,8 @@ import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 
+import dayjs from 'dayjs'
+
 // Placeholder function to simulate fetching questions
 const fetchQuestions = () => {
   return [
@@ -247,7 +249,7 @@ export default function ExerciseGame() {
             />
           </View>
         </RadioButton.Group>
-        <Text>Round ends at: {roomState.roundEndsAt}</Text>
+        <Text>Round ends at: {dayjs(roomState.roundEndsAt).toString()}</Text>
       </ScrollView>
       <View>
         <Button onPress={handleSkipQuestion}>Skip question</Button>
