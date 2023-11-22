@@ -147,16 +147,9 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          filter:
-            "room_id=eq." +
-            room?.id /* FIXME:  maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
-          // alternative: dont filter here. then it works
-
-          // TODO: use policy SELECT to filter only room_id = room.id ? performacne bad?
+          filter: "room_id=eq." + room?.id,
         },
         (payload) => {
-          // if new or old . room_id !== room.id return;
-
           console.log("Room state update ", payload);
           // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
           // navigation.dispatch(
@@ -174,8 +167,8 @@ function MainTabs({ navigation }) {
             case "UPDATE":
               break;
             case "DELETE":
-              // warning({ message: "Room was closed by host (mainav)" });
-              // setRoom(null);
+              warning({ message: "Room was closed by host (mainav)" });
+              setRoom(null);
               break;
           }
         },
