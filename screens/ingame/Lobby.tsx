@@ -17,6 +17,7 @@ import LearningProjectCategory from "../../components/learningProject/LearningPr
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
+import { responsiveWidth } from "react-native-responsive-dimensions";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -104,13 +105,12 @@ export default function Lobby({ navigation }) {
         showCreateFlashcardGame={showCreateFlashcardGame}
         close={() => setShowCreateFlashcardGame(false)}
       />
-      <SafeAreaView
-        style={{
-          width: "100%",
-          height: "100%",
-          backgroundColor: theme.colors.primaryContainer,
-        }}
-      >
+    <SafeAreaView
+      style={{
+        width: "100%",
+        height: "100%",
+      }}
+    >
         <View style={{ flex: 1, marginTop: 20 }}>
           <View style={{ flex: 1 }}>
             <FlatList
@@ -150,11 +150,6 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                {
-                  backgroundColor:
-                    //@ts-expect-error
-                    theme.colors.backdropWithLowerOpacity,
-                },
               ]}
               path={require("../../assets/completed_task_symbol.png")}
               name={"Cogniquiz"}
@@ -239,11 +234,6 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                {
-                  backgroundColor:
-                    //@ts-expect-error
-                    theme.colors.backdropWithLowerOpacity,
-                },
               ]}
               path={require("../../assets/cards_symbol.png")}
               name={"Cognicards"}
@@ -331,11 +321,6 @@ export default function Lobby({ navigation }) {
             <LearningProjectCategory
               style={[
                 styles.learningProjectCategory,
-                {
-                  backgroundColor:
-                    //@ts-expect-error
-                    theme.colors.backdropWithLowerOpacity,
-                },
               ]}
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
@@ -346,9 +331,15 @@ export default function Lobby({ navigation }) {
           </View>
 
           <View style={{ flex: 4, alignItems: "center" }}>
-            <Button
-              mode="contained"
-              style={{ width: 300 }}
+          <Button
+            mode="contained"
+            style={{
+              width: responsiveWidth(45),
+              alignSelf: "flex-start",
+              marginTop: 180,
+              margin: 20,
+              
+            }}
               onPress={async () => {
                 const { error } = await supabase.rpc("leave_room");
                 if (error) return error.message;
@@ -366,5 +357,6 @@ export default function Lobby({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  learningProjectCategory: {},
+  learningProjectCategory: {
+  },
 });
