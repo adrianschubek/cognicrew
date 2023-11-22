@@ -34,7 +34,7 @@ export default function GuestLobby() {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
         // if (userNames.data.length === 0 && room) {
-        //  TODO: remove this
+        // //  TODO: remove this
         //   warning({ message: "Room was closed by host" });
         //   setRoom(null);
         // }
@@ -78,6 +78,7 @@ export default function GuestLobby() {
         okText: "Leave",
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");
+          setRoom(null);
           if (error) return error.message;
         },
       });
@@ -122,6 +123,7 @@ export default function GuestLobby() {
             okText: "Leave",
             okAction: async () => {
               const { error } = await supabase.rpc("leave_room");
+              setRoom(null);
               if (error) return error.message;
             },
           })

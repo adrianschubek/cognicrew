@@ -171,6 +171,11 @@ function MainTabs({ navigation }) {
               setRoomState(payload.new.data);
               break;
             case "DELETE":
+              if (payload.old.room_id !== room?.id) {
+                // FIXME: Fixes bug if room id not mismatch
+                console.log("ignoring room_id mismatch on DELETE ", payload.old.room_id, room?.id);
+                return;
+              }
               warning({ message: "Room was closed by host (mainav)" });
               setRoom(null);
               break;
