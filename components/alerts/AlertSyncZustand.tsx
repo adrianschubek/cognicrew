@@ -13,7 +13,12 @@ import {
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
 import { Fragment, startTransition, useEffect, useMemo, useState } from "react";
-import { FlatList, TouchableHighlight, VirtualizedList } from "react-native";
+import {
+  FlatList,
+  TouchableHighlight,
+  TouchableOpacity,
+  VirtualizedList,
+} from "react-native";
 
 /**
  * Universal alert component that can be used to display alerts.
@@ -112,32 +117,48 @@ export default function AlertSyncZustand() {
                 <Fragment key={i}>
                   {field.type === "checkbox" ? (
                     <>
-                      <TextInput
-                        style={{ marginVertical: 2, marginTop: 10 }}
-                        theme={{ roundness: 10 }}
-                        value={field.label}
-                        editable={false}
-                        disabled={field.disabled}
-                        left={
-                          field.icon && <TextInput.Icon icon={field.icon} />
-                        }
-                        right={
-                          <TextInput.Icon
-                            icon={() => (
-                              <Switch
-                                disabled={field.disabled}
-                                value={values[i] === "true"}
-                                onValueChange={() => {
-                                  const newValues = [...values];
-                                  newValues[i] =
-                                    values[i] === "true" ? "false" : "true";
-                                  setValues(newValues);
-                                }}
-                              />
-                            )}
-                          />
-                        }
-                      />
+                      <TouchableOpacity
+                        onPress={() => {
+                          const newValues = [...values];
+                          newValues[i] =
+                            values[i] === "true" ? "false" : "true";
+                          setValues(newValues);
+                        }}
+                      >
+                        <TextInput
+                          style={{
+                            marginVertical: 2,
+                            marginTop: 10,
+                            borderBottomLeftRadius: 10,
+                            borderBottomRightRadius: 10,
+                          }}
+                          underlineColor="transparent"
+                          theme={{ roundness: 10 }}
+                          value={field.label}
+                          editable={false}
+                          disabled={field.disabled}
+                          left={
+                            field.icon && <TextInput.Icon icon={field.icon} />
+                          }
+                          right={
+                            <TextInput.Icon
+                              icon={() => (
+                                <Switch
+                                  disabled={field.disabled}
+                                  value={values[i] === "true"}
+                                  onValueChange={() => {
+                                    const newValues = [...values];
+                                    newValues[i] =
+                                      values[i] === "true" ? "false" : "true";
+                                    setValues(newValues);
+                                  }}
+                                />
+                              )}
+                            />
+                          }
+                        />
+                      </TouchableOpacity>
+
                       {field.helperText && (
                         <HelperText type="info" visible={true}>
                           {field.helperText}
@@ -266,8 +287,9 @@ export default function AlertSyncZustand() {
                         renderItem={({ item }) => {
                           const { key, value, label } = item;
                           return (
-                            /* TODO: add touchable input */
                             <TouchableHighlight
+                              underlayColor={theme.colors.backdrop}
+                              style={{ borderRadius: 10, marginVertical: 2 }}
                               onPress={() =>
                                 field.type === "radio" ||
                                 field.type === "search-radio"
@@ -297,11 +319,14 @@ export default function AlertSyncZustand() {
                             >
                               <TextInput
                                 key={key}
-                                theme={{ roundness: 0 }}
+                                theme={{
+                                  roundness: 10,
+                                }}
+                                underlineColor="transparent"
                                 style={{
                                   backgroundColor:
                                     theme.colors.primaryContainer,
-                                  borderColor: theme.colors.primaryContainer,
+                                  borderRadius: 10,
                                   // border: 0,
                                 }}
                                 value={key}

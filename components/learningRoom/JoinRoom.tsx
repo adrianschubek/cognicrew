@@ -56,7 +56,34 @@ export default function JoinRoom({ navigation }) {
               },
               fields: [
                 {
+                  type: "checkbox"
+                },
+                {
                   type: "radio",
+                  data: [
+                    { key: "Quiz", value: "q", label: "blabla" },
+                    { key: "Flashcard", value: "f" },
+                  ],
+                  required: true,
+                },
+                {
+                  type: "search-radio",
+                  data: [
+                    { key: "Quiz", value: "q", label: "blabla" },
+                    { key: "Flashcard", value: "f" },
+                  ],
+                  required: true,
+                },
+                {
+                  type: "select",
+                  data: [
+                    { key: "Quiz", value: "q", label: "blabla" },
+                    { key: "Flashcard", value: "f" },
+                  ],
+                  required: true,
+                },
+                {
+                  type: "search-select",
                   data: [
                     { key: "Quiz", value: "q", label: "blabla" },
                     { key: "Flashcard", value: "f" },
