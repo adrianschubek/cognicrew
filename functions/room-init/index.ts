@@ -159,7 +159,7 @@ serve(async (req) => {
         username: user.username,
         score: 0,
       })),
-      screen: ScreenState.LOBBY,
+      screen: ScreenState.INGAME,
       game: GameState.EXERCISES,
       totalRounds: 1,
       round: 1,
