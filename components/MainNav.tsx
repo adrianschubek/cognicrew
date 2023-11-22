@@ -154,6 +154,8 @@ function MainTabs({ navigation }) {
           //   "room_id=eq." +
           //   room?.id /* maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
           // alternative: dont filter here. then it works
+
+          // FIXME: use policy SLECT to filter only room_id = room.id ? performacne bad?
         },
         (payload) => {
           // if new or old . room_id !== room.id return;
@@ -175,8 +177,8 @@ function MainTabs({ navigation }) {
             case "UPDATE":
               break;
             case "DELETE":
-              warning({ message: "Room was closed by host (mainav)" });
-              setRoom(null);
+              // warning({ message: "Room was closed by host (mainav)" });
+              // setRoom(null);
               break;
           }
         },
