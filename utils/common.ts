@@ -1,3 +1,5 @@
+import { orderByPrinciple } from "../types/common";
+
 /**
  * Updates a value if it has changed.
  * Prevents too deep update error.
@@ -51,7 +53,22 @@ export function getRandomColor(str: string = ""): string {
 
   // Return the color corresponding to the index
   return materialColorsHex[index];
-  
+
   // const randomIndex = Math.floor(Math.random() * materialColorsHex.length);
   // return materialColorsHex[randomIndex];
+}
+export function sortByOrder(list: any[], order: orderByPrinciple) {
+  return list.sort((a, b) => {
+    let isReverse = order.substring(0, 8) === "reverse_";
+    let orderPrinciple = isReverse ? order.substring(8, order.length) : order;
+    return a[orderPrinciple] < b[orderPrinciple]
+      ? isReverse
+        ? 1
+        : -1
+      : a[orderPrinciple] > b[orderPrinciple]
+      ? isReverse
+        ? -1
+        : 1
+      : 0;
+  });
 }

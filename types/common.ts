@@ -29,3 +29,10 @@ export const enum ManagementType {
   FILE = 2,
   LINK = 3,
 }
+export type orderByPrinciple =
+  | "name"
+  | "reverse_name"
+  | "created_at"
+  | "reverse_created_at"
+  | "priority"
+  | "reverse_priority";

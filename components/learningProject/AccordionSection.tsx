@@ -7,18 +7,19 @@ import {
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import AccordionListItems from "./AccordionListItems";
-import { ManagementType } from "../../types/common";
+import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useSets } from "../../utils/hooks";
 import { Fragment, useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 import { supabase } from "../../supabase";
+import { sortByOrder } from "../../utils/common";
 
 export default function AccordionSection(props: {
   type: ManagementType;
   width?: number;
-  orderSetsBy?: string;
+  orderSetsBy: orderByPrinciple;
+  orderSetItemsBy: orderByPrinciple;
   [name: string]: any;
 }) {
   const projectId = useProjectStore((state) => state.projectId);
@@ -41,22 +42,7 @@ export default function AccordionSection(props: {
       )
       .subscribe();
   }, []);
-
-  const orderedSets = sets.sort((a, b) => {
-    let isReverse = props.orderSetsBy.substring(0, 8) === "reverse_";
-    let orderPrinciple = isReverse
-      ? props.orderSetsBy.substring(8, props.orderSetsBy.length)
-      : props.orderSetsBy;
-    return a[orderPrinciple] < b[orderPrinciple]
-      ? isReverse
-        ? 1
-        : -1
-      : a[orderPrinciple] > b[orderPrinciple]
-      ? isReverse
-        ? -1
-        : 1
-      : 0;
-  });
+  const orderedSets= sortByOrder(sets, props.orderSetsBy);
 
   if (error || !data) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -69,7 +55,7 @@ export default function AccordionSection(props: {
               title={learningSet.name}
               left={(props) => <List.Icon {...props} icon="folder" />}
             >
-              <AccordionListItems setId={learningSet.id} type={props.type} />
+              <AccordionListItems setId={learningSet.id} type={props.type} orderSetItemsBy={props.orderSetItemsBy} />
             </List.Accordion>
             <Divider />
           </Fragment>

@@ -6,10 +6,9 @@ import AccordionSection from "../../components/learningProject/AccordionSection"
 import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
-import { ManagementType } from "../../types/common";
+import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
 import AddExercises from "../../components/dialogues/AddExercises";
-import { orderBy, set } from "cypress/types/lodash";
 
 export default function FlashcardExerciseManagement({
   route,
@@ -19,12 +18,19 @@ export default function FlashcardExerciseManagement({
   useSoundSystem1();
   const { confirm } = useAlerts();
   const type = route.params.type;
-  const [orderSetsBy, setOrderSetsBy] = useState("created_at");
+  const [orderSetsBy, setOrderSetsBy] =
+    useState<orderByPrinciple>("created_at");
+  const [orderSetItemsBy, setOrderSetItemsBy] =
+    useState<orderByPrinciple>("created_at");
   const [showAddItem, setShowAddItem] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
   const { open } = FABOpen;
+  const typeName = (plural: boolean) =>
+    (type === ManagementType.FLASHCARD ? " flashcard" : " exercise") +
+    (plural ? "s" : "");
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -45,7 +51,11 @@ export default function FlashcardExerciseManagement({
         type={type}
       />
       <ScrollView>
-        <AccordionSection type={type} orderSetsBy={orderSetsBy} />
+        <AccordionSection
+          type={type}
+          orderSetsBy={orderSetsBy}
+          orderSetItemsBy={orderSetItemsBy}
+        />
       </ScrollView>
       <FAB.Group
         open={open}
@@ -54,14 +64,45 @@ export default function FlashcardExerciseManagement({
         actions={[
           {
             icon: "sort",
-            label: "Sort by",
+            label: "Sort" + typeName(true) + " by",
             onPress: () => {
               confirm({
-                icon: "account-multiple-plus",
+                icon: "",
+                title: "Sort your" + typeName(true) + " by?",
+                okText: "Accept",
+                okAction: (val) => {
+                  setOrderSetItemsBy(val[0] as orderByPrinciple);
+                },
+                fields: [
+                  {
+                    type: "radio",
+                    icon: "sort",
+                    helperText: "Choose a sorting option to your liking",
+                    required: true,
+                    data: [
+                      { key: "creation date", value: "created_at" },
+                      {
+                        key: "inverse creation date",
+                        value: "reverse_created_at",
+                      },
+                      { key: "priority", value: "priority" },
+                      { key: "inverse priority", value: "reverse_priority" },
+                    ],
+                  },
+                ],
+              });
+            },
+          },
+          {
+            icon: "sort",
+            label: "Sort sets by",
+            onPress: () => {
+              confirm({
+                icon: "",
                 title: "Sort your sets by?",
                 okText: "Accept",
                 okAction: (val) => {
-                  setOrderSetsBy(val[0]);
+                  setOrderSetsBy(val[0] as orderByPrinciple);
                 },
                 fields: [
                   {
@@ -85,21 +126,12 @@ export default function FlashcardExerciseManagement({
           },
           {
             icon: "plus",
-            label:
-              "Add new" +
-              (type === ManagementType.FLASHCARD
-                ? " flashcards"
-                : " exercises"),
+            label: "Add new" + typeName(false),
             onPress: () => setShowAddItem(true),
           },
           {
             icon: "table-settings",
-            label:
-              "Manage" +
-              (type === ManagementType.FLASHCARD
-                ? " flashcard"
-                : " exercise") +
-              " sets",
+            label: "Manage" + typeName(false) + " sets",
             onPress: () => setShowManageSets(true),
           },
         ]}
