@@ -1,13 +1,15 @@
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { StackActions, useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
-import { NAVIGATION } from "../../types/common";
+import {
+  useAlerts,
+  useSoundSystem1,
+  useUsernamesByRoom,
+} from "../../utils/hooks";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
-import { useSoundsStore } from "../../stores/SoundsStore";
 import React from "react";
 
 export default function GuestLobby() {
@@ -24,7 +26,39 @@ export default function GuestLobby() {
   const roomState = useRoomStateStore((state) => state.roomState);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
 
- 
+  const { warning } = useAlerts();
+
+  const [userList, setUserList] = React.useState<string[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      await useUsernamesByRoom().then((userNames) => {
+        setUserList(userNames.data.map((user) => user.username));
+        if (userNames.data.length === 0 && room) {
+          // FIXME this here in mainav doesnt trigger, but it works here. currently max result in double alerts (here and in mainav)
+          // actually doesnt work
+          warning({ message: "Room was closed by host" });
+          setRoom(null);
+        }
+      });
+    };
+    fetchData();
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "room_id=eq." + room?.id,
+        },
+        (payload) => {
+          console.log("refetching lobby members");
+          fetchData();
+        },
+      )
+      .subscribe();
+  }, []);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -69,6 +103,13 @@ export default function GuestLobby() {
         style={{ flex: 0, color: theme.colors.primary }}
       >
         Waiting for host to start a game
+      </Text>
+      <Text
+        variant="bodyLarge"
+        style={{ flex: 0, color: theme.colors.primary }}
+      >
+        <Icon size={24} source="account-group" /> {userList.length} /{" "}
+        {room?.max_size}
       </Text>
       <Button
         style={{ marginTop: 20 }}

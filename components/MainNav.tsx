@@ -20,17 +20,14 @@ import InviteFriends from "../screens/projectManagement/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";
-import { IconButton, useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStore } from "../stores/RoomStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
-import { StackActions } from "@react-navigation/native";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
-import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
-import { Database } from "../types/supabase";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -146,7 +143,9 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          filter: "room_id=eq." + room?.id,
+          filter:
+            "room_id=eq." +
+            room?.id /* maybe its null and therefore delte not triggered alert . wont trigger on host close*/,
         },
         (payload) => {
           console.log("Room state update ", payload);
@@ -160,13 +159,13 @@ function MainTabs({ navigation }) {
             message: JSON.stringify(payload, null, 2),
             messageStyle: { textAlign: "left" },
           });
-          switch (payload.eventType) {
+          switch (payload.eventType /* DELETE handles seperate */) {
             case "INSERT":
               break;
             case "UPDATE":
               break;
             case "DELETE":
-              warning({ message: "Room was closed by host" });
+              warning({ message: "Room was closed by host (mainav)" });
               setRoom(null);
               break;
           }

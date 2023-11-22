@@ -64,7 +64,6 @@ setInterval(async () => {
           )`,
   );
 
-  // TODO: find stale lobbies where host left / room closed -> kick all users
 
   const end = performance.now();
   console.log(
