@@ -58,6 +58,9 @@ export default function GuestLobby() {
         },
       )
       .subscribe();
+    return () => {
+      roomsTracker.unsubscribe();
+    };
   }, []);
 
   const navigation = useNavigation();
