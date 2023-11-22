@@ -30,7 +30,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
     });
     setQuestion("");
     setAnswer("");
-    resetDialogue()
+    resetDialogue();
   };
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
@@ -41,7 +41,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
     setSelectedSetId(setId);
     console.log(setId);
   };
-  function resetDialogue(){
+  function resetDialogue() {
     setSelectedSetId(null);
     close();
     Keyboard.dismiss();
@@ -53,7 +53,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         style={{ alignItems: "center" }}
         visible={showAddingFlashcards}
         onDismiss={() => {
-          resetDialogue()
+          resetDialogue();
         }}
       >
         <SearchWithList

@@ -30,6 +30,7 @@ import PrioritySelector from "./PrioritySelector";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
+  const [allowUpdate, setAllowUpdate] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [priority, setPriority] = useState<number>(0);
   const [question, setQuestion] = useState(listItem.question);
@@ -129,9 +130,9 @@ export default function EditExercise({ listItem }) {
     [], // dependencies array is empty because debounce and editFlashcard do not change
   );
   useEffect(() => {
-    if (question && answers && priority && isInitialized) {
+    if (question && answers && priority && isInitialized === true) {
       // Call the debounced function
-      debouncedEditExercise(question, answers, priority);
+      allowUpdate === true ? debouncedEditExercise(question, answers, priority) : setAllowUpdate(true);
     }
   }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
 

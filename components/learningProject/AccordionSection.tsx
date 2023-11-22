@@ -10,7 +10,7 @@ import AccordionListItems from "./AccordionListItems";
 import { ManagementType } from "../../types/common";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useSets } from "../../utils/hooks";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 import { supabase } from "../../supabase";
@@ -18,20 +18,16 @@ import { supabase } from "../../supabase";
 export default function AccordionSection(props: {
   type: ManagementType;
   width?: number;
+  orderSetsBy?: string;
   [name: string]: any;
 }) {
-  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error, mutate } = useSets(
-    props.type,
-    projectId,
-  );
+  const { data, isLoading, error, mutate } = useSets(props.type, projectId);
   const [sets, setSets] = useState([]);
   useEffect(() => {
     if (!data) return;
     setSets(data);
   }, [data]);
-
   useEffect(() => {
     const realtimeSets = supabase
       .channel("sets_all")
@@ -46,21 +42,37 @@ export default function AccordionSection(props: {
       .subscribe();
   }, []);
 
+  const orderedSets = sets.sort((a, b) => {
+    let isReverse = props.orderSetsBy.substring(0, 8) === "reverse_";
+    let orderPrinciple = isReverse
+      ? props.orderSetsBy.substring(8, props.orderSetsBy.length)
+      : props.orderSetsBy;
+    return a[orderPrinciple] < b[orderPrinciple]
+      ? isReverse
+        ? 1
+        : -1
+      : a[orderPrinciple] > b[orderPrinciple]
+      ? isReverse
+        ? -1
+        : 1
+      : 0;
+  });
+
   if (error || !data) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Section style={{ width: props.width || responsiveWidth(100) }}>
-      {sets
+      {orderedSets
         .filter((learningSet) => learningSet.type === props.type)
         .map((learningSet) => (
-          <React.Fragment key={learningSet.id}>
+          <Fragment key={learningSet.id}>
             <List.Accordion
               title={learningSet.name}
               left={(props) => <List.Icon {...props} icon="folder" />}
             >
-              <AccordionListItems setId={learningSet.id} type={props.type}/>
+              <AccordionListItems setId={learningSet.id} type={props.type} />
             </List.Accordion>
             <Divider />
-          </React.Fragment>
+          </Fragment>
         ))}
     </List.Section>
   );

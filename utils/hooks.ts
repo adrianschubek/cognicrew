@@ -116,7 +116,7 @@ export function useRemoveUserFromLearningProject() {
     useDeleteMutation(
       supabase.from("user_learning_projects"),
       ["learning_project_id", "user_id"],
-      "learning_project_id,user_id"
+      "learning_project_id,user_id",
     ),
   );
 }
@@ -266,7 +266,7 @@ export function useSets(
 ) {
   const query = supabase
     .from("sets")
-    .select("id,name,type,project_id")
+    .select("id,name,type,project_id,created_at")
     .eq("type", type)
     .eq("project_id", projectId);
 
@@ -287,8 +287,9 @@ export function useUpsertSet() {
 export function useFlashcards(setId: number) {
   const query = supabase
     .from("flashcards")
-    .select("id,question,answer,priority,set_id")
-    .eq("set_id", setId);
+    .select("id,question,answer,priority,set_id,created_at")
+    .eq("set_id", setId)
+    .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();
@@ -324,8 +325,9 @@ export function useDeleteFlashcard() {
 export function useExercises(setId: number) {
   const query = supabase
     .from("exercises")
-    .select("id,question,priority,set_id")
-    .eq("set_id", setId);
+    .select("id,question,priority,set_id,created_at")
+    .eq("set_id", setId)
+    .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();
@@ -353,7 +355,8 @@ export function useAnswersExercises(exerciseId: number) {
       supabase
         .from("answers_exercises")
         .select("id,answer,exercise,is_correct,order_position")
-        .eq("exercise", exerciseId).order("order_position"),
+        .eq("exercise", exerciseId)
+        .order("order_position"),
     ),
   );
 }

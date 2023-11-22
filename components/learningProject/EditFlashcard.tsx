@@ -1,4 +1,4 @@
-import { max } from "cypress/types/lodash";
+import { max, set } from "cypress/types/lodash";
 import * as React from "react";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -29,6 +29,7 @@ export default function EditFlashcard({ listItem }) {
     };
   };
   const theme = useTheme();
+  const [allowUpdate, setAllowUpdate] = useState(false);
   const [question, setQuestion] = useState(listItem.question);
   const [answer, setAnswer] = useState(listItem.answer);
   const [priority, setPriority] = useState(listItem.priority);
@@ -55,7 +56,9 @@ export default function EditFlashcard({ listItem }) {
   useEffect(() => {
     if (question !== "" && answer !== "") {
       // Call the debounced function
-      debouncedEditFlashcard(question, answer, priority);
+      allowUpdate === true
+        ? debouncedEditFlashcard(question, answer, priority)
+        : setAllowUpdate(true);
     }
   }, [question, answer, priority, debouncedEditFlashcard]); // add debouncedEditFlashcard to dependencies
   useEffect(() => {

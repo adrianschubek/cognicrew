@@ -7,9 +7,9 @@ import { useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType } from "../../types/common";
-import { useSoundSystem1 } from "../../utils/hooks";
-import { type } from "cypress/types/jquery";
+import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
 import AddExercises from "../../components/dialogues/AddExercises";
+import { orderBy, set } from "cypress/types/lodash";
 
 export default function FlashcardExerciseManagement({
   route,
@@ -17,7 +17,9 @@ export default function FlashcardExerciseManagement({
   route: { params: { type: ManagementType } };
 }) {
   useSoundSystem1();
+  const { confirm } = useAlerts();
   const type = route.params.type;
+  const [orderSetsBy, setOrderSetsBy] = useState("created_at");
   const [showAddItem, setShowAddItem] = useState(false);
   const [showManageSets, setShowManageSets] = useState(false);
   const [FABOpen, setFABOpen] = useState({ open: false });
@@ -43,7 +45,7 @@ export default function FlashcardExerciseManagement({
         type={type}
       />
       <ScrollView>
-        <AccordionSection type={type} />
+        <AccordionSection type={type} orderSetsBy={orderSetsBy} />
       </ScrollView>
       <FAB.Group
         open={open}
@@ -51,9 +53,43 @@ export default function FlashcardExerciseManagement({
         icon={open ? "card-text" : "plus"}
         actions={[
           {
+            icon: "sort",
+            label: "Sort by",
+            onPress: () => {
+              confirm({
+                icon: "account-multiple-plus",
+                title: "Sort your sets by?",
+                okText: "Accept",
+                okAction: (val) => {
+                  setOrderSetsBy(val[0]);
+                },
+                fields: [
+                  {
+                    type: "radio",
+                    icon: "sort",
+                    helperText: "Choose a sorting option to your liking",
+                    required: true,
+                    data: [
+                      { key: "creation date", value: "created_at" },
+                      {
+                        key: "inverse creation date",
+                        value: "reverse_created_at",
+                      },
+                      { key: "alphabetical order", value: "name" },
+                      { key: "inverse alphab. order", value: "reverse_name" },
+                    ],
+                  },
+                ],
+              });
+            },
+          },
+          {
             icon: "plus",
             label:
-              "Add new" + (type === ManagementType.FLASHCARD ? " flashcards" : " exercises"),
+              "Add new" +
+              (type === ManagementType.FLASHCARD
+                ? " flashcards"
+                : " exercises"),
             onPress: () => setShowAddItem(true),
           },
           {
