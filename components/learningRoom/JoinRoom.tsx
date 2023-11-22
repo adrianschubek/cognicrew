@@ -56,7 +56,7 @@ export default function JoinRoom({ navigation }) {
               },
               fields: [
                 {
-                  type: "search-radio",
+                  type: "radio",
                   data: [
                     { key: "Quiz", value: "q", label: "blabla" },
                     { key: "Flashcard", value: "f" },

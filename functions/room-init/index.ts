@@ -205,6 +205,3 @@ serve(async (req) => {
   return new Response("????", { status: 500 });
 });
 
-// To invoke:
-// curl 'http://localhost:<KONG_HTTP_PORT>/functions/v1/hello' \
-//   --header 'Authorization: Bearer <anon/service_role API key>'

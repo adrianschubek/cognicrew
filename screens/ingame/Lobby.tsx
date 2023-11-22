@@ -16,6 +16,7 @@ import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -32,8 +33,6 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      room &&
-        roomState &&
         (await useUsernamesByRoom().then((userNames) => {
           setUserList(userNames.data.map((user) => user.username));
         }));
@@ -45,6 +44,7 @@ export default function Lobby({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "tracker" },
         (payload) => {
+          console.log("refetching lobby members"); 
           fetchData();
         },
       )
@@ -73,14 +73,31 @@ export default function Lobby({ navigation }) {
   }, [confirm, navigation]);
 
   const projectId = useProjectStore((state) => state.projectId);
-  const { data: flashcards } = useSets(ManagementType.FLASHCARD, projectId);
-  const { data: quizzes } = useSets(ManagementType.EXERCISE, projectId);
+  const {
+    data: flashcards,
+    error: flashError,
+    isLoading: islf,
+  } = useSets(ManagementType.FLASHCARD, projectId);
+  const {
+    data: quizzes,
+    error: quizError,
+    isLoading: islq,
+  } = useSets(ManagementType.EXERCISE, projectId);
 
   // TODO: add subscribe tracker where key=rooms
 
   // TODO: oncreate room call db function to insert public_room_state
   //TODO: add functionality with acutal user icon
   //TODO: Live Loading of users (useSubscription)
+
+  if (flashError || quizError) {
+    return <Text>{flashError?.message || quizError?.message}</Text>;
+  }
+
+  if (islf || islq) {
+    return <LoadingOverlay visible />;
+  }
+
   return (
     <>
       <CreateFlashCardGame

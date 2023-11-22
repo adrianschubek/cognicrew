@@ -21,6 +21,7 @@ export const enum NAVIGATION {
   LOBBY = "Lobby",
   ROOMS_LIST = "RoomsList",
   ACCOUNT = "Account",
+  SPLASH_INGAME = "SplashIngame",
 }
 export const enum ManagementType {
   FLASHCARD = 0,

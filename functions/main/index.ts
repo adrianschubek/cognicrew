@@ -64,6 +64,7 @@ setInterval(async () => {
           )`,
   );
 
+
   const end = performance.now();
   console.log(
     new Date().toISOString() + " | main_loop time: " + (end - start) + "ms",
