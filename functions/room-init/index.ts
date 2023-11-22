@@ -12,6 +12,7 @@ import {
   PublicRoomState,
   ScreenState,
 } from "../rooms.ts";
+import dayjs from "https://esm.sh/v134/dayjs@1.11.10/index.js";
 
 serve(async (req) => {
   const start = performance.now();
@@ -159,12 +160,12 @@ serve(async (req) => {
         score: 0,
       })),
       screen: ScreenState.LOBBY,
-      game: GameState.FLASHCARDS,
-      totalRounds: 0,
-      round: 0,
-      question: "",
-      possibleAnswers: [],
-      roundEndsAt: null,
+      game: GameState.EXERCISES,
+      totalRounds: 1,
+      round: 1,
+      question: "What is the capital of Berlin?",
+      possibleAnswers: ["Berlin", "Paris", "London", "New York"],
+      roundEndsAt: dayjs().add(body.roundDuration, "second").toDate(),
     };
     console.log(publicState);
 
@@ -204,4 +205,3 @@ serve(async (req) => {
   }
   return new Response("????", { status: 500 });
 });
-

@@ -164,6 +164,7 @@ function MainTabs({ navigation }) {
           });
           switch (payload.eventType) {
             case "INSERT": // new room state
+            console.log("new room state", payload.new.data);
               setRoomState(payload.new.data);
               break;
             case "UPDATE": // room satte update
