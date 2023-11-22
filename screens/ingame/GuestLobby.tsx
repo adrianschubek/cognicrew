@@ -24,34 +24,7 @@ export default function GuestLobby() {
   const roomState = useRoomStateStore((state) => state.roomState);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
 
-  // TODO: Realtime subscription filter -> = room.id neeeee !
-  // TODO: Realtime subscription filter -> public_room_state = 'lobby'
-  // useEffect(() => {
-  //   const publicRoomStates = supabase
-  //     .channel("guest-lobby")
-  //     .on(
-  //       "postgres_changes",
-  //       {
-  //         event: "*",
-  //         schema: "public",
-  //         table: "public_room_states",
-  //         filter: "room_id=eq." + room?.id,
-  //       },
-  //       (payload) => {
-  //         console.log("Room state update ", payload);
-  //         // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
-  //         navigation.dispatch(
-  //           StackActions.replace('Profile', {
-  //             user: 'jane',
-  //           })
-  //         );
-  //       },
-  //     )
-  //     .subscribe();
-  //   return () => {
-  //     publicRoomStates.unsubscribe();
-  //   };
-  // }, [room]);
+ 
 
   const navigation = useNavigation();
   useEffect(() => {

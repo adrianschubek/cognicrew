@@ -33,7 +33,6 @@ export default function Lobby({ navigation }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      room &&
         (await useUsernamesByRoom().then((userNames) => {
           setUserList(userNames.data.map((user) => user.username));
         }));
@@ -45,6 +44,7 @@ export default function Lobby({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "tracker" },
         (payload) => {
+          console.log("refetching lobby members"); 
           fetchData();
         },
       )
