@@ -94,7 +94,12 @@ export default function FlashcardExerciseManagement({
           },
           {
             icon: "table-settings",
-            label: "Manage flashcard sets",
+            label:
+              "Manage" +
+              (type === ManagementType.FLASHCARD
+                ? " flashcard"
+                : " exercise") +
+              " sets",
             onPress: () => setShowManageSets(true),
           },
         ]}
