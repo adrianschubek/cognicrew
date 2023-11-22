@@ -35,6 +35,16 @@ export default function LearningProject({ navigation, route }) {
       title: project.name,
       headerRight: () => (
         <>
+           <Tooltip title="Rate project">
+            <IconButton
+              icon="star"
+              onPress={() => {
+                navigation.navigate(NAVIGATION.RATE_PROJECT, {
+                  edit: project,
+                });
+              }}
+            ></IconButton>
+          </Tooltip>
           <Tooltip title="Project settings">
             <IconButton
               icon="cog"

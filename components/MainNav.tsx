@@ -28,6 +28,7 @@ import { useEffect } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
+import RateProject from "../screens/projectManagement/RateProject";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -114,6 +115,12 @@ function LearningProjectsTab() {
         component={FilesManagement}
       />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
+
+      <Stack.Screen
+        name={NAVIGATION.RATE_PROJECT}
+        component={RateProject}
+      />
+
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
         component={CreateEditProject}
