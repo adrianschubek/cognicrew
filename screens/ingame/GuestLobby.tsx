@@ -80,7 +80,7 @@ export default function GuestLobby() {
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");
           if (error) return error.message;
-          setRoom(null);
+          // setRoom(null);
         },
       });
     });
@@ -125,7 +125,7 @@ export default function GuestLobby() {
             okAction: async () => {
               const { error } = await supabase.rpc("leave_room");
               if (error) return error.message;
-              setRoom(null);
+              // setRoom(null);
             },
           })
         }

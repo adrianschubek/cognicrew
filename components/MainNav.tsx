@@ -116,10 +116,7 @@ function LearningProjectsTab() {
       />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
-      <Stack.Screen
-        name={NAVIGATION.RATE_PROJECT}
-        component={RateProject}
-      />
+      <Stack.Screen name={NAVIGATION.RATE_PROJECT} component={RateProject} />
 
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
@@ -150,9 +147,9 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          // FIXME: filter:
-          //   "room_id=eq." +
-          //   room?.id /* maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
+          filter:
+            "room_id=eq." +
+            room?.id /* FIXME:  maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
           // alternative: dont filter here. then it works
 
           // TODO: use policy SELECT to filter only room_id = room.id ? performacne bad?
