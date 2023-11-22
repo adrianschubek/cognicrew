@@ -150,11 +150,14 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          filter:
-            "room_id=eq." +
-            room?.id /* maybe its null and therefore delte not triggered alert . wont trigger on host close*/,
+          // filter:
+          //   "room_id=eq." +
+          //   room?.id /* maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
+          // alternative: dont filter here. then it works
         },
         (payload) => {
+          // if new or old . room_id !== room.id return;
+
           console.log("Room state update ", payload);
           // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
           // navigation.dispatch(
@@ -166,7 +169,7 @@ function MainTabs({ navigation }) {
             message: JSON.stringify(payload, null, 2),
             messageStyle: { textAlign: "left" },
           });
-          switch (payload.eventType /* DELETE handles seperate */) {
+          switch (payload.eventType) {
             case "INSERT":
               break;
             case "UPDATE":
