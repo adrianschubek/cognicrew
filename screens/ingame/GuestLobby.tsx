@@ -1,6 +1,6 @@
 import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -29,12 +29,12 @@ export default function GuestLobby() {
   const { warning } = useAlerts();
 
   const [userList, setUserList] = React.useState<string[]>([]);
-  useEffect(() => {
+  useFocusEffect(() => {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
         // if (userNames.data.length === 0 && room) {
-        //  TODO: remove this
+        // //  TODO: remove this
         //   warning({ message: "Room was closed by host" });
         //   setRoom(null);
         // }
@@ -60,7 +60,7 @@ export default function GuestLobby() {
     return () => {
       roomsTracker.unsubscribe();
     };
-  }, []);
+  });
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -78,6 +78,7 @@ export default function GuestLobby() {
         okText: "Leave",
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");
+          setRoom(null);
           if (error) return error.message;
         },
       });
@@ -122,6 +123,7 @@ export default function GuestLobby() {
             okText: "Leave",
             okAction: async () => {
               const { error } = await supabase.rpc("leave_room");
+              setRoom(null);
               if (error) return error.message;
             },
           })
