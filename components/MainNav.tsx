@@ -23,7 +23,7 @@ import RoomsList from "../screens/RoomsList";
 import { useTheme } from "react-native-paper";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
-import { useRoomStore } from "../stores/RoomStore";
+import { useRoomStateStore, useRoomStore } from "../stores/RoomStore";
 import { useEffect } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
 import { supabase } from "../supabase";
@@ -129,6 +129,7 @@ function LearningProjectsTab() {
 function MainTabs({ navigation }) {
   const room = useRoomStore((state) => state.room);
   const setRoom = useRoomStore((state) => state.setRoom);
+  const setRoomState = useRoomStateStore((state) => state.setRoomState);
   const uid = useAuth().user?.id;
   // redirect to lobby if user is currently ingame
   useEffect(() => {
@@ -162,9 +163,11 @@ function MainTabs({ navigation }) {
             messageStyle: { textAlign: "left" },
           });
           switch (payload.eventType) {
-            case "INSERT":
+            case "INSERT": // new room state
+              setRoomState(payload.new.data);
               break;
-            case "UPDATE":
+            case "UPDATE": // room satte update
+              setRoomState(payload.new.data);
               break;
             case "DELETE":
               warning({ message: "Room was closed by host (mainav)" });

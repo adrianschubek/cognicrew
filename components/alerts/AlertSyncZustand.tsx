@@ -298,6 +298,7 @@ export default function AlertSyncZustand() {
                               <TextInput
                                 key={key}
                                 theme={{ roundness: 0 }}
+                                style={{ backgroundColor: theme.colors.primaryContainer,borderColor:theme.colors.primaryContainer }}
                                 value={key}
                                 editable={false}
                                 disabled={field.disabled}
