@@ -150,12 +150,12 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          // filter:
+          // FIXME: filter:
           //   "room_id=eq." +
           //   room?.id /* maybe its null and therefore delte not triggered alert = wont trigger on host close*/,
           // alternative: dont filter here. then it works
 
-          // FIXME: use policy SLECT to filter only room_id = room.id ? performacne bad?
+          // TODO: use policy SELECT to filter only room_id = room.id ? performacne bad?
         },
         (payload) => {
           // if new or old . room_id !== room.id return;
