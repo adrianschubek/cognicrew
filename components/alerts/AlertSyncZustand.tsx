@@ -379,7 +379,10 @@ export default function AlertSyncZustand() {
                         <HelperText type="info">
                           {field.helperText
                             ? field.helperText
-                            : "Specify your query for more results."}
+                            : field.type === "search-radio" ||
+                              field.type === "search-select"
+                            ? "Specify your query for more results."
+                            : undefined}
                         </HelperText>
                       )}
                     </>
