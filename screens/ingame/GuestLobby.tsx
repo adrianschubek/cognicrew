@@ -33,12 +33,11 @@ export default function GuestLobby() {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
-        if (userNames.data.length === 0 && room) {
-          // FIXME this here in mainav doesnt trigger, but it works here. currently max result in double alerts (here and in mainav)
-          // actually doesnt work
-          warning({ message: "Room was closed by host" });
-          setRoom(null);
-        }
+        // if (userNames.data.length === 0 && room) {
+        //  TODO: remove this
+        //   warning({ message: "Room was closed by host" });
+        //   setRoom(null);
+        // }
       });
     };
     fetchData();
@@ -80,7 +79,6 @@ export default function GuestLobby() {
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");
           if (error) return error.message;
-          // setRoom(null);
         },
       });
     });
@@ -125,7 +123,6 @@ export default function GuestLobby() {
             okAction: async () => {
               const { error } = await supabase.rpc("leave_room");
               if (error) return error.message;
-              // setRoom(null);
             },
           })
         }
