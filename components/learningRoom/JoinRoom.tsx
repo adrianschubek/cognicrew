@@ -42,7 +42,7 @@ export default function JoinRoom({ navigation }) {
         }}
         maxLength={7}
         inputMode="numeric"
-        style={[styles.container, { height: responsiveHeight(8) }]}
+        style={{ textAlign: "center", marginBottom: 10 }}
       />
       <View style={{ flexDirection: "row", gap: 5 }}>
         <Button
