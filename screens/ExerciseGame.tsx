@@ -7,6 +7,7 @@ import {
   Button,
   Text,
   ProgressBar,
+  useTheme,
 } from "react-native-paper";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
@@ -41,6 +42,7 @@ export default function ExerciseGame() {
   const [quizComplete, setQuizComplete] = useState(false);
   const unlockAchievement = useUnlockAchievement();
   const [achievementVisible, setAchievementVisible] = useState(false);
+  const theme = useTheme();
 
   const { data: achievements } = useAchievements();
   const [achievementName, setAchievementName] = useState("");
@@ -143,14 +145,42 @@ export default function ExerciseGame() {
           <RadioButton.Item
             key={index}
             label={`${String.fromCharCode(65 + index)}) ${option[0]}`}
+            labelStyle={{
+              color: checked.includes(option[1]) ? "white" : undefined,
+            }}
             value={option[1].toString()}
             status={checked.includes(option[1]) ? "checked" : "unchecked"}
             onPress={() => {
               handleValueChange(option[1]);
             }}
-            uncheckedColor="white"
+            mode="ios"
+            // uncheckedColor="white"
+            color="white"
+            style={{
+              margin: 10,
+              marginVertical: 5,
+              backgroundColor: checked.includes(option[1])
+                ? theme.colors.primary
+                : theme.colors.secondaryContainer,
+              borderRadius: 10,
+              paddingVertical: 15,
+            }}
           />
         ))}
+        <View
+          style={{
+            marginHorizontal: 10,
+            marginTop: 10,
+          }}
+        >
+          <Button
+            style={{ paddingVertical: 5, borderRadius: 10 }}
+            mode="contained"
+            onPress={answer}
+          >
+            Submit Answer
+          </Button>
+        </View>
         <View
           style={{
             flexDirection: "row",
@@ -161,10 +191,8 @@ export default function ExerciseGame() {
             paddingRight: 16,
           }}
         >
+          {/* Host only */}
           <Button onPress={() => {}}>Skip question</Button>
-          <Button mode="contained-tonal" onPress={answer}>
-            Submit Answer
-          </Button>
         </View>
       </ScrollView>
     </>
