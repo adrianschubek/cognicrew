@@ -44,11 +44,11 @@ setInterval(async () => {
   // TODO: for each room:
   // TODO: |- if players is not in room connected -> remove them from the players[]
 
-  // TODO: |- if screen == ROUND_RESULTS and roundEndsAt + 4s < now -> start next round (~ show ROUND_RESULTS for 5 secs)
+  // TODO: |- if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for 5 secs)
   // TODO: |- |- if current round + 1 <= total rounds -> load next question, increment current round, update scores.
   // TODO: |- |- if current round + 1 > total rounds -> game is over. show END_RESULTS screen
 
-  // TODO: |- else if roundEndsAt < now -> show ROUND_RESULTS (~ round is over)
+  // TODO: |- else if roundEndsAt < now (~ round is over)
   // TODO: |- |- if current round + 1 <= total rounds -> show ROUND_RESULTS
   // TODO: |- |- if current round + 1 > total rounds -> game is over. show END_RESULTS screen
 
