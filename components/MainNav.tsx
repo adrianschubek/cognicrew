@@ -187,10 +187,12 @@ function MainTabs({ navigation }) {
                 );
                 return;
               }
-              warning({ message: "Room was closed by host (mainav)" });
+              warning({
+                key: "room-ingame-closed",
+                message: "Room was closed by host (mainav)",
+              });
               setRoom(null);
               alert({
-                key: "room-ingame-closed",
                 message: JSON.stringify(payload, null, 2),
                 messageStyle: { textAlign: "left" },
               });

@@ -64,6 +64,10 @@ setInterval(async () => {
           )`,
   );
 
+  // TODO: check players are still connected and remove them from the room if not
+
+  // TODO: if roundEndsAt is in the past, then we need to start a new round
+  // TODO: |-> if next round > total rounds, then game is over. show "results" screen
 
   const end = performance.now();
   console.log(
