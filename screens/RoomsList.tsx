@@ -191,7 +191,7 @@ export default function RoomsList({ navigation }) {
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
-      <FAB
+     {/*  <FAB
         icon={"location-enter"}
         onPress={() => {
           info({
@@ -208,7 +208,7 @@ export default function RoomsList({ navigation }) {
           backgroundColor: theme.colors.primary,
         }}
         label={"Enter Room code"}
-      />
+      /> */}
     </>
   );
 }
