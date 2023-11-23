@@ -1,26 +1,37 @@
 import * as React from "react";
-import { View, ScrollView, StyleSheet, StatusBar } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  StatusBar,
+  Keyboard,
+} from "react-native";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCards from "../../components/learningProject/LinkCards";
-import AddLink from "../../components/dialogues/AddLink";
-import { useLinks, useSoundSystem1 } from "../../utils/hooks";
+import {
+  useAlerts,
+  useLinks,
+  useSoundSystem1,
+  useUpsertLink,
+} from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 
 export default function LinkManagement() {
-
+  const { confirm } = useAlerts();
   useSoundSystem1();
 
-  const [showLinkDialog, setShowLinkDialog] = useState(false);
-  const [editingLink, setEditingLink] = useState(null);
-
+  function ensureHttpURL(url: string) {
+    return url.match(/^(https?:\/\/)/) ? url : `http://${url}`;
+  }
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
+  const { isMutating, trigger: upsertLink } = useUpsertLink();
 
   useEffect(() => {
     if (!data) return;
@@ -43,27 +54,70 @@ export default function LinkManagement() {
 
   const [linkItems, setLinkItems] = useState([]);
   const handleEdit = (link) => {
-    setEditingLink(link);
-    setShowLinkDialog(true);
+    openAddEditLinkDialog(link);
   };
 
+  const addOrEdit = (id, title, subtitle, description, url) => {
+    upsertLink({
+      // @ts-expect-error
+      learning_project: projectId,
+      id: id ? id : undefined,
+      title: title,
+      subtitle: subtitle,
+      description: description,
+      link_url: url,
+    });
+    Keyboard.dismiss();
+  };
+  function openAddEditLinkDialog(link?: any) {
+    link = link || null;
+    confirm({
+      icon: link ? "link" : "link-plus", //"link-edit" isn't working ;/
+      title: link ? "Edit link" : "Add new link",
+      okText: "Save",
+      okAction: async (vars) => {
+        addOrEdit(link?.id, vars[0], vars[1], vars[2], ensureHttpURL(vars[3]));
+      },
+      fields: [
+        {
+          label: "Title:",
+          defaultValue: link?.title ?? "",
+          type: "text",
+          icon: "format-text",
+          required: true,
+        },
+        {
+          label: "Subtitle:",
+          defaultValue: link?.subtitle ?? "",
+          type: "text",
+          icon: "subtitles",
+          required: false,
+        },
+        {
+          label: "Description:",
+          defaultValue: link?.description ?? "",
+          type: "text",
+          icon: "text-box",
+          required: false,
+        },
+        {
+          label: "URL:",
+          defaultValue: link?.link_url ?? "",
+          type: "text",
+          icon: "link",
+          required: true,
+        },
+      ],
+    });
+  }
   return (
     <View style={styles.container}>
       <StatusBar />
-      <AddLink
-        link={editingLink}
-        showLinkDialog={showLinkDialog}
-        close={() => {
-          setShowLinkDialog(false);
-          setEditingLink(null);
-        }}
-      />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
-          text="add new link"
+          text="Add new link"
           onPress={() => {
-            setEditingLink(null);
-            setShowLinkDialog(true);
+            openAddEditLinkDialog();
           }}
         />
       </View>
