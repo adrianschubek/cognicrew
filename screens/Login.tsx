@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Text, Button } from "react-native-paper";
+import { TextInput, Text, Button, Checkbox, Icon } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
@@ -15,14 +15,14 @@ import { useAlerts } from "../utils/hooks";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
   // TODO: only save password when "remember me" is checked
-  const { email, password, setEmail, setPassword } = usePreferencesStore();
+  const { email, password, setEmail, setPassword, rememberMe, setRememberMe } = usePreferencesStore();
   // const [text, setText] = useState("foo@bar.de");
   // const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
 
-  const { error: errorAlert } = useAlerts();
+  const { error: errorAlert, alert, warning } = useAlerts();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -84,18 +84,52 @@ export default function Login({ navigation }) {
         />
         <View
           style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
-        ></View>
-        <TouchableOpacity
-          style={{
-            alignSelf: "flex-start",
-            marginTop: responsiveHeight(0.5),
-          }}
-          onPress={() => {
-            setShowPasswordForgotten(true);
-          }}
         >
-          <Text>Forgot password?</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              alignSelf: "flex-start",
+              marginTop: responsiveHeight(0.5),
+            }}
+            onPress={() => {
+              setShowPasswordForgotten(true);
+            }}
+          >
+            <Button>Forgot password?</Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              display: "flex",
+              alignItems: "center",
+              flexDirection: "row",
+              marginLeft: "auto",
+              marginTop: responsiveHeight(0.5),
+            }}
+            onPress={() => {
+              if (!rememberMe) {
+                warning({
+                  title: "Remember me",
+                  message:
+                    "This will save your email and password in the app. Only use this feature on your personal device.",
+                  okText: "Save",
+                  cancelText: "Don't save",
+                  okAction() {
+                    setRememberMe(true);
+                  },
+                });
+              } else {
+                setRememberMe(false);
+                setEmail("");
+                setPassword("");
+              }
+            }}
+          >
+            <Text>Remember me</Text>
+            <Checkbox
+              status={rememberMe ? "checked" : "unchecked"}
+              onPress={() => setRememberMe(!rememberMe)}
+            ></Checkbox>
+          </TouchableOpacity>
+        </View>
         <Button
           style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
           mode="contained"
@@ -119,7 +153,28 @@ export default function Login({ navigation }) {
           style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
           mode="contained-tonal"
           onPress={() => {
-            setShowRegister(true);
+            // setShowRegister(true); /* TODO remove */
+
+            alert({
+              title: "Create your account",
+              message: "Please enter your data",
+              okAction(values) {
+                alert({
+                  title: "Confirm account",
+                  message:
+                    "Please enter the verification code you received in your email.",
+                  dismissable: false,
+                  okText: "Confirm",
+                  cancelText: "Cancel",
+                  fields: [
+                    {
+                      label: "Verification Code",
+                      type: "number",
+                    },
+                  ],
+                });
+              },
+            });
           }}
           testID="register-button"
         >
