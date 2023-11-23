@@ -14,6 +14,10 @@ import {
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
 
+function err(message: string, code: number = 400): Response {
+  return new Response(JSON.stringify({ message }), { status: code });
+}
+
 serve(async (req) => {
   const start = performance.now();
   try {
@@ -42,8 +46,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError)
-      return new Response("User is not in a room", { status: 400 });
+    if (roomError) return err("User is not in a room", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -56,7 +59,8 @@ serve(async (req) => {
       .eq("id", rid)
       .eq("is_ingame", false)
       .single();
-    if (error) return new Response("User is not host of room", { status: 401 });
+    if (error)
+      return err("User is not host of room or room is already ingame", 400);
 
     const pid: number = data.project_id;
     console.log(data);
@@ -77,14 +81,12 @@ serve(async (req) => {
     console.log(body);
 
     // validate body
-    if (body.type !== 0 && body.type !== 1)
-      return new Response("Invalid type", { status: 400 });
-    if (body.sets.length === 0)
-      return new Response("No sets selected", { status: 400 });
+    if (body.type !== 0 && body.type !== 1) return err("Invalid type", 400);
+    if (body.sets.length === 0) return err("No sets selected", 400);
     if (body.roundDuration <= 0 || body.roundDuration > 600)
-      return new Response("Invalid round duration", { status: 400 });
+      return err("Invalid round duration", 400);
     if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
-      return new Response("Invalid number of rounds", { status: 400 });
+      return err("Invalid number of rounds", 400);
 
     // private game state
     const { data: gamedata, error: errorGamedata } = await supabase
@@ -165,7 +167,7 @@ serve(async (req) => {
       round: 1,
       question: "What is the capital of Berlin?",
       possibleAnswers: ["Berlin", "Paris", "London", "New York"],
-      roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf() ,
+      roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
     };
     console.log(publicState);
 
@@ -201,7 +203,6 @@ serve(async (req) => {
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (err) {
-    return new Response(String(err?.message ?? err), { status: 504 });
+    return err("Something went wrong (room-init/uxpct)", 500);
   }
-  return new Response("????", { status: 500 });
 });

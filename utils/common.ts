@@ -1,3 +1,4 @@
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { orderByPrinciple } from "../types/common";
 
 /**
@@ -71,4 +72,10 @@ export function sortByOrder(list: any[], order: orderByPrinciple) {
         : 1
       : 0;
   });
+}
+
+export async function handleEdgeError(error: Error) {
+  return error instanceof FunctionsHttpError
+    ? (await error.context.json()).message
+    : JSON.stringify(error);
 }

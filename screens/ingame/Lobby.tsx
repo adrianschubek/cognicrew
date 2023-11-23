@@ -18,6 +18,8 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { responsiveWidth } from "react-native-responsive-dimensions";
+import { FunctionsHttpError } from "@supabase/supabase-js";
+import { handleEdgeError } from "../../utils/common";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -186,7 +188,7 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
-                        if (error) return JSON.stringify(error);
+                        if (error) return handleEdgeError(error);
                         console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME);
                       },
@@ -266,7 +268,8 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
-                        if (error) return JSON.stringify(error);
+                        if (error) return handleEdgeError(error);
+
                         console.log(data);
                         navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
                           sets: setValues[0].split("|").map((set) => +set),

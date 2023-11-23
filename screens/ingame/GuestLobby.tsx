@@ -108,10 +108,15 @@ export default function GuestLobby() {
       </Text>
       <Text
         variant="bodyLarge"
-        style={{ flex: 0, color: theme.colors.primary }}
+        style={{
+          flex: 0,
+          color: theme.colors.primary,
+          includeFontPadding: false,
+          textAlignVertical: "center",
+        }}
       >
-        <Icon size={24} source="account-group" /> {userList.length} /{" "}
-        {room?.max_size}
+        <Icon color={theme.colors.primary} size={24} source="account-group" />{" "}
+        {userList.length} / {room?.max_size}
       </Text>
       <Button
         style={{ marginTop: 20 }}
