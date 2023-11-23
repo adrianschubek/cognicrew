@@ -119,6 +119,10 @@ export default function RoomsList() {
     setFriends(data.map((friend) => friend.id));
   };
 
+  useEffect(() => {
+    getFriends();
+  }, []);
+
   // Cheating: check for updates on room_tracker then refetch rooms
   useFocusEffect(() => {
     const roomsTracker = supabase
@@ -132,7 +136,6 @@ export default function RoomsList() {
         },
       )
       .subscribe();
-    getFriends();
     return () => {
       roomsTracker.unsubscribe();
     };
