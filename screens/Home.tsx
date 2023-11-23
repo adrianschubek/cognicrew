@@ -1,10 +1,13 @@
 import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Avatar, Text, Card, IconButton } from "react-native-paper";
+import { Avatar, Text, Card, IconButton, Button } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import { useSoundSystem1, useUsername } from "../utils/hooks";
 import { useEffect } from "react";
+
+//for testing purposes
+import { NAVIGATION } from "../types/common";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
@@ -22,7 +25,6 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useSoundSystem1();
-
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -46,6 +48,18 @@ export default function HomeScreen({ navigation }) {
           <JoinRoom navigation={navigation} />
         </Card>
       </View>
+      {/* for testing purposes*/}
+      <Button
+      style={{marginBottom: 20}}
+        onPress={() => {
+          navigation.navigate(NAVIGATION.END_RESULTS, {
+            roomState: null,
+            user_id: null,
+          });
+        }}
+      >
+        PRESS ME, DADDY!
+      </Button>
     </View>
   );
 }

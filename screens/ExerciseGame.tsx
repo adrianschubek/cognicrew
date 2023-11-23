@@ -28,8 +28,8 @@ import { NAVIGATION } from "../types/common";
 // Placeholder function to simulate fetching questions
 
 export default function ExerciseGame({ navigation }) {
-  const { user } = useAuth();
   useSoundSystem2();
+  const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
   async function answer() {
     const { data, error } = await supabase.functions.invoke("room-update", {

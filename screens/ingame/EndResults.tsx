@@ -10,13 +10,50 @@ export default function EndResults({
   route: { params: { roomState: PublicRoomState; user_id: string } };
 }) {
   let self;
-  const roomState = route.params.roomState;
-  const user_id = route.params.user_id;
-  const otherPlayers = roomState.players.filter((player) => {
+  //const roomState = route.params.roomState;
+  //const user_id = route.params.user_id;
+  /*const otherPlayers = roomState.players.filter((player) => {
     if (player.id !== user_id) return true;
     self = player;
     return false;
-  });
+  });*/
+  self = {
+    id: "10",
+    username: "TimoDerBoiii",
+    score: 9000,
+    currentCorrect: false,
+    currentDone: false,
+  };
+  const otherPlayers = [
+    {
+      id: "1",
+      username: "Player 1",
+      score: 10,
+      currentCorrect: false,
+      currentDone: false,
+    },
+    {
+      id: "2",
+      username: "Player 2",
+      score: 20,
+      currentCorrect: false,
+      currentDone: false,
+    },
+    {
+      id: "3",
+      username: "Player 3",
+      score: 30,
+      currentCorrect: false,
+      currentDone: false,
+    },
+    {
+      id: "4",
+      username: "Player 4",
+      score: 40,
+      currentCorrect: false,
+      currentDone: false,
+    },
+  ];
   useEffect(() => {
     console.log(self);
   }, []);
@@ -24,18 +61,19 @@ export default function EndResults({
     <View
       style={{
         flex: 1,
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        marginTop: 200,
         alignItems: "center",
       }}
     >
-      <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+      <Text style={{ fontSize: 24, fontWeight: "bold" }}>
         Your score: {self.score} {/*"\n \n"*/}
       </Text>
-      <Text style={{ textAlign:"center" }}>
+      <Text style={{ textAlign: "center", marginBottom: 100 }}>
         You are more than the others, {"\n"}thats why your score is big and bold
       </Text>
       {otherPlayers.map((player) => (
-        <Text>
+        <Text key={player.id}>
           {player.username}s score: {player.score} {"\n \n"}
         </Text>
       ))}
