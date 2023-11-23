@@ -1,10 +1,10 @@
-import { Card, Divider, FAB, Icon, Text, useTheme } from "react-native-paper";
+import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
 import { useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { useAlerts, useSoundSystem1, useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
@@ -14,7 +14,6 @@ function Room({ room }) {
   useSoundSystem1();
 
   const theme = useTheme();
-  const focus = useIsFocused();
   const { data: username } = useUsername();
   const user = useAuth().user;
   const { confirm, info } = useAlerts();
@@ -100,18 +99,9 @@ function Room({ room }) {
   );
 }
 
-export default function RoomsList({ navigation }) {
+export default function RoomsList() {
   const theme = useTheme();
-  const focus = useIsFocused();
-  const { data: username } = useUsername();
-  const { confirm, info } = useAlerts();
-  const setRoom = useRoomStore((state) => state.setRoom);
-  const {
-    data: rooms,
-    isLoading,
-    isValidating,
-    mutate,
-  } = useQuery(supabase.rpc("list_rooms"), {});
+  const { data: rooms, isLoading } = useQuery(supabase.rpc("list_rooms"), {});
 
   const [friends, setFriends] = useState([]);
   const getFriends = async () => {
@@ -128,23 +118,18 @@ export default function RoomsList({ navigation }) {
   // Cheating: check for updates on room_tracker then refetch rooms
   useEffect(() => {
     getFriends();
-    const roomsTracker = supabase
-      .channel("list-rooms-tracker")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "tracker" },
-        (payload) => {
-          mutate();
-          getFriends();
-        },
-      )
-      .subscribe();
   }, []);
 
-  if (isLoading) return <LoadingOverlay visible />;
+  const friendRooms = useMemo(
+    () => (rooms ?? []).filter((room) => friends.includes(room.host)),
+    [rooms, friends],
+  );
+  const otherRooms = useMemo(
+    () => (rooms ?? []).filter((room) => !friends.includes(room.host)),
+    [rooms, friends],
+  );
 
-  const friendRooms = rooms.filter((room) => friends.includes(room.host));
-  const otherRooms = rooms.filter((room) => !friends.includes(room.host));
+  if (isLoading) return <LoadingOverlay visible />;
 
   return (
     <>
@@ -191,7 +176,7 @@ export default function RoomsList({ navigation }) {
         </Card.Content>
       </ScrollView>
       {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
-     {/*  <FAB
+      {/*  <FAB
         icon={"location-enter"}
         onPress={() => {
           info({
