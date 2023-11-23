@@ -48,7 +48,7 @@ setInterval(async () => {
   // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
   // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
 
-  // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for 5 secs)
+  // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
   // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
   // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
