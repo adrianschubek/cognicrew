@@ -70,7 +70,7 @@ export default function EndResults({
         Your score: {self.score} {/*"\n \n"*/}
       </Text>
       <Text style={{ textAlign: "center", marginBottom: 100 }}>
-        You are more than the others, {"\n"}thats why your score is big and bold
+        You are more important than the others, {"\n"}thats why your score is big and bold
       </Text>
       {otherPlayers.map((player) => (
         <Text key={player.id}>
