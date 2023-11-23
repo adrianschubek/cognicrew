@@ -20,8 +20,10 @@ import AchievementNotification from "../components/dialogues/AchievementNotifica
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
-import Timer from "./ingame/IngameComponents/Timer";
+import Timer from "../components/IngameComponents/Timer";
 import { useAuth } from "../providers/AuthProvider";
+import { ScreenState } from "../functions/rooms";
+import RoundResults from "./ingame/RoundResults";
 
 // Placeholder function to simulate fetching questions
 
@@ -108,7 +110,8 @@ export default function ExerciseGame() {
   if (!roomState) {
     return <LoadingOverlay visible />;
   }
-  return quizComplete ? (
+  return (
+    /*quizComplete ? (
     <Portal>
       <Dialog visible={quizComplete} onDismiss={() => setQuizComplete(false)}>
         <AchievementNotification
@@ -129,7 +132,8 @@ export default function ExerciseGame() {
         </Dialog.Actions>
       </Dialog>
     </Portal>
-  ) : (
+  ) : (*/
+
     <>
       <ScrollView style={{ paddingTop: 20 }}>
         <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
@@ -166,6 +170,7 @@ export default function ExerciseGame() {
             Submit Answer
           </Button>
         </View>
+        <RoundResults roomState={roomState} user_id={user.id} />
       </ScrollView>
     </>
   );
