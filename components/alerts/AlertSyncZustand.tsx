@@ -12,7 +12,14 @@ import {
   useTheme,
 } from "react-native-paper";
 import { useAlertsStore } from "../../stores/AlertsStore";
-import { Fragment, startTransition, useEffect, useMemo, useState } from "react";
+import {
+  FC,
+  Fragment,
+  startTransition,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   FlatList,
   TouchableHighlight,
@@ -24,7 +31,7 @@ import {
  * Universal alert component that can be used to display alerts.
  * @see useAlerts
  */
-export default function AlertSyncZustand() {
+function AlertSyncZustand() {
   const activeAlert = useAlertsStore((state) => state.activeAlert);
   const alerts = useAlertsStore((state) => state.alerts);
   const next = useAlertsStore((state) => state.next);
@@ -519,22 +526,49 @@ export default function AlertSyncZustand() {
   )
     return null;
 
+  // return (
+  //   <Portal>
+  //     <Dialog
+  //       dismissableBackButton={activeAlert && activeAlert.dismissable}
+  //       visible={true}
+  //       dismissable={activeAlert && activeAlert.dismissable}
+  //       onDismiss={() => activeAlert && activeAlert.dismissable && next()}
+  //       testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
+  //       style={{ zIndex: 999999, overflow: "scroll" }}
+  //     >
+  //       <VirtualizedList
+  //         renderItem={() => null}
+  //         getItemCount={() => 0}
+  //         ListHeaderComponent={memoBody}
+  //       />
+  //     </Dialog>
+  //   </Portal>
+  // );
+
   return (
-    <Portal>
-      <Dialog
-        dismissableBackButton={activeAlert && activeAlert.dismissable}
-        visible={true}
-        dismissable={activeAlert && activeAlert.dismissable}
-        onDismiss={() => activeAlert && activeAlert.dismissable && next()}
-        testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
-        style={{ zIndex: 999999, overflow: "scroll" }}
-      >
-        <VirtualizedList
-          renderItem={() => null}
-          getItemCount={() => 0}
-          ListHeaderComponent={memoBody}
-        />
-      </Dialog>
-    </Portal>
+    <Dialog
+      dismissableBackButton={activeAlert && activeAlert.dismissable}
+      visible={true}
+      dismissable={activeAlert && activeAlert.dismissable}
+      onDismiss={() => activeAlert && activeAlert.dismissable && next()}
+      testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
+      style={{ zIndex: 999999, overflow: "scroll" }}
+    >
+      <VirtualizedList
+        renderItem={() => null}
+        getItemCount={() => 0}
+        ListHeaderComponent={memoBody}
+      />
+    </Dialog>
   );
 }
+
+const withPortal =
+  <P,>(Component: FC<P>) =>
+  (props: P) => (
+    <Portal>
+      <Component {...props} />
+    </Portal>
+  );
+
+export default withPortal(AlertSyncZustand);
