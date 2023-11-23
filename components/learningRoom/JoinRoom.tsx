@@ -12,10 +12,12 @@ import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { NAVIGATION } from "../../types/common";
 import { useAlerts } from "../../utils/hooks";
+import { useRoomStore } from "../../stores/RoomStore";
 
 export default function JoinRoom({ navigation }) {
   const [joinCode, setJoinCode] = useState("#");
   const { alert, error: errorAlert, info } = useAlerts();
+  const setRoom = useRoomStore((state) => state.setRoom);
   return (
     <React.Fragment>
       <Text style={[styles.container, { textAlign: "center" }]}>
@@ -47,51 +49,12 @@ export default function JoinRoom({ navigation }) {
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
           onPress={async () => {
-            alert({
-              title: "blabla",
-              dismissable: false,
-              cancelText: "Cancel",
-              okAction(values) {
-                alert({message: JSON.stringify(values)})
-              },
-              fields: [
-                {
-                  type: "checkbox"
-                },
-                {
-                  type: "radio",
-                  data: [
-                    { key: "Quiz", value: "q", label: "blabla" },
-                    { key: "Flashcard", value: "f" },
-                  ],
-                  required: true,
-                },
-                {
-                  type: "search-radio",
-                  data: [
-                    { key: "Quiz", value: "q", label: "blabla" },
-                    { key: "Flashcard", value: "f" },
-                  ],
-                  required: true,
-                },
-                {
-                  type: "select",
-                  data: [
-                    { key: "Quiz", value: "q", label: "blabla" },
-                    { key: "Flashcard", value: "f" },
-                  ],
-                  required: true,
-                },
-                {
-                  type: "search-select",
-                  data: [
-                    { key: "Quiz", value: "q", label: "blabla" },
-                    { key: "Flashcard", value: "f" },
-                  ],
-                  required: true,
-                },
-              ],
+            const { data, error } = await supabase.rpc("quick_join_room", {
+              p_share_code: +joinCode.substring(1),
             });
+            if (!data?.id)
+              return errorAlert({ title: "Error", message: "Room not found." });
+            setRoom(data);
           }}
           style={{ marginRight: "auto", flex: 1 }}
         >
