@@ -110,7 +110,7 @@ export default function Register({ showRegister, close }) {
               onChangeText={(text6) => setPassword2(text6)}
               testID="password2-input-register"
             />
-            <View style={{ alignItems: "center", alignSelf: "flex-start" }}>
+          {/*   <View style={{ alignItems: "center", alignSelf: "flex-start" }}>
               <Text style={{ marginTop: responsiveHeight(1) }}>
                 Profile picture
               </Text>
@@ -121,9 +121,10 @@ export default function Register({ showRegister, close }) {
                 disabled
                 onPress={() => {}}
               />
-            </View>
+            </View> */}
             <Button
               mode="contained"
+              style={{ marginTop: responsiveHeight(1) }}
               disabled={
                 !validators[0](username) ||
                 !validators[1](email) ||
