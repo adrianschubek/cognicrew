@@ -138,13 +138,11 @@ export default function RoomsList() {
     };
   });
 
-  const friendRooms = useMemo(
-    () => (rooms ?? []).filter((room) => friends.includes(room.host)),
-    [rooms, friends],
+  const friendRooms = (rooms ?? []).filter((room) =>
+    friends.includes(room.host),
   );
-  const otherRooms = useMemo(
-    () => (rooms ?? []).filter((room) => !friends.includes(room.host)),
-    [rooms, friends],
+  const otherRooms = (rooms ?? []).filter(
+    (room) => !friends.includes(room.host),
   );
 
   if (isLoading) return <LoadingOverlay visible />;
