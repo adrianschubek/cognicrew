@@ -165,9 +165,17 @@ function MainTabs({ navigation }) {
           switch (payload.eventType) {
             case "INSERT": // new room state
               setRoomState(payload.new.data);
+              alert({
+                message: JSON.stringify(payload, null, 2),
+                messageStyle: { textAlign: "left" },
+              });
               break;
             case "UPDATE": // room satte update
               setRoomState(payload.new.data);
+              alert({
+                message: JSON.stringify(payload, null, 2),
+                messageStyle: { textAlign: "left" },
+              });
               break;
             case "DELETE":
               if (payload.old.room_id !== room?.id) {
@@ -181,6 +189,10 @@ function MainTabs({ navigation }) {
               }
               warning({ message: "Room was closed by host (mainav)" });
               setRoom(null);
+              alert({
+                message: JSON.stringify(payload, null, 2),
+                messageStyle: { textAlign: "left" },
+              });
               break;
           }
         },
