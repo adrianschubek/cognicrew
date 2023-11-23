@@ -2,7 +2,7 @@ import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 import { ScrollView, TouchableOpacity } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
-import { useIsFocused } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { useEffect, useMemo, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
@@ -101,7 +101,11 @@ function Room({ room }) {
 
 export default function RoomsList() {
   const theme = useTheme();
-  const { data: rooms, isLoading } = useQuery(supabase.rpc("list_rooms"), {});
+  const {
+    data: rooms,
+    isLoading,
+    mutate,
+  } = useQuery(supabase.rpc("list_rooms"), {});
 
   const [friends, setFriends] = useState([]);
   const getFriends = async () => {
@@ -116,9 +120,23 @@ export default function RoomsList() {
   };
 
   // Cheating: check for updates on room_tracker then refetch rooms
-  useEffect(() => {
+  useFocusEffect(() => {
+    const roomsTracker = supabase
+      .channel("list-rooms-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker" },
+        (payload) => {
+          mutate();
+          getFriends();
+        },
+      )
+      .subscribe();
     getFriends();
-  }, []);
+    return () => {
+      roomsTracker.unsubscribe();
+    };
+  });
 
   const friendRooms = useMemo(
     () => (rooms ?? []).filter((room) => friends.includes(room.host)),
