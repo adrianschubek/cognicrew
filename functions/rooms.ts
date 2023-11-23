@@ -3,7 +3,8 @@
 export const enum ScreenState {
   LOBBY = "lobby",
   INGAME = "ingame",
-  RESULTS = "results", // game end
+  ROUND_RESULTS = "round-results", // between rounds results screen
+  END_RESULTS = "end-results", // game end
 }
 export const enum GameState {
   EXERCISES = "exercises",
