@@ -42,15 +42,15 @@ setInterval(async () => {
   // TODO: main game state loop here
 
   // TODO: for each room:
-  // TODO: |- if players is not in room connected -> remove them from the players[]
+  // TODO: |> if players is not in room connected -> remove them from the players[]
 
-  // TODO: |- if roundEndsAt < now (~ round is over)
-  // TODO: |- |- if current round + 1 <= total rounds -> show ROUND_RESULTS
-  // TODO: |- |- else current round + 1 > total rounds -> show END_RESULTS
+  // TODO: |> if roundEndsAt < now (~ round is over)
+  // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
+  // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
 
-  // TODO: |- if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for 5 secs)
-  // TODO: |- |- if current round + 1 <= total rounds -> load next question, increment current round, update scores.
-  // TODO: |- |- else current round + 1 > total rounds -> game is over. show END_RESULTS screen
+  // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
+  // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
+  // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
   const end = performance.now();
   console.log(
