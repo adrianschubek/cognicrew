@@ -14,11 +14,11 @@ import {
 } from "react-native-responsive-dimensions";
 import { useDeleteLink } from "../../utils/hooks";
 
-export default function VideoLinkCards({ videos, onEdit }) {
+export default function LinkCards({ links, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const getIconForVideo = (videoURL) => {
+  const getIconForLink = (URL) => {
     const youtubePatterns = ["youtube.com", "youtu.be"];
     const youtubeIcon =
       "https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png";
@@ -26,16 +26,16 @@ export default function VideoLinkCards({ videos, onEdit }) {
       "https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png";
 
     const isYouTubeURL = youtubePatterns.some((pattern) =>
-      videoURL.includes(pattern),
+      URL.includes(pattern),
     );
     return isYouTubeURL ? youtubeIcon : defaultIcon;
   };
 
   const { isMutating, trigger: deleteLink } = useDeleteLink();
 
-  const openVideo = (url) => {
+  const openLink = (url) => {
     if (!url) {
-      console.error("URL is not provided for video.");
+      console.error("URL is not provided for link.");
       return;
     }
     Linking.canOpenURL(url)
@@ -50,9 +50,9 @@ export default function VideoLinkCards({ videos, onEdit }) {
         console.error("Error in opening URL: ", err);
       });
   };
-  const onShare = async (video) => {
+  const onShare = async (link) => {
     try {
-      const message = `Check this out: ${video.title}\n${video.link_url}`;
+      const message = `Check this out: ${link.title}\n${link.link_url}`;
       await Share.share({
         message: message,
       });
@@ -60,44 +60,43 @@ export default function VideoLinkCards({ videos, onEdit }) {
       alert(error.message);
     }
   };
-  
 
-  return videos.map((video) => (
+  return links.map((link) => (
     <Card
       elevation={1}
       style={styles.cardStyle}
-      key={video.id}
-      onPress={() => openVideo(video.link_url)}
+      key={link.id}
+      onPress={() => openLink(link.link_url)}
       accessible
-      accessibilityLabel={`Video titled ${video.title}`}
+      accessibilityLabel={`Link titled ${link.title}`}
     >
       <Card.Title
-        title={video.title}
-        subtitle={video.subtitle}
+        title={link.title}
+        subtitle={link.subtitle}
         left={() => (
-          <TouchableOpacity onPress={() => openVideo(video.link_url)}>
+          <TouchableOpacity onPress={() => openLink(link.link_url)}>
             <Image
-              source={{ uri: getIconForVideo(video.link_url) }}
+              source={{ uri: getIconForLink(link.link_url) }}
               style={styles.iconStyle}
             />
           </TouchableOpacity>
         )}
         right={() => (
           <>
-<IconButton icon="share" onPress={() => onShare(video)} />
+            <IconButton icon="share" onPress={() => onShare(link)} />
             <Menu
-              visible={menuVisible === video.id}
+              visible={menuVisible === link.id}
               onDismiss={() => setMenuVisible(false)}
               anchor={
                 <IconButton
                   icon="dots-vertical"
-                  onPress={() => setMenuVisible(video.id)}
+                  onPress={() => setMenuVisible(link.id)}
                 />
               }
             >
               <Menu.Item
                 onPress={() => {
-                  deleteLink({ id: video.id });
+                  deleteLink({ id: link.id });
                   setMenuVisible(false);
                 }}
                 title="Delete"
@@ -105,7 +104,7 @@ export default function VideoLinkCards({ videos, onEdit }) {
               <Divider />
               <Menu.Item
                 onPress={() => {
-                  onEdit(video);
+                  onEdit(link);
                   setMenuVisible(false);
                 }}
                 title="Edit"
@@ -114,18 +113,18 @@ export default function VideoLinkCards({ videos, onEdit }) {
           </>
         )}
       />
-      {expandedId === video.id && (
+      {expandedId === link.id && (
         <Card.Content>
           <Text>
-            {typeof video.description === "string"
-              ? video.description
+            {typeof link.description === "string"
+              ? link.description
               : "Invalid description"}
           </Text>
         </Card.Content>
       )}
       <IconButton
-        icon={expandedId === video.id ? "chevron-up" : "chevron-down"}
-        onPress={() => setExpandedId(expandedId === video.id ? null : video.id)}
+        icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
+        onPress={() => setExpandedId(expandedId === link.id ? null : link.id)}
       />
     </Card>
   ));

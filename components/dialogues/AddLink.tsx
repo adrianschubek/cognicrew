@@ -9,19 +9,19 @@ import { useUpsertLink } from "../../utils/hooks";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useEffect, useState } from "react";
 
-export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
-  const [title, setTitle] = useState(video?.title || "");
-  const [subtitle, setSubtitle] = useState(video?.subtitle || "");
-  const [description, setDescription] = useState(video?.description || "");
-  const [videoURL, setVideoURL] = useState<string>(video?.link_url || "");
+export default function AddLink({ link, showLinkDialog, close }) {
+  const [title, setTitle] = useState(link?.title || "");
+  const [subtitle, setSubtitle] = useState(link?.subtitle || "");
+  const [description, setDescription] = useState(link?.description || "");
+  const [URL, setURL] = useState<string>(link?.link_url || "");
   const projectId = useProjectStore((state) => state.projectId);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
-  const ensuredHttpURL = videoURL.match(/^(https?:\/\/)/) ? videoURL : `http://${videoURL}`;
+  const ensuredHttpURL = URL.match(/^(https?:\/\/)/) ? URL : `http://${URL}`;
   const addOrEdit = () => {
     upsertLink({
       // @ts-expect-error
       learning_project: projectId,
-      id: video?.id,
+      id: link?.id,
       title: title,
       subtitle: subtitle,
       description: description,
@@ -31,29 +31,29 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
     setTitle("");
     setSubtitle("");
     setDescription("");
-    setVideoURL("");
+    setURL("");
     close();
     Keyboard.dismiss();
   };
   useEffect(() => {
-    if (video) {
-      setTitle(video.title);
-      setSubtitle(video.subtitle);
-      setDescription(video.description);
-      setVideoURL(video.link_url);
+    if (link) {
+      setTitle(link.title);
+      setSubtitle(link.subtitle);
+      setDescription(link.description);
+      setURL(link.link_url);
     } else {
       setTitle("");
       setSubtitle("");
       setDescription("");
-      setVideoURL("");
+      setURL("");
     }
-  }, [video]);
+  }, [link]);
 
   return (
     <Portal>
       <Dialog
         style={{ alignItems: "center" }}
-        visible={showVideoLinkDialog}
+        visible={showLinkDialog}
         onDismiss={() => {
           close();
           Keyboard.dismiss();
@@ -86,8 +86,8 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
         <TextInput
           style={styles.textInputStyle}
           label="URL:"
-          value={videoURL}
-          onChangeText={setVideoURL}
+          value={URL}
+          onChangeText={setURL}
           //multiline={true}
           blurOnSubmit={true}
         />
@@ -99,7 +99,7 @@ export default function AddVideoLink({ video, showVideoLinkDialog, close }) {
             }}
             mode="contained"
           >
-            {video ? "Update Video" : "Add New Video"}
+            {link ? "Update Link" : "Add New Link"}
           </Button>
         </Dialog.Actions>
       </Dialog>

@@ -5,8 +5,8 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import VideoLinkCards from "../../components/learningProject/VideoLinkCards";
-import AddVideoLink from "../../components/dialogues/AddVideoLink";
+import LinkCards from "../../components/learningProject/LinkCards";
+import AddLink from "../../components/dialogues/AddLink";
 import { useLinks, useSoundSystem1 } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -16,8 +16,8 @@ export default function LinkManagement() {
 
   useSoundSystem1();
 
-  const [showVideoLinkDialog, setShowVideoLinkDialog] = useState(false);
-  const [editingVideo, setEditingVideo] = useState(null);
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [editingLink, setEditingLink] = useState(null);
 
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
@@ -42,33 +42,33 @@ export default function LinkManagement() {
   }, []);
 
   const [linkItems, setLinkItems] = useState([]);
-  const handleEditVideo = (video) => {
-    setEditingVideo(video);
-    setShowVideoLinkDialog(true);
+  const handleEdit = (link) => {
+    setEditingLink(link);
+    setShowLinkDialog(true);
   };
 
   return (
     <View style={styles.container}>
       <StatusBar />
-      <AddVideoLink
-        video={editingVideo}
-        showVideoLinkDialog={showVideoLinkDialog}
+      <AddLink
+        link={editingLink}
+        showLinkDialog={showLinkDialog}
         close={() => {
-          setShowVideoLinkDialog(false);
-          setEditingVideo(null);
+          setShowLinkDialog(false);
+          setEditingLink(null);
         }}
       />
       <View style={styles.upperContainer}>
         <TextWithPlusButton
           text="add new link"
           onPress={() => {
-            setEditingVideo(null);
-            setShowVideoLinkDialog(true);
+            setEditingLink(null);
+            setShowLinkDialog(true);
           }}
         />
       </View>
       <ScrollView>
-        <VideoLinkCards videos={linkItems} onEdit={handleEditVideo} />
+        <LinkCards links={linkItems} onEdit={handleEdit} />
       </ScrollView>
     </View>
   );
