@@ -158,13 +158,12 @@ function MainTabs({ navigation }) {
           //     user: 'jane',
           //   })
           // );
-          alert({
-            message: JSON.stringify(payload, null, 2),
-            messageStyle: { textAlign: "left" },
-          });
+          // alert({
+          //   message: JSON.stringify(payload, null, 2),
+          //   messageStyle: { textAlign: "left" },
+          // });
           switch (payload.eventType) {
             case "INSERT": // new room state
-            console.log("new room state", payload.new.data);
               setRoomState(payload.new.data);
               break;
             case "UPDATE": // room satte update
@@ -173,7 +172,11 @@ function MainTabs({ navigation }) {
             case "DELETE":
               if (payload.old.room_id !== room?.id) {
                 // FIXME: Fixes bug if room id not mismatch
-                console.log("ignoring room_id mismatch on DELETE ", payload.old.room_id, room?.id);
+                console.log(
+                  "ignoring room_id mismatch on DELETE ",
+                  payload.old.room_id,
+                  room?.id,
+                );
                 return;
               }
               warning({ message: "Room was closed by host (mainav)" });
