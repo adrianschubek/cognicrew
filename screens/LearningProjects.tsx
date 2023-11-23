@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
-import { Tooltip, IconButton } from "react-native-paper";
+import { Tooltip, IconButton, Icon, useTheme, Text } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
 import { useAlerts, useSoundSystem1 } from "../utils/hooks";
 import { useEffect } from "react";
@@ -12,13 +12,15 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
-
   useSoundSystem1();
+  const theme = useTheme();
 
   const { info } = useAlerts();
 
   useEffect(() => {
     navigation.setOptions({
+      headerShadowVisible: false,
+
       title: "Projects",
       headerRight: () => (
         <>
@@ -53,13 +55,56 @@ export default function LearningProjects({ navigation }) {
       initialRouteName={"default_my_projects"}
       screenOptions={{
         tabBarLabelStyle: { textTransform: "capitalize" },
+        tabBarItemStyle: { flexDirection: "row" },
       }}
     >
-      <Tab.Screen name={NAVIGATION.DISCOVER} component={Discover} />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              color={focused ? theme.colors.primary : theme.colors.secondary}
+              source={"creation"}
+              size={24}
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text
+              variant="labelMedium"
+              style={{
+                color: focused ? theme.colors.primary : theme.colors.secondary,
+              }}
+            >
+              {" "}
+              Discover
+            </Text>
+          ),
+        }}
+        name={NAVIGATION.DISCOVER}
+        component={Discover}
+      />
       <Tab.Screen
         name={"default_my_projects"}
         component={ProjectGroups}
-        options={{ title: "My projects" }}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              color={focused ? theme.colors.primary : theme.colors.secondary}
+              source={"book-multiple"}
+              size={24}
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text
+              variant="labelMedium"
+              style={{
+                color: focused ? theme.colors.primary : theme.colors.secondary,
+              }}
+            >
+              {" "}
+              My Projects
+            </Text>
+          ),
+        }}
       />
     </Tab.Navigator>
   );

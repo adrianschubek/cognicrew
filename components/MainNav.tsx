@@ -81,6 +81,7 @@ function AccountTab() {
         component={AccountManage}
         options={{
           headerRight: LogoutButton,
+          headerShadowVisible: false,
         }}
       />
     </Stack.Navigator>
