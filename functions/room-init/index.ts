@@ -160,6 +160,8 @@ serve(async (req) => {
         id: user.id,
         username: user.username,
         score: 0,
+        currentCorrect: false,
+        currentDone: false,
       })),
       screen: ScreenState.INGAME,
       game: GameState.EXERCISES,
