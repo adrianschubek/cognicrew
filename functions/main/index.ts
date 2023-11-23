@@ -50,7 +50,7 @@ setInterval(async () => {
 
   // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for 5 secs)
   // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
-  // TODO: |  |> else current round + 1 > total rounds -> game is over. do nothing.
+  // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
   const end = performance.now();
   console.log(
