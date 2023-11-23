@@ -15,14 +15,15 @@ import { useAlerts } from "../utils/hooks";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
   // TODO: only save password when "remember me" is checked
-  const { email, password, setEmail, setPassword, rememberMe, setRememberMe } = usePreferencesStore();
+  const { email, password, setEmail, setPassword, rememberMe, setRememberMe } =
+    usePreferencesStore();
   // const [text, setText] = useState("foo@bar.de");
   // const [text2, setText2] = useState("foobar");
   const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
 
-  const { error: errorAlert, alert, warning } = useAlerts();
+  const { error: errorAlert, alert, warning, success } = useAlerts();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -156,16 +157,39 @@ export default function Login({ navigation }) {
             // setShowRegister(true); /* TODO remove */
 
             alert({
+              icon: "account-plus",
               title: "Create your account",
               message: "Please enter your data",
-              okAction(values) {
+              dismissable: false,
+              okText: "Next",
+              cancelText: "Cancel",
+              async okAction(values) {
+                const { data, error } = await supabase.auth.signUp({
+                  email: values[1],
+                  password: values[2],
+                  options: {
+                    data: {
+                      username: values[0],
+                    },
+                  },
+                });
+
+                if (error) return error?.message ?? "Unknown error";
+
                 alert({
+                  icon: "account-check",
                   title: "Confirm account",
                   message:
                     "Please enter the verification code you received in your email.",
                   dismissable: false,
                   okText: "Confirm",
-                  cancelText: "Cancel",
+                  okAction(values) {
+                    success({
+                      title: "Account created",
+                      message:
+                        "Account created successfully. You may login now.",
+                    });
+                  },
                   fields: [
                     {
                       label: "Verification Code",
@@ -174,11 +198,54 @@ export default function Login({ navigation }) {
                   ],
                 });
               },
+              fields: [
+                {
+                  label: "Username",
+                  type: "text",
+                  required: true,
+                  validator(value, allValues) {
+                    return (
+                      value.length < 32 &&
+                      value.length > 4 &&
+                      /^[a-zA-Z0-9_]+$/.test(value)
+                    );
+                  },
+                  errorText:
+                    "Username must be between 4 and 32 characters long and may only contain letters, numbers and underscores.",
+                },
+                {
+                  label: "E-Mail",
+                  type: "text",
+                  required: true,
+                  validator(value, allValues) {
+                    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                  },
+                  errorText: "Please enter a valid email address.",
+                },
+                {
+                  label: "Password",
+                  type: "password",
+                  required: true,
+                  validator(value, allValues) {
+                    return value.length >= 8;
+                  },
+                  errorText: "Password must be at least 8 characters long.",
+                },
+                {
+                  label: "Confirm Password",
+                  type: "password",
+                  required: true,
+                  validator(value, allValues) {
+                    return value === allValues[2];
+                  },
+                  errorText: "Passwords do not match.",
+                },
+              ],
             });
           }}
           testID="register-button"
         >
-          Register
+          Sign up
         </Button>
       </View>
     </SafeAreaView>
