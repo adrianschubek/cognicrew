@@ -146,7 +146,9 @@ export default function ExerciseGame() {
             key={index}
             label={`${String.fromCharCode(65 + index)}) ${option[0]}`}
             labelStyle={{
-              color: checked.includes(option[1]) ? "white" : undefined,
+              color: checked.includes(option[1])
+                ? theme.colors.onPrimary
+                : theme.colors.onSecondaryContainer,
             }}
             value={option[1].toString()}
             status={checked.includes(option[1]) ? "checked" : "unchecked"}
@@ -155,7 +157,7 @@ export default function ExerciseGame() {
             }}
             mode="ios"
             // uncheckedColor="white"
-            color="white"
+            color={theme.colors.onPrimary}
             style={{
               margin: 10,
               marginVertical: 5,
@@ -170,7 +172,7 @@ export default function ExerciseGame() {
         <View
           style={{
             marginHorizontal: 10,
-            marginTop: 10,
+            marginTop: 15,
           }}
         >
           <Button
