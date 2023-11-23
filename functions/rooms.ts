@@ -30,6 +30,14 @@ export type PublicRoomState = {
     id: string;
     username: string;
     score: number;
+    /**
+     * Whether the user answered correctly in the current round
+     */
+    currentCorrect: boolean;
+    /**
+     * Whether the user submitted an answer in the current round
+     */
+    currentDone: boolean;
   }[];
   /**
    * Total rounds in this game
@@ -49,7 +57,7 @@ export type PublicRoomState = {
    */
   possibleAnswers: string[];
   /**
-   * Round ends at timestamp milliseconds 
+   * Round ends at timestamp milliseconds
    */
   roundEndsAt: number;
 };
