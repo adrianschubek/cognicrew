@@ -66,14 +66,15 @@ export default function EndResults({
         alignItems: "center",
       }}
     >
-      <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+      <Text variant="headlineSmall" style={{ fontWeight: "bold" }}>
         Your score: {self.score} {/*"\n \n"*/}
       </Text>
-      <Text style={{ textAlign: "center", marginBottom: 100 }}>
-        You are more important than the others, {"\n"}thats why your score is big and bold
+      <Text variant="bodyMedium" style={{ textAlign: "center", marginBottom: 70 }}>
+        You are more important than the others, {"\n"}thats why your score is
+        big and bold
       </Text>
       {otherPlayers.map((player) => (
-        <Text key={player.id}>
+        <Text variant="titleMedium" key={player.id}>
           {player.username}s score: {player.score} {"\n \n"}
         </Text>
       ))}
