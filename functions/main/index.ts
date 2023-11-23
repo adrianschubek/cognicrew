@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
+import { PublicRoomState } from "../rooms.ts";
 
 console.log("main function started");
 
@@ -41,20 +42,30 @@ setInterval(async () => {
   const start = performance.now();
   // TODO: main game state loop here
 
-  // TODO: for each room:
-  // TODO: |> if players is not in room connected -> remove them from the players[]
+  // TODO: for each public_room_state:
+  const { data: pubRoomStatesObj } = await supabase
+    .from("public_room_states")
+    .select("data,room_id");
 
-  // TODO: |> if roundEndsAt < now (~ round is over)
-  // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
-  // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
+  const publicRoomStates = (pubRoomStatesObj ?? []).map(
+    (pr) => pr.data,
+  ) as PublicRoomState[];
 
-  // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
-  // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
-  // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+  for (const state of publicRoomStates) {
+    // TODO: |> if players is not in room connected -> remove them from the players[]
+    // TODO: |> if roundEndsAt < now (~ round is over)
+    // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
+    // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
+    // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
+    // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
+    // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+  }
 
   const end = performance.now();
   console.log(
-    new Date().toISOString() + " | main_loop took " + (end - start) + "ms",
+    `${new Date().toISOString()} | main_loop: updated ${
+      publicRoomStates.length
+    } states in ${end - start}ms`,
   );
 }, 2000);
 
