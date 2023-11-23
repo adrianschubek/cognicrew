@@ -39,39 +39,22 @@ const supabase = createClient(
 );
 setInterval(async () => {
   const start = performance.now();
-  // store timestamp for remaingroundtime
   // TODO: main game state loop here
 
-  const { data, error } = await supabase.from("learning_projects").select(
-    `id,
-          name,
-          sets(
-            name,
-            exercises(
-              id,
-              question,
-              answers_exercises(
-                id,
-                answer,
-                is_correct
-              )
-            ),
-            flashcards(
-              id,
-              question,
-              answer
-            )
-          )`,
-  );
+  // TODO: for each room:
+  // TODO: |- if players is not in room connected -> remove them from the players[]
 
-  // TODO: check players are still connected and remove them from the room if not
+  // TODO: |- if screen == ROUND_RESULTS and roundEndsAt + 4s < now -> start next round (~ show ROUND_RESULTS for 5 secs)
+  // TODO: |- |- if current round + 1 <= total rounds -> load next question, increment current round, update scores.
+  // TODO: |- |- if current round + 1 > total rounds -> game is over. show END_RESULTS screen
 
-  // TODO: if roundEndsAt is in the past, then we need to start a new round
-  // TODO: |-> if next round > total rounds, then game is over. show "results" screen
+  // TODO: |- else if roundEndsAt < now -> show ROUND_RESULTS (~ round is over)
+  // TODO: |- |- if current round + 1 <= total rounds -> show ROUND_RESULTS
+  // TODO: |- |- if current round + 1 > total rounds -> game is over. show END_RESULTS screen
 
   const end = performance.now();
   console.log(
-    new Date().toISOString() + " | main_loop time: " + (end - start) + "ms",
+    new Date().toISOString() + " | main_loop took " + (end - start) + "ms",
   );
 }, 2000);
 
