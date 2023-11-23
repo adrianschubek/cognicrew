@@ -19,9 +19,9 @@ export default function Discover() {
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data } = useQuery(supabase.rpc("public_projects"), {
+  const { data , mutate } = useQuery(supabase.rpc("public_projects"), {
     onSuccess(data, key, config) {
-      console.log("Data fetched successfully:", data);
+      console.log("Data fetched successfully:", data.data);
     },
     onError(err, key, config) {
       errorAlert({
@@ -40,16 +40,7 @@ export default function Discover() {
       <Text style={styles.title}>{title}</Text>
     </View>
   );
-  const refreshData = () => {
-    // Use the mutate function to refetch data
-    mutate(supabase.rpc("group"), {
-      args: { group: selectedSemester },
-    });
-  };
 
-  useEffect(() => {
-    refreshData();
-  }, [selectedSemester]);
 
   const CourseDialog = () => {
     const [visible, setVisible] = useState(false);
@@ -77,6 +68,7 @@ export default function Discover() {
       </PaperProvider>
     );
   };
+if (!data) return null
 
   return (
     <SafeAreaView style={styles.container}>
@@ -97,7 +89,7 @@ export default function Discover() {
             mode="outlined"
             onPress={() => {
               setSelectedSemester("Winter 2023/24");
-              refreshData();
+              mutate();
               console.log("WI23-Button-Pressed");
             }}
           >
@@ -108,6 +100,8 @@ export default function Discover() {
             style={styles.WI23}
             mode="outlined"
             onPress={() => {
+              setSelectedSemester("Summer 2023");
+              mutate();
               console.log("*TODO*");
             }}
           >
@@ -117,7 +111,10 @@ export default function Discover() {
           <Button
             style={styles.WI23}
             mode="outlined"
-            onPress={() => console.log("*TODO*")}
+            onPress={() => {
+              setSelectedSemester("Winter 2022/23");
+              mutate();
+            }}
           >
             WI 22/23
           </Button>
@@ -125,16 +122,19 @@ export default function Discover() {
           <Button
             style={styles.WI23}
             mode="outlined"
-            onPress={() => console.log("*TODO*")}
+            onPress={() => {
+              setSelectedSemester("All");
+              mutate();
+            }}
           >
-            other
+            All
           </Button>
         </ScrollView>
       </View>
       <FlatList
         /*TODO : ADDING DIALOG */
         style={styles.flatList}
-        data={data}
+        data={data.filter(project=>project.group===selectedSemester)}
         renderItem={({ item, index }) => (
           <TouchableOpacity
             key={index.toString()}
