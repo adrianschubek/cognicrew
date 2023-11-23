@@ -50,7 +50,7 @@ setInterval(async () => {
 
   // TODO: |- else if roundEndsAt < now (~ round is over)
   // TODO: |- |- if current round + 1 <= total rounds -> show ROUND_RESULTS
-  // TODO: |- |- if current round + 1 > total rounds -> game is over. show END_RESULTS screen
+  // TODO: |- |- if current round + 1 > total rounds -> show END_RESULTS
 
   const end = performance.now();
   console.log(
