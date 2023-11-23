@@ -22,11 +22,10 @@ export default function LinkCards({ links, onEdit }) {
     const youtubePatterns = ["youtube.com", "youtu.be"];
     const youtubeIcon =
       "https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png";
-    const defaultIcon =
-      "https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png";
+    const defaultIcon = URL + "/favicon.ico";
 
     const isYouTubeURL = youtubePatterns.some((pattern) =>
-      URL.includes(pattern),
+      URL.toLowerCase().includes(pattern),
     );
     return isYouTubeURL ? youtubeIcon : defaultIcon;
   };
@@ -134,12 +133,7 @@ const styles = StyleSheet.create({
   cardStyle: {
     flex: 1,
     width: responsiveWidth(90),
-    marginBottom: responsiveHeight(2),
-  },
-  thumbnailStyle: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    marginBottom: 16,
   },
   iconStyle: {
     width: 30,
