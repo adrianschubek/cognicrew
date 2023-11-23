@@ -208,6 +208,7 @@ export default function AlertSyncZustand() {
                         label={field.label}
                         placeholder={field.placeholder}
                         secureTextEntry={field.type === "password"}
+                        multiline={field.multiline}
                         left={
                           field.icon && <TextInput.Icon icon={field.icon} />
                         }

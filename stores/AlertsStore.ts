@@ -47,6 +47,10 @@ type TextInput = CommonInput & {
    * The type of the input.
    */
   type: "text" | "number" | "password";
+  /**
+   * Whether or not the input should support multiline text.
+   */
+  multiline: boolean;
 };
 type CheckboxInput = CommonInput & {
   type: "checkbox";
@@ -69,7 +73,7 @@ type SearchSelectInput = CommonInput & {
   /**
    * key-value pairs of options to display in the select.
    */
-  data: { key: string; value: string, label?: string }[];
+  data: { key: string; value: string; label?: string }[];
   /**
    * Number of options to display in the (virtualized) list.
    */
@@ -208,6 +212,7 @@ export const DEFAULT_ALERT_INPUT: AlertField = {
   action: () => {},
   visibleOptions: 5,
   data: [],
+  multiline: false,
 };
 
 type AlertsStoreType = {
