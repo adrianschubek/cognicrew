@@ -332,8 +332,7 @@ function AlertSyncZustand() {
                                 }}
                                 underlineColor="transparent"
                                 style={{
-                                  backgroundColor:
-                                    theme.colors.background,
+                                  backgroundColor: theme.colors.background,
                                   borderRadius: 10,
                                   // border: 0,
                                 }}
