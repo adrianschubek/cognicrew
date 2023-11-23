@@ -526,25 +526,6 @@ function AlertSyncZustand() {
   )
     return null;
 
-  // return (
-  //   <Portal>
-  //     <Dialog
-  //       dismissableBackButton={activeAlert && activeAlert.dismissable}
-  //       visible={true}
-  //       dismissable={activeAlert && activeAlert.dismissable}
-  //       onDismiss={() => activeAlert && activeAlert.dismissable && next()}
-  //       testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
-  //       style={{ zIndex: 999999, overflow: "scroll" }}
-  //     >
-  //       <VirtualizedList
-  //         renderItem={() => null}
-  //         getItemCount={() => 0}
-  //         ListHeaderComponent={memoBody}
-  //       />
-  //     </Dialog>
-  //   </Portal>
-  // );
-
   return (
     <Dialog
       dismissableBackButton={activeAlert && activeAlert.dismissable}
