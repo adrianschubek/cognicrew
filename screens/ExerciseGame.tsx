@@ -23,12 +23,11 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
 import { useAuth } from "../providers/AuthProvider";
-import { ScreenState } from "../functions/rooms";
-import RoundResults from "./ingame/RoundResults";
+import { NAVIGATION } from "../types/common";
 
 // Placeholder function to simulate fetching questions
 
-export default function ExerciseGame() {
+export default function ExerciseGame({ navigation }) {
   const { user } = useAuth();
   useSoundSystem2();
   const roomState = useRoomStateStore((state) => state.roomState);
@@ -200,7 +199,16 @@ export default function ExerciseGame() {
           {/* Host only */}
           <Button onPress={() => {}}>Skip question</Button>
         </View>
-        <RoundResults roomState={roomState} user_id={user.id} />
+        <Button
+          onPress={() => {
+            navigation.navigate(NAVIGATION.END_RESULTS, {
+              roomState: roomState,
+              user_id: user.id,
+            });
+          }}
+        >
+          PRESS ME, DADDY!{" "}
+        </Button>
       </ScrollView>
     </>
   );

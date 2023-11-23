@@ -29,6 +29,7 @@ import GuestLobby from "../screens/ingame/GuestLobby";
 import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
 import RateProject from "../screens/projectManagement/RateProject";
+import EndResults from "../screens/ingame/EndResults";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -245,6 +246,7 @@ export default function MainNav() {
       <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
       <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
+      <Stack.Screen name={NAVIGATION.END_RESULTS} component={EndResults} />
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_GAME}
         component={FlashcardGame}
