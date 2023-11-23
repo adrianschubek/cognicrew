@@ -190,6 +190,7 @@ function MainTabs({ navigation }) {
               warning({ message: "Room was closed by host (mainav)" });
               setRoom(null);
               alert({
+                key: "room-ingame-closed",
                 message: JSON.stringify(payload, null, 2),
                 messageStyle: { textAlign: "left" },
               });

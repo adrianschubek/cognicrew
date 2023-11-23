@@ -33,11 +33,15 @@ export default function GuestLobby() {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
-        // if (userNames.data.length === 0 && room) {
-        // //  TODO: remove this
-        //   warning({ message: "Room was closed by host" });
-        //   setRoom(null);
-        // }
+        // room was cloes by host (all users kicked)
+        if (userNames.data.length === 0 && room) {
+          setRoom(null);
+          console.log("room was closed by host (guest lobby)");
+          warning({
+            key: "guest-lobby-closed",
+            message: "Room was closed by host",
+          });
+        }
       });
     };
     fetchData();

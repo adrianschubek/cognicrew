@@ -125,6 +125,12 @@ export function isSearchSelectInput(input: AlertField): input is SearchSelectInp
 
 export type Alert = {
   /**
+   * The key of the alert. Used to prevent duplicate alerts from being added to the queue.
+   *
+   * If the key is already in the queue, the alert will not be added.
+   */
+  key?: string;
+  /**
    * The icon to display in the alert.
    */
   icon: string;
@@ -245,17 +251,11 @@ export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
   dispatch: (alert: Alert) => {
     // ignore duplicate alerts already in queue
     if (
-      get().alerts.some(
-        (a) =>
-          a.message === alert.message &&
-          a.title === alert.title &&
-          a.icon === alert.icon &&
-          a.okText === alert.okText &&
-          a.cancelText === alert.cancelText,
-      )
-    ) {
+      alert.key &&
+      (get().activeAlert?.key === alert.key ||
+        get().alerts.some((a) => a.key === alert.key))
+    )
       return;
-    }
     set((state) => ({
       alerts: [
         ...state.alerts,

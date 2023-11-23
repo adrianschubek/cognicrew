@@ -40,6 +40,7 @@ function Room({ room }) {
               });
 
               if (error) return error.message;
+              if (!data?.id) return "Something went wrong";
               console.log(data);
               setRoom(data);
             },
