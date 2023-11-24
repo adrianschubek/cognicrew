@@ -11,3 +11,4 @@ export const useProjectStore = create<ProjectStoreType>((set, get) => ({
   setProjectId: (id: number) => set({ projectId: id }),
   reset: () => set({ projectId: null }),
 }));
+

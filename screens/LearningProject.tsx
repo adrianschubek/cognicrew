@@ -30,6 +30,10 @@ export default function LearningProject({ navigation, route }) {
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
 
+  
+ const projectId = useProjectStore((state) => state.projectId);
+
+
   useEffect(() => {
     navigation.setOptions({
       title: project.name,

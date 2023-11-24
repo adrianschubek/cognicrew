@@ -14,6 +14,7 @@ import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import React from "react";
+import { useProjectStore } from "../stores/ProjectStore";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -166,24 +167,12 @@ export function useInsertFriend() {
 
 //Project ratings
 
-export function useUpsertProjectRating(){
+export function useUpsertProjectRating() {
   return handleErrors(
     useUpsertMutation(
       supabase.from("project_ratings"),
-      ["project_id","user_id"],
+      ["project_id", "user_id"],
       "project_id, user_id, rating",
-    ),
-  );
-}
-
-export function useProjectRating(project_id: number){
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("project_ratings")
-        .select( "project_id, user_id, rating")
-        .eq("project_id", project_id)
-        .order("user_id"),
     ),
   );
 }

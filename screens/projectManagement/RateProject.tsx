@@ -8,7 +8,6 @@ import { supabase } from "../../supabase";
 import {
   useAlerts,
   useDeleteProject,
-  useProjectRating,
   useRemoveUserFromLearningProject,
   useSoundSystem1,
   useUpsertProjectRating,
@@ -18,6 +17,7 @@ import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function RateProject({
   navigation,
@@ -31,6 +31,8 @@ export default function RateProject({
   };
 }) {
   useSoundSystem1();
+
+
 
   const { edit: project } = route.params;
 
@@ -144,50 +146,49 @@ export default function RateProject({
     );
   };
 
-  const [starRating, setStarRating] = useState(null);
 
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
 
   const { user } = useAuth();
+  const projectId = useProjectStore((state) => state.projectId)
 
-  const projectId = useProjectStore((state) => state.projectId);
-
-  const { data: ratings } = useProjectRating(projectId);
-
+  const [starRating, setStarRating] = useState(null);
   const [sum, setSum] = useState(null);
-
-  async function calulateSum() {
-    console.log(projectId)
-    let { data, error } = await supabase.rpc("sum_project_ratings", { project_id_param: projectId});
-    console.log("Count");
+  const [avg, setAvg] = useState(null);
+  const [arrRatings, setArrRatings] = useState([]);
+  
+  async function getUsersRating() {
+    let { data, error } = await supabase.rpc("get_users_rating_for_project", {project_id_param: projectId, user_id_param: user.id});
+    console.log("User's Id:");
     console.log(data);
+    if (data) {
+      setStarRating(data);
+    }
+    if (error) console.error(error);
+    else console.log(data);
+  } 
 
+  async function calculateSum() {
+    let { data, error } = await supabase.rpc("sum_project_ratings", {project_id_param: projectId});
     if (data) {
       setSum(data);
     }
-
     if (error) console.error(error);
     else console.log(data);
-  }
+  } 
 
-  const [avg, setAvg] = useState(null);
-
-  async function calulateAverage() {
-    let { data, error } = await supabase.rpc("avg_project_rating",  {project_id_param: projectId});
-    console.log("Avg");
-    console.log(data);
+  async function calculateAvg() {
+    let { data, error } = await supabase.rpc("avg_project_rating", {project_id_param: projectId});
     if (data) {
       setAvg(data);
     }
     if (error) console.error(error);
     else console.log(data);
-  }
-
-  const [arrRatings, setArrRatings] = useState(null);
+  } 
 
   async function calculateIndividualRatings() {
     let { data, error } = await supabase.rpc("get_particular_amount_ratings", {project_id_param: projectId});
-    console.log("Partiular ratings:");
+    console.log("Particular ratings:");
     console.log(data);
     const dataArray = Object.values(data);
     console.log(dataArray)
@@ -197,15 +198,38 @@ export default function RateProject({
     if (error) console.error(error);
     else console.log(data);
   }
-  
 
-  async function calulateStatistics() {
-    calulateSum();
-    calulateAverage();
+
+
+  useEffect(() => {
+      getUsersRating();
+      calculateStatistics();
+  }, []
+  );
+
+  useFocusEffect(() => {
+    const roomsTracker = supabase
+      .channel("list-ratings-tracker")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "tracker", filter: "key=eq.rate" },
+        (payload) => {
+          getUsersRating();
+          calculateStatistics();
+        },
+      )
+      .subscribe();
+    return () => {
+      roomsTracker.unsubscribe();
+    };
+  });
+
+  async function calculateStatistics(){
+    calculateSum();
+    calculateAvg();
     calculateIndividualRatings();
   }
-
-
+ 
 
   return (
     <ScrollView>
@@ -229,6 +253,7 @@ export default function RateProject({
                 size={32}
                 style={
                   starRating >= 1 ? styles.starSelected : styles.starUnselected
+
                 }
               />
             </TouchableOpacity>
@@ -298,6 +323,7 @@ export default function RateProject({
                   user_id: user.id,
                   rating: 5,
                 });
+                //setRefetchIndex(refetchIndex + 1);
               }}
             >
               <MaterialIcons
@@ -322,8 +348,7 @@ export default function RateProject({
       <View style={styles.container}>
         <Text style={styles.heading}>{"Statistics:"}</Text>
 
-        <Button onPress={() => calulateStatistics()}>Show statistics</Button>
-
+      
         <View style={styles.box}>
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
             {"Total number of ratings:"}
@@ -372,7 +397,6 @@ export default function RateProject({
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
             {"Amount of particular ratings:"}
           </Text>
-
           {renderStars(1)}
           {renderStars(2)}
           {renderStars(3)}
