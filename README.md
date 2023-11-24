@@ -1,17 +1,6 @@
-# LernApp - Internet - Praktikum Telekooperation
-
 # CogniCrew: Collaborative Learning Made Fun
 
 Welcome to CogniCrew, your go-to collaborative learning tool where education meets entertainment! Dive into a world of knowledge, engage with peers, and have a blast while expanding your horizons.
-
-## Table of Contents
-
-- [Introduction](#introduction)
-- [Features](#features)
-- [Getting Started](#getting-started)
-- [How to Contribute](#how-to-contribute)
-- [Community](#community)
-- [License](#license)
 
 ## Introduction
 
