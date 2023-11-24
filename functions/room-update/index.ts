@@ -78,7 +78,7 @@ serve(async (req) => {
 
     switch (body.type) {
       case "flashcard-answer":
-        return err("Not implemented [rupd:nimpl]", 501);
+        return err("Not implemented [rupd:nimpl1]", 501);
         break;
       case "exercise-answer": {
         // FIXME: should i save the literial input of the uiser. OR should save whether its correct??
@@ -95,10 +95,10 @@ serve(async (req) => {
         break;
       }
       case "reset-lobby":
-        return err("Not implemented [rupd:nimpl]", 501);
+        return err("Not implemented [rupd:nimpl2]", 501);
         break;
       case "skip-round":
-        return err("Not implemented [rupd:nimpl]", 501);
+        return err("Not implemented [rupd:nimpl3]", 501);
         break;
       default:
         return err(`Invalid action "${(body as any).type} [rupd:ivact]"`, 400);
