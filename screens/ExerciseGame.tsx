@@ -42,6 +42,14 @@ export default function ExerciseGame({ navigation }) {
     });
     if (error) errrorAlert({ message: await handleEdgeError(error) });
   }
+  async function skipQuestion() {
+    const { data, error } = await supabase.functions.invoke("room-update", {
+      body: {
+        type: "skip-round",
+      } as RoomClientUpdate,
+    });
+    if (error) errrorAlert({ message: await handleEdgeError(error) });
+  }
   const [checked, setChecked] = useState([] as number[]);
   const [quizComplete, setQuizComplete] = useState(false);
   const unlockAchievement = useUnlockAchievement();
@@ -115,29 +123,6 @@ export default function ExerciseGame({ navigation }) {
     return <LoadingOverlay visible />;
   }
   return (
-    /*quizComplete ? (
-    <Portal>
-      <Dialog visible={quizComplete} onDismiss={() => setQuizComplete(false)}>
-        <AchievementNotification
-          isVisible={achievementVisible}
-          achievementName={achievementName}
-          achievementIconName={achievementIcon}
-        />
-        <Dialog.Title>Quiz Summary</Dialog.Title>
-        <Dialog.Content>
-          <Text>
-            Your score:{" "}
-            {roomState.players.find((player) => player.id === user.id).score} /{" "}
-          </Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={() => {}}>Retake Quiz</Button>
-          <Button onPress={() => {}}>Close</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  ) : (*/
-
     <>
       <ScrollView style={{ paddingTop: 20 }}>
         <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
@@ -201,7 +186,7 @@ export default function ExerciseGame({ navigation }) {
           }}
         >
           {/* Host only */}
-          <Button onPress={() => {}}>Skip question</Button>
+          <Button onPress={skipQuestion}>Skip question</Button>
         </View>
         <Button
           onPress={() => {
