@@ -43,7 +43,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData) return err("User is not in a room", 400);
+    if (roomError || !roomData) return err("User is not in a room (rint:unf)", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -57,7 +57,7 @@ serve(async (req) => {
       .eq("is_ingame", false)
       .single();
     if (error)
-      return err("User is not host of room or room is already ingame", 400);
+      return err("User is not host of room or room is already ingame (rint:unhig)", 400);
 
     const pid: number = data.project_id;
     console.log(data);
@@ -78,12 +78,12 @@ serve(async (req) => {
     console.log(body);
 
     // validate body
-    if (body.type !== 0 && body.type !== 1) return err("Invalid type", 400);
-    if (body.sets.length === 0) return err("No sets selected", 400);
+    if (body.type !== 0 && body.type !== 1) return err("Invalid type (rint:bvl)", 400);
+    if (body.sets.length === 0) return err("No sets selected (rint:bvl)", 400);
     if (body.roundDuration <= 0 || body.roundDuration > 600)
-      return err("Invalid round duration", 400);
+      return err("Invalid round duration (rint:bvl)", 400);
     if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
-      return err("Invalid number of rounds", 400);
+      return err("Invalid number of rounds (rint:bvl)", 400);
 
     // private game state
     const { data: gamedata, error: errorGamedata } = await supabase
@@ -218,6 +218,6 @@ serve(async (req) => {
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong (room-init/uxpct)", 500);
+    return err("Something went wrong (rint:uxpct)", 500);
   }
 });

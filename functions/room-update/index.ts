@@ -8,7 +8,7 @@
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import { err } from "../utils.ts";
-import { RoomClientUpdate } from "../rooms.ts";
+import { PrivateRoomState, RoomClientUpdate } from "../rooms.ts";
 
 serve(async (req) => {
   const start = performance.now();
@@ -39,7 +39,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData) return err("User is not in a room", 400);
+    if (roomError || !roomData) return err("User is not in a room (rupd:unf)", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -47,13 +47,34 @@ serve(async (req) => {
     const body = (await req.json()) as RoomClientUpdate;
     console.log(body);
 
+    // fetch current round id
+    const { data: rdata, error: rdataerror } = await supabase
+      .from("public_room_states")
+      .select("data")
+      .eq("room_id", rid)
+      .single();
+    const roomdata = rdata?.data as PrivateRoomState;
+    console.log(roomdata);
+
+    if (rdataerror || !rdata) return err("Could not fetch game data (rupd:prvnf)", 404);
+
     switch (body.type) {
       case "flashcard-answer":
         return err("Not implemented", 501);
         break;
-      case "exercise-answer":
-        return err("Not implemented", 501);
+      case "exercise-answer": {
+        // FIXME: should i save the literial input of the uiser. OR should save whether its correct??
+        // latter.
+
+        // |> check if user answer is correct and save it to db
+
+        // const { data, error } = await supabase.from("player_answers").upsert({
+        //   room_id: rid,
+        //   user_id: user?.id,
+        //   answer: body.answerIndex.toString(),
+        // });
         break;
+      }
       case "reset-lobby":
         return err("Not implemented", 501);
         break;
@@ -67,6 +88,6 @@ serve(async (req) => {
     console.log(`room-update: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong (room-update/uxpct)", 500);
+    return err("Something went wrong (rupd:uxpct)", 500);
   }
 });
