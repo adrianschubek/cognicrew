@@ -152,12 +152,13 @@ export default function RateProject({
 
   const projectId = useProjectStore((state) => state.projectId);
 
-  const { data: ratings } = useProjectRating();
+  const { data: ratings } = useProjectRating(projectId);
 
   const [sum, setSum] = useState(null);
 
   async function calulateSum() {
-    let { data, error } = await supabase.rpc("sum_project_ratings");
+    console.log(projectId)
+    let { data, error } = await supabase.rpc("sum_project_ratings", { project_id_param: projectId});
     console.log("Count");
     console.log(data);
 
@@ -167,14 +168,12 @@ export default function RateProject({
 
     if (error) console.error(error);
     else console.log(data);
-
-    return data;
   }
 
   const [avg, setAvg] = useState(null);
 
   async function calulateAverage() {
-    let { data, error } = await supabase.rpc("avg_project_rating");
+    let { data, error } = await supabase.rpc("avg_project_rating",  {project_id_param: projectId});
     console.log("Avg");
     console.log(data);
     if (data) {
@@ -187,7 +186,7 @@ export default function RateProject({
   const [arrRatings, setArrRatings] = useState(null);
 
   async function calculateIndividualRatings() {
-    let { data, error } = await supabase.rpc("get_particular_amount_ratings");
+    let { data, error } = await supabase.rpc("get_particular_amount_ratings", {project_id_param: projectId});
     console.log("Partiular ratings:");
     console.log(data);
     const dataArray = Object.values(data);

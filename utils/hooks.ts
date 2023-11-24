@@ -176,12 +176,13 @@ export function useUpsertProjectRating(){
   );
 }
 
-export function useProjectRating(){
+export function useProjectRating(project_id: number){
   return handleErrors(
     useQuery(
       supabase
         .from("project_ratings")
         .select( "project_id, user_id, rating")
+        .eq("project_id", project_id)
         .order("user_id"),
     ),
   );
