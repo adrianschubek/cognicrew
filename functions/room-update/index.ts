@@ -8,7 +8,11 @@
 import { serve } from "https://deno.land/std@0.177.1/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import { err } from "../utils.ts";
-import { PrivateRoomState, RoomClientUpdate } from "../rooms.ts";
+import {
+  PrivateRoomState,
+  PublicRoomState,
+  RoomClientUpdate,
+} from "../rooms.ts";
 
 serve(async (req) => {
   const start = performance.now();
@@ -39,7 +43,8 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData) return err("User is not in a room (rupd:unf)", 400);
+    if (roomError || !roomData)
+      return err("User is not in a room (rupd:unf)", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -47,18 +52,33 @@ serve(async (req) => {
     const body = (await req.json()) as RoomClientUpdate;
     console.log(body);
 
-    // fetch current round id
-    const { data: rdata, error: rdataerror } = await supabase
+    // fetch private state
+    const { data: rawPrivateState, error: rdataerror } = await supabase
+      .from("private_room_states")
+      .select("data")
+      .eq("room_id", rid)
+      .single();
+    const privateState = rawPrivateState?.data as PrivateRoomState;
+    console.log(privateState);
+
+    if (rdataerror || !rawPrivateState)
+      return err("Could not fetch game data (rupd:prv)", 500);
+
+    // fetch public state
+    const { data: rawPublicState, error: rdataerror2 } = await supabase
       .from("public_room_states")
       .select("data")
       .eq("room_id", rid)
       .single();
-    const roomdata = rdata?.data as PrivateRoomState;
-    console.log(roomdata);
+    const publicState = rawPublicState?.data as PublicRoomState;
+    console.log(publicState);
 
-    if (rdataerror || !rdata) return err("Could not fetch game data (rupd:prvnf)", 404);
+    if (rdataerror2 || !rawPublicState)
+      return err("Could not fetch game data (rupd:pub)", 500);
 
-    switch (body.type) {
+    
+      
+      switch (body.type) {
       case "flashcard-answer":
         return err("Not implemented", 501);
         break;
@@ -66,7 +86,8 @@ serve(async (req) => {
         // FIXME: should i save the literial input of the uiser. OR should save whether its correct??
         // latter.
 
-        // |> check if user answer is correct and save it to db
+        // |> check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
+        // store "true" or "false" in db
 
         // const { data, error } = await supabase.from("player_answers").upsert({
         //   room_id: rid,

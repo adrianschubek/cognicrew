@@ -70,7 +70,7 @@ serve(async (req) => {
     if (errorUsers) throw errorUsers;
 
     const body = (await req.json()) as {
-      type: 0 /* quiz */ | 1 /* flashcard */;
+      type: 1 /* quiz */ | 0 /* flashcard */;
       sets: number[];
       roundDuration: number;
       numberOfRounds: number;
