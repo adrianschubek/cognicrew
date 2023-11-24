@@ -120,7 +120,7 @@ serve(async (req) => {
     const privateState: PrivateRoomState = {
       gameData: {
         exercises:
-          body.type === 0
+          body.type === 1
             ? gamedata.sets
                 .map((set) => set.exercises)
                 .flat()
@@ -140,7 +140,7 @@ serve(async (req) => {
                 }))
             : [],
         flashcards:
-          body.type === 1
+          body.type === 0
             ? gamedata.sets
                 .map((set) => set.flashcards)
                 .flat()
@@ -151,20 +151,7 @@ serve(async (req) => {
                   answer: flashcard.answer,
                 }))
             : [],
-      },
-      /* playerAnswers: users.map((user) => ({
-        id: user.id,
-        exercises:
-          body.type === 0
-            ? Array(gamedata.sets.flatMap((x) => x.exercises).length).fill(null)
-            : [],
-        flashcards:
-          body.type === 1
-            ? Array(gamedata.sets.flatMap((x) => x.flashcards).length).fill(
-                null,
-              )
-            : [],
-      // })), */
+      }
     };
     console.log(privateState);
 
