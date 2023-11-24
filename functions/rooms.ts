@@ -94,6 +94,9 @@ export type PrivateRoomState = {
   };
   /**
    * submitted answers by players
+   * REMOVE THIS
+   * //FIXME: move to seperate table => easier
+   * @deprecated use external table
    */
   playerAnswers: {
     /**
@@ -105,9 +108,10 @@ export type PrivateRoomState = {
      */
     exercises: {
       /**
-       * question id
+       * question index
+       *  @deprecated not needed. for index use array
        */
-      id: number;
+      // idx: number;
       /**
        * which indices from possible answers were selected by user
        */
@@ -118,9 +122,10 @@ export type PrivateRoomState = {
      */
     flashcards: {
       /**
-       * flashcard id
+       * flashcard index
+       * @deprecated not needed. for index use array
        */
-      id: number;
+      // idx: number;
       /**
        * answer by user
        */

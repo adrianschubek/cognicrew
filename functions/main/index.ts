@@ -38,6 +38,9 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
+
+// listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
+
 setInterval(async () => {
   const start = performance.now();
   // TODO: main game state loop here
@@ -50,6 +53,22 @@ setInterval(async () => {
   const publicRoomStates = (pubRoomStatesObj ?? []).map(
     (pr) => pr.data,
   ) as PublicRoomState[];
+
+  /**  // FIXME: race condition wenn mehre edge fucntin aufrufen und JSON updaten -> besser queue? 
+    -> JSONB ok and update though postgres jsonb functions -> supabase doesnt support jsonb functions! -> pg function
+    das hier main loop ok. nur bei answer updaten from clients race condition (!)
+
+    lösung?? für updates von client pg fucntion callen die mit SELECT * FOR UPDATE die rows locked ???
+    client callen edge function -> edge function callt pg function die row lockt und updatet. ????
+    => wahrscheinlich beste idee. 
+
+    solved: revoke all: wie pg function nur callable from server edge function machen
+
+    alternative: TRANSACTION ISOLATION LEVEL SERILIZABLE
+
+
+    socket.io ?? zu viel aufwand.!!!
+    */
 
   for (const state of publicRoomStates) {
     // TODO: |> if players is not in room connected -> remove them from the players[]

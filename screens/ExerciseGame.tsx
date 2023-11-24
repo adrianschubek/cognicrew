@@ -24,8 +24,7 @@ import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
 import { useAuth } from "../providers/AuthProvider";
 import { NAVIGATION } from "../types/common";
-
-// Placeholder function to simulate fetching questions
+import { RoomClientUpdate } from "../functions/rooms";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
@@ -34,9 +33,9 @@ export default function ExerciseGame({ navigation }) {
   async function answer() {
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
-        type: "exercise_answer",
-        answerIndex: checked, // between 0 and 3 // TODO: get selected Answers
-      },
+        type: "exercise-answer",
+        answerIndex: checked , // between 0 and 3 // TODO: get selected Answers
+      } as RoomClientUpdate,
     });
   }
   const [checked, setChecked] = useState([] as number[]);
@@ -182,6 +181,7 @@ export default function ExerciseGame({ navigation }) {
             style={{ paddingVertical: 5, borderRadius: 10 }}
             mode="contained"
             onPress={answer}
+            /* TODO: autosubmit on timer end */
           >
             Submit Answer
           </Button>

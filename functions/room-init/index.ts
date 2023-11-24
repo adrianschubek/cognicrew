@@ -13,10 +13,7 @@ import {
   ScreenState,
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-
-function err(message: string, code: number = 400): Response {
-  return new Response(JSON.stringify({ message }), { status: code });
-}
+import { err } from "../utils.ts";
 
 serve(async (req) => {
   const start = performance.now();
@@ -46,7 +43,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError) return err("User is not in a room", 400);
+    if (roomError || !roomData) return err("User is not in a room", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -122,36 +119,52 @@ serve(async (req) => {
 
     const privateState: PrivateRoomState = {
       gameData: {
-        exercises: gamedata.sets
-          .map((set) => set.exercises)
-          .flat()
-          .map((exercise) => ({
-            id: exercise.id,
-            question: exercise.question,
-            answers: exercise.answers_exercises.map((answer) => answer.answer),
-            priority: exercise.priority,
-            /* get correct answer index */
-            correct: exercise.answers_exercises.reduce(
-              (acc, answer, index) =>
-                answer.is_correct ? [...acc, index] : acc,
-              [] as number[],
-            ),
-          })),
-        flashcards: gamedata.sets
-          .map((set) => set.flashcards)
-          .flat()
-          .map((flashcard) => ({
-            id: flashcard.id,
-            question: flashcard.question,
-            priority: flashcard.priority,
-            answer: flashcard.answer,
-          })),
+        exercises:
+          body.type === 0
+            ? gamedata.sets
+                .map((set) => set.exercises)
+                .flat()
+                .map((exercise) => ({
+                  id: exercise.id,
+                  question: exercise.question,
+                  answers: exercise.answers_exercises.map(
+                    (answer) => answer.answer,
+                  ),
+                  priority: exercise.priority,
+                  /* get correct answer index */
+                  correct: exercise.answers_exercises.reduce(
+                    (acc, answer, index) =>
+                      answer.is_correct ? [...acc, index] : acc,
+                    [] as number[],
+                  ),
+                }))
+            : [],
+        flashcards:
+          body.type === 1
+            ? gamedata.sets
+                .map((set) => set.flashcards)
+                .flat()
+                .map((flashcard) => ({
+                  id: flashcard.id,
+                  question: flashcard.question,
+                  priority: flashcard.priority,
+                  answer: flashcard.answer,
+                }))
+            : [],
       },
-      playerAnswers: users.map((user) => ({
+      /* playerAnswers: users.map((user) => ({
         id: user.id,
-        exercises: [],
-        flashcards: [],
-      })),
+        exercises:
+          body.type === 0
+            ? Array(gamedata.sets.flatMap((x) => x.exercises).length).fill(null)
+            : [],
+        flashcards:
+          body.type === 1
+            ? Array(gamedata.sets.flatMap((x) => x.flashcards).length).fill(
+                null,
+              )
+            : [],
+      // })), */
     };
     console.log(privateState);
 
@@ -204,7 +217,7 @@ serve(async (req) => {
     );
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
-  } catch (err) {
+  } catch (_) {
     return err("Something went wrong (room-init/uxpct)", 500);
   }
 });
