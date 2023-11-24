@@ -12,6 +12,7 @@ import {
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
   useAchievements,
+  useAlerts,
   useExercisesAndAnswers,
   useSoundSystem2,
   useUnlockAchievement,
@@ -25,18 +26,21 @@ import Timer from "../components/IngameComponents/Timer";
 import { useAuth } from "../providers/AuthProvider";
 import { NAVIGATION } from "../types/common";
 import { RoomClientUpdate } from "../functions/rooms";
+import { handleEdgeError } from "../utils/common";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
+  const { error: errrorAlert } = useAlerts();
   async function answer() {
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
         type: "exercise-answer",
-        answerIndex: checked , // between 0 and 3 // TODO: get selected Answers
+        answerIndex: checked, // between 0 and 3 // TODO: get selected Answers
       } as RoomClientUpdate,
     });
+    if (error) errrorAlert({ message: await handleEdgeError(error) });
   }
   const [checked, setChecked] = useState([] as number[]);
   const [quizComplete, setQuizComplete] = useState(false);

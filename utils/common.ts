@@ -74,7 +74,7 @@ export function sortByOrder(list: any[], order: orderByPrinciple) {
   });
 }
 
-export async function handleEdgeError(error: Error) {
+export async function handleEdgeError(error: Error): Promise<string> {
   return error instanceof FunctionsHttpError
     ? (await error.context.json()).message
     : JSON.stringify(error);
