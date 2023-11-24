@@ -1,26 +1,23 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import React, { Fragment, useEffect, useMemo, useState } from "react";
-import { Platform, ScrollView, TouchableOpacity,  } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
-import {
-    Divider,
-  FAB,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { StyleSheet, View, SafeAreaView } from 'react-native';
+import { Platform, ScrollView, TouchableOpacity } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
+import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useAlerts,
   useDeleteProject,
+  useProjectRating,
   useRemoveUserFromLearningProject,
   useSoundSystem1,
+  useUpsertProjectRating,
   useUsername,
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { HeaderBackButton } from "@react-navigation/elements";
-
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function RateProject({
   navigation,
@@ -33,7 +30,6 @@ export default function RateProject({
     };
   };
 }) {
-
   useSoundSystem1();
 
   const { edit: project } = route.params;
@@ -81,10 +77,6 @@ export default function RateProject({
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
-
-
-  
-
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
@@ -100,11 +92,10 @@ export default function RateProject({
       onError: (error) => {
         let err = "";
         switch (error.message) {
-          case 'E2':
-            err =
-              "X";
+          case "E2":
+            err = "X";
             break;
-          case 'E1':
+          case "E1":
             err = "X";
             break;
           default:
@@ -127,25 +118,27 @@ export default function RateProject({
       is_published: isPublished,
       tags,
     });
-  }; 
-  
+  };
+
   const renderStars = (numStars) => {
     const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
-    
+
     return (
       <View style={{ marginLeft: 20 }}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: "row" }}>
           {starsArray.map((star, index) => (
             <MaterialIcons
               key={index}
-              name={index < numStars ? 'star' : 'star-border'}
+              name={index < numStars ? "star" : "star-border"}
               size={32}
-              style={index < numStars ? styles.starSelected : styles.starUnselected}
+              style={
+                index < numStars ? styles.starSelected : styles.starUnselected
+              }
             />
           ))}
-           <Text style={[styles.heading2, { marginLeft: 20 }]}> 
-               1000 ratings
-           </Text>
+          <Text style={[styles.heading2, { marginLeft: 20 }]}>
+            {arrRatings && arrRatings[numStars-1]}
+          </Text>
         </View>
       </View>
     );
@@ -153,119 +146,245 @@ export default function RateProject({
 
   const [starRating, setStarRating] = useState(null);
 
+  const { trigger: upsertProjectRating } = useUpsertProjectRating();
+
+  const { user } = useAuth();
+
+  const projectId = useProjectStore((state) => state.projectId);
+
+  const { data: ratings } = useProjectRating();
+
+  const [sum, setSum] = useState(null);
+
+  async function calulateSum() {
+    let { data, error } = await supabase.rpc("sum_project_ratings");
+    console.log("Count");
+    console.log(data);
+
+    if (data) {
+      setSum(data);
+    }
+
+    if (error) console.error(error);
+    else console.log(data);
+
+    return data;
+  }
+
+  const [avg, setAvg] = useState(null);
+
+  async function calulateAverage() {
+    let { data, error } = await supabase.rpc("avg_project_rating");
+    console.log("Avg");
+    console.log(data);
+    if (data) {
+      setAvg(data);
+    }
+    if (error) console.error(error);
+    else console.log(data);
+  }
+
+  const [arrRatings, setArrRatings] = useState(null);
+
+  async function calculateIndividualRatings() {
+    let { data, error } = await supabase.rpc("get_particular_amount_ratings");
+    console.log("Partiular ratings:");
+    console.log(data);
+    const dataArray = Object.values(data);
+    console.log(dataArray)
+    if (dataArray) {
+      setArrRatings(dataArray);
+    }
+    if (error) console.error(error);
+    else console.log(data);
+  }
+  
+
+  async function calulateStatistics() {
+    calulateSum();
+    calulateAverage();
+    calculateIndividualRatings();
+  }
+
+
+
   return (
     <ScrollView>
+      <SafeAreaView style={styles.personalRating}>
+        <View style={styles.container}>
+          <Text style={styles.heading}>{"Tap to rate:"}</Text>
+          <View style={styles.stars}>
+            <TouchableOpacity
+              onPress={() => {
+                setStarRating(1);
+                upsertProjectRating({
+                  //@ts-expect-error
+                  project_id: projectId,
+                  user_id: user.id,
+                  rating: 1,
+                });
+              }}
+            >
+              <MaterialIcons
+                name={starRating >= 1 ? "star" : "star-border"}
+                size={32}
+                style={
+                  starRating >= 1 ? styles.starSelected : styles.starUnselected
+                }
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setStarRating(2);
+                upsertProjectRating({
+                  //@ts-expect-error
+                  project_id: projectId,
+                  user_id: user.id,
+                  rating: 2,
+                });
+              }}
+            >
+              <MaterialIcons
+                name={starRating >= 2 ? "star" : "star-border"}
+                size={32}
+                style={
+                  starRating >= 2 ? styles.starSelected : styles.starUnselected
+                }
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setStarRating(3);
+                upsertProjectRating({
+                  //@ts-expect-error
+                  project_id: projectId,
+                  user_id: user.id,
+                  rating: 3,
+                });
+              }}
+            >
+              <MaterialIcons
+                name={starRating >= 3 ? "star" : "star-border"}
+                size={32}
+                style={
+                  starRating >= 3 ? styles.starSelected : styles.starUnselected
+                }
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setStarRating(4);
+                upsertProjectRating({
+                  //@ts-expect-error
+                  project_id: projectId,
+                  user_id: user.id,
+                  rating: 4,
+                });
+              }}
+            >
+              <MaterialIcons
+                name={starRating >= 4 ? "star" : "star-border"}
+                size={32}
+                style={
+                  starRating >= 4 ? styles.starSelected : styles.starUnselected
+                }
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setStarRating(5);
+                upsertProjectRating({
+                  //@ts-expect-error
+                  project_id: projectId,
+                  user_id: user.id,
+                  rating: 5,
+                });
+              }}
+            >
+              <MaterialIcons
+                name={starRating >= 5 ? "star" : "star-border"}
+                size={32}
+                style={
+                  starRating >= 5 ? styles.starSelected : styles.starUnselected
+                }
+              />
+            </TouchableOpacity>
+            <Text style={[styles.heading, { marginLeft: 10 }]}>
+              {starRating
+                ? `${starRating} ${starRating > 1 ? "stars" : "star"}`
+                : "Unrated"}
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
 
-    <SafeAreaView style={styles.personalRating}>
+      <Divider />
+
       <View style={styles.container}>
-        <Text style={styles.heading}>{'Tap to rate:'}</Text>
-        <View style={styles.stars}>
-          <TouchableOpacity onPress={() => setStarRating(1)}>
-            <MaterialIcons
-              name={starRating >= 1 ? 'star' : 'star-border'}
-              size={32}
-              style={starRating >= 1 ? styles.starSelected : styles.starUnselected}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setStarRating(2)}>
-            <MaterialIcons
-              name={starRating >= 2 ? 'star' : 'star-border'}
-              size={32}
-              style={starRating >= 2 ? styles.starSelected : styles.starUnselected}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setStarRating(3)}>
-            <MaterialIcons
-              name={starRating >= 3 ? 'star' : 'star-border'}
-              size={32}
-              style={starRating >= 3 ? styles.starSelected : styles.starUnselected}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setStarRating(4)}>
-            <MaterialIcons
-              name={starRating >= 4 ? 'star' : 'star-border'}
-              size={32}
-              style={starRating >= 4 ? styles.starSelected : styles.starUnselected}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => setStarRating(5)}>
-            <MaterialIcons
-              name={starRating >= 5 ? 'star' : 'star-border'}
-              size={32}
-              style={starRating >= 5 ? styles.starSelected : styles.starUnselected}
-            />
-          </TouchableOpacity>
-          <Text style={[styles.heading, { marginLeft: 10 }]}>
-            {starRating ? `${starRating} ${starRating > 1 ? 'stars' : 'star'}` : 'Unrated'}
+        <Text style={styles.heading}>{"Statistics:"}</Text>
+
+        <Button onPress={() => calulateStatistics()}>Show statistics</Button>
+
+        <View style={styles.box}>
+          <Text style={[styles.heading2, { marginLeft: 20 }]}>
+            {"Total number of ratings:"}
           </Text>
+          <Text style={[styles.heading2, { marginLeft: 20, color: "red" }]}>
+              {sum}
+          </Text>
+          <Text style={[styles.heading2, { marginLeft: 20 }]}>
+            {"Project's average rating:"}
+          </Text>
+          <View style={{ marginLeft: 20 }}>
+            <View style={styles.stars}>
+              <MaterialIcons
+                name={avg >= 1 ? "star" : "star-border"}
+                size={32}
+                style={avg >= 1 ? styles.starSelected : styles.starUnselected}
+              />
+              <MaterialIcons
+                name={avg >= 2 ? "star" : "star-border"}
+                size={32}
+                style={avg >= 2 ? styles.starSelected : styles.starUnselected}
+              />
+
+              <MaterialIcons
+                name={avg >= 3 ? "star" : "star-border"}
+                size={32}
+                style={avg >= 3 ? styles.starSelected : styles.starUnselected}
+              />
+
+              <MaterialIcons
+                name={avg >= 4 ? "star" : "star-border"}
+                size={32}
+                style={avg >= 4 ? styles.starSelected : styles.starUnselected}
+              />
+
+              <MaterialIcons
+                name={avg >= 5 ? "star" : "star-border"}
+                size={32}
+                style={avg >= 5 ? styles.starSelected : styles.starUnselected}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.box}>
+          <Text style={[styles.heading2, { marginLeft: 20 }]}>
+            {"Amount of particular ratings:"}
+          </Text>
+
+          {renderStars(1)}
+          {renderStars(2)}
+          {renderStars(3)}
+          {renderStars(4)}
+          {renderStars(5)}
         </View>
       </View>
-    </SafeAreaView>
 
-    <Divider />
+      <Divider />
 
-    
-
-    <View style={styles.container}>
-        <Text style={styles.heading}>{'Statistics:'}</Text>
-
-        <View style={styles.box}>
-            <Text style={[styles.heading2, { marginLeft: 20 }]}>{'Total number of ratings:'}</Text>
-            <Text style={[styles.heading2, { marginLeft: 20, color: 'red' }]}>{'200000'}</Text>
-            <Text style={[styles.heading2, { marginLeft: 20 }]}>{'Amount of stars:'}</Text>
-            <View style={{marginLeft:20}}>
-                <View style={styles.stars}>
-                        <MaterialIcons
-                        name={'star-border'}
-                        size={32}
-                        style={styles.starUnselected}
-                        />
-                    
-                        <MaterialIcons
-                        name={'star-border'}
-                        size={32}
-                        style={styles.starUnselected}
-                        />
-                
-                        <MaterialIcons
-                       name={'star-border'}
-                       size={32}
-                       style={styles.starUnselected}
-                        />
-                
-                        <MaterialIcons
-                        name={'star-border'}
-                        size={32}
-                        style={styles.starUnselected}
-                        />
-                
-                        <MaterialIcons
-                        name={'star-border'}
-                        size={32}
-                        style={styles.starUnselected}
-                        />
-    
-                </View>
-            </View>
-        </View>
-
-        <View style={styles.box}>
-                <Text style={[styles.heading2, { marginLeft: 20 }]}>
-                    {'Amount of particular ratings:'}
-                </Text>
-                
-                {renderStars(1)}
-                {renderStars(2)}
-                {renderStars(3)}
-                {renderStars(4)}
-                {renderStars(5)}
-        </View>
-
-    </View>
-    
-    <Divider />
-
-       {(!project || project?.owner_id === myid) && (
+      {(!project || project?.owner_id === myid) && (
         <FAB
           icon={"check"}
           color={theme.colors.onPrimary}
@@ -299,20 +418,19 @@ const styles = StyleSheet.create({
 
   box: {
     borderWidth: 1, // Border width
-    borderColor: '#000', // Border color (you can use any color value)
+    borderColor: "#000", // Border color (you can use any color value)
     borderRadius: 8, // Border radius to round the corners (optional)
     padding: 10, // Padding inside the box (optional)
     marginBottom: 15,
   },
 
-
   personalRating: {
-    flex: 0.5, 
-    flexDirection: "row" ,
+    flex: 0.5,
+    flexDirection: "row",
   },
   heading2: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
 
@@ -321,17 +439,17 @@ const styles = StyleSheet.create({
   },
   heading: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   stars: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
   },
   starUnselected: {
-    color: '#aaa',
+    color: "#aaa",
   },
   starSelected: {
-    color: '#ffb300',
+    color: "#ffb300",
   },
 });

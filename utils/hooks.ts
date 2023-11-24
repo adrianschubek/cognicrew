@@ -164,6 +164,30 @@ export function useInsertFriend() {
   );
 }
 
+//Project ratings
+
+export function useUpsertProjectRating(){
+  return handleErrors(
+    useUpsertMutation(
+      supabase.from("project_ratings"),
+      ["project_id","user_id"],
+      "project_id, user_id, rating",
+    ),
+  );
+}
+
+export function useProjectRating(){
+  return handleErrors(
+    useQuery(
+      supabase
+        .from("project_ratings")
+        .select( "project_id, user_id, rating")
+        .order("user_id"),
+    ),
+  );
+}
+
+
 export function useAchievements() {
   return handleErrors(
     useQuery(
