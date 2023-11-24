@@ -43,7 +43,8 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData) return err("User is not in a room (rint:unf)", 400);
+    if (roomError || !roomData)
+      return err("User is not in a room [rint:unf]", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -57,7 +58,10 @@ serve(async (req) => {
       .eq("is_ingame", false)
       .single();
     if (error)
-      return err("User is not host of room or room is already ingame (rint:unhig)", 400);
+      return err(
+        "User is not host of room or room is already ingame [rint:unhig]",
+        400,
+      );
 
     const pid: number = data.project_id;
     console.log(data);
@@ -70,6 +74,10 @@ serve(async (req) => {
     if (errorUsers) throw errorUsers;
 
     const body = (await req.json()) as {
+      /**
+       * 0 = flashcard
+       * 1 = quiz
+       */
       type: 1 /* quiz */ | 0 /* flashcard */;
       sets: number[];
       roundDuration: number;
@@ -78,12 +86,13 @@ serve(async (req) => {
     console.log(body);
 
     // validate body
-    if (body.type !== 0 && body.type !== 1) return err("Invalid type (rint:bvl)", 400);
-    if (body.sets.length === 0) return err("No sets selected (rint:bvl)", 400);
+    if (body.type !== 0 && body.type !== 1)
+      return err("Invalid type [rint:bvl0]", 400);
+    if (body.sets.length === 0) return err("No sets selected [rint:bvl1]", 400);
     if (body.roundDuration <= 0 || body.roundDuration > 600)
-      return err("Invalid round duration (rint:bvl)", 400);
+      return err("Invalid round duration [rint:bvl2]", 400);
     if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
-      return err("Invalid number of rounds (rint:bvl)", 400);
+      return err("Invalid number of rounds [rint:bvl3]", 400);
 
     // private game state
     const { data: gamedata, error: errorGamedata } = await supabase
@@ -116,6 +125,22 @@ serve(async (req) => {
     if (errorGamedata || !gamedata) {
       throw errorGamedata;
     }
+
+    // check if sets contain at least one exercise/flashcard
+    if (
+      (body.type === 1 &&
+        gamedata.sets.map((set) => set.exercises).length === 0) ||
+      (body.type === 0 &&
+        gamedata.sets.map((set) => set.flashcards).length === 0)
+    )
+      return err(
+        `Selected sets do not contain any ${
+          body.type === 1 ? "questions" : "flashcards"
+        } [rint:semp]`,
+        400,
+      );
+
+    // TODO: sort questions/flashacards randomly by priority
 
     const privateState: PrivateRoomState = {
       gameData: {
@@ -151,7 +176,7 @@ serve(async (req) => {
                   answer: flashcard.answer,
                 }))
             : [],
-      }
+      },
     };
     console.log(privateState);
 
@@ -205,6 +230,6 @@ serve(async (req) => {
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong (rint:uxpct)", 500);
+    return err("Something went wrong [rint:uxpct]", 500);
   }
 });

@@ -44,7 +44,7 @@ serve(async (req) => {
       .eq("id", user?.id)
       .single();
     if (roomError || !roomData)
-      return err("User is not in a room (rupd:unf)", 400);
+      return err("User is not in a room [rupd:unf]", 400);
 
     const rid: string = roomData.room_id;
     console.log(rid);
@@ -62,7 +62,7 @@ serve(async (req) => {
     console.log(privateState);
 
     if (rdataerror || !rawPrivateState)
-      return err("Could not fetch game data (rupd:prv)", 500);
+      return err("Could not fetch game data [rupd:prv]", 500);
 
     // fetch public state
     const { data: rawPublicState, error: rdataerror2 } = await supabase
@@ -74,13 +74,11 @@ serve(async (req) => {
     console.log(publicState);
 
     if (rdataerror2 || !rawPublicState)
-      return err("Could not fetch game data (rupd:pub)", 500);
+      return err("Could not fetch game data [rupd:pub]", 500);
 
-    
-      
-      switch (body.type) {
+    switch (body.type) {
       case "flashcard-answer":
-        return err("Not implemented", 501);
+        return err("Not implemented [rupd:nimpl]", 501);
         break;
       case "exercise-answer": {
         // FIXME: should i save the literial input of the uiser. OR should save whether its correct??
@@ -97,18 +95,18 @@ serve(async (req) => {
         break;
       }
       case "reset-lobby":
-        return err("Not implemented", 501);
+        return err("Not implemented [rupd:nimpl]", 501);
         break;
       case "skip-round":
-        return err("Not implemented", 501);
+        return err("Not implemented [rupd:nimpl]", 501);
         break;
       default:
-        return err(`Invalid action "${(body as any).type}"`, 400);
+        return err(`Invalid action "${(body as any).type} [rupd:ivact]"`, 400);
     }
 
     console.log(`room-update: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong (rupd:uxpct)", 500);
+    return err("Something went wrong [rupd:uxpct]", 500);
   }
 });
