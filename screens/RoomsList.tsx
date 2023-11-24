@@ -129,7 +129,7 @@ export default function RoomsList() {
       .channel("list-rooms-tracker")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "tracker" },
+        { event: "*", schema: "public", table: "tracker", filter: "key=eq.rooms" },
         (payload) => {
           mutate();
           getFriends();
