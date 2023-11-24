@@ -139,7 +139,7 @@ export default function RateProject({
             />
           ))}
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {arrRatings && arrRatings[numStars-1]}
+          {arrRatings[numStars - 1]} {arrRatings[numStars - 1] === 1 ? "time" : "times"}
           </Text>
         </View>
       </View>
@@ -199,6 +199,14 @@ export default function RateProject({
     else console.log(data);
   }
 
+  async function calculateStatistics(){
+    calculateSum();
+    calculateAvg();
+    calculateIndividualRatings();
+  }
+ 
+
+
 
 
   useEffect(() => {
@@ -224,12 +232,22 @@ export default function RateProject({
     };
   });
 
-  async function calculateStatistics(){
-    calculateSum();
-    calculateAvg();
-    calculateIndividualRatings();
+
+ const handleStarPress = (rating) => {
+  if (rating === starRating) {
+    setStarRating(0);
+  } else {
+    setStarRating(rating);
   }
- 
+
+  upsertProjectRating({
+    //@ts-expect-error
+    project_id: projectId,
+    user_id: user.id,
+    rating: rating === starRating ? 0 : rating,
+  });
+};
+
 
   return (
     <ScrollView>
@@ -239,14 +257,7 @@ export default function RateProject({
           <View style={styles.stars}>
             <TouchableOpacity
               onPress={() => {
-                setStarRating(1);
-                upsertProjectRating({
-                  //@ts-expect-error
-                  project_id: projectId,
-                  user_id: user.id,
-                  rating: 1,
-                });
-              }}
+              handleStarPress(1)}}
             >
               <MaterialIcons
                 name={starRating >= 1 ? "star" : "star-border"}
@@ -259,13 +270,7 @@ export default function RateProject({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setStarRating(2);
-                upsertProjectRating({
-                  //@ts-expect-error
-                  project_id: projectId,
-                  user_id: user.id,
-                  rating: 2,
-                });
+                handleStarPress(2)
               }}
             >
               <MaterialIcons
@@ -278,13 +283,7 @@ export default function RateProject({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setStarRating(3);
-                upsertProjectRating({
-                  //@ts-expect-error
-                  project_id: projectId,
-                  user_id: user.id,
-                  rating: 3,
-                });
+                handleStarPress(3)
               }}
             >
               <MaterialIcons
@@ -297,13 +296,7 @@ export default function RateProject({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setStarRating(4);
-                upsertProjectRating({
-                  //@ts-expect-error
-                  project_id: projectId,
-                  user_id: user.id,
-                  rating: 4,
-                });
+                handleStarPress(4)
               }}
             >
               <MaterialIcons
@@ -316,14 +309,7 @@ export default function RateProject({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                setStarRating(5);
-                upsertProjectRating({
-                  //@ts-expect-error
-                  project_id: projectId,
-                  user_id: user.id,
-                  rating: 5,
-                });
-                //setRefetchIndex(refetchIndex + 1);
+                handleStarPress(5)
               }}
             >
               <MaterialIcons
@@ -389,6 +375,9 @@ export default function RateProject({
                 size={32}
                 style={avg >= 5 ? styles.starSelected : styles.starUnselected}
               />
+              <Text style={[styles.heading2, { marginLeft: 20 }]}>
+                {avg === 1 ? "1 star" : `${avg} stars`}
+              </Text>
             </View>
           </View>
         </View>
