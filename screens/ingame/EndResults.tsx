@@ -1,10 +1,11 @@
 import { View } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
 import { PublicRoomState, ScreenState } from "../../functions/rooms";
 import { useAlerts } from "../../utils/hooks";
 import { useEffect, useMemo, useState } from "react";
 import Animated, {
   useAnimatedStyle,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
@@ -64,6 +65,11 @@ export default function EndResults({
   const allPlayers = [...otherPlayers, self];
   //lowest to highest
   const sortedPlayers = allPlayers.sort((p1, p2) => p1.score - p2.score);
+
+  //add attribute position to players
+  sortedPlayers.forEach((player, index) => {
+    player.position = sortedPlayers.length - index;
+  });
   function reSortPlayers(
     players /*players already have to be sorted ascending by score*/,
   ) {
@@ -97,7 +103,7 @@ export default function EndResults({
       style={{
         flex: 1,
         justifyContent: "flex-start",
-        marginTop: 200,
+        marginTop: 100,
         alignItems: "center",
       }}
     >
@@ -112,16 +118,15 @@ export default function EndResults({
             flexDirection: "row",
             gap: 10,
             alignItems: "flex-end",
-            //backgroundColor: "red",
           }}
         >
-          {reSortedPlayers.map((player) => {
+          {reSortedPlayers.map((player, index) => {
             const height = useSharedValue(0);
             useEffect(() => {
               height.value = withTiming(
                 (player.score < 10 ? 10 : player.score) * 2 * maxheight,
                 {
-                  duration: 1000,
+                  duration: 1200,
                 },
               );
             }, []);
@@ -131,63 +136,82 @@ export default function EndResults({
               };
             });
             return (
-              <Animated.View
+              <View
                 key={player.id}
-                style={[
-                  {
-                    width: 60,
-
-                    backgroundColor: theme.colors.primary,
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                  },
-                  animatedStyles,
-                ]}
+                style={{
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 10,
+                }}
               >
-                <Text
-                  variant="bodyMedium"
-                  style={{ color: theme.colors.background }}
+                <Avatar.Icon icon="account" size={35} />
+                <Animated.View
+                  key={index}
+                  style={[
+                    {
+                      width: 65,
+                      backgroundColor: theme.colors.primary,
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    },
+                    animatedStyles,
+                  ]}
                 >
-                  {player.username}
-                </Text>
-              </Animated.View>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.background, paddingBottom: 4 }}
+                  >
+                    {player.position}
+                  </Text>
+                </Animated.View>
+              </View>
             );
           })}
         </View>
       </View>
-      {/* <Text variant="headlineSmall" style={{ fontWeight: "bold" }}>
-        Your score: {self.score}
-      </Text>
-      <Text
-        variant="bodyMedium"
-        style={{ textAlign: "center", marginBottom: 70 }}
-      >
-        You are more important than the others, {"\n"}thats why your score is
-        big and bold
-      </Text>
-      {otherPlayers.map((player) => (
-        <Text variant="titleMedium" key={player.id}>
-          {player.username}s score: {player.score} {"\n \n"}
-        </Text>
-      ))} */}
+      <View style={{ flexDirection: "column", gap: 10, marginTop: 40 }}>
+        {sortedPlayers.reverse().map((player, index) => {
+          //const height = useSharedValue(0);
+          useEffect(() => {
+            //animation here
+          }, []);
+          /* const animatedStyles = useAnimatedStyle(() => {
+            return {
+              //styles changes here
+            };
+          });*/
+          return (
+            <Card
+              key={index}
+              style={[{ width: 350, height: 70 } /*animatedStyles*/]}
+            >
+              <Card.Content
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-start",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                <Text style={{ textAlign: "center" }}>{index + 1}th </Text>
+                <Avatar.Icon icon="account" size={35} />
+                <View
+                  style={{
+                    marginLeft: 5,
+                    justifyContent: "flex-start",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Text style={{ textAlign: "center" }}>{player.username}</Text>
+                  <Text style={{ textAlign: "center" }}>
+                    Score: {player.score}
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
+          );
+        })}
+      </View>
     </View>
   );
 }
-/*
- props.roomState.players.map((player) => player.score)) }*/
-/*
- <View style={{}}>
-      {
-        //props.roomState.screen == ScreenState.ROUND_RESULTS ? (
-        <Text>
-          Your score:{" "}
-          {
-            props.roomState.players.find(
-              (player) => player.id === props.user_id,
-            ).score
-          }
-        </Text>
-        //) : null
-      }
-    </View>
-*/
