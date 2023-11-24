@@ -29,7 +29,7 @@ export default function GuestLobby() {
   const { warning } = useAlerts();
 
   const [userList, setUserList] = React.useState<string[]>([]);
-  useFocusEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
         setUserList(userNames.data.map((user) => user.username));
@@ -46,17 +46,17 @@ export default function GuestLobby() {
     };
     fetchData();
     const roomsTracker = supabase
-      .channel("list-rooms-tracker")
+      .channel("list-guestlobby-tracker")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
           table: "tracker",
-          filter: "room_id=eq." + room?.id,
+          filter: "key=eq.rooms",
         },
         (payload) => {
-          console.log("refetching lobby members");
+          console.log("refetching lobby members (guest)");
           fetchData();
         },
       )
@@ -64,7 +64,7 @@ export default function GuestLobby() {
     return () => {
       roomsTracker.unsubscribe();
     };
-  });
+  }, []);
 
   const navigation = useNavigation();
   useEffect(() => {
@@ -76,9 +76,10 @@ export default function GuestLobby() {
       e.preventDefault();
       // Prompt the user before leaving the screen
       confirm({
+        key: "leave-room",
         icon: "location-exit",
         title: "Leave room?",
-        message: "Are you sure you want to leave this room?",
+        message: "Are you sure you want to leave this room? (guest lobby)",
         okText: "Leave",
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");

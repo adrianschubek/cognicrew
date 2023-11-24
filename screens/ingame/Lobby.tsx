@@ -20,6 +20,7 @@ import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { handleEdgeError } from "../../utils/common";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -41,17 +42,25 @@ export default function Lobby({ navigation }) {
       });
     };
     fetchData();
-    const roomsTracker = supabase
+    const tracker = supabase
       .channel("list-rooms-tracker")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "tracker" },
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "key=eq.rooms",
+        },
         (payload) => {
-          console.log("refetching lobby members");
+          console.log("refetching lobby members (lobby)");
           fetchData();
         },
       )
       .subscribe();
+    return () => {
+      tracker.unsubscribe();
+    };
   }, []);
   useEffect(() => {
     navigation.setOptions({
@@ -62,6 +71,7 @@ export default function Lobby({ navigation }) {
       e.preventDefault();
       // Prompt the user before leaving the screen
       confirm({
+        key: "leave-room",
         icon: "location-exit",
         title: "Leave room?",
         message: "Are you sure you want to leave this room?",
