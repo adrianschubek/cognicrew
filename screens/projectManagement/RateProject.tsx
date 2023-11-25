@@ -40,7 +40,6 @@ export default function RateProject({
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
-  const myid = useAuth().user.id;
 
   useEffect(() => {
     navigation.setOptions({
@@ -67,60 +66,7 @@ export default function RateProject({
       ),
     });
   }, [navigation]);
-  const { trigger: removeUserFromLearningProject } =
-    useRemoveUserFromLearningProject();
-  const { trigger: deleteProject } = useDeleteProject();
-  const [title, setTitle] = useState(project?.name ?? "");
-  const [description, setDescription] = useState(project?.description ?? "");
-  const [group, setGroup] = useState(project?.group ?? "");
-  const [isPublished, setIsPublished] = useState(
-    project?.is_published ?? false,
-  );
-  const [owner, setOwner] = useState(username.data);
-  const [tags, setTags] = useState(project?.tags ?? "");
 
-  const { isMutating, trigger: upsert } = useUpsertMutation(
-    supabase.from("learning_projects"),
-    ["id"],
-    "id,name,description,group,is_published,tags",
-    {
-      onSuccess: () => {
-        success({
-          title: `Saved`,
-          message: "Thank you for rating this project!",
-          okAction: () => navigation.goBack(),
-        });
-      },
-      onError: (error) => {
-        let err = "";
-        switch (error.message) {
-          case "E2":
-            err = "X";
-            break;
-          case "E1":
-            err = "X";
-            break;
-          default:
-            err = error.message;
-        }
-        errorAlert({
-          message: err,
-        });
-      },
-    },
-  );
-
-  const save = () => {
-    upsert({
-      // @ts-expect-error
-      id: project?.id,
-      name: title,
-      description,
-      group,
-      is_published: isPublished,
-      tags,
-    });
-  };
 
   const renderStars = (numStars) => {
     const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
@@ -128,7 +74,7 @@ export default function RateProject({
     return (
       <View style={{ marginLeft: 20 }}>
         <View style={{ flexDirection: "row" }}>
-          {starsArray.map((star, index) => (
+          {starsArray.map(( index) => (
             <MaterialIcons
               key={index}
               name={index < numStars ? "star" : "star-border"}
@@ -174,7 +120,7 @@ export default function RateProject({
             />
           ))}
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {avg === 1 ? '1 star' : `${avg} stars`}
+            {avg == null ? ("Not yet rated"):(avg === 1 ? '1 star' : `${avg} stars`)}
           </Text>
         </View>
       </View>
@@ -190,11 +136,13 @@ export default function RateProject({
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
+
+
+  const {trigger: deleteProjectRating} = useDeleteProject();
+
   
   async function getUsersRating() {
     let { data, error } = await supabase.rpc("get_users_rating_for_project", {project_id_param: projectId, user_id_param: user.id});
-    console.log("User's Id:");
-    console.log(data);
     if (data) {
       setStarRating(data);
     }
@@ -251,7 +199,7 @@ export default function RateProject({
   );
 
   useFocusEffect(() => {
-    const roomsTracker = supabase
+    const ratingsTracker = supabase
       .channel("list-ratings-tracker")
       .on(
         "postgres_changes",
@@ -263,7 +211,7 @@ export default function RateProject({
       )
       .subscribe();
     return () => {
-      roomsTracker.unsubscribe();
+      ratingsTracker.unsubscribe();
     };
   });
 
@@ -271,6 +219,7 @@ export default function RateProject({
  const handleStarPress = (rating) => {
   if (rating === starRating) {
     setStarRating(0);
+    deleteProjectRating({user_id: user.id, project_id: projectId});
   } else {
     setStarRating(rating);
   }
@@ -375,7 +324,7 @@ export default function RateProject({
             {"Total number of ratings:"}
           </Text>
           <Text style={[styles.heading2, { marginLeft: 20, color: "red" }]}>
-              {sum}
+              {sum == null ? "0" : sum}
           </Text>
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
             {"Project's average rating:"}
@@ -399,24 +348,6 @@ export default function RateProject({
 
       <Divider />
 
-      {(!project || project?.owner_id === myid) && (
-        <FAB
-          icon={"check"}
-          color={theme.colors.onPrimary}
-          style={{
-            position: "absolute",
-            margin: 16,
-            right: 0,
-            bottom: 0,
-            backgroundColor: theme.colors.primary,
-          }}
-          label={"Save"}
-          onPress={() => {
-            save();
-          }}
-          disabled={isMutating}
-        />
-      )}
     </ScrollView>
   );
 }
