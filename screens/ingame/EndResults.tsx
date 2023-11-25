@@ -187,8 +187,13 @@ export default function EndResults({
             transform: [{ translateY: withSpring(translateY.value * 2) }],
           }));
           return (
-            <Animated.View style={[{}, animatedStyles]}>
-              <Card key={index} mode="outlined"style={[{ width: 350, height: 70, borderColor:theme.colors.primary }]}>
+            <Animated.View key={index} style={[{}, animatedStyles]}>
+              <Card
+                mode="outlined"
+                style={[
+                  { width: 350, height: 70, borderColor: theme.colors.primary },
+                ]}
+              >
                 <Card.Content
                   style={{
                     flexDirection: "row",
@@ -197,7 +202,16 @@ export default function EndResults({
                     gap: 5,
                   }}
                 >
-                  <Text style={{ textAlign: "center" }}> {index + 1}{index === 1 ? "nd" : "th"} </Text>
+                  <Text style={{ textAlign: "center" }}>
+                    {index + 1}
+                    {index === 0
+                      ? "st"
+                      : index === 1
+                      ? "nd"
+                      : index === 2
+                      ? "rd"
+                      : "th"}{" "}
+                  </Text>
                   <Avatar.Icon icon="account" size={35} />
                   <View
                     style={{
