@@ -62,7 +62,7 @@ export default function Login({ navigation }) {
           onChangeText={(text) => setEmail(text)}
         />
         <TextInput
-          style={[styles.dataInput, { marginTop: responsiveHeight(1) }]}
+          style={[styles.dataInput, { marginTop: 8 }]}
           label="Password"
           placeholder="your password"
           onSubmitEditing={async () => {
@@ -121,6 +121,7 @@ export default function Login({ navigation }) {
                         });
 
                         alert({
+                          cover: true,
                           icon: "lock-reset",
                           title: "Reset password",
                           message: "Enter your new password:",
@@ -190,7 +191,7 @@ export default function Login({ navigation }) {
               alignItems: "center",
               flexDirection: "row",
               marginLeft: "auto",
-              marginTop: responsiveHeight(0.5),
+              marginTop: 4,
             }}
             onPress={() => {
               if (!rememberMe) {
@@ -219,7 +220,7 @@ export default function Login({ navigation }) {
           </TouchableOpacity>
         </View>
         <Button
-          style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+          style={[styles.dataInput, { marginTop: 12 }]}
           mode="contained"
           disabled={loginDisabled}
           onPress={async () => {
@@ -238,7 +239,7 @@ export default function Login({ navigation }) {
           Login
         </Button>
         <Button
-          style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
+          style={[styles.dataInput, { marginTop: 12 }]}
           mode="contained-tonal"
           onPress={() => {
             alert({
