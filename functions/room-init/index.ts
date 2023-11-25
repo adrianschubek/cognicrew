@@ -180,6 +180,7 @@ serve(async (req) => {
     };
     console.log(privateState);
 
+    // load first question/flashcard
     const publicState: PublicRoomState = {
       players: users.map((user) => ({
         id: user.id,
@@ -188,12 +189,17 @@ serve(async (req) => {
         currentCorrect: false,
         currentDone: false,
       })),
-      screen: ScreenState.INGAME,
-      game: GameState.EXERCISES,
+      screen:
+        ScreenState.INGAME /* TODO: maybe show pre lobby first for few seconds? */,
+      game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
       totalRounds: 1,
       round: 1,
-      question: "What is the capital of Berlin?",
-      possibleAnswers: ["Berlin", "Paris", "London", "New York"],
+      question:
+        body.type === 1
+          ? privateState.gameData.exercises[0].question
+          : privateState.gameData.flashcards[0].question,
+      possibleAnswers:
+        body.type === 1 ? privateState.gameData.exercises[0].answers : [],
       roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
     };
     console.log(publicState);
