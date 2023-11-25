@@ -18,6 +18,7 @@ import {
   useRemoveUserFromLearningProject,
   useSoundSystem1,
   useUpsertProjectRating,
+  useUserRating,
   useUsername,
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
@@ -83,10 +84,12 @@ export default function RateProject({
           {starsArray.map((index) => (
             <MaterialIcons
               key={index}
-              name={index-1 < numStars ? "star" : "star-border"}
+              name={index - 1 < numStars ? "star" : "star-border"}
               size={32}
               style={
-                index-1 < numStars ? styles.starSelected : styles.starUnselected
+                index - 1 < numStars
+                  ? styles.starSelected
+                  : styles.starUnselected
               }
             />
           ))}
@@ -146,17 +149,7 @@ export default function RateProject({
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
-
-  async function getUsersRating() {
-    let { data, error } = await supabase.rpc("get_users_rating_for_project", {
-      project_id_param: projectId,
-      user_id_param: user.id,
-    });
-    if (data) {
-      setOldRating(data);
-    }
-  }
-
+  const { data, isLoading, error, mutate } = useUserRating(user.id, projectId);
   async function calculateSum() {
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
@@ -181,7 +174,6 @@ export default function RateProject({
       setAvg(data);
       //console.log(data);
     }
-
   }
 
   async function calculateIndividualRatings() {
@@ -199,7 +191,7 @@ export default function RateProject({
     calculateAvg();
     calculateIndividualRatings();
   }
-  
+
   useEffect(() => {
     if (!data) return;
     setRating(data);
@@ -218,7 +210,7 @@ export default function RateProject({
           filter: "key=eq.rate",
         },
         (payload) => {
-          getUsersRating();
+          mutate();
           calculateStatistics();
         },
       )
