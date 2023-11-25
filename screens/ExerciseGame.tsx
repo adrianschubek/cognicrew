@@ -137,6 +137,7 @@ export default function ExerciseGame({ navigation }) {
     return <LoadingOverlay visible />;
   }
 
+  // TODO: pack alles in useMemo
   return (
     <>
       <ScrollView style={{ paddingTop: 20 }}>
