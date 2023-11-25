@@ -163,6 +163,10 @@ export type Alert = {
    */
   dismissable: boolean;
   /**
+   * Shows a cover behind the alert to hide the rest of the screen.
+   */
+  cover?: boolean;
+  /**
    * The action to perform when the "OK" button is clicked.
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
@@ -201,6 +205,7 @@ export const DEFAULT_ALERT: Alert = {
   okAction: () => {},
   cancelAction: () => {},
   fields: [],
+  cover: false,
 };
 
 export const DEFAULT_ALERT_INPUT: AlertField = {

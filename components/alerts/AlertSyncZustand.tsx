@@ -553,6 +553,14 @@ function AlertSyncZustand() {
       onDismiss={() => activeAlert && activeAlert.dismissable && next()}
       testID={(activeAlert && activeAlert.icon) ?? "" + "_alert"}
       style={{ zIndex: 999999, overflow: "scroll" }}
+      theme={{
+        colors: {
+          backdrop:
+            activeAlert && activeAlert.cover
+              ? theme.colors.background
+              : theme.colors.backdrop,
+        },
+      }}
     >
       <VirtualizedList
         renderItem={() => null}
