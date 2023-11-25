@@ -142,6 +142,7 @@ function MainTabs({ navigation }) {
   }, [room]);
   const { alert, warning } = useAlerts();
   useEffect(() => {
+    console.log(room?.id)
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
       .on(
@@ -150,7 +151,7 @@ function MainTabs({ navigation }) {
           event: "*",
           schema: "public",
           table: "public_room_states",
-          filter: "room_id=eq." + room?.id,
+          filter: `room_id=eq.${room?.id}`,
         },
         (payload) => {
           console.log("Room state update " + room?.id, payload);
