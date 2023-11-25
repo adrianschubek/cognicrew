@@ -196,6 +196,7 @@ serve(async (req) => {
         username: user.username,
         score: 0,
         currentCorrect: null,
+        currentTimeNeeded: null,
         // currentDone: null,
       })),
       screen:
