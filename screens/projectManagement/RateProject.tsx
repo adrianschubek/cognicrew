@@ -154,7 +154,10 @@ export default function RateProject({
     });
     if (data) {
       setSum(data);
-      console.log(data)
+      console.log(data);
+    } else  {
+      setSum(data);
+      console.log(data);
     }
   }
 
@@ -165,6 +168,9 @@ export default function RateProject({
     if (data) {
       data = data.toFixed(2);
       setAvg(data);
+    } else {
+      setAvg(data);
+      console.log(data);
     }
   }
 
@@ -189,7 +195,7 @@ export default function RateProject({
     calculateStatistics();
   }, []);
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const ratingsTracker = supabase
       .channel("list-ratings-tracker")
       .on(
@@ -203,13 +209,14 @@ export default function RateProject({
         (payload) => {
           getUsersRating();
           calculateStatistics();
+          console.log(payload);
         },
       )
       .subscribe();
     return () => {
       ratingsTracker.unsubscribe();
     };
-  }, []);
+  });
 
   const handleStarPress = (newRating) => {
     if (newRating === oldRating) {
