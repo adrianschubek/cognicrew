@@ -8,6 +8,7 @@ import { useEffect } from "react";
 
 //for testing purposes
 import { NAVIGATION } from "../types/common";
+import Timer from "../components/IngameComponents/Timer";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
@@ -49,6 +50,7 @@ export default function HomeScreen({ navigation }) {
         </Card>
       </View>
       {/* for testing purposes*/}
+      <Timer roundEndsAt={Date.now() + 10000}/>
       <Button
       style={{marginBottom: 20}}
         onPress={() => {
