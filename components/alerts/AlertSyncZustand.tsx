@@ -34,13 +34,28 @@ import {
 function AlertSyncZustand() {
   const activeAlert = useAlertsStore((state) => state.activeAlert);
   const alerts = useAlertsStore((state) => state.alerts);
-  const next = useAlertsStore((state) => state.next);
+  const _next = useAlertsStore((state) => state.next);
 
   const [values, setValues] = useState<string[]>([]);
   const [tempError, setTempError] = useState<string | null>(null);
   const [busy, setBusy] = useState<boolean>(false); // FIXME performance bottleneck. too many states
 
   const [tempValues, setTempValues] = useState<string[]>([]);
+
+  /**
+   * Temp fix for
+   * Problem:
+   *
+   * if alert A has 1 field. and alert b has 3 fields.
+   * opening alert 1 init values [""] THEN open alert b => short time ["",undefined,undefined] CRASH! (=> ["","",""])
+   */
+  const [initDone, setInitDone] = useState<boolean>(true);
+
+  const next = () => {
+    setInitDone(() => false);
+    // console.log("next...");
+    _next();
+  };
 
   useEffect(() => {
     if (!activeAlert && alerts?.length > 0) {
@@ -58,15 +73,19 @@ function AlertSyncZustand() {
       setTempError(() => null);
       setTempValues(() => activeAlert?.fields?.map(() => "") ?? []);
       setBusy(() => false);
+      // console.log("setinit " + JSON.stringify(values));
+      setInitDone(() => true);
     }
   }, [activeAlert]);
 
   const theme = useTheme();
 
   const getBody = () => {
+    // console.log("!!! " + JSON.stringify(values));
     if (
       !activeAlert ||
-      (activeAlert?.fields?.length !== 0 && values.length === 0)
+      (activeAlert?.fields?.length !== 0 && values.length === 0) ||
+      !initDone
     )
       return null;
     const {
@@ -516,6 +535,7 @@ function AlertSyncZustand() {
     tempError,
     tempValues,
     busy,
+    initDone,
   ]);
 
   // Fixed: inputvalues may not be set but activeAlert is set during first render. => undefined
