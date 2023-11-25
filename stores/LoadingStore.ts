@@ -7,5 +7,8 @@ type LoadingStore = {
 
 export const useLoadingStore = create<LoadingStore>((set) => ({
   loading: false,
+  /**
+   * Set the global loading state
+   */
   setLoading: (loading) => set({ loading }),
 }));

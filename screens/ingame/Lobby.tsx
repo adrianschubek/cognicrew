@@ -187,6 +187,7 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: async (values) => {
+                        setLoading(true);
                         const { data, error } = await supabase.functions.invoke(
                           "room-init",
                           {
@@ -198,6 +199,7 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
+                        setLoading(false);
                         if (error) return handleEdgeError(error);
                         console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME);

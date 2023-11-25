@@ -33,7 +33,10 @@ export default function ExerciseGame({ navigation }) {
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
   const { error: errrorAlert } = useAlerts();
+
+  const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
+    setIsInvoking(true);
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
         type: "exercise-answer",
@@ -41,14 +44,17 @@ export default function ExerciseGame({ navigation }) {
       } as RoomClientUpdate,
     });
     if (error) errrorAlert({ message: await handleEdgeError(error) });
+    setIsInvoking(false);
   }
   async function skipQuestion() {
+    setIsInvoking(true);
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
         type: "skip-round",
       } as RoomClientUpdate,
     });
     if (error) errrorAlert({ message: await handleEdgeError(error) });
+    setIsInvoking(false);
   }
   const [checked, setChecked] = useState([] as number[]);
   const [quizComplete, setQuizComplete] = useState(false);
@@ -169,6 +175,7 @@ export default function ExerciseGame({ navigation }) {
           <Button
             style={{ paddingVertical: 5, borderRadius: 10 }}
             mode="contained"
+            disabled={isInvoking || checked.length === 0}
             onPress={answer}
             /* TODO: autosubmit on timer end */
           >
@@ -186,7 +193,9 @@ export default function ExerciseGame({ navigation }) {
           }}
         >
           {/* Host only */}
-          <Button onPress={skipQuestion}>Skip question</Button>
+          <Button disabled={isInvoking} onPress={skipQuestion}>
+            Skip question
+          </Button>
         </View>
         <Button
           onPress={() => {

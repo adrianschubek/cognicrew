@@ -66,9 +66,9 @@ setInterval(async () => {
 
     alternative: TRANSACTION ISOLATION LEVEL SERILIZABLE
 
-
-    socket.io ?? zu viel aufwand.!!!
     */
+
+    // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
 
   for (const state of publicRoomStates) {
     // TODO: |> if players is not in room connected -> remove them from the players[]
