@@ -11,7 +11,7 @@ export default function GlobalLoadingOverlay() {
       <View
         style={{
           position: "absolute",
-          zIndex: 9999,
+          zIndex: 9999991,
           backgroundColor: theme.colors.backdrop,
           width: "100%",
           height: "100%",

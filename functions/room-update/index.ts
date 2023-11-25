@@ -94,11 +94,6 @@ serve(async (req) => {
         )
           return err("Round is over [rupd:rovr]", 400);
 
-        console.table(
-          privateState.gameData.exercises[publicState.round - 1].correct,
-        );
-        console.table(body.answerIndex);
-
         // check and save if answer is correct
         const { error } = await supabase.from("player_answers").upsert({
           room_id: rid,
@@ -113,9 +108,7 @@ serve(async (req) => {
               privateState.gameData.exercises[
                 publicState.round - 1
               ].correct.includes(e),
-            )
-              ? "true"
-              : "false",
+            ),
           answered_at: new Date(),
         });
         if (error) {
