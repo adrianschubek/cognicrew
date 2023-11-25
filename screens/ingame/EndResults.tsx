@@ -4,7 +4,9 @@ import { PublicRoomState, ScreenState } from "../../functions/rooms";
 import { useAlerts } from "../../utils/hooks";
 import { useEffect, useMemo, useState } from "react";
 import Animated, {
+  Easing,
   useAnimatedStyle,
+  withDelay,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
@@ -79,7 +81,9 @@ export default function EndResults({
       result.push(players[i]);
       i += 2;
     }
-    i = players.length - 2;
+    players.length % 2 === 0
+      ? (i = players.length - 1)
+      : (i = players.length - 2);
     while (i > 0) {
       result.push(players[i]);
       i -= 2;
@@ -96,8 +100,6 @@ export default function EndResults({
   if (highestScore > 250) {
     maxheight = 250 / highestScore;
   }
-  useFocusEffect(() => {});
-
   return (
     <View
       style={{
@@ -171,44 +173,49 @@ export default function EndResults({
       </View>
       <View style={{ flexDirection: "column", gap: 10, marginTop: 40 }}>
         {sortedPlayers.reverse().map((player, index) => {
-          //const height = useSharedValue(0);
+          const translateY = useSharedValue(-70);
+          const opacity = useSharedValue(0);
           useEffect(() => {
-            //animation here
+            (translateY.value += 70),
+              (opacity.value = withDelay(
+                400 * (sortedPlayers.length - index),
+                withTiming(1, { duration: 2000 }),
+              ));
           }, []);
-          /* const animatedStyles = useAnimatedStyle(() => {
-            return {
-              //styles changes here
-            };
-          });*/
+          const animatedStyles = useAnimatedStyle(() => ({
+            opacity: opacity.value,
+            transform: [{ translateY: withSpring(translateY.value * 2) }],
+          }));
           return (
-            <Card
-              key={index}
-              style={[{ width: 350, height: 70 } /*animatedStyles*/]}
-            >
-              <Card.Content
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  gap: 5,
-                }}
-              >
-                <Text style={{ textAlign: "center" }}>{index + 1}th </Text>
-                <Avatar.Icon icon="account" size={35} />
-                <View
+            <Animated.View style={[{}, animatedStyles]}>
+              <Card key={index} mode="outlined"style={[{ width: 350, height: 70, borderColor:theme.colors.primary }]}>
+                <Card.Content
                   style={{
-                    marginLeft: 5,
+                    flexDirection: "row",
                     justifyContent: "flex-start",
-                    alignItems: "flex-start",
+                    alignItems: "center",
+                    gap: 5,
                   }}
                 >
-                  <Text style={{ textAlign: "center" }}>{player.username}</Text>
-                  <Text style={{ textAlign: "center" }}>
-                    Score: {player.score}
-                  </Text>
-                </View>
-              </Card.Content>
-            </Card>
+                  <Text style={{ textAlign: "center" }}> {index + 1}{index === 1 ? "nd" : "th"} </Text>
+                  <Avatar.Icon icon="account" size={35} />
+                  <View
+                    style={{
+                      marginLeft: 5,
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <Text style={{ textAlign: "center" }}>
+                      {player.username}
+                    </Text>
+                    <Text style={{ textAlign: "center" }}>
+                      Score: {player.score}
+                    </Text>
+                  </View>
+                </Card.Content>
+              </Card>
+            </Animated.View>
           );
         })}
       </View>
