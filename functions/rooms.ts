@@ -39,9 +39,14 @@ export type PublicRoomState = {
     currentCorrect: boolean | null;
     /**
      * Whether the user submitted an answer in the current round.
-     * @deprecated use currentCorrect instead. it implies currentDone
+     * @ deprecated use currentCorrect instead. it implies currentDone
      */
     // currentDone: boolean | null;
+    /**
+     * Time needed to answer the current question in milliseconds.
+     * Will be null if there is no current round, it is disabled or the user did not answer yet.
+     */
+    currentTimeNeeded: number | null;
   }[];
   /**
    * Total rounds in this game

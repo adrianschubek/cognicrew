@@ -112,6 +112,7 @@ serve(async (req) => {
               ].correct.includes(e),
             ),
           answered_at: dayjs().valueOf(),
+          answer_time: dayjs().valueOf() - publicState.roundBeganAt,
         });
         if (error) {
           return err("Could not save answer [rupd:svans]", 500);

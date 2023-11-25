@@ -87,6 +87,7 @@ setInterval(async () => {
       if (!playerAnswer) continue;
       player.currentCorrect =
         playerAnswer.answer_correct; /* TODO: gameoption: if plr cant change answer -> ignore when currentCorrect !== null */
+      player.currentTimeNeeded = playerAnswer.answer_time;
     }
 
     /**
