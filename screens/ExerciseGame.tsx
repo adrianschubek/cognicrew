@@ -97,7 +97,7 @@ export default function ExerciseGame({ navigation }) {
   ) as [string, number][];
   const shuffledAnswers = useMemo(
     () => shuffleArray(answersWithIndexes),
-    [roomState],
+    [roomState?.round],
   );
   /*function starts from the end of the array and works its way to the start, 
   swapping each element with a random element that comes before it (including possibly itself).*/
