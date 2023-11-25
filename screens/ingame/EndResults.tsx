@@ -211,7 +211,7 @@ export default function EndResults({
           style={{ backgroundColor: theme.colors.primary }}
         />
       </View>
-      <ScrollView style={{ flexDirection: "column", gap: 10, marginTop: 30 }}>
+      <ScrollView style={{ flexDirection: "column", marginTop: 30 }}>
         {sortedPlayers.reverse().map((player, index) => {
           const translateY = useSharedValue(-70);
           const opacity = useSharedValue(0);
@@ -239,6 +239,7 @@ export default function EndResults({
                 {
                   width: 350,
                   height: 70,
+                  marginBottom: 10,
                 },
                 animatedStyles,
               ]}
