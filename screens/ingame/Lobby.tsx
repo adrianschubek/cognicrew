@@ -199,10 +199,10 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
+                        setLoading(false);
                         if (error) return handleEdgeError(error);
                         console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME);
-                        setLoading(false);
                       },
                       fields: [
                         {

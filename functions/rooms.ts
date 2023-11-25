@@ -57,6 +57,10 @@ export type PublicRoomState = {
    */
   possibleAnswers: string[];
   /**
+   * Round began at timestamp milliseconds
+   */
+  roundBeganAt: number;
+  /**
    * Round ends at timestamp milliseconds
    */
   roundEndsAt: number;
@@ -91,51 +95,6 @@ export type PrivateRoomState = {
      */
     // whiteboard: {};
   };
-  /**
-   * submitted answers by players
-   * REMOVE THIS
-   * //FIXME: move to seperate table => easier
-   * @deprecated use external table
-   */
-  playerAnswers: {
-    /**
-     * user uuid
-     */
-    id: string;
-    /**
-     * exercise game
-     */
-    exercises: {
-      /**
-       * question index
-       *  @deprecated not needed. for index use array
-       */
-      // idx: number;
-      /**
-       * which indices from possible answers were selected by user
-       */
-      answerIndex: number[];
-    }[];
-    /*+
-     * flashcard game
-     */
-    flashcards: {
-      /**
-       * flashcard index
-       * @deprecated not needed. for index use array
-       */
-      // idx: number;
-      /**
-       * answer by user
-       */
-      answer: string;
-    }[];
-    /**
-     * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
-     * @deprecated
-     */
-    // whiteboard: {}; //
-  }[];
 };
 
 /**
