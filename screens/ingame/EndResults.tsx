@@ -178,13 +178,13 @@ export default function EndResults({
           useEffect(() => {
             (translateY.value += 70),
               (opacity.value = withDelay(
-                400 * (sortedPlayers.length - index),
+                400 * (sortedPlayers.length - (index + 1)),
                 withTiming(1, { duration: 2000 }),
               ));
           }, []);
           const animatedStyles = useAnimatedStyle(() => ({
             opacity: opacity.value,
-            transform: [{ translateY: withSpring(translateY.value * 2) }],
+            //transform: [{ translateY: withSpring(translateY.value *5) }],
           }));
           return (
             <Animated.View key={index} style={[{}, animatedStyles]}>
