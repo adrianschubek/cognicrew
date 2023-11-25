@@ -119,45 +119,49 @@ export default function Login({ navigation }) {
                           token: verification[0],
                           type: "recovery",
                         });
-
-                        alert({
-                          cover: true,
-                          icon: "lock-reset",
-                          title: "Reset password",
-                          message: "Enter your new password:",
-                          async okAction(password) {
-                            const { data, error } =
-                              await supabase.auth.updateUser({
-                                password: password[0],
+                        //console.log(data, error);
+                        if (error) return error?.message ?? "Unknown error";
+                        else {
+                          return alert({
+                            cover: true,
+                            icon: "lock-reset",
+                            title: "Reset password",
+                            message: "Enter your new password:",
+                            async okAction(password) {
+                              const { data, error } =
+                                await supabase.auth.updateUser({
+                                  password: password[0],
+                                });
+                              if (error)
+                                return error?.message ?? "Unknown error";
+                              success({
+                                title: "Password reset",
+                                message: "Password reset successfully!",
                               });
-                            if (error) return error?.message ?? "Unknown error";
-                            success({
-                              title: "Password reset",
-                              message: "Password reset successfully!",
-                            });
-                          },
-                          fields: [
-                            {
-                              label: "Password",
-                              type: "password",
-                              required: true,
-                              validator(value, allValues) {
-                                return value.length >= 8;
-                              },
-                              errorText:
-                                "Password must be at least 8 characters long.",
                             },
-                            {
-                              label: "Confirm Password",
-                              type: "password",
-                              required: true,
-                              validator(value, allValues) {
-                                return value === allValues[0];
+                            fields: [
+                              {
+                                label: "Password",
+                                type: "password",
+                                required: true,
+                                validator(value, allValues) {
+                                  return value.length >= 8;
+                                },
+                                errorText:
+                                  "Password must be at least 8 characters long.",
                               },
-                              errorText: "Passwords do not match.",
-                            },
-                          ],
-                        });
+                              {
+                                label: "Confirm Password",
+                                type: "password",
+                                required: true,
+                                validator(value, allValues) {
+                                  return value === allValues[0];
+                                },
+                                errorText: "Passwords do not match.",
+                              },
+                            ],
+                          });
+                        }
                       },
                       fields: [
                         {
