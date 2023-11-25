@@ -27,6 +27,7 @@ import {
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { parse } from "react-native-svg";
 import PrioritySelector from "./PrioritySelector";
+import { debounce } from "../../utils/common";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
@@ -110,17 +111,6 @@ export default function EditExercise({ listItem }) {
       prevAnswers[2],
       [text, checked, prevAnswers[3][2]],
     ]);
-  };
-  const debounce = (func, delay) => {
-    let timer;
-    let args;
-    return (...newArgs) => {
-      args = newArgs;
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
   };
   // Create the debounced function
   const debouncedEditExercise = useCallback(

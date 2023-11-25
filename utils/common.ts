@@ -73,7 +73,17 @@ export function sortByOrder(list: any[], order: orderByPrinciple) {
       : 0;
   });
 }
-
+export function debounce (func, delay: number) {
+  let timer;
+  let args;
+  return (...newArgs) => {
+    args = newArgs;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, delay);
+  };
+};
 export async function handleEdgeError(error: Error): Promise<string> {
   return error instanceof FunctionsHttpError
     ? (await error.context.json()).message

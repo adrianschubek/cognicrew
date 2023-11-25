@@ -17,17 +17,9 @@ import {
 import { useDeleteFlashcard, useUpsertFlashcard } from "../../utils/hooks";
 import { use } from "chai";
 import PrioritySelector from "./PrioritySelector";
+import { debounce } from "../../utils/common";
 
 export default function EditFlashcard({ listItem }) {
-  const debounce = (func, delay) => {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
   const theme = useTheme();
   const [allowUpdate, setAllowUpdate] = useState(false);
   const [question, setQuestion] = useState(listItem.question);
