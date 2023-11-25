@@ -83,16 +83,14 @@ export default function Login({ navigation }) {
           value={password}
           onChangeText={(text2) => setPassword(text2)}
         />
-        <View
-          style={{ flexDirection: "row", marginTop: responsiveHeight(0.2) }}
-        >
+        <View style={{ flexDirection: "row", marginTop: 2 }}>
           <TouchableOpacity
             style={{
               alignSelf: "flex-start",
-              marginTop: responsiveHeight(0.5),
+              marginTop: 4,
             }}
             onPress={() => {
-              setShowPasswordForgotten(true);
+              //setShowPasswordForgotten(true);
             }}
           >
             <Button
@@ -105,6 +103,9 @@ export default function Login({ navigation }) {
                   okText: "Next",
                   cancelText: "Cancel",
                   async okAction(values) {
+                    const { data, error } =
+                      await supabase.auth.resetPasswordForEmail(values[0]);
+                    if (error) return error?.message ?? "Unknown error";
                     alert({
                       icon: "account-check",
                       title: "Confirm Email-address",
@@ -116,13 +117,45 @@ export default function Login({ navigation }) {
                         const { data, error } = await supabase.auth.verifyOtp({
                           email: values[0],
                           token: verification[0],
-                          type: "email",
+                          type: "recovery",
                         });
-                        if (error) return error?.message ?? "Unknown error";
-                        success({
-                          title: "Password reset",
-                          message:
-                            "Account created successfully. You may login now.",
+
+                        alert({
+                          icon: "lock-reset",
+                          title: "Reset password",
+                          message: "Enter your new password:",
+                          async okAction(password) {
+                            const { data, error } =
+                              await supabase.auth.updateUser({
+                                password: password[0],
+                              });
+                            if (error) return error?.message ?? "Unknown error";
+                            success({
+                              title: "Password reset",
+                              message: "Password reset successfully!",
+                            });
+                          },
+                          fields: [
+                            {
+                              label: "Password",
+                              type: "password",
+                              required: true,
+                              validator(value, allValues) {
+                                return value.length >= 8;
+                              },
+                              errorText:
+                                "Password must be at least 8 characters long.",
+                            },
+                            {
+                              label: "Confirm Password",
+                              type: "password",
+                              required: true,
+                              validator(value, allValues) {
+                                return value === allValues[0];
+                              },
+                              errorText: "Passwords do not match.",
+                            },
+                          ],
                         });
                       },
                       fields: [
@@ -244,8 +277,7 @@ export default function Login({ navigation }) {
                     if (error) return error?.message ?? "Unknown error";
                     success({
                       title: "Account created",
-                      message:
-                        "Account created successfully. You may login now.",
+                      message: "Account created successfully!",
                     });
                   },
                   fields: [
