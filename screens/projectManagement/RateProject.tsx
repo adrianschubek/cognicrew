@@ -147,6 +147,40 @@ export default function RateProject({
   };
 
 
+  const StarRating = ({ avg }) => {
+    // Function to determine star type (full, half, or border)
+    const getStarType = (index) => {
+      const floorAvg = Math.floor(avg) +1;
+      const decimalPart = avg % 1;
+  
+      if (index < floorAvg) {
+        return 'star';
+      } else if (index === floorAvg && decimalPart > 0) {
+        return 'star-half';
+      } else {
+        return 'star-border';
+      }
+    };
+  
+    return (
+      <View style={{ marginLeft: 20 }}>
+        <View style={styles.stars}>
+          {[1, 2, 3, 4, 5].map((index) => (
+            <MaterialIcons
+              key={index}
+              name={getStarType(index)}
+              size={32}
+              style={styles.starSelected}
+            />
+          ))}
+          <Text style={[styles.heading2, { marginLeft: 20 }]}>
+            {avg === 1 ? '1 star' : `${avg} stars`}
+          </Text>
+        </View>
+      </View>
+    );
+  };
+
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
 
   const { user } = useAuth();
@@ -180,6 +214,7 @@ export default function RateProject({
   async function calculateAvg() {
     let { data, error } = await supabase.rpc("avg_project_rating", {project_id_param: projectId});
     if (data) {
+      data = data.toFixed(2);
       setAvg(data);
     }
     if (error) console.error(error);
@@ -345,41 +380,9 @@ export default function RateProject({
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
             {"Project's average rating:"}
           </Text>
-          <View style={{ marginLeft: 20 }}>
-            <View style={styles.stars}>
-              <MaterialIcons
-                name={avg >= 1 ? "star" : "star-border"}
-                size={32}
-                style={avg >= 1 ? styles.starSelected : styles.starUnselected}
-              />
-              <MaterialIcons
-                name={avg >= 2 ? "star" : "star-border"}
-                size={32}
-                style={avg >= 2 ? styles.starSelected : styles.starUnselected}
-              />
 
-              <MaterialIcons
-                name={avg >= 3 ? "star" : "star-border"}
-                size={32}
-                style={avg >= 3 ? styles.starSelected : styles.starUnselected}
-              />
-
-              <MaterialIcons
-                name={avg >= 4 ? "star" : "star-border"}
-                size={32}
-                style={avg >= 4 ? styles.starSelected : styles.starUnselected}
-              />
-
-              <MaterialIcons
-                name={avg >= 5 ? "star" : "star-border"}
-                size={32}
-                style={avg >= 5 ? styles.starSelected : styles.starUnselected}
-              />
-              <Text style={[styles.heading2, { marginLeft: 20 }]}>
-                {avg === 1 ? "1 star" : `${avg} stars`}
-              </Text>
-            </View>
-          </View>
+          <StarRating avg={avg}/>
+          
         </View>
 
         <View style={styles.box}>
