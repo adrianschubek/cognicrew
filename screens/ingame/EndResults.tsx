@@ -63,10 +63,19 @@ export default function EndResults({
       currentCorrect: false,
       currentDone: false,
     },
+    {
+      id: "5",
+      username: "Player 5",
+      score: 50,
+      currentCorrect: false,
+      currentDone: false,
+    },
   ];
   const allPlayers = [...otherPlayers, self];
-  //lowest to highest
-  const sortedPlayers = allPlayers.sort((p1, p2) => p1.score - p2.score);
+  //lowest to highest and only the first five  players
+  const sortedPlayers = allPlayers
+    .sort((p1, p2) => p1.score - p2.score)
+    .slice(-5);
 
   //add attribute position to players
   sortedPlayers.forEach((player, index) => {
@@ -124,7 +133,9 @@ export default function EndResults({
         >
           {reSortedPlayers.map((player, index) => {
             const height = useSharedValue(0);
+            const opacity = useSharedValue(0);
             useEffect(() => {
+              opacity.value = 1;
               height.value =
                 (player.score < 10 ? 10 : player.score) * 2 * maxheight;
             }, []);
@@ -133,7 +144,18 @@ export default function EndResults({
                 height: withDelay(
                   400 * (sortedPlayers.length - player.position),
                   withTiming(height.value, {
-                    duration: 1200,
+                    duration: 1200,  easing: Easing.inOut(Easing.poly(3)),
+                  }),
+                ),
+              };
+            });
+            const animatedAvatarStyles = useAnimatedStyle(() => {
+              return {
+                opacity: withDelay(
+                  400 + 400 * (sortedPlayers.length - player.position),
+                  withTiming(opacity.value, {
+                    duration: 1000,
+                    //easing: Easing.inOut(Easing.cubic),
                   }),
                 ),
               };
@@ -147,7 +169,9 @@ export default function EndResults({
                   gap: 10,
                 }}
               >
-                <Avatar.Icon icon="account" size={35} />
+                <Animated.View style={[animatedAvatarStyles]}>
+                  <Avatar.Icon icon="account" size={35} />
+                </Animated.View>
                 <Animated.View
                   key={index}
                   style={[
@@ -182,7 +206,7 @@ export default function EndResults({
           const animatedStyles = useAnimatedStyle(() => ({
             opacity: withDelay(
               400 * (sortedPlayers.length - (index + 1)),
-              withTiming(opacity.value, { duration: 2000 }),
+              withTiming(opacity.value, { duration: 2000, }),
             ),
             transform: [
               {
