@@ -17,7 +17,7 @@ import {
   useSoundSystem2,
   useUnlockAchievement,
 } from "../utils/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -31,7 +31,9 @@ import { handleEdgeError } from "../utils/common";
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
   const { user } = useAuth();
-  const roomState = useRoomStateStore((state) => state.roomState);
+  const roomState = useRoomStateStore(
+    (state) => state.roomState,
+  ); /* TODO: memoize */
   const { error: errrorAlert } = useAlerts();
 
   const [isInvoking, setIsInvoking] = useState(false);
@@ -125,16 +127,23 @@ export default function ExerciseGame({ navigation }) {
       console.log(`Failed to unlock achievement: ID ${achievementId}`);
     }
   };
+
+  const MemoTimer = useMemo(
+    () => <Timer roundEndsAt={roomState.roundEndsAt} />,
+    [roomState?.roundEndsAt],
+  );
+
   if (!roomState) {
     return <LoadingOverlay visible />;
   }
+
   return (
     <>
       <ScrollView style={{ paddingTop: 20 }}>
         <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
           Question {roomState.round} of {roomState.totalRounds}
         </Dialog.Title>
-        <Timer roundEndsAt={roomState.roundEndsAt} />
+        {MemoTimer}
         <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
           {roomState.question}
         </Text>
