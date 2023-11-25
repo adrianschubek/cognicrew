@@ -125,16 +125,17 @@ export default function EndResults({
           {reSortedPlayers.map((player, index) => {
             const height = useSharedValue(0);
             useEffect(() => {
-              height.value = withTiming(
-                (player.score < 10 ? 10 : player.score) * 2 * maxheight,
-                {
-                  duration: 1200,
-                },
-              );
+              height.value =
+                (player.score < 10 ? 10 : player.score) * 2 * maxheight;
             }, []);
             const animatedStyles = useAnimatedStyle(() => {
               return {
-                height: height.value,
+                height: withDelay(
+                  400 * (sortedPlayers.length - player.position),
+                  withTiming(height.value, {
+                    duration: 1200,
+                  }),
+                ),
               };
             });
             return (
@@ -176,15 +177,21 @@ export default function EndResults({
           const translateY = useSharedValue(-70);
           const opacity = useSharedValue(0);
           useEffect(() => {
-            (translateY.value += 70),
-              (opacity.value = withDelay(
-                400 * (sortedPlayers.length - (index + 1)),
-                withTiming(1, { duration: 2000 }),
-              ));
+            (translateY.value += 70), (opacity.value = 1);
           }, []);
           const animatedStyles = useAnimatedStyle(() => ({
-            opacity: opacity.value,
-            //transform: [{ translateY: withSpring(translateY.value *5) }],
+            opacity: withDelay(
+              400 * (sortedPlayers.length - (index + 1)),
+              withTiming(opacity.value, { duration: 2000 }),
+            ),
+            transform: [
+              {
+                translateY: withDelay(
+                  400 * (sortedPlayers.length - (index + 1)),
+                  withTiming(translateY.value * 2, { duration: 1000 }),
+                ),
+              },
+            ],
           }));
           return (
             <Animated.View key={index} style={[{}, animatedStyles]}>
