@@ -1,4 +1,5 @@
-# CogniCrew: Collaborative Learning Made Fun
+# CogniCrew: Collaborative Learning Made Fun 
+[![Made with Supabase](https://supabase.com/badge-made-with-supabase.svg)](https://supabase.com)
 
 Welcome to CogniCrew, your go-to collaborative learning tool where education meets entertainment! Dive into a world of knowledge, engage with peers, and have a blast while expanding your horizons.
 
