@@ -86,7 +86,7 @@ setInterval(async () => {
       publicRoomStates.length
     } states in ${end - start}ms`,
   );
-}, 2000);
+}, 1000);
 
 serve(async (req: Request) => {
   if (req.method !== "OPTIONS" && VERIFY_JWT) {

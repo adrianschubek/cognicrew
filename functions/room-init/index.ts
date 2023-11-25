@@ -121,17 +121,18 @@ serve(async (req) => {
             )`,
       )
       .eq("id", pid)
+      .in("sets.id", body.sets)
       .single();
     if (errorGamedata || !gamedata) {
       throw errorGamedata;
     }
 
     // check if sets contain at least one exercise/flashcard
+    const exercisesNum = gamedata.sets.map((set) => set.exercises).length;
+    const flashcardsNum = gamedata.sets.map((set) => set.flashcards).length;
     if (
-      (body.type === 1 &&
-        gamedata.sets.map((set) => set.exercises).length === 0) ||
-      (body.type === 0 &&
-        gamedata.sets.map((set) => set.flashcards).length === 0)
+      (body.type === 1 && exercisesNum === 0) ||
+      (body.type === 0 && flashcardsNum === 0)
     )
       return err(
         `Selected sets do not contain any ${
@@ -163,6 +164,10 @@ serve(async (req) => {
                     [] as number[],
                   ),
                 }))
+                .sort(
+                  (a, b) => a.priority - b.priority,
+                ) /* TODO: randomize/shuffle */
+                .slice(0, body.numberOfRounds)
             : [],
         flashcards:
           body.type === 0
@@ -175,6 +180,10 @@ serve(async (req) => {
                   priority: flashcard.priority,
                   answer: flashcard.answer,
                 }))
+                .sort(
+                  (a, b) => a.priority - b.priority,
+                ) /* TODO: randomize/shuffle */
+                .slice(0, body.numberOfRounds)
             : [],
       },
     };
@@ -192,7 +201,7 @@ serve(async (req) => {
       screen:
         ScreenState.INGAME /* TODO: maybe show pre lobby first for few seconds? */,
       game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
-      totalRounds: 1,
+      totalRounds: body.type === 1 ? exercisesNum : flashcardsNum,
       round: 1,
       question:
         body.type === 1
