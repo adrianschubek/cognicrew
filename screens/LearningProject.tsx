@@ -142,7 +142,7 @@ export default function LearningProject({ navigation, route }) {
                 type: "number",
                 icon: "key",
                 helperText:
-                  "A password required to join. Leave blank for no password.",
+                  "A password required to join. Optional.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },
@@ -151,7 +151,7 @@ export default function LearningProject({ navigation, route }) {
                 type: "number",
                 icon: "share-circle",
                 helperText:
-                  "A code to enter this room directly. This also bypasses the password. Leave blank for no join code.",
+                  "A code to enter this room directly. This also bypasses the password. Optional.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },

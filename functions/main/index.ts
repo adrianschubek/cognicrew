@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { PublicRoomState } from "../rooms.ts";
+import { PublicRoomState, ScreenState } from "../rooms.ts";
 
 console.log("main function started");
 
@@ -72,7 +72,7 @@ setInterval(async () => {
   // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
 
   for (const state of publicRoomStates) {
-    let newState = state.data as PublicRoomState;
+    const newState = state.data as PublicRoomState;
     // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
 
     // TODO: |> foreach player in room -> update currentCorrect if player has submitted an answer
@@ -91,18 +91,26 @@ setInterval(async () => {
     }
 
     /**
-     * LOBBY -> INGAME -> ROUND_SOLUTION -> ROUND_RESULTS ->
+     * ScreenState:
+     * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~4s] -> * OR END_RESULTS
      */
-    // TODO: |> if roundEndsAt < now (~ round is over)
-    // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
-    // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
+
+    if (newState.roundEndsAt < dayjs().valueOf()) {
+      // TODO: |> if roundEndsAt < now (~ round is over)
+      if (newState.round + 1 <= newState.totalRounds) {
+        // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
+        newState.screen = ScreenState.ROUND_RESULTS;
+      } else {
+        // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
+      }
+    }
     // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
     // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
     // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
     newState.question = "Alex " + Math.random();
     console.log(newState);
-    const { error } = await supabase
+    await supabase
       .from("public_room_states")
       .update({ data: newState })
       .eq("room_id", state.room_id);
