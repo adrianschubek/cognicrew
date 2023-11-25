@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { PublicRoomState, ScreenState } from "../rooms.ts";
+import { PublicRoomState } from "../rooms.ts";
 
 console.log("main function started");
 
@@ -38,6 +38,21 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
+
+// @ from rooms.ts
+enum ScreenState {
+  LOBBY = "lobby",
+  INGAME = "ingame",
+  ROUND_SOLUTION = "round-solution", // after ingame and before round results screen
+  ROUND_RESULTS = "round-results", // after round solution screen
+  END_RESULTS = "end-results", // game end
+}
+// @ from rooms.ts
+enum GameState {
+  EXERCISES = "exercises",
+  FLASHCARDS = "flashcards",
+  WHITEBOARD = "whiteboard",
+}
 
 // listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
 
@@ -95,20 +110,19 @@ setInterval(async () => {
      * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~4s] -> * OR END_RESULTS
      */
 
-    if (newState.roundEndsAt < dayjs().valueOf()) {
-      // TODO: |> if roundEndsAt < now (~ round is over)
-      if (newState.round + 1 <= newState.totalRounds) {
-        // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
-        newState.screen = ScreenState.ROUND_RESULTS;
-      } else {
-        // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
-      }
+    if (newState.screen === ScreenState.INGAME && newState.roundEndsAt < dayjs().valueOf()) {
+      // TODO: |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
+      newState.screen = ScreenState.ROUND_SOLUTION;
     }
-    // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
+    // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
+
+    // TODO: |> else if screen == ROUND_RESULTS && current round + 1 > total rounds -> show END_RESULTS
+
+    // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
     // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
     // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
-    newState.question = "Alex " + Math.random();
+    // newState.question = "Alex " + Math.random();
     console.log(newState);
     await supabase
       .from("public_room_states")

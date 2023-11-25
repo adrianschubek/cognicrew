@@ -1,13 +1,13 @@
 // This file must be in /functions!!! DONT MOVE
 
-export const enum ScreenState {
+export enum ScreenState {
   LOBBY = "lobby",
   INGAME = "ingame",
   ROUND_SOLUTION = "round-solution", // after ingame and before round results screen
   ROUND_RESULTS = "round-results", // after round solution screen
   END_RESULTS = "end-results", // game end
 }
-export const enum GameState {
+export enum GameState {
   EXERCISES = "exercises",
   FLASHCARDS = "flashcards",
   WHITEBOARD = "whiteboard",
