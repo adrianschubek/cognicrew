@@ -41,7 +41,7 @@ export type PublicRoomState = {
      * Whether the user submitted an answer in the current round.
      * @deprecated use currentCorrect instead. it implies currentDone
      */
-    currentDone: boolean | null;
+    // currentDone: boolean | null;
   }[];
   /**
    * Total rounds in this game

@@ -50,10 +50,10 @@ serve(async (req) => {
       return err("User is not in a room [rupd:unf]", 400);
 
     const rid: string = roomData.room_id;
-    console.log(rid);
+    // console.log(rid);
 
     const body = (await req.json()) as RoomClientUpdate;
-    console.log(body);
+    // console.log(body);
 
     // fetch private state
     const { data: rawPrivateState, error: rdataerror } = await supabase
@@ -62,7 +62,7 @@ serve(async (req) => {
       .eq("room_id", rid)
       .single();
     const privateState = rawPrivateState?.data as PrivateRoomState;
-    console.log(privateState);
+    // console.log(privateState);
 
     if (rdataerror || !rawPrivateState)
       return err("Could not fetch game data [rupd:prv]", 500);
@@ -74,7 +74,7 @@ serve(async (req) => {
       .eq("room_id", rid)
       .single();
     const publicState = rawPublicState?.data as PublicRoomState;
-    console.log(publicState);
+    // console.log(publicState);
 
     if (rdataerror2 || !rawPublicState)
       return err("Could not fetch game data [rupd:pub]", 500);
@@ -94,13 +94,15 @@ serve(async (req) => {
         )
           return err("Round is over [rupd:rovr]", 400);
 
+        // TODO: game option: can users change their answer?
+
         // check and save if answer is correct
         const { error } = await supabase.from("player_answers").upsert({
           room_id: rid,
           user_id: user.id,
           round: publicState.round,
           /* correct === user_answers */
-          answer:
+          answer_correct:
             privateState.gameData.exercises[
               publicState.round - 1
             ].correct.every((e) => body.answerIndex.includes(e)) &&
@@ -109,7 +111,7 @@ serve(async (req) => {
                 publicState.round - 1
               ].correct.includes(e),
             ),
-          answered_at: new Date(),
+          answered_at: dayjs().valueOf(),
         });
         if (error) {
           return err("Could not save answer [rupd:svans]", 500);

@@ -46,13 +46,14 @@ setInterval(async () => {
   // TODO: main game state loop here
 
   // TODO: for each public_room_state:
-  const { data: pubRoomStatesObj } = await supabase
+  const { data: publicRoomStates } = await supabase
     .from("public_room_states")
     .select("data,room_id");
+  if (!publicRoomStates) return; /* deno assert is not null */
 
-  const publicRoomStates = (pubRoomStatesObj ?? []).map(
-    (pr) => pr.data,
-  ) as PublicRoomState[];
+  const { data: playerAnswers, error: plrErrors } = await supabase
+    .from("player_answers")
+    .select("*");
 
   /**  // FIXME: race condition wenn mehre edge fucntin aufrufen und JSON updaten -> besser queue? 
     -> JSONB ok and update though postgres jsonb functions -> supabase doesnt support jsonb functions! -> pg function
@@ -71,14 +72,39 @@ setInterval(async () => {
   // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
 
   for (const state of publicRoomStates) {
-    // TODO: |> if players is not in room -> remove them from the players[]
+    let newState = state.data as PublicRoomState;
+    // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
+
     // TODO: |> foreach player in room -> update currentCorrect if player has submitted an answer
+    // TODO: only do this when timer ends  ?
+    for (const player of newState.players) {
+      const playerAnswer = playerAnswers?.find(
+        (pa) =>
+          pa.user_id === player.id &&
+          pa.room_id === state.room_id &&
+          pa.round === newState.round,
+      );
+      if (!playerAnswer) continue;
+      player.currentCorrect =
+        playerAnswer.answer_correct; /* TODO: gameoption: if plr cant change answer -> ignore when currentCorrect !== null */
+    }
+
+    /**
+     * LOBBY -> INGAME -> ROUND_SOLUTION -> ROUND_RESULTS ->
+     */
     // TODO: |> if roundEndsAt < now (~ round is over)
     // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
     // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
     // TODO: |> if screen == ROUND_RESULTS and roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
     // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
     // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+
+    newState.question = "Alex " + Math.random();
+    console.log(newState);
+    const { error } = await supabase
+      .from("public_room_states")
+      .update({ data: newState })
+      .eq("room_id", state.room_id);
   }
 
   const end = performance.now();

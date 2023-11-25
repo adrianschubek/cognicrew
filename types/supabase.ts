@@ -90,6 +90,7 @@ export interface Database {
           exercise: number
           id: number
           is_correct: boolean
+          order_position: number | null
         }
         Insert: {
           answer: string
@@ -97,6 +98,7 @@ export interface Database {
           exercise: number
           id?: number
           is_correct: boolean
+          order_position?: number | null
         }
         Update: {
           answer?: string
@@ -104,6 +106,7 @@ export interface Database {
           exercise?: number
           id?: number
           is_correct?: boolean
+          order_position?: number | null
         }
         Relationships: [
           {
@@ -113,6 +116,48 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      candidate_rooms: {
+        Row: {
+          code: number | null
+          created_at: string | null
+          host: string | null
+          id: string | null
+          is_ingame: boolean | null
+          is_private: boolean | null
+          max_size: number | null
+          name: string | null
+          project_id: number | null
+          secret_key: string | null
+          share_code: number | null
+        }
+        Insert: {
+          code?: number | null
+          created_at?: string | null
+          host?: string | null
+          id?: string | null
+          is_ingame?: boolean | null
+          is_private?: boolean | null
+          max_size?: number | null
+          name?: string | null
+          project_id?: number | null
+          secret_key?: string | null
+          share_code?: number | null
+        }
+        Update: {
+          code?: number | null
+          created_at?: string | null
+          host?: string | null
+          id?: string | null
+          is_ingame?: boolean | null
+          is_private?: boolean | null
+          max_size?: number | null
+          name?: string | null
+          project_id?: number | null
+          secret_key?: string | null
+          share_code?: number | null
+        }
+        Relationships: []
       }
       exercises: {
         Row: {
@@ -287,21 +332,61 @@ export interface Database {
           }
         ]
       }
+      player_answers: {
+        Row: {
+          answer_correct: boolean
+          answered_at: number
+          room_id: string
+          round: number
+          user_id: string
+        }
+        Insert: {
+          answer_correct: boolean
+          answered_at: number
+          room_id: string
+          round: number
+          user_id: string
+        }
+        Update: {
+          answer_correct?: boolean
+          answered_at?: number
+          room_id?: string
+          round?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_answers_room_id_fkey"
+            columns: ["room_id"]
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "player_answers_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       private_room_states: {
         Row: {
           created_at: string
-          data: Json | null
+          data: Json
           room_id: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
-          data?: Json | null
+          data: Json
           room_id: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
-          data?: Json | null
+          data?: Json
           room_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -382,16 +467,19 @@ export interface Database {
           created_at: string
           data: Json
           room_id: string
+          updated_at: string
         }
         Insert: {
           created_at?: string
           data: Json
           room_id: string
+          updated_at?: string
         }
         Update: {
           created_at?: string
           data?: Json
           room_id?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -444,12 +532,6 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "rooms_host_fkey"
-            columns: ["host"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "rooms_project_id_fkey"
             columns: ["project_id"]
             referencedRelation: "learning_projects"
@@ -487,6 +569,21 @@ export interface Database {
             referencedColumns: ["id"]
           }
         ]
+      }
+      tracker: {
+        Row: {
+          key: string
+          last_updated: string | null
+        }
+        Insert: {
+          key: string
+          last_updated?: string | null
+        }
+        Update: {
+          key?: string
+          last_updated?: string | null
+        }
+        Relationships: []
       }
       user_achievements: {
         Row: {
@@ -589,12 +686,31 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      avg_project_rating: {
+        Args: {
+          project_id_param: number
+        }
+        Returns: number
+      }
+      bullshit_list_room_members: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          username: string
+        }[]
+      }
+      cleanup_rooms: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_room: {
         Args: {
           p_project_id: number
           p_code: number
           p_name: string
           p_share_code: number
+          p_size: number
+          p_private: boolean
         }
         Returns: Record<string, unknown>
       }
@@ -604,17 +720,24 @@ export interface Database {
         }
         Returns: boolean
       }
-      delete_room: {
+      get_particular_amount_ratings: {
         Args: {
-          p_room_id: string
+          project_id_param: number
         }
-        Returns: undefined
+        Returns: Record<string, unknown>
       }
       get_usernames: {
         Args: {
           user_ids: string[]
         }
         Returns: unknown
+      }
+      get_users_rating_for_project: {
+        Args: {
+          project_id_param: number
+          user_id_param: string
+        }
+        Returns: number
       }
       getUsername: {
         Args: {
@@ -631,10 +754,14 @@ export interface Database {
       }
       join_room: {
         Args: {
-          p_room_id: number
+          p_room_id: string
           p_room_code: number
         }
         Returns: Record<string, unknown>
+      }
+      leave_room: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       list_friends: {
         Args: Record<PropertyKey, never>
@@ -642,6 +769,20 @@ export interface Database {
           created_at: string
           user_from_id: string
           user_to_id: string
+        }[]
+      }
+      list_friends_ids_and_names: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          username: string
+        }[]
+      }
+      list_room_members: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          username: string
         }[]
       }
       list_rooms: {
@@ -652,6 +793,39 @@ export interface Database {
           created_at: string
           protected: boolean
           host: string
+          hostname: string
+          cursize: number
+          maxsize: number
+        }[]
+      }
+      list_sets: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          name: string
+          id: number
+          type: number
+        }[]
+      }
+      project_members: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: {
+          user_id: string
+          username: string
+        }[]
+      }
+      public_projects: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          description: string
+          group: string
+          id: number
+          is_published: boolean
+          name: string
+          owner_id: string | null
+          tags: string | null
         }[]
       }
       quick_join_room: {
@@ -672,6 +846,18 @@ export interface Database {
           search_query: string
         }
         Returns: Record<string, unknown>
+      }
+      sum_project_ratings: {
+        Args: {
+          project_id_param: number
+        }
+        Returns: number
+      }
+      track: {
+        Args: {
+          p_key: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

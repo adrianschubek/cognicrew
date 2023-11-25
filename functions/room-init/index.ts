@@ -47,7 +47,7 @@ serve(async (req) => {
       return err("User is not in a room [rint:unf]", 400);
 
     const rid: string = roomData.room_id;
-    console.log(rid);
+    // console.log(rid);
 
     // check host is owner of room
     const { data, error } = await supabase
@@ -64,7 +64,7 @@ serve(async (req) => {
       );
 
     const pid: number = data.project_id;
-    console.log(data);
+    // console.log(data);
 
     // get all connected users in room
     const { data: users, error: errorUsers } = await supabase
@@ -83,7 +83,7 @@ serve(async (req) => {
       roundDuration: number;
       numberOfRounds: number;
     };
-    console.log(body);
+    // console.log(body);
 
     // validate body
     if (body.type !== 0 && body.type !== 1)
@@ -187,7 +187,7 @@ serve(async (req) => {
             : [],
       },
     };
-    console.log(privateState);
+    // console.log(privateState);
 
     // load first question/flashcard
     const publicState: PublicRoomState = {
@@ -195,8 +195,8 @@ serve(async (req) => {
         id: user.id,
         username: user.username,
         score: 0,
-        currentCorrect: false,
-        currentDone: false,
+        currentCorrect: null,
+        // currentDone: null,
       })),
       screen:
         ScreenState.INGAME /* TODO: maybe show pre lobby first for few seconds? */,
@@ -212,7 +212,7 @@ serve(async (req) => {
       roundBeganAt: dayjs().valueOf(),
       roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
     };
-    console.log(publicState);
+    // console.log(publicState);
 
     // save to db
     const { error: errSavePriv } = await supabase
