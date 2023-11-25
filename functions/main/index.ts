@@ -68,10 +68,11 @@ setInterval(async () => {
 
     */
 
-    // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
+  // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
 
   for (const state of publicRoomStates) {
     // TODO: |> if players is not in room connected -> remove them from the players[]
+    // TODO: |>
     // TODO: |> if roundEndsAt < now (~ round is over)
     // TODO: |  |> if current round + 1 <= total rounds -> show ROUND_RESULTS
     // TODO: |  |> else current round + 1 > total rounds -> show END_RESULTS
