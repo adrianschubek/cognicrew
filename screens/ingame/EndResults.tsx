@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Avatar, Card, Divider, Text, useTheme } from "react-native-paper";
 import { PublicRoomState } from "../../functions/rooms";
 import { useEffect, useMemo, useState } from "react";
@@ -211,7 +211,7 @@ export default function EndResults({
           style={{ backgroundColor: theme.colors.primary }}
         />
       </View>
-      <View style={{ flexDirection: "column", gap: 10, marginTop: 40 }}>
+      <ScrollView style={{ flexDirection: "column", gap: 10, marginTop: 30 }}>
         {sortedPlayers.reverse().map((player, index) => {
           const translateY = useSharedValue(-70);
           const opacity = useSharedValue(0);
@@ -237,8 +237,8 @@ export default function EndResults({
               key={index}
               style={[
                 {
-                  width: responsiveWidth(90) < 350 ? responsiveWidth(90) : 350,
-                  height: responsiveHeight(9) < 70 ? responsiveHeight(9) : 70,
+                  width: 350,
+                  height: 70,
                 },
                 animatedStyles,
               ]}
@@ -285,7 +285,7 @@ export default function EndResults({
             </Animated.View>
           );
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 }
