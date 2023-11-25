@@ -1,5 +1,11 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
@@ -21,6 +27,8 @@ import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
+import { debounce } from "../../utils/common";
+import { use } from "chai";
 
 export default function RateProject({
   navigation,
@@ -38,7 +46,7 @@ export default function RateProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-  const { success, error: errorAlert, info, confirm } = useAlerts();
+  const { confirm } = useAlerts();
   const theme = useTheme();
 
   useEffect(() => {
@@ -135,8 +143,8 @@ export default function RateProject({
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-  const [oldRating, setOldRating] = useState(null);
-  const [newRating, setNewRating] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [allowUpdate, setAllowUpdate] = useState(false);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
@@ -149,10 +157,10 @@ export default function RateProject({
     });
     if (data) {
       setSum(data);
-      console.log(data);
-    } else  {
+      //console.log(data);
+    } else {
       setSum(data);
-      console.log(data);
+      //console.log(data);
     }
   }
 
@@ -165,7 +173,7 @@ export default function RateProject({
       setAvg(data);
     } else {
       setAvg(data);
-      console.log(data);
+      //console.log(data);
     }
   }
 
@@ -187,7 +195,7 @@ export default function RateProject({
 
   useEffect(() => {
     if (!data) return;
-    setOldRating(data);
+    setRating(data);
     calculateStatistics();
   }, []);
 
@@ -206,7 +214,6 @@ export default function RateProject({
           console.log("payload", payload);
           mutate();
           calculateStatistics();
-          console.log(payload);
         },
       )
       .subscribe();
@@ -216,7 +223,7 @@ export default function RateProject({
   });
 
   const handleStarPress = (newRating) => {
-    if (newRating === oldRating) {
+    if (newRating === rating) {
       deleteProjectRating({
         project_id: projectId,
         user_id: user.id,
@@ -224,19 +231,32 @@ export default function RateProject({
       });
       //setSum(sum-1);
       //setAvg(0);
-      setOldRating(0);
-      console.log("OBEN");
+      setRating(0);
     } else {
-      setOldRating(newRating);
-      console.log("UNTEN");
-      upsertProjectRating({
-        //@ts-expect-error
-        project_id: projectId,
-        user_id: user.id,
-        rating: newRating === oldRating ? 0 : newRating,
-      });
+      setRating(newRating);
     }
   };
+
+  const debouncedUpsertProjectRating = useCallback(
+    debounce((pId, uId, r) => {
+      upsertProjectRating({
+        //@ts-expect-error
+        project_id: pId,
+        user_id: uId,
+        rating: r,
+      });
+    }, 1000),
+    [],
+  );
+  useEffect(() => {
+    if (rating !== null || rating === 0) {
+      // Call the debounced function
+      if (allowUpdate === true) {
+        debouncedUpsertProjectRating(projectId, user.id, rating);
+      } else setAllowUpdate(true);
+    }
+  }, [rating, debouncedUpsertProjectRating]); // add debouncedEditFlashcard to dependencies
+
   if (isLoading || error) return <LoadingOverlay visible />;
   return (
     <ScrollView>
@@ -250,10 +270,10 @@ export default function RateProject({
               }}
             >
               <MaterialIcons
-                name={oldRating >= 1 ? "star" : "star-border"}
+                name={rating >= 1 ? "star" : "star-border"}
                 size={32}
                 style={
-                  oldRating >= 1 ? styles.starSelected : styles.starUnselected
+                  rating >= 1 ? styles.starSelected : styles.starUnselected
                 }
               />
             </TouchableOpacity>
@@ -263,10 +283,10 @@ export default function RateProject({
               }}
             >
               <MaterialIcons
-                name={oldRating >= 2 ? "star" : "star-border"}
+                name={rating >= 2 ? "star" : "star-border"}
                 size={32}
                 style={
-                  oldRating >= 2 ? styles.starSelected : styles.starUnselected
+                  rating >= 2 ? styles.starSelected : styles.starUnselected
                 }
               />
             </TouchableOpacity>
@@ -276,10 +296,10 @@ export default function RateProject({
               }}
             >
               <MaterialIcons
-                name={oldRating >= 3 ? "star" : "star-border"}
+                name={rating >= 3 ? "star" : "star-border"}
                 size={32}
                 style={
-                  oldRating >= 3 ? styles.starSelected : styles.starUnselected
+                  rating >= 3 ? styles.starSelected : styles.starUnselected
                 }
               />
             </TouchableOpacity>
@@ -289,10 +309,10 @@ export default function RateProject({
               }}
             >
               <MaterialIcons
-                name={oldRating >= 4 ? "star" : "star-border"}
+                name={rating >= 4 ? "star" : "star-border"}
                 size={32}
                 style={
-                  oldRating >= 4 ? styles.starSelected : styles.starUnselected
+                  rating >= 4 ? styles.starSelected : styles.starUnselected
                 }
               />
             </TouchableOpacity>
@@ -302,16 +322,16 @@ export default function RateProject({
               }}
             >
               <MaterialIcons
-                name={oldRating >= 5 ? "star" : "star-border"}
+                name={rating >= 5 ? "star" : "star-border"}
                 size={32}
                 style={
-                  oldRating >= 5 ? styles.starSelected : styles.starUnselected
+                  rating >= 5 ? styles.starSelected : styles.starUnselected
                 }
               />
             </TouchableOpacity>
             <Text style={[styles.heading, { marginLeft: 10 }]}>
-              {oldRating
-                ? `${oldRating} ${oldRating > 1 ? "stars" : "star"}`
+              {rating
+                ? `${rating} ${rating > 1 ? "stars" : "star"}`
                 : "Unrated"}
             </Text>
           </View>
