@@ -129,10 +129,8 @@ export default function RateProject({
   };
 
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
-
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-
   const [starRating, setStarRating] = useState(null);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
@@ -225,8 +223,6 @@ export default function RateProject({
   const handleStarPress = (rating) => {
     if (rating === starRating) {
       setStarRating(0);
-      console.log("userId: ", user.id);
-      console.log("projectId: ", projectId);
       deleteProjectRating({
         project_id: projectId,
         user_id: user.id,
