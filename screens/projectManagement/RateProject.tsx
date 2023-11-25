@@ -12,7 +12,6 @@ import {
   useRemoveUserFromLearningProject,
   useSoundSystem1,
   useUpsertProjectRating,
-  useUserRating,
   useUsername,
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
@@ -20,7 +19,6 @@ import { useAuth } from "../../providers/AuthProvider";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
-import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function RateProject({
   navigation,
@@ -76,12 +74,10 @@ export default function RateProject({
           {starsArray.map((index) => (
             <MaterialIcons
               key={index}
-              name={index - 1 < numStars ? "star" : "star-border"}
+              name={index-1 < numStars ? "star" : "star-border"}
               size={32}
               style={
-                index - 1 < numStars
-                  ? styles.starSelected
-                  : styles.starUnselected
+                index-1 < numStars ? styles.starSelected : styles.starUnselected
               }
             />
           ))}
@@ -140,20 +136,24 @@ export default function RateProject({
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
-  const { data, error, isLoading, mutate } = useUserRating(user.id, projectId);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
+
+  async function getUsersRating() {
+    let { data, error } = await supabase.rpc("get_users_rating_for_project", {
+      project_id_param: projectId,
+      user_id_param: user.id,
+    });
+    if (data) {
+      setOldRating(data);
+    }
+  }
 
   async function calculateSum() {
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
     });
-    if (data) {
       setSum(data);
       console.log(data);
-    } else  {
-      setSum(data);
-      console.log(data);
-    }
   }
 
   async function calculateAvg() {
@@ -167,6 +167,7 @@ export default function RateProject({
       setAvg(data);
       console.log(data);
     }
+
   }
 
   async function calculateIndividualRatings() {
@@ -184,10 +185,9 @@ export default function RateProject({
     calculateAvg();
     calculateIndividualRatings();
   }
-
+  
   useEffect(() => {
-    if (!data) return;
-    setOldRating(data);
+    getUsersRating();
     calculateStatistics();
   }, []);
 
@@ -203,10 +203,8 @@ export default function RateProject({
           filter: "key=eq.rate",
         },
         (payload) => {
-          console.log("payload", payload);
-          mutate();
+          getUsersRating();
           calculateStatistics();
-          console.log(payload);
         },
       )
       .subscribe();
@@ -225,10 +223,9 @@ export default function RateProject({
       //setSum(sum-1);
       //setAvg(0);
       setOldRating(0);
-      console.log("OBEN");
     } else {
       setOldRating(newRating);
-      console.log("UNTEN");
+
       upsertProjectRating({
         //@ts-expect-error
         project_id: projectId,
@@ -237,7 +234,7 @@ export default function RateProject({
       });
     }
   };
-  if (isLoading || error) return <LoadingOverlay visible />;
+
   return (
     <ScrollView>
       <SafeAreaView style={styles.personalRating}>
