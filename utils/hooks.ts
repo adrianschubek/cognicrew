@@ -168,7 +168,7 @@ export function useInsertFriend() {
 //Project ratings
 export function useUserRating(uid: string, project_id: number) {
   const query = supabase
-    .from("user_ratings")
+    .from("project_ratings")
     .select("rating")
     .eq("user_id", uid)
     .eq("project_id", project_id);
