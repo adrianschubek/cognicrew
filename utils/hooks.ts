@@ -9,7 +9,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
@@ -19,7 +19,7 @@ import { useProjectStore } from "../stores/ProjectStore";
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const { isLoaded } = useSoundsStore.getState();
       if (!isLoaded) {
         const audioSource = require("../assets/sounds/musicmusicmusic.mp3");
@@ -37,7 +37,7 @@ export function useSoundSystem1() {
 export function useSoundSystem2() {
   const { playSound, stopSound, loadSound2 } = useSoundsStore();
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       const { isLoaded2 } = useSoundsStore.getState();
       if (!isLoaded2) {
         const audioSource = require("../assets/sounds/Tetris.mp3");
@@ -166,6 +166,18 @@ export function useInsertFriend() {
 }
 
 //Project ratings
+export function useUserRating(uid: string, project_id: number) {
+  const query = supabase
+    .from("user_ratings")
+    .select("rating")
+    .eq("user_id", uid)
+    .eq("project_id", project_id);
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, []);
+  return { data, isLoading, error, mutate };
+}
 
 export function useUpsertProjectRating() {
   return handleErrors(
@@ -181,12 +193,11 @@ export function useDeleteProjectRating() {
   return handleErrors(
     useDeleteMutation(
       supabase.from("project_ratings"),
-      ["project_id","user_id"],
+      ["project_id", "user_id"],
       "project_id,user_id,rating",
     ),
   );
 }
-
 
 export function useAchievements() {
   return handleErrors(
