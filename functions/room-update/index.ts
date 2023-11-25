@@ -87,6 +87,8 @@ serve(async (req) => {
         // |> check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
         // store "true" or "false" in db
 
+        // what if user submits when round is over?
+
         // const { data, error } = await supabase.from("player_answers").upsert({
         //   room_id: rid,
         //   user_id: user?.id,
