@@ -1,11 +1,5 @@
-import { View } from "react-native";
-import {
-  Avatar,
-  Card,
-  Divider,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { ScrollView, View } from "react-native";
+import { Avatar, Card, Divider, Text, useTheme } from "react-native-paper";
 import { PublicRoomState } from "../../functions/rooms";
 import { useEffect, useMemo, useState } from "react";
 import Animated, {
@@ -16,6 +10,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
+import {
+  responsiveHeight,
+  responsiveScreenHeight,
+  responsiveWidth,
+} from "react-native-responsive-dimensions";
 export default function EndResults({
   route,
 }: {
@@ -132,6 +131,7 @@ export default function EndResults({
             flexDirection: "row",
             gap: 10,
             alignItems: "flex-end",
+            paddingHorizontal: 10,
           }}
         >
           {reSortedPlayers.map((player, index) => {
@@ -208,10 +208,10 @@ export default function EndResults({
         </View>
         <Divider
           //bold={true}
-          style={{ backgroundColor: theme.colors.primary}}
+          style={{ backgroundColor: theme.colors.primary }}
         />
       </View>
-      <View style={{ flexDirection: "column", gap: 10, marginTop: 40 }}>
+      <ScrollView style={{ flexDirection: "column", marginTop: 30 }}>
         {sortedPlayers.reverse().map((player, index) => {
           const translateY = useSharedValue(-70);
           const opacity = useSharedValue(0);
@@ -233,12 +233,20 @@ export default function EndResults({
             ],
           }));
           return (
-            <Animated.View key={index} style={[{}, animatedStyles]}>
+            <Animated.View
+              key={index}
+              style={[
+                {
+                  width: 350,
+                  height: 70,
+                  marginBottom: 10,
+                },
+                animatedStyles,
+              ]}
+            >
               <Card
                 mode="outlined"
-                style={[
-                  { width: 350, height: 70, borderColor: theme.colors.primary },
-                ]}
+                style={[{ borderColor: theme.colors.primary }]}
               >
                 <Card.Content
                   style={{
@@ -278,7 +286,7 @@ export default function EndResults({
             </Animated.View>
           );
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 }
