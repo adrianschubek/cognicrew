@@ -20,7 +20,7 @@ import MainNav from "./components/MainNav";
 import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
 import { SWRConfig } from "swr";
 import LoadingOverlay from "./components/alerts/LoadingOverlay";
-import { useLoadingStore } from "./stores/LoadingStore";
+import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -57,8 +57,6 @@ export default function App() {
     [toggleTheme, darkmode],
   );
 
-  const loading = useLoadingStore((state) => state.loading);
-
   return (
     <PreferencesContext.Provider value={preferences}>
       <PaperProvider theme={theme}>
@@ -75,7 +73,7 @@ export default function App() {
               }}
             >
               <AlertSyncZustand />
-              <LoadingOverlay visible={loading} />
+              <GlobalLoadingOverlay />
               <MainNav />
             </SWRConfig>
           </AuthProvider>
