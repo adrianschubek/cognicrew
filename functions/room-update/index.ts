@@ -13,6 +13,7 @@ import {
   PublicRoomState,
   RoomClientUpdate,
 } from "../rooms.ts";
+import dayjs from "https://esm.sh/dayjs@1.11.10";
 
 serve(async (req) => {
   const start = performance.now();
@@ -35,6 +36,8 @@ serve(async (req) => {
     const {
       data: { user },
     } = await supabaseUser.auth.getUser();
+
+    if (!user) return err("User not found [rupd:unf]", 400);
 
     // TODO: move to helper function
     // get current room user is in
@@ -81,19 +84,43 @@ serve(async (req) => {
         return err("Not implemented [rupd:nimpl1]", 501);
         break;
       case "exercise-answer": {
-        // FIXME: should i save the literial input of the uiser. OR should save whether its correct??
-        // latter.
-
-        // |> check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
+        // |check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
         // store "true" or "false" in db
 
-        // what if user submits when round is over?
+        // check if round is active
+        if (
+          publicState.roundEndsAt < dayjs().valueOf() ||
+          publicState.roundBeganAt > dayjs().valueOf()
+        )
+          return err("Round is over [rupd:rovr]", 400);
 
-        // const { data, error } = await supabase.from("player_answers").upsert({
-        //   room_id: rid,
-        //   user_id: user?.id,
-        //   answer: body.answerIndex.toString(),
-        // });
+        console.table(
+          privateState.gameData.exercises[publicState.round - 1].correct,
+        );
+        console.table(body.answerIndex);
+
+        // check and save if answer is correct
+        const { error } = await supabase.from("player_answers").upsert({
+          room_id: rid,
+          user_id: user.id,
+          round: publicState.round,
+          /* correct === user_answers */
+          answer:
+            privateState.gameData.exercises[
+              publicState.round - 1
+            ].correct.every((e) => body.answerIndex.includes(e)) &&
+            body.answerIndex.every((e) =>
+              privateState.gameData.exercises[
+                publicState.round - 1
+              ].correct.includes(e),
+            )
+              ? "true"
+              : "false",
+          answered_at: new Date(),
+        });
+        if (error) {
+          return err("Could not save answer [rupd:svans]", 500);
+        }
         break;
       }
       case "reset-lobby":
