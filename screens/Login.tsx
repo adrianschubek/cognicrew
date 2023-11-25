@@ -95,7 +95,61 @@ export default function Login({ navigation }) {
               setShowPasswordForgotten(true);
             }}
           >
-            <Button>Forgot password?</Button>
+            <Button
+              onPress={() => {
+                alert({
+                  icon: "lock-reset",
+                  title: "Reset password",
+                  message:
+                    "Please insert your e-mail address and a mail will be sent to your address with the option to change your password.",
+                  okText: "Next",
+                  cancelText: "Cancel",
+                  async okAction(values) {
+                    alert({
+                      icon: "account-check",
+                      title: "Confirm Email-address",
+                      message:
+                        "Please enter the verification code you received in your email.",
+                      dismissable: false,
+                      okText: "Confirm",
+                      async okAction(verification) {
+                        const { data, error } = await supabase.auth.verifyOtp({
+                          email: values[0],
+                          token: verification[0],
+                          type: "email",
+                        });
+                        if (error) return error?.message ?? "Unknown error";
+                        success({
+                          title: "Password reset",
+                          message:
+                            "Account created successfully. You may login now.",
+                        });
+                      },
+                      fields: [
+                        {
+                          label: "Verification Code",
+                          type: "number",
+                        },
+                      ],
+                    });
+                  },
+                  fields: [
+                    {
+                      label: "E-Mail",
+                      type: "text",
+                      required: true,
+                      validator(value) {
+                        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                      },
+                      errorText: "Please enter a valid email address.",
+                    },
+                  ],
+                });
+              }}
+              testID="register-button"
+            >
+              Forgot password?
+            </Button>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -154,8 +208,6 @@ export default function Login({ navigation }) {
           style={[styles.dataInput, { marginTop: responsiveHeight(1.5) }]}
           mode="contained-tonal"
           onPress={() => {
-            // setShowRegister(true); /* TODO remove */
-
             alert({
               icon: "account-plus",
               title: "Create your account",
@@ -183,7 +235,13 @@ export default function Login({ navigation }) {
                     "Please enter the verification code you received in your email.",
                   dismissable: false,
                   okText: "Confirm",
-                  okAction(values) {
+                  async okAction(verification) {
+                    const { data, error } = await supabase.auth.verifyOtp({
+                      email: values[1],
+                      token: verification[0],
+                      type: "email",
+                    });
+                    if (error) return error?.message ?? "Unknown error";
                     success({
                       title: "Account created",
                       message:
