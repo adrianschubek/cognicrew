@@ -1,7 +1,12 @@
 import { View } from "react-native";
-import { Avatar, Button, Card, Text, useTheme } from "react-native-paper";
-import { PublicRoomState, ScreenState } from "../../functions/rooms";
-import { useAlerts } from "../../utils/hooks";
+import {
+  Avatar,
+  Card,
+  Divider,
+  Text,
+  useTheme,
+} from "react-native-paper";
+import { PublicRoomState } from "../../functions/rooms";
 import { useEffect, useMemo, useState } from "react";
 import Animated, {
   Easing,
@@ -11,8 +16,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
-import { all } from "cypress/types/bluebird";
-import { useFocusEffect } from "@react-navigation/native";
 export default function EndResults({
   route,
 }: {
@@ -45,7 +48,7 @@ export default function EndResults({
     {
       id: "2",
       username: "Player 2",
-      score: 100,
+      score: 3,
       currentCorrect: false,
       currentDone: false,
     },
@@ -144,7 +147,8 @@ export default function EndResults({
                 height: withDelay(
                   400 * (sortedPlayers.length - player.position),
                   withTiming(height.value, {
-                    duration: 1200,  easing: Easing.inOut(Easing.poly(3)),
+                    duration: 1200,
+                    easing: Easing.inOut(Easing.poly(3)),
                   }),
                 ),
               };
@@ -189,12 +193,23 @@ export default function EndResults({
                     style={{ color: theme.colors.background, paddingBottom: 4 }}
                   >
                     {player.position}
+                    {player.position === 1
+                      ? "st"
+                      : player.position === 2
+                      ? "nd"
+                      : player.position === 3
+                      ? "rd"
+                      : "th"}
                   </Text>
                 </Animated.View>
               </View>
             );
           })}
         </View>
+        <Divider
+          //bold={true}
+          style={{ backgroundColor: theme.colors.primary}}
+        />
       </View>
       <View style={{ flexDirection: "column", gap: 10, marginTop: 40 }}>
         {sortedPlayers.reverse().map((player, index) => {
@@ -206,7 +221,7 @@ export default function EndResults({
           const animatedStyles = useAnimatedStyle(() => ({
             opacity: withDelay(
               400 * (sortedPlayers.length - (index + 1)),
-              withTiming(opacity.value, { duration: 2000, }),
+              withTiming(opacity.value, { duration: 2000 }),
             ),
             transform: [
               {
