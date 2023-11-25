@@ -76,6 +76,7 @@ setInterval(async () => {
     // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
 
     // TODO: |> foreach player in room -> update currentCorrect if player has submitted an answer
+    // TODO: only do this when timer ends  ?
     for (const player of newState.players) {
       const playerAnswer = playerAnswers?.find(
         (pa) =>
@@ -84,7 +85,8 @@ setInterval(async () => {
           pa.round === newState.round,
       );
       if (!playerAnswer) continue;
-      player.currentCorrect = playerAnswer.answer_correct;
+      player.currentCorrect =
+        playerAnswer.answer_correct; /* TODO: gameoption: if plr cant change answer -> ignore when currentCorrect !== null */
     }
 
     /**
@@ -97,7 +99,12 @@ setInterval(async () => {
     // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
     // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
-    console.log(state);
+    newState.question = "Alex " + Math.random();
+    console.log(newState);
+    const { error } = await supabase
+      .from("public_room_states")
+      .update({ data: newState })
+      .eq("room_id", state.room_id);
   }
 
   const end = performance.now();
