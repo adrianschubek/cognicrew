@@ -194,6 +194,7 @@ export default function RateProject({
 
   useEffect(() => {
     if (!data) return;
+    console.log("data: ", data);
     setRating(data);
     calculateStatistics();
   }, []);
@@ -243,7 +244,7 @@ export default function RateProject({
         user_id: uId,
         rating: r,
       });
-    }, 1000),
+    }, 500),
     [],
   );
   useEffect(() => {
