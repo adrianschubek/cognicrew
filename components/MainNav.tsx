@@ -154,7 +154,7 @@ function MainTabs({ navigation }) {
           filter: `room_id=eq.${room?.id}`,
         },
         (payload) => {
-          console.log("Room state update " + room?.id, payload);
+          // console.log("Room state update " + room?.id, payload);
           // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
           // navigation.dispatch(
           //   StackActions.replace('Profile', {
