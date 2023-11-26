@@ -62,9 +62,10 @@ export type PublicRoomState = {
   /**
    * correct answers for current question
    * only when screen === ROUND_SOLUTION, otherwise null
-   * Tuple [answer (string), percentage (0-100)]
+   * Tuple [answer/index (string), percentage (0-100), isCorrect (boolean)]
+   * @example [["answer1", 50, true], ["answer2", 50, false]]
    */
-  correctAnswersPercentage: [string, number][] | null;
+  answersPercentage: [string, number, boolean][] | null;
   /**
    * Round began at timestamp milliseconds
    */

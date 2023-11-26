@@ -127,28 +127,34 @@ setInterval(async () => {
         newState.players.every((p) => p.currentCorrect !== null))
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
-      // tuple: [user_answer, percentage_of_users_who_answered_this_answer]
-      newState.correctAnswersPercentage = playerAnswers
+      // Tuple [answer (string), percentage of player who chose this answer (0-100), isCorrect (boolean)]
+
+      let submittedAnswers = 0;
+      newState.answersPercentage = playerAnswers
         ?.filter(
-          (pa) =>
-            pa.room_id === state.room_id &&
-            pa.round === newState.round &&
-            pa.answer_correct,
+          (pa) => pa.room_id === state.room_id && pa.round === newState.round,
         )
-        .map((pa) => pa.answer)
         .reduce(
-          (acc, curr) => {
-            const existing = acc.find((a) => a[0] === curr);
-            if (existing) {
-              existing[1] += 1;
-            } else {
-              acc.push([curr, 1]);
-            }
-            return acc;
+          (acc: [string, number, boolean][], pa) => {
+            const player = newState.players.find((p) => p.id === pa.user_id);
+            if (!player) return acc;
+            submittedAnswers++;
+            // if answer already exists in acc -> increment percentage
+            if (acc.some((e) => e[0] === pa.answer)) {
+              return acc.map((e) =>
+                e[0] === pa.answer
+                  ? [e[0], e[1] + 100 / submittedAnswers, e[2]]
+                  : e,
+              );
+            } else
+              return [
+                ...acc,
+                [pa.answer, 100 / submittedAnswers, pa.answer_correct],
+              ];
           },
-          [] as [string, number][] /* TODO: type */,
-        )
-        .map((e) => [e[0], (e[1] / newState.players.length) * 100]);
+          [] as [string, number, boolean][],
+        );
+      // TODO: ....
     } else if (
       // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
       newState.screen === ScreenState.ROUND_SOLUTION &&

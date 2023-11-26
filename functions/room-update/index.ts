@@ -115,6 +115,10 @@ serve(async (req) => {
                   .answer /* TODO. maybe save actual answer to display user answers with % */,
           answered_at: dayjs().valueOf(),
           answer_time: dayjs().valueOf() - publicState.roundBeganAt,
+          answer:
+            body.type === "exercise-answer"
+              ? body.answerIndex.toString()
+              : body.answer,
         });
         if (error) {
           return err("Could not save answer [rupd:svans]", 500);

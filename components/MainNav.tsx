@@ -158,15 +158,8 @@ function MainTabs({ navigation }) {
             case "INSERT": // new room state
             case "UPDATE":
               // room state update
-              if (
-                useRoomStateStore.getState().roomState?.screen !==
-                payload.new.data.screen
-              ) {
-                console.log(
-                  `screen changed from ${useRoomStateStore.getState().roomState
-                    ?.screen} to ${payload.new.data.screen}`,
-                );
-              }
+              console.debug(payload.new.data);
+
               setRoomState(payload.new.data);
               // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
