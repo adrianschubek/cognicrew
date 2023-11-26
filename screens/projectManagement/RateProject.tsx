@@ -28,7 +28,6 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { debounce } from "../../utils/common";
-import { use } from "chai";
 
 export default function RateProject({
   navigation,
@@ -75,9 +74,8 @@ export default function RateProject({
     });
   }, [navigation]);
 
+  const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
   const renderStars = (numStars) => {
-    const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
-
     return (
       <View style={{ marginLeft: 20 }}>
         <View style={{ flexDirection: "row" }}>
@@ -258,71 +256,26 @@ export default function RateProject({
         <View style={styles.container}>
           <Text style={styles.heading}>{"Tap to rate:"}</Text>
           <View style={styles.stars}>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(1);
-              }}
-            >
-              <MaterialIcons
-                name={rating >= 1 ? "star" : "star-border"}
-                size={32}
-                style={
-                  rating >= 1 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(2);
-              }}
-            >
-              <MaterialIcons
-                name={rating >= 2 ? "star" : "star-border"}
-                size={32}
-                style={
-                  rating >= 2 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(3);
-              }}
-            >
-              <MaterialIcons
-                name={rating >= 3 ? "star" : "star-border"}
-                size={32}
-                style={
-                  rating >= 3 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(4);
-              }}
-            >
-              <MaterialIcons
-                name={rating >= 4 ? "star" : "star-border"}
-                size={32}
-                style={
-                  rating >= 4 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(5);
-              }}
-            >
-              <MaterialIcons
-                name={rating >= 5 ? "star" : "star-border"}
-                size={32}
-                style={
-                  rating >= 5 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
+            {starsArray.map((number) => {
+              return (
+                <TouchableOpacity
+                  key={number}
+                  onPress={() => {
+                    handleStarPress(number);
+                  }}
+                >
+                  <MaterialIcons
+                    name={rating >= number ? "star" : "star-border"}
+                    size={32}
+                    style={
+                      rating >= number
+                        ? styles.starSelected
+                        : styles.starUnselected
+                    }
+                  />
+                </TouchableOpacity>
+              );
+            })}
             <Text style={[styles.heading, { marginLeft: 10 }]}>
               {rating
                 ? `${rating} ${rating > 1 ? "stars" : "star"}`
