@@ -142,7 +142,6 @@ function MainTabs({ navigation }) {
   }, [room]);
   const { alert, warning } = useAlerts();
   useEffect(() => {
-    console.log(room?.id)
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
       .on(
@@ -154,32 +153,33 @@ function MainTabs({ navigation }) {
           filter: `room_id=eq.${room?.id}`,
         },
         (payload) => {
-          // console.log("Room state update " + room?.id, payload);
-          // TODO: (update/insert) save roomsatte -> setRoomState(payload.new)
-          // navigation.dispatch(
-          //   StackActions.replace('Profile', {
-          //     user: 'jane',
-          //   })
-          // );
-          // alert({
-          //   message: JSON.stringify(payload, null, 2),
-          //   messageStyle: { textAlign: "left" },
-          // });
           switch (payload.eventType) {
             case "INSERT": // new room state
+              if (
+                useRoomStateStore.getState().roomState?.screen !==
+                payload.new.data.screen
+              ) {
+                console.log(
+                  `screen changed from ${useRoomStateStore.getState().roomState
+                    ?.screen} to ${payload.new.data.screen}`,
+                );
+              }
               setRoomState(payload.new.data);
-              // alert({
-              //   message: JSON.stringify(payload, null, 2),
-              //   messageStyle: { textAlign: "left" },
-              // });
               break;
-            case "UPDATE": // room satte update
+            case "UPDATE": {
+              // room state update
+              if (
+                useRoomStateStore.getState().roomState?.screen !==
+                payload.new.data.screen
+              ) {
+                console.log(
+                  `screen changed from ${useRoomStateStore.getState().roomState
+                    ?.screen} to ${payload.new.data.screen}`,
+                );
+              }
               setRoomState(payload.new.data);
-              // alert({
-              //   message: JSON.stringify(payload, null, 2),
-              //   messageStyle: { textAlign: "left" },
-              // });
               break;
+            }
             case "DELETE":
               if (payload.old.room_id !== room?.id) {
                 // FIXME: Fixes bug if room id not mismatch
