@@ -202,7 +202,11 @@ function AlertSyncZustand() {
                       <Button
                         onPress={async () => {
                           try {
-                            setBusy(() => true);
+                            setTempValues((tempValues) => {
+                              const newTempValues = [...tempValues];
+                              newTempValues[i] = "busy";
+                              return newTempValues;
+                            });
                             const ret = await field.action(values);
                             if (typeof ret === "string") {
                               setTempError(ret);
@@ -210,10 +214,14 @@ function AlertSyncZustand() {
                             }
                             next();
                           } finally {
-                            setBusy(() => false);
+                            setTempValues((tempValues) => {
+                              const newTempValues = [...tempValues];
+                              newTempValues[i] = "";
+                              return newTempValues;
+                            });
                           }
                         }}
-                        disabled={field.disabled || busy}
+                        disabled={field.disabled || tempValues[i] === "busy"}
                         style={{ marginTop: 10 }}
                         mode="contained"
                       >
