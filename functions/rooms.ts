@@ -65,6 +65,11 @@ export type PublicRoomState = {
    */
   possibleAnswers: string[];
   /**
+   * correct answers for current question
+   * only when screen === ROUND_SOLUTION, otherwise null
+   */
+  correctAnswers: string[] | null;
+  /**
    * Round began at timestamp milliseconds
    */
   roundBeganAt: number;
