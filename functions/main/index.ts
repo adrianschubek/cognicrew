@@ -66,7 +66,7 @@ setInterval(async () => {
     .select("data,room_id");
   if (!publicRoomStates) return; /* deno assert is not null */
 
-  const { data: playerAnswers, error: plrErrors } = await supabase
+  const { data: playerAnswers } = await supabase
     .from("player_answers")
     .select("*");
 
@@ -109,16 +109,34 @@ setInterval(async () => {
      * ScreenState:
      * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~4s] -> * OR END_RESULTS
      */
-
-    if (newState.screen === ScreenState.INGAME && newState.roundEndsAt < dayjs().valueOf()) {
+    if (
       // TODO: |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
+      newState.screen === ScreenState.INGAME &&
+      (newState.roundEndsAt < dayjs().valueOf() || // TODO: OR if all players answered -> show ROUND_SOLUTION
+        newState.players.every((p) => p.currentCorrect !== null))
+    ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
+    } else if (
+      // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
+      newState.screen === ScreenState.ROUND_SOLUTION &&
+      newState.roundEndsAt + 2000 < dayjs().valueOf()
+    ) {
+      newState.screen = ScreenState.ROUND_RESULTS;
+    } else if (
+      // TODO: |> else if screen == ROUND_RESULTS && current round + 1 > total rounds -> show END_RESULTS
+      newState.screen === ScreenState.ROUND_RESULTS &&
+      newState.round + 1 > newState.totalRounds
+    ) {
+      newState.screen = ScreenState.END_RESULTS;
+    } else if (
+      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
+      newState.screen === ScreenState.ROUND_RESULTS &&
+      newState.roundEndsAt + 4000 < dayjs().valueOf()
+    ) {
+      newState.screen = ScreenState.INGAME;
+      newState.round += 1;
+      newState.roundEndsAt = dayjs().valueOf() + 10000;
     }
-    // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
-
-    // TODO: |> else if screen == ROUND_RESULTS && current round + 1 > total rounds -> show END_RESULTS
-
-    // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
     // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
     // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 

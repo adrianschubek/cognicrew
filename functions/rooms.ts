@@ -64,11 +64,12 @@ export type PublicRoomState = {
    * possible answers for current question (quiz only)
    */
   possibleAnswers: string[];
-  /** //TODO: replace FlatList with shopify FlashList all
+  /**
    * correct answers for current question
    * only when screen === ROUND_SOLUTION, otherwise null
+   * Tuple [answer (string), percentage (0-100)]
    */
-  correctAnswers: string[] | null;
+  correctAnswers: [string, number][] | null;
   /**
    * Round began at timestamp milliseconds
    */
