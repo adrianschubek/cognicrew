@@ -58,7 +58,7 @@ serve(async (req) => {
       .eq("is_ingame", false)
       .single();
     if (error)
-      return err(
+      return err( /* TODO: dont error. instead overwrite room (remove old room states first!)) */
         "User is not host of room or room is already ingame [rint:unhig]",
         400,
       );

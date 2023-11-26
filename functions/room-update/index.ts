@@ -81,8 +81,6 @@ serve(async (req) => {
 
     switch (body.type) {
       case "flashcard-answer":
-        return err("Not implemented [rupd:nimpl1]", 501);
-        break;
       case "exercise-answer": {
         // |check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
         // store "true" or "false" in db
@@ -103,14 +101,18 @@ serve(async (req) => {
           round: publicState.round,
           /* correct === user_answers */
           answer_correct:
-            privateState.gameData.exercises[
-              publicState.round - 1
-            ].correct.every((e) => body.answerIndex.includes(e)) &&
-            body.answerIndex.every((e) =>
-              privateState.gameData.exercises[
-                publicState.round - 1
-              ].correct.includes(e),
-            ),
+            body.type === "exercise-answer"
+              ? privateState.gameData.exercises[
+                  publicState.round - 1
+                ].correct.every((e) => body.answerIndex.includes(e)) &&
+                body.answerIndex.every((e) =>
+                  privateState.gameData.exercises[
+                    publicState.round - 1
+                  ].correct.includes(e),
+                )
+              : body.answer ===
+                privateState.gameData.flashcards[publicState.round - 1]
+                  .answer /* TOOD. maybe save actual answer to display user answers with % */,
           answered_at: dayjs().valueOf(),
           answer_time: dayjs().valueOf() - publicState.roundBeganAt,
         });
