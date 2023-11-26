@@ -29,7 +29,7 @@ export default function Lobby({ navigation }) {
   const { confirm, alert } = useAlerts();
 
   const room = useRoomStore((state) => state.room);
-  const roomState = useRoomStateStore((state) => state.roomState);
+  const setRoomState = useRoomStateStore((state) => state.setRoomState);
   const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState([]);
   const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
@@ -80,6 +80,7 @@ export default function Lobby({ navigation }) {
           const { error } = await supabase.rpc("leave_room");
           if (error) return error.message;
           setRoom(null);
+          setRoomState(null);
         },
       });
     });
@@ -351,6 +352,7 @@ export default function Lobby({ navigation }) {
                 const { error } = await supabase.rpc("leave_room");
                 if (error) return error.message;
                 setRoom(null);
+                setRoomState(null);
                 navigation.navigate(NAVIGATION.HOME);
               }}
             >

@@ -155,15 +155,6 @@ function MainTabs({ navigation }) {
         (payload) => {
           switch (payload.eventType) {
             case "INSERT": // new room state
-              if (
-                useRoomStateStore.getState().roomState?.screen !==
-                payload.new.data.screen
-              ) {
-                console.log(
-                  `screen changed from ${useRoomStateStore.getState().roomState
-                    ?.screen} to ${payload.new.data.screen}`,
-                );
-              }
               setRoomState(payload.new.data);
               break;
             case "UPDATE": {
@@ -195,6 +186,7 @@ function MainTabs({ navigation }) {
                 message: "Room was closed by host (mainav)",
               });
               setRoom(null);
+              setRoomState(null);
               alert({
                 message: JSON.stringify(payload, null, 2),
                 messageStyle: { textAlign: "left" },

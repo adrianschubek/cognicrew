@@ -36,6 +36,7 @@ export default function GuestLobby() {
         // room was cloes by host (all users kicked)
         if (userNames.data.length === 0 && room) {
           setRoom(null);
+          setRoomState(null);
           console.log("room was closed by host (guest lobby)");
           warning({
             key: "guest-lobby-closed",
@@ -84,6 +85,7 @@ export default function GuestLobby() {
         okAction: async () => {
           const { error } = await supabase.rpc("leave_room");
           setRoom(null);
+          setRoomState(null);
           if (error) return error.message;
         },
       });
@@ -134,6 +136,7 @@ export default function GuestLobby() {
             okAction: async () => {
               const { error } = await supabase.rpc("leave_room");
               setRoom(null);
+              setRoomState(null);
               if (error) return error.message;
             },
           })
