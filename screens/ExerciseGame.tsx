@@ -129,7 +129,7 @@ export default function ExerciseGame({ navigation }) {
   };
 
   const MemoTimer = useMemo(
-    () => <Timer roundEndsAt={roomState.roundEndsAt} />,
+    () => <Timer roundEndsAt={roomState?.roundEndsAt} />,
     [roomState?.roundEndsAt],
   );
 
