@@ -69,7 +69,7 @@ export type PublicRoomState = {
    * only when screen === ROUND_SOLUTION, otherwise null
    * Tuple [answer (string), percentage (0-100)]
    */
-  correctAnswers: [string, number][] | null;
+  correctAnswersPercentage: [string, number][] | null;
   /**
    * Round began at timestamp milliseconds
    */
