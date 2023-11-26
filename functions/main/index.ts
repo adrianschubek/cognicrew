@@ -54,6 +54,9 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
+const ROUND_SOLUTION_DURATION = 3000;
+const ROUND_RESULTS_DURATION = 5000;
+
 // listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
 
 setInterval(async () => {
@@ -149,13 +152,14 @@ setInterval(async () => {
     } else if (
       // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
       newState.screen === ScreenState.ROUND_SOLUTION &&
-      newState.roundEndsAt + 2000 < dayjs().valueOf()
+      newState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
     ) {
       newState.screen = ScreenState.ROUND_RESULTS;
     } else if (
       // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
       newState.screen === ScreenState.ROUND_RESULTS &&
-      newState.roundEndsAt + 2000 + 3000 < dayjs().valueOf()
+      newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
+        dayjs().valueOf()
     ) {
       if (newState.round + 1 <= newState.totalRounds) {
         // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
