@@ -156,9 +156,7 @@ function MainTabs({ navigation }) {
         (payload) => {
           switch (payload.eventType) {
             case "INSERT": // new room state
-              setRoomState(payload.new.data);
-              break;
-            case "UPDATE": {
+            case "UPDATE":
               // room state update
               if (
                 useRoomStateStore.getState().roomState?.screen !==
@@ -188,11 +186,11 @@ function MainTabs({ navigation }) {
                   else navigation.navigate(NAVIGATION.GUEST_LOBBY);
                   break;
                 case ScreenState.END_RESULTS:
-                  navigation.navigate(NAVIGATION.END_RESULTS);
+                  // TODO:
+                  // navigation.navigate(NAVIGATION.END_RESULTS);
                   break;
               }
               break;
-            }
             case "DELETE":
               if (payload.old.room_id !== room?.id) {
                 // FIXME: Fixes bug if room id not mismatch
