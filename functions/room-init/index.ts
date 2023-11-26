@@ -187,6 +187,7 @@ serve(async (req) => {
                 .slice(0, body.numberOfRounds)
             : [],
       },
+      roundDuration: body.roundDuration,
     };
     // console.log(privateState);
 
@@ -213,7 +214,6 @@ serve(async (req) => {
       correctAnswersPercentage: null,
       roundBeganAt: dayjs().valueOf(),
       roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
-      roundDuration: body.roundDuration,
     };
     // console.log(publicState);
 

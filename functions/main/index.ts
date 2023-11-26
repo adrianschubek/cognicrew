@@ -162,7 +162,7 @@ setInterval(async () => {
         newState.round += 1;
         newState.roundBeganAt = dayjs().valueOf();
         newState.roundEndsAt =
-          dayjs().valueOf() + newState.roundDuration * 1000;
+          dayjs().valueOf() + privateState.roundDuration * 1000;
         newState.screen = ScreenState.INGAME;
         // Load next question
         switch (newState.game) {

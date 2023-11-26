@@ -73,10 +73,6 @@ export type PublicRoomState = {
    * Round ends at timestamp milliseconds
    */
   roundEndsAt: number;
-  /**
-   * Round duration in seconds
-   */
-  roundDuration: number;
 };
 
 /**
@@ -84,6 +80,10 @@ export type PublicRoomState = {
  * //TODO On Update Trigger -> execute Webhook -> Edge Function -> Update PublicRoomState
  */
 export type PrivateRoomState = {
+  /**
+   * Round duration in seconds
+   */
+  roundDuration: number;
   /**
    * Complete game data (incl. solutions)
    */
@@ -101,7 +101,6 @@ export type PrivateRoomState = {
       priority: number;
       answer: string;
     }[];
-
     /**
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
