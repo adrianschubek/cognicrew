@@ -194,7 +194,7 @@ export function useDeleteProjectRating() {
     useDeleteMutation(
       supabase.from("project_ratings"),
       ["project_id", "user_id"],
-      "project_id,user_id,rating",
+      "project_id,user_id",
     ),
   );
 }

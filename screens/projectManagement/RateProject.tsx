@@ -223,13 +223,6 @@ export default function RateProject({
 
   const handleStarPress = (newRating) => {
     if (newRating === rating) {
-      deleteProjectRating({
-        project_id: projectId,
-        user_id: user.id,
-        rating: newRating,
-      });
-      //setSum(sum-1);
-      //setAvg(0);
       setRating(0);
     } else {
       setRating(newRating);
@@ -247,14 +240,26 @@ export default function RateProject({
     }, 500),
     [],
   );
+  const debouncedDeleteProjectRating = useCallback(
+    debounce((pId, uId) => {
+      deleteProjectRating({
+        project_id: pId,
+        user_id: uId,
+      });
+    }, 500),
+    [],
+  );
   useEffect(() => {
-    if (rating !== null || rating === 0) {
-      // Call the debounced function
-      if (allowUpdate === true) {
-        debouncedUpsertProjectRating(projectId, user.id, rating);
-      } else setAllowUpdate(true);
-    }
-  }, [rating, debouncedUpsertProjectRating]); // add debouncedEditFlashcard to dependencies
+    if (rating === null || rating === 0) return;
+    // Call the debounced function
+      debouncedUpsertProjectRating(projectId, user.id, rating);
+
+  }, [rating, debouncedUpsertProjectRating]);
+
+  useEffect(() => {
+    if (rating === null || rating !== 0) return;
+    debouncedDeleteProjectRating(projectId, user.id);
+  }, [rating, debouncedDeleteProjectRating]);
 
   if (isLoading || error) return <LoadingOverlay visible />;
   return (
