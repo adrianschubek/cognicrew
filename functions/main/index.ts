@@ -142,13 +142,13 @@ setInterval(async () => {
             // if answer already exists in acc -> increment percentage
             if (acc.some((e) => e[0] === pa.answer)) {
               return acc.map((e) =>
-                e[0] === pa.answer
+                e[0] === pa.answer /* FIXME */
                   ? [e[0], e[1] + 100 / submittedAnswers, e[2]]
                   : e,
               );
             } else
               return [
-                ...acc,
+                ...acc, /* FIXME */
                 [pa.answer, 100 / submittedAnswers, pa.answer_correct],
               ];
           },
