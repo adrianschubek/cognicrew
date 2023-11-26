@@ -170,7 +170,7 @@ function MainTabs({ navigation }) {
                 );
               }
               setRoomState(payload.new.data);
-              // TODO: navigate to correct screen payload.new.data.screen
+              // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
                 case ScreenState.INGAME:
                   switch (payload.new.data.game as GameState) {
