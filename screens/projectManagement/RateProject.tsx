@@ -229,31 +229,27 @@ export default function RateProject({
     }
   };
 
-  const debouncedUpsertProjectRating = useCallback(
-    debounce((pId, uId, r) => {
-      upsertProjectRating({
-        //@ts-expect-error
-        project_id: pId,
-        user_id: uId,
-        rating: r,
-      });
-    }, 500),
-    [],
-  );
-  const debouncedDeleteProjectRating = useCallback(
-    debounce((pId, uId) => {
-      deleteProjectRating({
-        project_id: pId,
-        user_id: uId,
-      });
-    }, 500),
-    [],
-  );
+  const debouncedUpsert = debounce((pId, uId, r) => {
+    upsertProjectRating({
+      //@ts-expect-error
+      project_id: pId,
+      user_id: uId,
+      rating: r,
+    });
+  }, 3000);
+  const debouncedDelete = debounce((pId, uId) => {
+    deleteProjectRating({
+      project_id: pId,
+      user_id: uId,
+    });
+  }, 3000);
+  const debouncedUpsertProjectRating = useCallback(debouncedUpsert, []);
+  const debouncedDeleteProjectRating = useCallback(debouncedDelete, []);
+
   useEffect(() => {
     if (rating === null || rating === 0) return;
     // Call the debounced function
-      debouncedUpsertProjectRating(projectId, user.id, rating);
-
+    debouncedUpsertProjectRating(projectId, user.id, rating);
   }, [rating, debouncedUpsertProjectRating]);
 
   useEffect(() => {
