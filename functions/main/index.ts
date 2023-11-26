@@ -120,7 +120,7 @@ setInterval(async () => {
     if (
       // TODO: |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
       newState.screen === ScreenState.INGAME &&
-      (newState.roundEndsAt < dayjs().valueOf() || // TODO: OR if all players answered -> show ROUND_SOLUTION
+      (newState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
         newState.players.every((p) => p.currentCorrect !== null))
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
