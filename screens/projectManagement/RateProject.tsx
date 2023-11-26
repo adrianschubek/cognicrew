@@ -229,33 +229,27 @@ export default function RateProject({
     }
   };
 
-  const debouncedUpsert = debounce((pId, uId, r) => {
-    upsertProjectRating({
-      //@ts-expect-error
-      project_id: pId,
-      user_id: uId,
-      rating: r,
-    });
-  }, 3000);
-  const debouncedDelete = debounce((pId, uId) => {
-    deleteProjectRating({
-      project_id: pId,
-      user_id: uId,
-    });
-  }, 3000);
-  const debouncedUpsertProjectRating = useCallback(debouncedUpsert, []);
-  const debouncedDeleteProjectRating = useCallback(debouncedDelete, []);
+  const debouncedDeleteOrUpsert = debounce((pId, uId, r) => {
+    if (r === 0) {
+      deleteProjectRating({
+        project_id: pId,
+        user_id: uId,
+      });
+    } else
+      upsertProjectRating({
+        //@ts-expect-error
+        project_id: pId,
+        user_id: uId,
+        rating: r,
+      });
+  }, 500);
+  const debouncedBackendCall = useCallback(debouncedDeleteOrUpsert, []);
 
   useEffect(() => {
-    if (rating === null || rating === 0) return;
+    if (rating === null) return;
     // Call the debounced function
-    debouncedUpsertProjectRating(projectId, user.id, rating);
-  }, [rating, debouncedUpsertProjectRating]);
-
-  useEffect(() => {
-    if (rating === null || rating !== 0) return;
-    debouncedDeleteProjectRating(projectId, user.id);
-  }, [rating, debouncedDeleteProjectRating]);
+    debouncedBackendCall(projectId, user.id, rating);
+  }, [rating, debouncedBackendCall]);
 
   if (isLoading || error) return <LoadingOverlay visible />;
   return (
