@@ -62,7 +62,7 @@ type ButtonInput = CommonInput & {
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
-   * Return an empty string to keep the input open without displaying an error.
+   * Return an empty string to keep the alert open without displaying an error.
    *
    * @param values All input values in the alert.
    */
@@ -171,7 +171,7 @@ export type Alert = {
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
-   * Return an empty string to keep the input open without displaying an error.
+   * Return an empty string to keep the alert open without displaying an error.
    *
    * @param values All input values in the alert.
    */
@@ -181,7 +181,7 @@ export type Alert = {
    *
    * if the action returns `string`, the alert will NOT be dismissed and the string will be displayed as an error.
    *
-   * Return an empty string to keep the input open without displaying an error.
+   * Return an empty string to keep the alert open without displaying an error.
    *
    * @param values All input values in the alert.
    */
