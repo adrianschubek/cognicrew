@@ -30,6 +30,7 @@ import { supabase } from "../supabase";
 import { useAlerts } from "../utils/hooks";
 import RateProject from "../screens/projectManagement/RateProject";
 import EndResults from "../screens/ingame/EndResults";
+import { GameState, ScreenState } from "../functions/rooms";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -170,6 +171,26 @@ function MainTabs({ navigation }) {
               }
               setRoomState(payload.new.data);
               // TODO: navigate to correct screen payload.new.data.screen
+              switch (payload.new.data.screen) {
+                case ScreenState.INGAME:
+                  switch (payload.new.data.game as GameState) {
+                    case GameState.EXERCISES:
+                      navigation.navigate(NAVIGATION.EXERCISE_GAME);
+                      break;
+                    case GameState.FLASHCARDS:
+                      navigation.navigate(NAVIGATION.FLASHCARD_GAME);
+                      break;
+                  }
+                  break;
+                case ScreenState.LOBBY:
+                  if (payload.new.data.host === uid)
+                    navigation.navigate(NAVIGATION.LOBBY);
+                  else navigation.navigate(NAVIGATION.GUEST_LOBBY);
+                  break;
+                case ScreenState.END_RESULTS:
+                  navigation.navigate(NAVIGATION.END_RESULTS);
+                  break;
+              }
               break;
             }
             case "DELETE":
