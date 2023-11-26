@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { PublicRoomState } from "../rooms.ts";
+import { GameState, PrivateRoomState, PublicRoomState } from "../rooms.ts";
 
 console.log("main function started");
 
@@ -66,6 +66,11 @@ setInterval(async () => {
     .select("data,room_id");
   if (!publicRoomStates) return; /* deno assert is not null */
 
+  const { data: privateRoomSates } = await supabase
+    .from("private_room_states")
+    .select("data,room_id");
+  if (!privateRoomSates) return; /* deno assert is not null */
+
   const { data: playerAnswers } = await supabase
     .from("player_answers")
     .select("*");
@@ -88,6 +93,9 @@ setInterval(async () => {
 
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
+    const privateState = privateRoomSates.find(
+      (prs) => prs.room_id === state.room_id,
+    )?.data as PrivateRoomState;
     // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
 
     // TODO: |> foreach player in room -> update currentCorrect if player has submitted an answer
@@ -107,7 +115,7 @@ setInterval(async () => {
 
     /**
      * ScreenState:
-     * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~4s] -> * OR END_RESULTS
+     * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~2s + ~3s] -> * OR END_RESULTS
      */
     if (
       // TODO: |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
@@ -116,6 +124,28 @@ setInterval(async () => {
         newState.players.every((p) => p.currentCorrect !== null))
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
+      // tuple: [user_answer, percentage_of_users_who_answered_this_answer]
+      newState.correctAnswersPercentage = playerAnswers
+        ?.filter(
+          (pa) =>
+            pa.room_id === state.room_id &&
+            pa.round === newState.round &&
+            pa.answer_correct,
+        )
+        .map((pa) => pa.answer)
+        .reduce(
+          (acc, curr) => {
+            const existing = acc.find((a) => a[0] === curr);
+            if (existing) {
+              existing[1] += 1;
+            } else {
+              acc.push([curr, 1]);
+            }
+            return acc;
+          },
+          [] as [string, number][] /* TODO: type */,
+        )
+        .map((e) => [e[0], (e[1] / newState.players.length) * 100]);
     } else if (
       // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
       newState.screen === ScreenState.ROUND_SOLUTION &&
@@ -123,22 +153,38 @@ setInterval(async () => {
     ) {
       newState.screen = ScreenState.ROUND_RESULTS;
     } else if (
-      // TODO: |> else if screen == ROUND_RESULTS && current round + 1 > total rounds -> show END_RESULTS
+      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
       newState.screen === ScreenState.ROUND_RESULTS &&
-      newState.round + 1 > newState.totalRounds
+      newState.roundEndsAt + 2000 + 3000 < dayjs().valueOf()
     ) {
-      newState.screen = ScreenState.END_RESULTS;
-    } else if (
-      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 4s < now (~ show ROUND_RESULTS for few secs)
-      newState.screen === ScreenState.ROUND_RESULTS &&
-      newState.roundEndsAt + 4000 < dayjs().valueOf()
-    ) {
-      newState.screen = ScreenState.INGAME;
-      newState.round += 1;
-      newState.roundEndsAt = dayjs().valueOf() + 10000;
+      if (newState.round + 1 <= newState.totalRounds) {
+        // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
+        newState.round += 1;
+        newState.roundBeganAt = dayjs().valueOf();
+        newState.roundEndsAt =
+          dayjs().valueOf() + newState.roundDuration * 1000;
+        newState.screen = ScreenState.INGAME;
+        // Load next question
+        switch (newState.game) {
+          case GameState.EXERCISES:
+            newState.question =
+              privateState.gameData.exercises[newState.round - 1].question;
+            newState.possibleAnswers =
+              privateState.gameData.exercises[newState.round - 1].answers;
+            break;
+          case GameState.FLASHCARDS:
+            newState.question =
+              privateState.gameData.flashcards[newState.round - 1].question;
+            break;
+          default:
+            console.error("invalid game type");
+            continue;
+        }
+      } else {
+        // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+        newState.screen = ScreenState.END_RESULTS;
+      }
     }
-    // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
-    // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
 
     // newState.question = "Alex " + Math.random();
     console.log(newState);

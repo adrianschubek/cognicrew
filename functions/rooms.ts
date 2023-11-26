@@ -73,6 +73,10 @@ export type PublicRoomState = {
    * Round ends at timestamp milliseconds
    */
   roundEndsAt: number;
+  /**
+   * Round duration in seconds
+   */
+  roundDuration: number;
 };
 
 /**

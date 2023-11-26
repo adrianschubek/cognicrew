@@ -169,6 +169,7 @@ function MainTabs({ navigation }) {
                 );
               }
               setRoomState(payload.new.data);
+              // TODO: navigate to correct screen payload.new.data.screen
               break;
             }
             case "DELETE":

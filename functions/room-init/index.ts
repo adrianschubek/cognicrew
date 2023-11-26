@@ -58,7 +58,8 @@ serve(async (req) => {
       .eq("is_ingame", false)
       .single();
     if (error)
-      return err( /* TODO: dont error. instead overwrite room (remove old room states first!)) */
+      return err(
+        /* TODO: dont error. instead overwrite room (remove old room states first!)) */
         "User is not host of room or room is already ingame [rint:unhig]",
         400,
       );
@@ -199,8 +200,7 @@ serve(async (req) => {
         currentTimeNeeded: null,
         // currentDone: null,
       })),
-      screen:
-        ScreenState.INGAME /* TODO: maybe show pre lobby first for few seconds? */,
+      screen: ScreenState.INGAME,
       game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
       totalRounds: body.type === 1 ? exercisesNum : flashcardsNum,
       round: 1,
@@ -213,6 +213,7 @@ serve(async (req) => {
       correctAnswersPercentage: null,
       roundBeganAt: dayjs().valueOf(),
       roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
+      roundDuration: body.roundDuration,
     };
     // console.log(publicState);
 
@@ -235,7 +236,7 @@ serve(async (req) => {
       });
     if (errSavePub) throw errSavePub;
 
-    // set room to ingame
+    // set room to ingame (locks room)
     const { error: errSetIngame } = await supabase
       .from("rooms")
       .update({ is_ingame: true })

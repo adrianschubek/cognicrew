@@ -112,7 +112,7 @@ serve(async (req) => {
                 )
               : body.answer ===
                 privateState.gameData.flashcards[publicState.round - 1]
-                  .answer /* TOOD. maybe save actual answer to display user answers with % */,
+                  .answer /* TODO. maybe save actual answer to display user answers with % */,
           answered_at: dayjs().valueOf(),
           answer_time: dayjs().valueOf() - publicState.roundBeganAt,
         });
