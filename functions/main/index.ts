@@ -54,7 +54,7 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
-const ROUND_SOLUTION_DURATION = 3000;
+const ROUND_SOLUTION_DURATION = 4000;
 const ROUND_RESULTS_DURATION = 5000;
 
 // listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
