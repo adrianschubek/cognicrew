@@ -170,7 +170,13 @@ function MainTabs({ navigation }) {
               setRoomState(payload.new.data);
               // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
+                case ScreenState.LOBBY:
+                  if (payload.new.data.host === uid)
+                    navigation.navigate(NAVIGATION.LOBBY);
+                  else navigation.navigate(NAVIGATION.GUEST_LOBBY);
+                  break;
                 case ScreenState.INGAME:
+                case ScreenState.ROUND_SOLUTION:
                   switch (payload.new.data.game as GameState) {
                     case GameState.EXERCISES:
                       navigation.navigate(NAVIGATION.EXERCISE_GAME);
@@ -180,11 +186,7 @@ function MainTabs({ navigation }) {
                       break;
                   }
                   break;
-                case ScreenState.LOBBY:
-                  if (payload.new.data.host === uid)
-                    navigation.navigate(NAVIGATION.LOBBY);
-                  else navigation.navigate(NAVIGATION.GUEST_LOBBY);
-                  break;
+                case ScreenState.ROUND_RESULTS:
                 case ScreenState.END_RESULTS:
                   // TODO:
                   // navigation.navigate(NAVIGATION.END_RESULTS);
