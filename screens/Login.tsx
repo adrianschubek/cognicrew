@@ -168,6 +168,18 @@ export default function Login({ navigation }) {
                           label: "Verification Code",
                           type: "number",
                         },
+                        {
+                          label: "resend code",
+                          type: "button",
+                          action: async () => {
+                            const { data, error } = await supabase.auth.resend({
+                              type: "email_change",
+                              email: values[0],
+                            });
+                            if (error) return error?.message ?? "Unknown error";
+                            return "";
+                          },
+                        },
                       ],
                     });
                   },
@@ -289,6 +301,18 @@ export default function Login({ navigation }) {
                     {
                       label: "Verification Code",
                       type: "number",
+                    },
+                    {
+                      label: "resend code",
+                      type: "button",
+                      action: async () => {
+                        const { data, error } = await supabase.auth.resend({
+                          type: "email_change",
+                          email: values[1],
+                        });
+                        if (error) return error?.message ?? "Unknown error";
+                        return "";
+                      },
                     },
                   ],
                 });
