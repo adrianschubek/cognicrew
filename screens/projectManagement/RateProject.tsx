@@ -28,6 +28,7 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { debounce } from "../../utils/common";
+import { use } from "chai";
 
 export default function RateProject({
   navigation,
@@ -147,7 +148,7 @@ export default function RateProject({
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
-  const { data, isLoading, error, mutate } = useUserRating(user.id, projectId);
+  const { data, isLoading, error } = useUserRating(user.id, projectId);
   async function calculateSum() {
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
@@ -191,11 +192,12 @@ export default function RateProject({
   }
 
   useEffect(() => {
+    //on every table update he goes in here independently from subscription and i dont know why
     if (!data) return;
     console.log("data: ", data);
-    setRating(data);
+    setRating(data[0]?.rating);
     calculateStatistics();
-  }, []);
+  }, [data]);
 
   useFocusEffect(() => {
     const ratingsTracker = supabase
@@ -209,7 +211,6 @@ export default function RateProject({
           filter: "key=eq.rate",
         },
         (payload) => {
-          mutate();
           calculateStatistics();
         },
       )
@@ -246,7 +247,9 @@ export default function RateProject({
   useEffect(() => {
     if (rating === null) return;
     // Call the debounced function
-    debouncedBackendCall(projectId, user.id, rating);
+    allowUpdate === true
+      ? debouncedBackendCall(projectId, user.id, rating)
+      : setAllowUpdate(true);
   }, [rating, debouncedBackendCall]);
 
   if (isLoading || error) return <LoadingOverlay visible />;
