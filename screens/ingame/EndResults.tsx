@@ -15,15 +15,13 @@ import {
   responsiveScreenHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-export default function EndResults({
-  route,
-}: {
-  route: { params: { roomState: PublicRoomState; user_id: string } };
-}) {
+import { useRoomStateStore } from "../../stores/RoomStore";
+import { useAuth } from "../../providers/AuthProvider";
+export default function EndResults() {
+  const roomState = useRoomStateStore((state) => state.roomState);
+  const uid = useAuth().user?.id;
   const theme = useTheme();
   let self;
-  const roomState = route.params.roomState;
-  const user_id = route.params.user_id;
   self = {
     id: "10",
     username: "TimoDerBoiii",
@@ -106,7 +104,7 @@ export default function EndResults({
   }
   const reSortedPlayers = useMemo(
     () => reSortPlayers(sortedPlayers),
-    [route.params.roomState],
+    [roomState],
   );
 
   const highestScore = sortedPlayers[sortedPlayers.length - 1].score * 2;

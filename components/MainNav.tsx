@@ -132,7 +132,6 @@ function LearningProjectsTab() {
 function MainTabs({ navigation }) {
   const room = useRoomStore((state) => state.room);
   const setRoom = useRoomStore((state) => state.setRoom);
-  const roomState = useRoomStateStore((state) => state.roomState);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
   const uid = useAuth().user?.id;
   // redirect to lobby if user is currently ingame
@@ -182,10 +181,7 @@ function MainTabs({ navigation }) {
                   break;
                 case ScreenState.ROUND_RESULTS:
                 case ScreenState.END_RESULTS:
-                  navigation.navigate(NAVIGATION.END_RESULTS, {
-                    roomState: roomState,
-                    user_id: uid,
-                  });
+                  navigation.navigate(NAVIGATION.END_RESULTS);
                   break;
               }
               break;
