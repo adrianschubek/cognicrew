@@ -21,6 +21,7 @@ import { responsiveWidth } from "react-native-responsive-dimensions";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { handleEdgeError } from "../../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
+import { toArray } from "../../stores/AlertsStore";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -194,7 +195,7 @@ export default function Lobby({ navigation }) {
                           {
                             body: {
                               type: ManagementType.EXERCISE,
-                              sets: setValues[0].split("|").map((set) => +set),
+                              sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],
                             },
@@ -264,9 +265,6 @@ export default function Lobby({ navigation }) {
                       dismissable: false,
                       okText: "Start Game",
                       okAction: async (values) => {
-                        console.log(
-                          "Sets: " + setValues[0].split("|").map((set) => +set),
-                        );
                         console.log("Round Duration: " + +values[0]);
                         console.log("Number of Rounds: " + +values[1]);
                         const { data, error } = await supabase.functions.invoke(
@@ -274,7 +272,7 @@ export default function Lobby({ navigation }) {
                           {
                             body: {
                               type: ManagementType.FLASHCARD,
-                              sets: setValues[0].split("|").map((set) => +set),
+                              sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],
                             },
@@ -284,7 +282,7 @@ export default function Lobby({ navigation }) {
 
                         console.log(data);
                         navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
-                          sets: setValues[0].split("|").map((set) => +set),
+                          sets: toArray(setValues[0], (el) => +el),
                           roundDuration: +values[0],
                           numberOfRounds: +values[1],
                         });
