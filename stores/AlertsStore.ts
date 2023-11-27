@@ -290,6 +290,6 @@ export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
 /**
  * Converts an array string value from actions parameter to an array.
  */
-export function toArray<T>(values: string, mapFn: (T) => T = (el) => el): T[] {
-  return values.split("|").map(mapFn) as T[];
+export function toArray<T>(value?: string, mapFn: (T) => T = (el) => el): T[] {
+  return (value ?? "").split("|").map(mapFn) as T[];
 }
