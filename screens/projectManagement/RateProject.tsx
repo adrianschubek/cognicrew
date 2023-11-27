@@ -148,7 +148,16 @@ export default function RateProject({
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
-  const { data, isLoading, error } = useUserRating(user.id, projectId);
+
+  async function getUsersRating() {
+    let { data, error } = await supabase.rpc("get_users_rating_for_project", {
+      project_id_param: projectId,
+      user_id_param: user.id,
+    });
+    if (data) {
+      setRating(data);
+    }
+  }
   async function calculateSum() {
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
@@ -192,12 +201,9 @@ export default function RateProject({
   }
 
   useEffect(() => {
-    //on every table update he goes in here independently from subscription and i dont know why
-    if (!data) return;
-    console.log("data: ", data);
-    setRating(data[0]?.rating);
+    getUsersRating();
     calculateStatistics();
-  }, [data]);
+  }, []);
 
   useFocusEffect(() => {
     const ratingsTracker = supabase
@@ -252,7 +258,6 @@ export default function RateProject({
       : setAllowUpdate(true);
   }, [rating, debouncedBackendCall]);
 
-  if (isLoading || error) return <LoadingOverlay visible />;
   return (
     <ScrollView>
       <SafeAreaView style={styles.personalRating}>
