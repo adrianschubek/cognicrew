@@ -22,13 +22,8 @@ export default function EndResults({
 }) {
   const theme = useTheme();
   let self;
-  //const roomState = route.params.roomState;
-  //const user_id = route.params.user_id;
-  /*const otherPlayers = roomState.players.filter((player) => {
-    if (player.id !== user_id) return true;
-    self = player;
-    return false;
-  });*/
+  const roomState = route.params.roomState;
+  const user_id = route.params.user_id;
   self = {
     id: "10",
     username: "TimoDerBoiii",
@@ -73,11 +68,19 @@ export default function EndResults({
       currentDone: false,
     },
   ];
-  const allPlayers = [...otherPlayers, self];
+  const allPlayers = roomState.players;
+  //const allPlayers = [...otherPlayers, self];
   //lowest to highest and only the first five  players
   const sortedPlayers = allPlayers
     .sort((p1, p2) => p1.score - p2.score)
-    .slice(-5);
+    .slice(-5) as {
+    id: string;
+    username: string;
+    score: number;
+    currentCorrect: boolean;
+    currentTimeNeeded: number;
+    position?: number;
+  }[];
 
   //add attribute position to players
   sortedPlayers.forEach((player, index) => {
