@@ -129,8 +129,8 @@ serve(async (req) => {
     }
 
     // check if sets contain at least one exercise/flashcard
-    const exercisesNum = gamedata.sets.map((set) => set.exercises).length;
-    const flashcardsNum = gamedata.sets.map((set) => set.flashcards).length;
+    const exercisesNum = gamedata.sets.flatMap((set) => set.exercises).length;
+    const flashcardsNum = gamedata.sets.flatMap((set) => set.flashcards).length;
     if (
       (body.type === 1 && exercisesNum === 0) ||
       (body.type === 0 && flashcardsNum === 0)
@@ -189,7 +189,7 @@ serve(async (req) => {
       },
       roundDuration: body.roundDuration,
     };
-    // console.log(privateState);
+    console.log(privateState);
 
     // load first question/flashcard
     const publicState: PublicRoomState = {
