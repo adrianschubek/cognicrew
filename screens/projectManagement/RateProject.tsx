@@ -1,5 +1,8 @@
-import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
@@ -7,9 +10,7 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useAlerts,
-  useDeleteProject,
   useDeleteProjectRating,
-  useRemoveUserFromLearningProject,
   useSoundSystem1,
   useUpsertProjectRating,
   useUsername,
@@ -19,6 +20,7 @@ import { useAuth } from "../../providers/AuthProvider";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
+import { debounce } from "../../utils/common";
 
 export default function RateProject({
   navigation,
@@ -36,7 +38,7 @@ export default function RateProject({
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
-  const { success, error: errorAlert, info, confirm } = useAlerts();
+  const { confirm } = useAlerts();
   const theme = useTheme();
 
   useEffect(() => {
@@ -65,19 +67,20 @@ export default function RateProject({
     });
   }, [navigation]);
 
+  const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
   const renderStars = (numStars) => {
-    const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
-
     return (
       <View style={{ marginLeft: 20 }}>
         <View style={{ flexDirection: "row" }}>
           {starsArray.map((index) => (
             <MaterialIcons
               key={index}
-              name={index-1 < numStars ? "star" : "star-border"}
+              name={index - 1 < numStars ? "star" : "star-border"}
               size={32}
               style={
-                index-1 < numStars ? styles.starSelected : styles.starUnselected
+                index - 1 < numStars
+                  ? styles.starSelected
+                  : styles.starUnselected
               }
             />
           ))}
@@ -131,8 +134,8 @@ export default function RateProject({
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-  const [oldRating, setOldRating] = useState(null);
-  const [newRating, setNewRating] = useState(null);
+  const [rating, setRating] = useState(null);
+  const [allowUpdate, setAllowUpdate] = useState(false);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
@@ -144,15 +147,20 @@ export default function RateProject({
       user_id_param: user.id,
     });
     if (data) {
-      setOldRating(data);
+      setRating(data);
     }
   }
-
   async function calculateSum() {
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
     });
+    if (data) {
       setSum(data);
+      //console.log(data);
+    } else {
+      setSum(data);
+      //console.log(data);
+    }
   }
 
   async function calculateAvg() {
@@ -164,6 +172,7 @@ export default function RateProject({
       setAvg(data);
     } else {
       setAvg(data);
+      //console.log(data);
     }
   }
 
@@ -182,7 +191,7 @@ export default function RateProject({
     calculateAvg();
     calculateIndividualRatings();
   }
-  
+
   useEffect(() => {
     getUsersRating();
     calculateStatistics();
@@ -200,7 +209,6 @@ export default function RateProject({
           filter: "key=eq.rate",
         },
         (payload) => {
-          getUsersRating();
           calculateStatistics();
         },
       )
@@ -211,23 +219,34 @@ export default function RateProject({
   });
 
   const handleStarPress = (newRating) => {
-    if (newRating === oldRating) {
-      deleteProjectRating({
-        project_id: projectId,
-        user_id: user.id,
-        rating: newRating,
-      });
-      setOldRating(0);
+    if (newRating === rating) {
+      setRating(0);
     } else {
-      setOldRating(newRating);
-      upsertProjectRating({
-        //@ts-expect-error
-        project_id: projectId,
-        user_id: user.id,
-        rating: newRating === oldRating ? 0 : newRating,
-      });
+      setRating(newRating);
     }
   };
+
+  const debouncedDeleteOrUpsert = debounce((pId, uId, r) => {
+    if (r === 0) {
+      deleteProjectRating({
+        project_id: pId,
+        user_id: uId,
+      });
+    } else
+      upsertProjectRating({
+        //@ts-expect-error
+        project_id: pId,
+        user_id: uId,
+        rating: r,
+      });
+  }, 500);
+  const debouncedBackendCall = useCallback(debouncedDeleteOrUpsert, []);
+
+  useEffect(() => {
+    if (rating === null) return;
+    // Call the debounced function
+      debouncedBackendCall(projectId, user.id, rating);
+  }, [rating, debouncedBackendCall]);
 
   return (
     <ScrollView>
@@ -235,74 +254,29 @@ export default function RateProject({
         <View style={styles.container}>
           <Text style={styles.heading}>{"Tap to rate:"}</Text>
           <View style={styles.stars}>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(1);
-              }}
-            >
-              <MaterialIcons
-                name={oldRating >= 1 ? "star" : "star-border"}
-                size={32}
-                style={
-                  oldRating >= 1 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(2);
-              }}
-            >
-              <MaterialIcons
-                name={oldRating >= 2 ? "star" : "star-border"}
-                size={32}
-                style={
-                  oldRating >= 2 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(3);
-              }}
-            >
-              <MaterialIcons
-                name={oldRating >= 3 ? "star" : "star-border"}
-                size={32}
-                style={
-                  oldRating >= 3 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(4);
-              }}
-            >
-              <MaterialIcons
-                name={oldRating >= 4 ? "star" : "star-border"}
-                size={32}
-                style={
-                  oldRating >= 4 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                handleStarPress(5);
-              }}
-            >
-              <MaterialIcons
-                name={oldRating >= 5 ? "star" : "star-border"}
-                size={32}
-                style={
-                  oldRating >= 5 ? styles.starSelected : styles.starUnselected
-                }
-              />
-            </TouchableOpacity>
+            {starsArray.map((number) => {
+              return (
+                <TouchableOpacity
+                  key={number}
+                  onPress={() => {
+                    handleStarPress(number);
+                  }}
+                >
+                  <MaterialIcons
+                    name={rating >= number ? "star" : "star-border"}
+                    size={32}
+                    style={
+                      rating >= number
+                        ? styles.starSelected
+                        : styles.starUnselected
+                    }
+                  />
+                </TouchableOpacity>
+              );
+            })}
             <Text style={[styles.heading, { marginLeft: 10 }]}>
-              {oldRating
-                ? `${oldRating} ${oldRating > 1 ? "stars" : "star"}`
+              {rating
+                ? `${rating} ${rating > 1 ? "stars" : "star"}`
                 : "Unrated"}
             </Text>
           </View>
