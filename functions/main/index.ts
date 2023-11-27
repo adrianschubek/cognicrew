@@ -148,7 +148,7 @@ setInterval(async () => {
               );
             } else
               return [
-                ...acc, /* FIXME */
+                ...acc /* FIXME */,
                 [pa.answer, 100 / submittedAnswers, pa.answer_correct],
               ];
           },
@@ -174,6 +174,24 @@ setInterval(async () => {
         newState.roundEndsAt =
           dayjs().valueOf() + privateState.roundDuration * 1000;
         newState.screen = ScreenState.INGAME;
+        newState.answersPercentage = null;
+        newState.players = newState.players.map((player) => {
+          const plr = playerAnswers?.find(
+            (plr) =>
+              plr.user_id === player.id &&
+              plr.room_id === state.room_id &&
+              plr.round === newState.round,
+          );
+          return {
+            ...player,
+            score: !plr
+              ? player.score
+              : player.score +
+                (privateState.roundDuration * 1000 - plr.answer_time),
+            currentCorrect: null,
+            currentTimeNeeded: null,
+          };
+        });
         // Load next question
         switch (newState.game) {
           case GameState.EXERCISES:
