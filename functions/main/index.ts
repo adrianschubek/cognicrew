@@ -167,6 +167,25 @@ setInterval(async () => {
       newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
         dayjs().valueOf()
     ) {
+      newState.answersPercentage = null;
+      newState.players = newState.players.map((player) => {
+        const plr = playerAnswers?.find(
+          (plr) =>
+            plr.user_id === player.id &&
+            plr.room_id === state.room_id &&
+            plr.round === newState.round &&
+            plr.answer_correct,
+        );
+        return {
+          ...player,
+          score: !plr
+            ? player.score
+            : player.score +
+              (privateState.roundDuration * 1000 - plr.answer_time),
+          currentCorrect: null,
+          currentTimeNeeded: null,
+        };
+      });
       if (newState.round + 1 <= newState.totalRounds) {
         // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
         newState.round += 1;
@@ -174,25 +193,7 @@ setInterval(async () => {
         newState.roundEndsAt =
           dayjs().valueOf() + privateState.roundDuration * 1000;
         newState.screen = ScreenState.INGAME;
-        newState.answersPercentage = null;
-        newState.players = newState.players.map((player) => {
-          const plr = playerAnswers?.find(
-            (plr) =>
-              plr.user_id === player.id &&
-              plr.room_id === state.room_id &&
-              plr.round === newState.round &&
-              plr.answer_correct,
-          );
-          return {
-            ...player,
-            score: !plr
-              ? player.score
-              : player.score +
-                (privateState.roundDuration * 1000 - plr.answer_time),
-            currentCorrect: null,
-            currentTimeNeeded: null,
-          };
-        });
+
         // Load next question
         switch (newState.game) {
           case GameState.EXERCISES:
@@ -215,7 +216,6 @@ setInterval(async () => {
       }
     }
 
-    // newState.question = "Alex " + Math.random();
     console.log(newState);
     await supabase
       .from("public_room_states")
