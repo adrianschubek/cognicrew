@@ -253,9 +253,7 @@ export default function RateProject({
   useEffect(() => {
     if (rating === null) return;
     // Call the debounced function
-    allowUpdate === true
-      ? debouncedBackendCall(projectId, user.id, rating)
-      : setAllowUpdate(true);
+      debouncedBackendCall(projectId, user.id, rating);
   }, [rating, debouncedBackendCall]);
 
   return (
