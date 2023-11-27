@@ -180,7 +180,8 @@ setInterval(async () => {
             (plr) =>
               plr.user_id === player.id &&
               plr.room_id === state.room_id &&
-              plr.round === newState.round,
+              plr.round === newState.round &&
+              plr.answer_correct,
           );
           return {
             ...player,
