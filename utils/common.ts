@@ -92,7 +92,11 @@ export async function handleEdgeError(error: Error): Promise<string> {
         ? (await error.context.json())?.message
         : JSON.stringify(error);
   } catch (error) {
-    errMsg = "Something went wrong (#68)";
+    errMsg =
+      "Something went wrong. This usually indicates an unexpected error inside an edge function. Please try again later. (#68)";
   }
-  return errMsg ?? "Something went wrong (#68)";
+  return (
+    errMsg ??
+    "Something went wrong. This usually indicates an unexpected error inside an edge function. Please try again later. (#68)"
+  );
 }
