@@ -31,6 +31,7 @@ import { useAlerts } from "../utils/hooks";
 import RateProject from "../screens/projectManagement/RateProject";
 import EndResults from "../screens/ingame/EndResults";
 import { GameState, ScreenState } from "../functions/rooms";
+import dayjs from "dayjs";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -143,6 +144,28 @@ function MainTabs({ navigation }) {
   }, [room]);
   const { alert, warning } = useAlerts();
   useEffect(() => {
+    let lastUpdate = dayjs().valueOf();
+    const serverAliveInterval = setInterval(() => {
+      if (
+        (lastUpdate + 6000 < dayjs().valueOf() &&
+          useRoomStateStore.getState().roomState !== null)
+      ) {
+        warning({
+          key: "server-off",
+          icon: "server-off",
+          title: "Server not responding",
+          message:
+            "The server is not responding. This may indicate a very high load or an error on the server. You may leave the room or wait.",
+          okText: "Leave room",
+          cancelText: "Wait",
+          okAction(values) {
+            setRoom(null);
+            setRoomState(null);
+          },
+        });
+      }
+    }, 1000);
+
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
       .on(
@@ -154,11 +177,13 @@ function MainTabs({ navigation }) {
           filter: `room_id=eq.${room?.id}`,
         },
         (payload) => {
+          lastUpdate = dayjs(payload.commit_timestamp).valueOf();
+
           switch (payload.eventType) {
             case "INSERT": // new room state
             case "UPDATE":
               // room state update
-              console.debug(payload.new.data);
+              // console.debug(payload.new.data);
 
               setRoomState(payload.new.data);
               // navigate to correct screen payload.new.data.screen
@@ -208,6 +233,7 @@ function MainTabs({ navigation }) {
       .subscribe();
     return () => {
       publicRoomStates.unsubscribe();
+      clearInterval(serverAliveInterval);
     };
   }, [room]);
 
