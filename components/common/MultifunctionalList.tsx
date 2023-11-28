@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
 import {
   HelperText,
@@ -23,6 +23,7 @@ export default function MultifunctionalList(props: {
   close;
   mode?: Mode;
   creationOption?: boolean;
+  creationOptionFocused?: (e: boolean) => any;
   type?: ManagementType;
   sendSetId?: any;
   noSetAvailable: boolean;
@@ -48,7 +49,7 @@ export default function MultifunctionalList(props: {
     setCreationQuery("");
   };
   return (
-    <React.Fragment>
+    <Fragment>
       <View style={styles.container}>
         <ScrollView
           style={{
@@ -60,7 +61,7 @@ export default function MultifunctionalList(props: {
           keyboardShouldPersistTaps="handled"
         >
           {/* Option ein neues Set zu erstellen */}
-          {(props.creationOption === true || props.noSetAvailable) && (
+          {(props.creationOption || props.noSetAvailable) && (
             <TextInput
               label="create new Set"
               value={creationQuery}
@@ -76,7 +77,6 @@ export default function MultifunctionalList(props: {
                   onPress={() => {
                     createSet();
                     Keyboard.dismiss();
-                    //console.log(props.dataSource);
                   }}
                 />
               }
@@ -84,6 +84,16 @@ export default function MultifunctionalList(props: {
               onSubmitEditing={() => {
                 createSet();
               }}
+              onBlur={
+                props.creationOptionFocused
+                  ? () => props.creationOptionFocused(false)
+                  : null
+              }
+              onFocus={
+                props.creationOptionFocused
+                  ? () => props.creationOptionFocused(true)
+                  : null
+              }
             />
           )}
           {props.noSetAvailable && (
@@ -114,7 +124,7 @@ export default function MultifunctionalList(props: {
           )}
         </ScrollView>
       </View>
-    </React.Fragment>
+    </Fragment>
   );
 }
 
