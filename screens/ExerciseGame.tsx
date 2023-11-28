@@ -163,6 +163,7 @@ export default function ExerciseGame({ navigation }) {
                 : theme.colors.onSecondaryContainer,
             }}
             value={option[1].toString()}
+            disabled={alreadySubmitted}
             status={checked.includes(option[1]) ? "checked" : "unchecked"}
             onPress={() => {
               handleValueChange(option[1]);
