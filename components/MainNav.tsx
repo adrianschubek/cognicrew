@@ -145,6 +145,7 @@ function MainTabs({ navigation }) {
   const { alert, warning } = useAlerts();
   useEffect(() => {
     let lastUpdate = dayjs().valueOf();
+    // Health check for server
     const serverAliveInterval = setInterval(() => {
       if (
         (lastUpdate + 6000 < dayjs().valueOf() &&
