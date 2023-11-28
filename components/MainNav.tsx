@@ -148,7 +148,7 @@ function MainTabs({ navigation }) {
     // Health check for server
     const serverAliveInterval = setInterval(() => {
       if (
-        lastUpdate + 6000 < dayjs().valueOf() &&
+        lastUpdate + 12000 < dayjs().valueOf() &&
         useRoomStateStore.getState().roomState !== null
       ) {
         warning({
@@ -165,7 +165,7 @@ function MainTabs({ navigation }) {
           },
         });
       }
-    }, 6000);
+    }, 12000);
 
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
