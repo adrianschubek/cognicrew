@@ -222,12 +222,12 @@ export default function ExerciseGame({ navigation }) {
 const styles = StyleSheet.create({
   correctAnswer: {
     borderColor: "green",
-    borderWidth: 1,
+    borderWidth: 3,
     //backgroundColor:"green"
   },
   wrongAnswer: {
     borderColor: "red",
-    borderWidth: 1,
+    borderWidth: 3,
     //backgroundColor:"red"
   },
   summaryScreen: {
