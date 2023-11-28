@@ -172,8 +172,6 @@ setInterval(async () => {
         default:
           console.error("invalid game type (#0)");
       }
-
-      // TODO: ....
     } else if (
       // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
       newState.screen === ScreenState.ROUND_SOLUTION &&
