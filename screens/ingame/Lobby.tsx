@@ -252,7 +252,8 @@ export default function Lobby({ navigation }) {
               function={() => {
                 // FIXME: remove this
                 info({
-                  message: "Not implemented yet",
+                  title: "Coming soon",
+                  message: "Work in progress",
                 });
                 return;
                 confirm({
