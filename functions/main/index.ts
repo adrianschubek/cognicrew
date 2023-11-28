@@ -177,13 +177,6 @@ setInterval(async () => {
       newState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
     ) {
       newState.screen = ScreenState.ROUND_RESULTS;
-    } else if (
-      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
-      newState.screen === ScreenState.ROUND_RESULTS &&
-      newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
-        dayjs().valueOf()
-    ) {
-      newState.userAnswers = null;
       newState.players = newState.players.map((player) => {
         const plr = playerAnswers?.find(
           (plr) =>
@@ -202,6 +195,14 @@ setInterval(async () => {
           currentTimeNeeded: null,
         };
       });
+    } else if (
+      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
+      newState.screen === ScreenState.ROUND_RESULTS &&
+      newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
+        dayjs().valueOf()
+    ) {
+      newState.userAnswers = null;
+
       if (newState.round + 1 <= newState.totalRounds) {
         // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
         newState.round += 1;
