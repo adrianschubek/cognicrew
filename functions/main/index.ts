@@ -117,9 +117,12 @@ setInterval(async () => {
       newState.screen = ScreenState.ROUND_SOLUTION;
 
       // if this triggered by all players already answred then set roundEndsAt to now - roundDuration so that the following screens dont delay.
-      if (newState.roundEndsAt < dayjs().valueOf()) {
+      if (newState.players.every((p) => p.currentCorrect !== null)) {
+        console.log("all players answered");
+        console.log(newState.roundEndsAt);
         newState.roundEndsAt =
           dayjs().valueOf() - privateState.roundDuration * 1000;
+        console.log(newState.roundEndsAt);
       }
 
       switch (newState.game) {
@@ -258,7 +261,7 @@ setInterval(async () => {
     // if (deepEqual(state.data, newState)) continue;
 
     // updatedCount++;
-    console.log(newState);
+    // console.log(newState);
     await supabase
       .from("public_room_states")
       .update({ data: newState })
