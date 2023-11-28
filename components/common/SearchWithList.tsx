@@ -13,6 +13,7 @@ export default function SearchWithList(props: {
   searchPlaceholder?: string;
   //creationOption decides wether a new entry can be created within the set selection
   creationOption?: boolean;
+  creationOptionFocused?: (e: boolean) => any;
   mode?: Mode;
   sendSetId?: any;
   noSetSelected?: boolean;
@@ -60,6 +61,7 @@ export default function SearchWithList(props: {
         type={props.type}
         sendSetId={getSetId}
         noSetAvailable={data?.length === 0 ? true : false}
+        creationOptionFocused={props.creationOptionFocused}
         close={() => {
           close(), Keyboard.dismiss();
         }}

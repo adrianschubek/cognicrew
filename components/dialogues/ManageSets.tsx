@@ -14,40 +14,76 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchWithList from "../common/SearchWithList";
-import { useSets } from "../../utils/hooks";
+import { useAlerts, useSets } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { ManagementType } from "../../types/common";
 
-export default function ManageSets({ showManageSets, close, type }) {
+export default function ManageSets(props: {
+  showManageSets: boolean;
+  close: () => any;
+  type: ManagementType;
+}) {
   const theme = useTheme();
+  const [creationOptionFocused, setCreationOptionFocused] =
+    useState<boolean>(false);
+  const [showManageSets, setShowManageSets] = useState<boolean>(
+    props.showManageSets,
+  );
+  useEffect(() => {
+    setShowManageSets(props.showManageSets);
+  }, [props.showManageSets]);
+  const { confirm } = useAlerts();
   return (
     <Portal>
       <Dialog
         style={{ alignItems: "center" }}
         visible={showManageSets}
         onDismiss={() => {
-          close();
+          props.close();
           Keyboard.dismiss();
         }}
       >
         <SearchWithList
-          type={type}
+          type={props.type}
           mode="edit"
           searchPlaceholder={
             "Search for " +
-            (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+            (props.type === ManagementType.FLASHCARD
+              ? "flashcard"
+              : "exercise") +
             " set"
           }
           creationOption={true}
-          close={close}
+          creationOptionFocused={(boolean) => {
+            setCreationOptionFocused(boolean);
+          }}
+          close={props.close}
         />
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70), marginTop: 10 }}
             onPress={() => {
-              close(), Keyboard.dismiss();
+              creationOptionFocused
+                ? (setShowManageSets(false),
+                  confirm({
+                    icon: "alert-circle",
+                    title: "Are you sure to leave?",
+                    message:
+                      "Your currently entered set will be lost. Please make sure to save it before pressing 'Done'",
+                    okText: "Accept",
+                    cancelText: "Cancel",
+                    cancelAction: () => {
+                      setShowManageSets(true);
+                    },
+                    okAction: () => {
+                      props.close(), Keyboard.dismiss();
+                    },
+                  }),
+                  setCreationOptionFocused(false))
+                : props.close(),
+                Keyboard.dismiss();
             }}
             mode="contained"
           >
