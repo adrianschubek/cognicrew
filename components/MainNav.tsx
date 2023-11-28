@@ -159,7 +159,8 @@ function MainTabs({ navigation }) {
             "The server is not responding. This may indicate a very high load or an error on the server. You may leave the room or wait. (#68)",
           okText: "Leave room",
           cancelText: "Wait",
-          okAction(values) {
+          async okAction(values) {
+            const { error } = await supabase.rpc("leave_room");
             setRoom(null);
             setRoomState(null);
           },
