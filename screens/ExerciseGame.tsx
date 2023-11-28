@@ -63,11 +63,12 @@ export default function ExerciseGame({ navigation }) {
   const unlockAchievement = useUnlockAchievement();
   const [achievementVisible, setAchievementVisible] = useState(false);
   const theme = useTheme();
-
   const { data: achievements } = useAchievements();
   const [achievementName, setAchievementName] = useState("");
   const [achievementIcon, setAchievementIcon] = useState("");
-
+  const currentPlayerIndex = roomState?.players.findIndex(
+    (player) => player.id === user?.id,
+  );
   const handleValueChange = (newValue) => {
     if (checked.includes(newValue)) {
       setChecked(checked.filter((value) => value !== newValue));
@@ -165,15 +166,21 @@ export default function ExerciseGame({ navigation }) {
             mode="ios"
             // uncheckedColor="white"
             color={theme.colors.onPrimary}
-            style={{
-              margin: 10,
-              marginVertical: 5,
-              backgroundColor: checked.includes(option[1])
-                ? theme.colors.primary
-                : theme.colors.secondaryContainer,
-              borderRadius: 10,
-              paddingVertical: 15,
-            }}
+            style={[
+              {
+                margin: 10,
+                marginVertical: 5,
+                backgroundColor: checked.includes(option[1])
+                  ? theme.colors.primary
+                  : theme.colors.secondaryContainer,
+                borderRadius: 10,
+                paddingVertical: 15,
+              },
+              roomState.players[currentPlayerIndex].currentCorrect
+                ? // roomState.answersPercentage.some((e) => {return e.answer === option[1]})  ?
+                  styles.correctAnswer // : styles.wrongAnswer
+                : {},
+            ]}
           />
         ))}
         <View
@@ -197,7 +204,6 @@ export default function ExerciseGame({ navigation }) {
             flexDirection: "row",
             justifyContent: "flex-end",
             alignItems: "center",
-            //backgroundColor: "green",
             paddingTop: 16,
             paddingRight: 16,
           }}
@@ -213,6 +219,14 @@ export default function ExerciseGame({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  correctAnswer: {
+    borderColor: "green",
+    borderWidth: 1,
+  },
+  wrongAnswer: {
+    borderColor: "red",
+    borderWidth: 1,
+  },
   summaryScreen: {
     flex: 1,
     alignItems: "center",
