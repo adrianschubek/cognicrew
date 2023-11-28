@@ -142,7 +142,7 @@ function MainTabs({ navigation }) {
       else navigation.navigate(NAVIGATION.GUEST_LOBBY);
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
-  const { alert, warning } = useAlerts();
+  const { alert, warning, info } = useAlerts();
   useEffect(() => {
     let lastUpdate = dayjs().valueOf();
     // Health check for server
@@ -222,7 +222,7 @@ function MainTabs({ navigation }) {
                 );
                 return;
               }
-              warning({
+              info({
                 key: "room-ingame-closed",
                 message: "Room was closed by host or server (#70)",
               });
