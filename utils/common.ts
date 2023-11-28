@@ -73,7 +73,7 @@ export function sortByOrder(list: any[], order: orderByPrinciple) {
       : 0;
   });
 }
-export function debounce (func, delay: number) {
+export function debounce(func, delay: number) {
   let timer;
   let args;
   return (...newArgs) => {
@@ -83,9 +83,9 @@ export function debounce (func, delay: number) {
       func(...args);
     }, delay);
   };
-};
+}
 export async function handleEdgeError(error: Error): Promise<string> {
   return error instanceof FunctionsHttpError
-    ? (await error.context.json()).message
+    ? (await error.context.json())?.message ?? "Something went wrong (#68)"
     : JSON.stringify(error);
 }

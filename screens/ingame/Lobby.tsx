@@ -201,6 +201,7 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
+                        console.log(error)
                         if (error) return handleEdgeError(error);
                         console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME);
