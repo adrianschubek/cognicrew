@@ -218,9 +218,9 @@ export default function ExerciseGame({ navigation }) {
           }}
         >
           {/* Host only */}
-          <Button disabled={isInvoking} onPress={skipQuestion}>
+        {/*   <Button disabled={isInvoking} onPress={skipQuestion}>
             Skip question
-          </Button>
+          </Button> */}
         </View>
       </ScrollView>
     </>
