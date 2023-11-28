@@ -27,6 +27,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { NAVIGATION } from "../types/common";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
+import { set } from "cypress/types/lodash";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
@@ -77,7 +78,8 @@ export default function ExerciseGame({ navigation }) {
     }
   };
   useEffect(() => {
-  }, [checked]);
+    setChecked([]);
+  }, [roomState?.round]);
   /*
       Alert.alert(
         isCorrect ? "Correct!" : "Incorrect!",
@@ -220,11 +222,13 @@ export default function ExerciseGame({ navigation }) {
 const styles = StyleSheet.create({
   correctAnswer: {
     borderColor: "green",
-    borderWidth: 1,
+    borderWidth: 3,
+    //backgroundColor:"green"
   },
   wrongAnswer: {
     borderColor: "red",
-    borderWidth: 1,
+    borderWidth: 3,
+    //backgroundColor:"red"
   },
   summaryScreen: {
     flex: 1,
