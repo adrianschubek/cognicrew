@@ -140,7 +140,6 @@ setInterval(async () => {
                 pa.round === newState.round,
             );
             if (!playerAnswer) continue;
-            submittedAnswers++;
             answersWithCountWithIsCorrect = answersWithCountWithIsCorrect.map(
               ([answer, count, isCorrect], i) => [
                 answer,
@@ -148,7 +147,10 @@ setInterval(async () => {
                 count +
                   (playerAnswer.answer
                     .split(",")
-                    .map((a: string) => +a)
+                    .map((a: string) => {
+                      submittedAnswers++;
+                      return +a;
+                    })
                     .includes(i)
                     ? 1
                     : 0),
