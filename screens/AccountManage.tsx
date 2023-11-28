@@ -24,7 +24,6 @@ export default function AccountManage({ navigation }) {
         name={NAVIGATION.ACHIEVEMENTS}
         component={Achievements}
         options={{
-          // tabBarIcon: () => <Icon size={24} source="trophy" />,
           tabBarIcon: ({ focused }) => (
             <Icon
               color={focused ? theme.colors.primary : theme.colors.secondary}
