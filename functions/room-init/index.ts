@@ -43,8 +43,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData)
-      return err("User is not in a room (#40)", 400);
+    if (roomError || !roomData) return err("User is not in a room (#40)", 400);
 
     const rid: string = roomData.room_id;
     // console.log(rid);
@@ -203,7 +202,10 @@ serve(async (req) => {
       })),
       screen: ScreenState.INGAME,
       game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
-      totalRounds: body.type === 1 ? exercisesNum : flashcardsNum,
+      totalRounds:
+        body.type === 1
+          ? Math.min(body.numberOfRounds, exercisesNum)
+          : Math.min(body.numberOfRounds, flashcardsNum),
       round: 1,
       question:
         body.type === 1
