@@ -3,7 +3,10 @@ import { useState, useEffect, useMemo } from "react";
 import { ProgressBar } from "react-native-paper";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 
-export default function Timer(props: { roundEndsAt: number }) {
+export default function Timer(props: {
+  roundEndsAt: number;
+  onTimeUp: () => void;
+}) {
   const initialRemainingTime = useMemo(
     () => +(props.roundEndsAt - Date.now()) / 1000,
     [props.roundEndsAt],
@@ -15,7 +18,10 @@ export default function Timer(props: { roundEndsAt: number }) {
       1000,
     );
     remainingTime <= 0 && clearInterval(sec);
-    return () => clearInterval(sec);
+    return () => {
+      clearInterval(sec);
+      props.onTimeUp();
+    };
   });
 
   useEffect(() => {

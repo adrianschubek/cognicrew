@@ -130,7 +130,7 @@ export default function ExerciseGame({ navigation }) {
   };
 
   const MemoTimer = useMemo(
-    () => <Timer roundEndsAt={roomState?.roundEndsAt} />,
+    () => <Timer roundEndsAt={roomState?.roundEndsAt} onTimeUp={answer} />,
     [roomState?.roundEndsAt],
   );
 
@@ -194,7 +194,6 @@ export default function ExerciseGame({ navigation }) {
             mode="contained"
             disabled={isInvoking || checked.length === 0}
             onPress={answer}
-            /* TODO: autosubmit on timer end */
           >
             Submit Answer
           </Button>
