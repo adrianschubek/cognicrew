@@ -15,7 +15,7 @@ CogniCrew is designed to make learning a social and enjoyable experience. Whethe
 - **Interactive Challenges:** Test your knowledge with engaging quizzes, puzzles, and interactive challenges that make learning fun and memorable.
 - **Content Variety:** Explore a diverse range of topics, from science and technology to arts and culture, ensuring there's something for everyone.
 - **Real-time Collaboration:** Work on projects, assignments, or group activities in real-time with your peers, fostering teamwork and mutual understanding.
-- **Gamification:** Earn badges, unlock achievements, and compete with friends to add a layer of gamification to your learning journey.
+- **Gamification:** Unlock items and compete with friends to add a layer of gamification to your learning journey.
 
 ## Downloads 
 
