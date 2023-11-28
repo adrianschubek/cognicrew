@@ -25,7 +25,7 @@ import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
 import { useAuth } from "../providers/AuthProvider";
 import { NAVIGATION } from "../types/common";
-import { RoomClientUpdate } from "../functions/rooms";
+import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 
 export default function ExerciseGame({ navigation }) {
@@ -176,7 +176,7 @@ export default function ExerciseGame({ navigation }) {
                 borderRadius: 10,
                 paddingVertical: 15,
               },
-              roomState.players[currentPlayerIndex].currentCorrect
+              roomState.screen === ScreenState.ROUND_SOLUTION
                 ? roomState.userAnswers[option[1]].isCorrect === true
                   ? styles.correctAnswer
                   : styles.wrongAnswer
