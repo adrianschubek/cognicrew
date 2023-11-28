@@ -54,8 +54,9 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
-const ROUND_SOLUTION_DURATION = 4000;
+const ROUND_SOLUTION_DURATION = 4000; // ms
 const ROUND_RESULTS_DURATION = 5000;
+const END_RESULTS_DURATION = 10000;
 
 // listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
 
@@ -127,33 +128,10 @@ setInterval(async () => {
         newState.players.every((p) => p.currentCorrect !== null))
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
-      // Tuple [answer (string), percentage of player who chose this answer (0-100), isCorrect (boolean)]
 
       let submittedAnswers = 0;
-      newState.answersPercentage = playerAnswers
-        ?.filter(
-          (pa) => pa.room_id === state.room_id && pa.round === newState.round,
-        )
-        .reduce(
-          (acc: [string, number, boolean][], pa) => {
-            const player = newState.players.find((p) => p.id === pa.user_id);
-            if (!player) return acc;
-            submittedAnswers++;
-            // if answer already exists in acc -> increment percentage
-            if (acc.some((e) => e[0] === pa.answer)) {
-              return acc.map((e) =>
-                e[0] === pa.answer /* FIXME */
-                  ? [e[0], e[1] + 100 / submittedAnswers, e[2]]
-                  : e,
-              );
-            } else
-              return [
-                ...acc /* FIXME */,
-                [pa.answer, 100 / submittedAnswers, pa.answer_correct],
-              ];
-          },
-          [] as [string, number, boolean][],
-        );
+      newState.userAnswers = [];
+
       // TODO: ....
     } else if (
       // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
@@ -167,7 +145,7 @@ setInterval(async () => {
       newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
         dayjs().valueOf()
     ) {
-      newState.answersPercentage = null;
+      newState.userAnswers = null;
       newState.players = newState.players.map((player) => {
         const plr = playerAnswers?.find(
           (plr) =>
@@ -214,6 +192,27 @@ setInterval(async () => {
         // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
       }
+    } else if (
+      newState.screen === ScreenState.END_RESULTS &&
+      newState.roundEndsAt +
+        ROUND_SOLUTION_DURATION +
+        ROUND_RESULTS_DURATION +
+        END_RESULTS_DURATION <
+        dayjs().valueOf()
+    ) {
+      // destroy room state and set ingame to false
+      await supabase
+        .from("public_room_states")
+        .delete()
+        .eq("room_id", state.room_id);
+      await supabase
+        .from("private_room_states")
+        .delete()
+        .eq("room_id", state.room_id);
+      await supabase
+        .from("rooms")
+        .update({ is_ingame: false })
+        .eq("id", state.room_id);
     }
 
     console.log(newState);
