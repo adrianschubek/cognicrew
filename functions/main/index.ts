@@ -116,6 +116,12 @@ setInterval(async () => {
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
 
+      // if this triggered by all players already answred then set roundEndsAt to now - roundDuration so that the following screens dont delay.
+      if (newState.roundEndsAt < dayjs().valueOf()) {
+        newState.roundEndsAt =
+          dayjs().valueOf() - privateState.roundDuration * 1000;
+      }
+
       switch (newState.game) {
         case GameState.EXERCISES: {
           let submittedAnswers = 0;
