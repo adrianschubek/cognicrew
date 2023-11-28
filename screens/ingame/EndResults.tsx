@@ -17,6 +17,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { useAuth } from "../../providers/AuthProvider";
+import { getRandomColor } from "../../utils/common";
 export default function EndResults() {
   const roomState = useRoomStateStore((state) => state.roomState);
   const uid = useAuth().user?.id;
@@ -175,14 +176,20 @@ export default function EndResults() {
                 }}
               >
                 <Animated.View style={[animatedAvatarStyles]}>
-                  <Avatar.Icon icon="account" size={35} />
+                  <Avatar.Icon
+                    icon="account"
+                    size={35}
+                    theme={{
+                      colors: { primary: getRandomColor(player.username) },
+                    }}
+                  />
                 </Animated.View>
                 <Animated.View
                   key={index}
                   style={[
                     {
                       width: 65,
-                      backgroundColor: theme.colors.primary,
+                      backgroundColor: getRandomColor(player.username),
                       justifyContent: "flex-end",
                       alignItems: "center",
                     },
@@ -267,7 +274,13 @@ export default function EndResults() {
                       ? "rd"
                       : "th"}{" "}
                   </Text>
-                  <Avatar.Icon icon="account" size={35} />
+                  <Avatar.Icon
+                    icon="account"
+                    size={35}
+                    theme={{
+                      colors: { primary: getRandomColor(player.username) },
+                    }}
+                  />
                   <View
                     style={{
                       marginLeft: 5,
