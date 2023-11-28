@@ -116,10 +116,9 @@ setInterval(async () => {
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
 
-      // if this triggered by all players already answred then set roundEndsAt to now - roundDuration so that the following screens dont delay.
+      // if this triggered by all players already answred then set roundEndsAt to now so that the following screens dont delay.
       if (newState.players.every((p) => p.currentCorrect !== null)) {
-        newState.roundEndsAt =
-          dayjs().valueOf() - privateState.roundDuration * 1000;
+        newState.roundEndsAt = dayjs().valueOf();
       }
 
       switch (newState.game) {
