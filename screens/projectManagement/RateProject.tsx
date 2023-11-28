@@ -135,7 +135,6 @@ export default function RateProject({
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
   const [rating, setRating] = useState(null);
-  const [allowUpdate, setAllowUpdate] = useState(false);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
@@ -154,13 +153,7 @@ export default function RateProject({
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
     });
-    if (data) {
       setSum(data);
-      //console.log(data);
-    } else {
-      setSum(data);
-      //console.log(data);
-    }
   }
 
   async function calculateAvg() {
@@ -172,7 +165,6 @@ export default function RateProject({
       setAvg(data);
     } else {
       setAvg(data);
-      //console.log(data);
     }
   }
 
