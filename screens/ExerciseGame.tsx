@@ -207,16 +207,6 @@ export default function ExerciseGame({ navigation }) {
             Skip question
           </Button>
         </View>
-        <Button
-          onPress={() => {
-            navigation.navigate(NAVIGATION.END_RESULTS, {
-              roomState: roomState,
-              user_id: user.id,
-            });
-          }}
-        >
-          PRESS ME, DADDY!{" "}
-        </Button>
       </ScrollView>
     </>
   );

@@ -49,6 +49,7 @@ export default function HomeScreen({ navigation }) {
         </Card>
       </View>
       {/* for testing purposes*/}
+      {/* 
       <Button
       style={{marginBottom: 20}}
         onPress={() => {
@@ -59,7 +60,7 @@ export default function HomeScreen({ navigation }) {
         }}
       >
         PRESS ME, DADDY!
-      </Button>
+      </Button>*/}
     </View>
   );
 }

@@ -109,6 +109,7 @@ export default function ManageFriends({ navigation }) {
   }, []);
 
   useEffect(() => {
+    if (!data) return;
     const fetchData = async () => {
       const { data } = await friendIdsAndNames();
       setFriendIdsAndNamesData(data);
