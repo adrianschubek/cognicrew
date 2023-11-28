@@ -37,7 +37,7 @@ serve(async (req) => {
       data: { user },
     } = await supabaseUser.auth.getUser();
 
-    if (!user) return err("User not found [rupd:unf]", 400);
+    if (!user) return err("User not found (#20)", 400);
 
     // TODO: move to helper function
     // get current room user is in
@@ -47,7 +47,7 @@ serve(async (req) => {
       .eq("id", user?.id)
       .single();
     if (roomError || !roomData)
-      return err("User is not in a room [rupd:unf]", 400);
+      return err("User is not in a room (#21)", 400);
 
     const rid: string = roomData.room_id;
     // console.log(rid);
@@ -65,7 +65,7 @@ serve(async (req) => {
     // console.log(privateState);
 
     if (rdataerror || !rawPrivateState)
-      return err("Could not fetch game data [rupd:prv]", 500);
+      return err("Could not fetch game data (#22)", 500);
 
     // fetch public state
     const { data: rawPublicState, error: rdataerror2 } = await supabase
@@ -77,7 +77,7 @@ serve(async (req) => {
     // console.log(publicState);
 
     if (rdataerror2 || !rawPublicState)
-      return err("Could not fetch game data [rupd:pub]", 500);
+      return err("Could not fetch game data (#23)", 500);
 
     switch (body.type) {
       case "flashcard-answer":
@@ -90,7 +90,7 @@ serve(async (req) => {
           publicState.roundEndsAt < dayjs().valueOf() ||
           publicState.roundBeganAt > dayjs().valueOf()
         )
-          return err("Round is over [rupd:rovr]", 400);
+          return err("Round is over (#24)", 400);
 
         // TODO: game option: can users change their answer?
 
@@ -121,23 +121,23 @@ serve(async (req) => {
               : body.answer,
         });
         if (error) {
-          return err("Could not save answer [rupd:svans]", 500);
+          return err("Could not save answer (#25)", 500);
         }
         break;
       }
       case "reset-lobby":
-        return err("Not implemented [rupd:nimpl2]", 501);
+        return err("Not implemented (#26)", 501);
         break;
       case "skip-round":
-        return err("Not implemented [rupd:nimpl3]", 501);
+        return err("Not implemented (#27)", 501);
         break;
       default:
-        return err(`Invalid action "${(body as any).type} [rupd:ivact]"`, 400);
+        return err(`Invalid action "${(body as any).type} (#28)"`, 400);
     }
 
     console.log(`room-update: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong [rupd:uxpct]", 500);
+    return err("Something went wrong (#29)", 500);
   }
 });

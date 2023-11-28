@@ -44,7 +44,7 @@ serve(async (req) => {
       .eq("id", user?.id)
       .single();
     if (roomError || !roomData)
-      return err("User is not in a room [rint:unf]", 400);
+      return err("User is not in a room (#40)", 400);
 
     const rid: string = roomData.room_id;
     // console.log(rid);
@@ -60,7 +60,7 @@ serve(async (req) => {
     if (error)
       return err(
         /* TODO: dont error. instead overwrite room (remove old room states first!)) */
-        "User is not host of room or room is already ingame [rint:unhig]",
+        "User is not host of room or room is already ingame (#41)",
         400,
       );
 
@@ -89,11 +89,11 @@ serve(async (req) => {
     // validate body
     if (body.type !== 0 && body.type !== 1)
       return err("Invalid type [rint:bvl0]", 400);
-    if (body.sets.length === 0) return err("No sets selected [rint:bvl1]", 400);
+    if (body.sets.length === 0) return err("No sets selected (#42)", 400);
     if (body.roundDuration <= 0 || body.roundDuration > 600)
-      return err("Invalid round duration [rint:bvl2]", 400);
+      return err("Invalid round duration (#43)", 400);
     if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
-      return err("Invalid number of rounds [rint:bvl3]", 400);
+      return err("Invalid number of rounds (#44)", 400);
 
     // private game state
     const { data: gamedata, error: errorGamedata } = await supabase
@@ -138,7 +138,7 @@ serve(async (req) => {
       return err(
         `Selected sets do not contain any ${
           body.type === 1 ? "questions" : "flashcards"
-        } [rint:semp]`,
+        } (#45)`,
         400,
       );
 
@@ -249,6 +249,6 @@ serve(async (req) => {
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
   } catch (_) {
-    return err("Something went wrong [rint:uxpct]", 500);
+    return err("Something went wrong (#46)", 500);
   }
 });
