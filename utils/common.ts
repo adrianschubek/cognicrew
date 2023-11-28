@@ -85,7 +85,14 @@ export function debounce(func, delay: number) {
   };
 }
 export async function handleEdgeError(error: Error): Promise<string> {
-  return error instanceof FunctionsHttpError
-    ? (await error.context.json())?.message ?? "Something went wrong (#68)"
-    : JSON.stringify(error);
+  let errMsg: string;
+  try {
+    errMsg =
+      error instanceof FunctionsHttpError
+        ? (await error.context.json())?.message
+        : JSON.stringify(error);
+  } catch (error) {
+    errMsg = "Something went wrong (#68)";
+  }
+  return errMsg ?? "Something went wrong (#68)";
 }
