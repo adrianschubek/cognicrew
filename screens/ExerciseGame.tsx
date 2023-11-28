@@ -47,6 +47,7 @@ export default function ExerciseGame({ navigation }) {
       } as RoomClientUpdate,
     });
     if (error) errrorAlert({ message: await handleEdgeError(error) });
+    else setAlreadySubmitted(true);
     setIsInvoking(false);
   }
   async function skipQuestion() {
@@ -59,6 +60,7 @@ export default function ExerciseGame({ navigation }) {
     if (error) errrorAlert({ message: await handleEdgeError(error) });
     setIsInvoking(false);
   }
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [checked, setChecked] = useState([] as number[]);
   const [quizComplete, setQuizComplete] = useState(false);
   const unlockAchievement = useUnlockAchievement();
@@ -79,6 +81,7 @@ export default function ExerciseGame({ navigation }) {
   };
   useEffect(() => {
     setChecked([]);
+    setAlreadySubmitted(false);
   }, [roomState?.round]);
   /*
       Alert.alert(
