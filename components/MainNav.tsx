@@ -186,17 +186,6 @@ function MainTabs({ navigation }) {
               // room state update
               // console.debug(payload.new.data);
 
-              if (
-                payload.new.data.screen !==
-                useRoomStateStore.getState().roomState?.screen
-              )
-                console.log(
-                  "screen changed ",
-                  payload.new.data.screen,
-                  " -> ",
-                  useRoomStateStore.getState().roomState?.screen,
-                );
-
               setRoomState(payload.new.data);
               // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
