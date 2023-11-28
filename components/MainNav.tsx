@@ -155,7 +155,7 @@ function MainTabs({ navigation }) {
           icon: "server-off",
           title: "Server not responding",
           message:
-            "The server is not responding. This may indicate a very high load or an error on the server. You may leave the room or wait.",
+            "The server is not responding. This may indicate a very high load or an error on the server. You may leave the room or wait. (#69)",
           okText: "Leave room",
           cancelText: "Wait",
           okAction(values) {
