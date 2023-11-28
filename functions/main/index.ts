@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { GameState, PrivateRoomState, PublicRoomState } from "../rooms.ts";
+import { PrivateRoomState, PublicRoomState } from "../rooms.ts";
 
 console.log("main function started");
 
@@ -62,6 +62,7 @@ const END_RESULTS_DURATION = 10000;
 
 setInterval(async () => {
   const start = performance.now();
+  // let updatedCount = 0;
   // TODO: main game state loop here
 
   // TODO: for each public_room_state:
@@ -70,34 +71,20 @@ setInterval(async () => {
     .select("data,room_id");
   if (!publicRoomStates) return; /* deno assert is not null */
 
-  const { data: privateRoomSates } = await supabase
+  const { data: privateRoomStates } = await supabase
     .from("private_room_states")
     .select("data,room_id");
-  if (!privateRoomSates) return; /* deno assert is not null */
+  if (!privateRoomStates) return; /* deno assert is not null */
 
   const { data: playerAnswers } = await supabase
     .from("player_answers")
     .select("*");
 
-  /**  // FIXME: race condition wenn mehre edge fucntin aufrufen und JSON updaten -> besser queue? 
-    -> JSONB ok and update though postgres jsonb functions -> supabase doesnt support jsonb functions! -> pg function
-    das hier main loop ok. nur bei answer updaten from clients race condition (!)
-
-    lösung?? für updates von client pg fucntion callen die mit SELECT * FOR UPDATE die rows locked ???
-    client callen edge function -> edge function callt pg function die row lockt und updatet. ????
-    => wahrscheinlich beste idee. 
-
-    solved: revoke all: wie pg function nur callable from server edge function machen
-
-    alternative: TRANSACTION ISOLATION LEVEL SERILIZABLE
-    ^^^bullshit ist geklärt -> extra table.
-    */
-
   // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
 
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
-    const privateState = privateRoomSates.find(
+    const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
     )?.data as PrivateRoomState;
     // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
@@ -129,8 +116,49 @@ setInterval(async () => {
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
 
-      let submittedAnswers = 0;
-      newState.userAnswers = [];
+      switch (newState.game) {
+        case GameState.EXERCISES: {
+          let submittedAnswers = 0;
+          const roundAnswers =
+            privateState.gameData.exercises[newState.round - 1];
+          let answersWithCountWithIsCorrect: [string, number, boolean][] =
+            roundAnswers.answers.map((answer, i) => [
+              answer,
+              0,
+              roundAnswers.correct.includes(i),
+            ]);
+          for (const player of newState.players) {
+            const playerAnswer = playerAnswers?.find(
+              (pa) =>
+                pa.user_id === player.id &&
+                pa.room_id === state.room_id &&
+                pa.round === newState.round,
+            );
+            if (!playerAnswer) continue;
+            submittedAnswers++;
+            answersWithCountWithIsCorrect = answersWithCountWithIsCorrect.map(
+              ([answer, count, isCorrect]) => [
+                answer,
+                count + (playerAnswer.answerIndex.includes(answer) ? 1 : 0),
+                isCorrect,
+              ],
+            );
+          }
+          newState.userAnswers = answersWithCountWithIsCorrect.map(
+            ([answer, count, isCorrect]) => ({
+              answer,
+              percentage: Math.max(
+                0,
+                Math.min(100, Math.floor((count / submittedAnswers) * 100)),
+              ),
+              isCorrect,
+            }),
+          );
+          break;
+        }
+        default:
+          console.error("invalid game type (#0)");
+      }
 
       // TODO: ....
     } else if (
@@ -215,6 +243,10 @@ setInterval(async () => {
         .eq("id", state.room_id);
     }
 
+    // TODO: only update when state changed (deep-equal) maybe later. clone newState required
+    // if (deepEqual(state.data, newState)) continue;
+
+    // updatedCount++;
     console.log(newState);
     await supabase
       .from("public_room_states")
