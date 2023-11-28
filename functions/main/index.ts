@@ -257,7 +257,7 @@ setInterval(async () => {
     // if (deepEqual(state.data, newState)) continue;
 
     // updatedCount++;
-    console.log(newState);
+    // console.log(newState);
     await supabase
       .from("public_room_states")
       .update({ data: newState })
