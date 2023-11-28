@@ -165,7 +165,7 @@ function MainTabs({ navigation }) {
           },
         });
       }
-    }, 1000);
+    }, 6000);
 
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
