@@ -158,7 +158,7 @@ export default function CreateEditProject({
         switch (error.message) {
           case 'new row for relation "learning_projects" violates check constraint "check_group_format"':
             err =
-              "Invalid semester. Please use the format 'Summer XXXX' or 'Winter XX/YY'.";
+              "Invalid semester. Please use the format 'Summer XXXX' or 'Winter XXXX/YY'.";
             break;
           case 'new row for relation "learning_projects" violates check constraint "learning_projects_name_check"':
             err = "Please enter a title between 2 and 99 characters.";
