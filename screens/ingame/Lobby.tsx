@@ -180,7 +180,6 @@ export default function Lobby({ navigation }) {
                      *
                      * // TODO: Radio button
                      */
-                    console.log(setValues);
                     if (setValues[0].length === 0)
                       return "Please select at least one set.";
                     confirm({
@@ -201,9 +200,7 @@ export default function Lobby({ navigation }) {
                             },
                           },
                         );
-                        console.log(error)
                         if (error) return handleEdgeError(error);
-                        console.log(data);
                         navigation.navigate(NAVIGATION.EXERCISE_GAME);
                       },
                       fields: [
