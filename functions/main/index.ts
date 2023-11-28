@@ -139,8 +139,14 @@ setInterval(async () => {
             answersWithCountWithIsCorrect = answersWithCountWithIsCorrect.map(
               ([answer, count, isCorrect], i) => [
                 answer,
-                // playerAnswer.answer is the numeric index for quiz game.
-                count + (+playerAnswer.answer === i ? 1 : 0),
+                // playerAnswer.answer is the numeric index array for quiz game.
+                count +
+                  (playerAnswer.answer
+                    .split(",")
+                    .map((a: string) => +a)
+                    .include(i)
+                    ? 1
+                    : 0),
                 isCorrect,
               ],
             );
