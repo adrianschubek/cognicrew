@@ -54,7 +54,7 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
-const ROUND_SOLUTION_DURATION = 4000; // ms
+const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 5000;
 const END_RESULTS_DURATION = 10000;
 
