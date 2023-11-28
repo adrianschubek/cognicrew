@@ -146,13 +146,13 @@ setInterval(async () => {
               ([answer, count, isCorrect], i) => [
                 answer,
                 // playerAnswer.answer is the numeric index array for quiz game.
-                count +
-                  (playerAnswer.answer
+                count + 0
+                  /* (playerAnswer.answer
                     .split(",")
                     .map((a: string) => +a)
                     .include(i)
                     ? 1
-                    : 0),
+                    : 0) */,
                 isCorrect,
               ],
             );
