@@ -195,7 +195,11 @@ export default function ExerciseGame({ navigation }) {
           }}
         >
           <Button
-            style={{ paddingVertical: 5, borderRadius: 10 }}
+            style={{
+              paddingVertical: 5,
+              borderRadius: 10,
+              display: alreadySubmitted ? "none" : undefined,
+            }}
             mode="contained"
             disabled={isInvoking || checked.length === 0}
             onPress={answer}
