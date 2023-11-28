@@ -202,6 +202,11 @@ setInterval(async () => {
         dayjs().valueOf()
     ) {
       newState.userAnswers = null;
+      newState.players = newState.players.map((player) => ({
+        ...player,
+        currentCorrect: null,
+        currentTimeNeeded: null,
+      }));
 
       if (newState.round + 1 <= newState.totalRounds) {
         // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
