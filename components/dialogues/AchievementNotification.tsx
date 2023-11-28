@@ -27,6 +27,9 @@ const AchievementNotification = ({
     }
   }, [isVisible]);
 
+  // FIXME: remove this
+  return null;
+
   if (!isVisible) return null;
 
   return (
