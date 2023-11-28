@@ -27,7 +27,7 @@ export default function Lobby({ navigation }) {
   useSoundSystem1();
 
   const theme = useTheme();
-  const { confirm, alert } = useAlerts();
+  const { confirm, alert, info } = useAlerts();
 
   const room = useRoomStore((state) => state.room);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
@@ -250,6 +250,11 @@ export default function Lobby({ navigation }) {
               name={"Cognicards"}
               flexDirection="row-reverse"
               function={() => {
+                // FIXME: remove this
+                info({
+                  message: "Not implemented yet",
+                });
+                return;
                 confirm({
                   title: "Choose sets",
                   icon: "cards",
