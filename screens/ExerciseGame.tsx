@@ -156,12 +156,11 @@ export default function ExerciseGame({ navigation }) {
         {shuffledAnswers.map((option, index) => (
           <RadioButton.Item
             key={index}
-            label={
-              `${String.fromCharCode(65 + index)}) ${option[0]}` +
-              (roomState.screen === ScreenState.ROUND_SOLUTION)
+            label={`${String.fromCharCode(65 + index)}) ${option[0]} ${
+              roomState.screen === ScreenState.ROUND_SOLUTION
                 ? " (" + roomState.userAnswers[option[1]].percentage + "%)"
                 : ""
-            }
+            }`}
             labelStyle={{
               color: checked.includes(option[1])
                 ? theme.colors.onPrimary
