@@ -211,7 +211,7 @@ serve(async (req) => {
           : privateState.gameData.flashcards[0].question,
       possibleAnswers:
         body.type === 1 ? privateState.gameData.exercises[0].answers : [],
-      answersPercentage: null,
+      userAnswers: null,
       roundBeganAt: dayjs().valueOf(),
       roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
     };
