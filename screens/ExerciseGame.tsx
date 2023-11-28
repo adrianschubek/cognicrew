@@ -77,7 +77,6 @@ export default function ExerciseGame({ navigation }) {
     }
   };
   useEffect(() => {
-    console.log(checked);
   }, [checked]);
   /*
       Alert.alert(
