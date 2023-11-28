@@ -55,7 +55,7 @@ enum GameState {
 }
 
 const ROUND_SOLUTION_DURATION = 3000; // ms
-const ROUND_RESULTS_DURATION = 5000;
+const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
 // listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
