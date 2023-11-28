@@ -59,6 +59,7 @@ export default function SearchWithList(props: {
         creationOption={props.creationOption}
         type={props.type}
         sendSetId={getSetId}
+        noSetAvailable={data?.length === 0 ? true : false}
         close={() => {
           close(), Keyboard.dismiss();
         }}

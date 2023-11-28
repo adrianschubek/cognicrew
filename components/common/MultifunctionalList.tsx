@@ -1,7 +1,12 @@
 import * as React from "react";
 import { useState } from "react";
 import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
-import { RadioButton, TextInput, useTheme } from "react-native-paper";
+import {
+  HelperText,
+  RadioButton,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -14,12 +19,13 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function MultifunctionalList(props: {
-  dataSource;
+  dataSource: any[];
   close;
   mode?: Mode;
   creationOption?: boolean;
   type?: ManagementType;
   sendSetId?: any;
+  noSetAvailable: boolean;
   [name: string]: any;
 }) {
   const theme = useTheme();
@@ -54,7 +60,7 @@ export default function MultifunctionalList(props: {
           keyboardShouldPersistTaps="handled"
         >
           {/* Option ein neues Set zu erstellen */}
-          {props.creationOption === true && (
+          {(props.creationOption === true || props.noSetAvailable) && (
             <TextInput
               label="create new Set"
               value={creationQuery}
@@ -79,6 +85,11 @@ export default function MultifunctionalList(props: {
                 createSet();
               }}
             />
+          )}
+          {props.noSetAvailable && (
+            <HelperText type="error">
+              You have currently no sets. Feel free to create your first one!
+            </HelperText>
           )}
           {props.mode == "edit" ? (
             props.dataSource.map((item) => (

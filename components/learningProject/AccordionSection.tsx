@@ -42,7 +42,7 @@ export default function AccordionSection(props: {
       )
       .subscribe();
   }, []);
-  const orderedSets= sortByOrder(sets, props.orderSetsBy);
+  const orderedSets = sortByOrder(sets, props.orderSetsBy);
 
   if (error || !data) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -55,7 +55,11 @@ export default function AccordionSection(props: {
               title={learningSet.name}
               left={(props) => <List.Icon {...props} icon="folder" />}
             >
-              <AccordionListItems setId={learningSet.id} type={props.type} orderSetItemsBy={props.orderSetItemsBy} />
+              <AccordionListItems
+                setId={learningSet.id}
+                type={props.type}
+                orderSetItemsBy={props.orderSetItemsBy}
+              />
             </List.Accordion>
             <Divider />
           </Fragment>
