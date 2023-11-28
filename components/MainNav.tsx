@@ -197,14 +197,10 @@ function MainTabs({ navigation }) {
               }
               warning({
                 key: "room-ingame-closed",
-                message: "Room was closed by host (mainav)",
+                message: "Room was closed by host (#70)",
               });
               setRoom(null);
               setRoomState(null);
-              alert({
-                message: JSON.stringify(payload, null, 2),
-                messageStyle: { textAlign: "left" },
-              });
               break;
           }
         },
