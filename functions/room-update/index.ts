@@ -88,10 +88,12 @@ serve(async (req) => {
         // check if round is active
         if (
           publicState.roundEndsAt < dayjs().valueOf() ||
-          publicState.roundBeganAt > dayjs().valueOf() ||
-          publicState.screen !== ScreenState.INGAME
+          publicState.roundBeganAt > dayjs().valueOf()
         )
-          return err("Round is over (#24)", 400);
+          return err("Round is over (#24a)", 400);
+        // check if round is still active
+        if (publicState.screen !== ScreenState.INGAME)
+          return err("Round is over (#24b)", 400);
 
         // TODO: game option: can users change their answer?
 
