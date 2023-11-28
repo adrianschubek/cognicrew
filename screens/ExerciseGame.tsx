@@ -78,9 +78,6 @@ export default function ExerciseGame({ navigation }) {
     }
   };
   useEffect(() => {
-    //console.log(checked);
-  }, [checked]);
-  useEffect(() => {
     setChecked([]);
   }, [roomState?.round]);
   /*
