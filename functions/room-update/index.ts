@@ -12,6 +12,7 @@ import {
   PrivateRoomState,
   PublicRoomState,
   RoomClientUpdate,
+  ScreenState,
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
 
@@ -46,8 +47,7 @@ serve(async (req) => {
       .select("room_id")
       .eq("id", user?.id)
       .single();
-    if (roomError || !roomData)
-      return err("User is not in a room (#21)", 400);
+    if (roomError || !roomData) return err("User is not in a room (#21)", 400);
 
     const rid: string = roomData.room_id;
     // console.log(rid);
@@ -88,7 +88,8 @@ serve(async (req) => {
         // check if round is active
         if (
           publicState.roundEndsAt < dayjs().valueOf() ||
-          publicState.roundBeganAt > dayjs().valueOf()
+          publicState.roundBeganAt > dayjs().valueOf() ||
+          publicState.screen !== ScreenState.INGAME
         )
           return err("Round is over (#24)", 400);
 
