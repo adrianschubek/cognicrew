@@ -177,8 +177,9 @@ export default function ExerciseGame({ navigation }) {
                 paddingVertical: 15,
               },
               roomState.players[currentPlayerIndex].currentCorrect
-                ? // roomState.answersPercentage.some((e) => {return e.answer === option[1]})  ?
-                  styles.correctAnswer // : styles.wrongAnswer
+                ? roomState.userAnswers[option[1]].isCorrect === true
+                  ? styles.correctAnswer
+                  : styles.wrongAnswer
                 : {},
             ]}
           />
