@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { List, Divider, useTheme } from "react-native-paper";
+import { List, Divider, useTheme, HelperText } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -22,6 +22,11 @@ export default function AccordionListItems(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const [noSetItemsAvailable, setNoSetItemsAvailable] =
+    useState<boolean>(false);
+  const typeName = (plural: boolean) =>
+    (props.type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+    (plural ? "s" : "");
   const { data, isLoading, error, mutate } =
     props.type === ManagementType.FLASHCARD
       ? useFlashcards(props.setId)
@@ -30,6 +35,7 @@ export default function AccordionListItems(props: {
   useEffect(() => {
     if (!data) return;
     setContent(data);
+    setNoSetItemsAvailable(data.length === 0);
   }, [data]);
 
   useEffect(() => {
@@ -40,7 +46,10 @@ export default function AccordionListItems(props: {
         {
           event: "*",
           schema: "public",
-          table: props.type === ManagementType.FLASHCARD ? "flashcards" : "exercises",
+          table:
+            props.type === ManagementType.FLASHCARD
+              ? "flashcards"
+              : "exercises",
         },
         (payload) => {
           console.log("Change received!", payload);
@@ -50,32 +59,39 @@ export default function AccordionListItems(props: {
       .subscribe();
   }, []);
   const [content, setContent] = useState([]);
-  const orderedContent= sortByOrder(content, props.orderSetItemsBy);
+  const orderedContent = sortByOrder(content, props.orderSetItemsBy);
   if (error) return <LoadingOverlay visible={isLoading} />;
-  return orderedContent.map((listItem) => (
-    <View key={listItem.id}>
-      <List.Accordion
-        title={listItem.question}
-        titleNumberOfLines={4}
-        style={{
-          width: responsiveWidth(100),
-          backgroundColor: theme.colors.secondaryContainer,
-        }}
-      >
-        {
-          props.type === ManagementType.FLASHCARD && (
-            <EditFlashcard listItem={listItem} />
-          ) //if type === flashcard then render <EditFlashcard/> component
-        }
-        {
-          props.type === ManagementType.EXERCISE && (
-            <EditExercise listItem={listItem} />
-          ) //if type === exercise then render <EditExercise/> component
-        }
-      </List.Accordion>
-      <Divider />
-    </View>
-  ));
+  return noSetItemsAvailable ? (
+    <HelperText type="info" style={{ backgroundColor: theme.colors.secondaryContainer }}>
+      There are no {typeName(true)} in this set. Add some via the button on the
+      bottom right
+    </HelperText>
+  ) : (
+    orderedContent.map((listItem) => (
+      <View key={listItem.id}>
+        <List.Accordion
+          title={listItem.question}
+          titleNumberOfLines={4}
+          style={{
+            width: responsiveWidth(100),
+            backgroundColor: theme.colors.secondaryContainer,
+          }}
+        >
+          {
+            props.type === ManagementType.FLASHCARD && (
+              <EditFlashcard listItem={listItem} />
+            ) //if type === flashcard then render <EditFlashcard/> component
+          }
+          {
+            props.type === ManagementType.EXERCISE && (
+              <EditExercise listItem={listItem} />
+            ) //if type === exercise then render <EditExercise/> component
+          }
+        </List.Accordion>
+        <Divider />
+      </View>
+    ))
+  );
 }
 
 const styles = StyleSheet.create({
