@@ -47,26 +47,6 @@ export default function RateProject({
     });
   }, []);
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerLeft: (props) => (
-        <HeaderBackButton
-          {...props}
-          style={styles.fixHeaderStyles}
-          onPress={() => {
-            confirm({
-              title: "Discard changes?",
-              message:
-                "All unsaved changes will be lost. Do you want to continue?",
-              okText: "Continue",
-              okAction: () => navigation.goBack(),
-            });
-          }}
-        />
-      ),
-    });
-  }, [navigation]);
-
   const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
   const renderStars = (numStars) => {
     return (
