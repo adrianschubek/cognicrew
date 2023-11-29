@@ -11,9 +11,11 @@ import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
 import AddExercises from "../../components/dialogues/AddExercises";
 
 export default function FlashcardExerciseManagement({
+  navigation,
   route,
 }: {
   route: { params: { type: ManagementType } };
+  navigation: any;
 }) {
   useSoundSystem1();
   const theme = useTheme();
@@ -29,9 +31,21 @@ export default function FlashcardExerciseManagement({
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
   const { open } = FABOpen;
-  const typeName = (plural: boolean) =>
-    (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
-    (plural ? "s" : "");
+  function capitalizeFirstLetter(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  }
+  const typeName = (plural: boolean, uppercase?: boolean) => {
+    let returnString =
+      (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+      (plural ? "s" : "");
+    if (uppercase) returnString = capitalizeFirstLetter(returnString);
+    return returnString;
+  };
+  useEffect(() => {
+    navigation.setOptions({
+      title: typeName(false, true) + " Management",
+    });
+  }, []);
   return (
     <>
       <StatusBar style="auto" />
