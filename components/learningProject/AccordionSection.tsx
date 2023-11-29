@@ -20,6 +20,7 @@ export default function AccordionSection(props: {
   width?: number;
   orderSetsBy: orderByPrinciple;
   orderSetItemsBy: orderByPrinciple;
+  sendNoSetAvailableToParent?: (boolean) => any;
   [name: string]: any;
 }) {
   const projectId = useProjectStore((state) => state.projectId);
@@ -28,6 +29,7 @@ export default function AccordionSection(props: {
   useEffect(() => {
     if (!data) return;
     setSets(data);
+    props.sendNoSetAvailableToParent(data.length === 0);
   }, [data]);
   useEffect(() => {
     const realtimeSets = supabase
