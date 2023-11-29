@@ -34,16 +34,12 @@ export default function FlashcardExerciseManagement({
   function capitalizeFirstLetter(string: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-  const typeName = (plural: boolean, uppercase?: boolean) => {
-    let returnString =
-      (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
-      (plural ? "s" : "");
-    if (uppercase) returnString = capitalizeFirstLetter(returnString);
-    return returnString;
-  };
+  const typeName = (plural: boolean) =>
+    (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+    (plural ? "s" : "");
   useEffect(() => {
     navigation.setOptions({
-      title: typeName(false, true) + " Management",
+      title: capitalizeFirstLetter(typeName(false)) + " Management",
     });
   }, []);
   return (
