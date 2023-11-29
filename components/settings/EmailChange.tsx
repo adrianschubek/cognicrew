@@ -19,7 +19,8 @@ export default function EmailChange(props) {
 
   const validator = mail.length > 0 && mail.includes("@");
 
-  const { success, error: errorAlert } = useAlerts();
+  const { success, error: errorAlert, alert } = useAlerts();
+
   const update = async () => {
     const { data, error } = await supabase.auth.updateUser({ email: mail });
 
@@ -28,9 +29,33 @@ export default function EmailChange(props) {
         message: error.message,
       });
     else
-      success({
-        message: "E-Mail updated successfully",
+      alert({
+        icon: "account-check",
+        title: "Enter code sent to your new mail: ",
+        message:
+          "Please enter the verification code you received in your email.",
+        dismissable: false,
+        okText: "Confirm",
+        async okAction(verification) {
+          const { data, error } = await supabase.auth.verifyOtp({
+            email: mail,
+            token: verification[0], 
+            
+            type: "email_change",
+          });
+          if (error) return error?.message ?? "Unknown error";
+          success({
+            message: "E-Mail updated successfully",
+          });
+        },
+        fields: [
+          {
+            label: "Verification code:",
+            type: "number",
+          },
+        ],
       });
+
   };
 
   return (
