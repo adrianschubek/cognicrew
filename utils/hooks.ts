@@ -9,7 +9,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
@@ -270,6 +270,113 @@ export function useUnlockAchievement() {
   };
 
   return unlockAchievement;
+}
+
+export function useFileUpload() {
+  const { user } = useAuth(); // Call useAuth inside the hook
+
+  const uploadFile = async ({ uri, name, type }) => {
+    if (!user) {
+      console.error('No user is authenticated!');
+      return { success: false, error: 'User is not authenticated' };
+    }
+
+    // Use the user ID as part of the file path
+    const userSpecificPath = `uploads/${user.id}/${name}`;
+
+    try {
+      // Fetch the file from the uri
+      const response = await fetch(uri);
+      const blob = await response.blob();
+
+      // Create a new FormData object and append the file details
+      let formData = new FormData();
+      formData.append('files', blob, name);
+
+      // Log the user-specific path for debugging
+      console.log(`Uploading to path: ${userSpecificPath}`);
+
+      // Perform the file upload
+      const { data, error } = await supabase.storage
+        .from('files')
+        .upload(userSpecificPath, formData, {
+          contentType: type,
+          upsert: false,
+        });
+
+      if (error) {
+        console.error('Error uploading file:', error);
+        return { success: false, error };
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error during file upload:', error);
+      return { success: false, error };
+    }
+  };
+
+  return uploadFile;
+}
+
+
+
+export function useFileDownload() {
+  // Downloads a file from Supabase storage
+  const downloadFile = async (fileName) => {
+    const { data, error } = await supabase.storage
+      .from('files') // bucket name in supabase
+      .download(fileName);
+
+    if (error) {
+      console.error('Error downloading file:', error);
+      return { success: false, error };
+    }
+
+    return { success: true, data };
+  };
+
+  return downloadFile;
+}
+
+export function useFilesList() {
+  const [filesList, setFilesList] = useState([]);
+
+  const fetchFilesList = async () => {
+    const { data, error } = await supabase.storage.from('files').list();
+
+    if (error) {
+      console.error('Error fetching files:', error);
+      return;
+    }
+
+    // Filter or categorize files here if needed
+    // For example, add a file type property or categorize by file extension
+
+    setFilesList(data);
+  };
+
+  useEffect(() => {
+    fetchFilesList();
+  }, []);
+
+  return { filesList, fetchFilesList };
+}
+
+export function useFileDelete() {
+  // Takes a file path and deletes the file from the "files" bucket
+  const deleteFile = async (filePath) => {
+    const { error } = await supabase.storage.from('files').remove([filePath]);
+
+    if (error) {
+      console.error('Error deleting file:', error);
+      return { success: false, error };
+    }
+
+    return { success: true };
+  };
+
+  return deleteFile;
 }
 
 //Returns all Sets

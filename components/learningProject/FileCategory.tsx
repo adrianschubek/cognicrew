@@ -14,7 +14,7 @@ import {
 import FileItem from "./FileItem";
 import { useTheme } from "react-native-paper";
 
-export default function FileCategory({ title, files, onDelete }) {
+export default function FileCategory({ title, files, onDelete, onDownload }) {
   const [expanded, setExpanded] = useState(true);
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ export default function FileCategory({ title, files, onDelete }) {
           renderItem={({ item }) => (
             <FileItem
               file={item}
-              onIconPress={() => handleDownload(item)}
+              onIconPress={() => onDownload(item)} // Pass the whole file object
               onDeletePress={() => onDelete(item.id)}
             />
           )}
