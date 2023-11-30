@@ -4,7 +4,7 @@ import { TextInput, Checkbox } from "react-native-paper";
 //takes some time to load for exercises, maybe there is a more efficient way to do this?
 export default function TextInputWithCheckbox(props: {
   width?: any;
-  sendAnswer?: ([string, boolean]) => any;
+  sendAnswer?: ([text, checked]: [string, boolean]) => void;
   listItemAnswer?: [string, boolean, number];
   [name: string]: any;
 }) {

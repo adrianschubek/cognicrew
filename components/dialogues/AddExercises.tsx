@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  Keyboard,
-} from "react-native";
+import { StyleSheet, Keyboard } from "react-native";
 import {
   Button,
   Dialog,
@@ -72,18 +69,13 @@ export default function AddExercises({ showAddExercises, close }) {
     ]);
     resetDialogue();
   };
-  const getAnswer1 = ([text, checked]) => {
-    setAnswers([[text, checked], answers[1], answers[2], answers[3]]);
-  };
-  const getAnswer2 = ([text, checked]) => {
-    setAnswers([answers[0], [text, checked], answers[2], answers[3]]);
-  };
-  const getAnswer3 = ([text, checked]) => {
-    setAnswers([answers[0], answers[1], [text, checked], answers[3]]);
-  };
-  const getAnswer4 = ([text, checked]) => {
-    setAnswers([answers[0], answers[1], answers[2], [text, checked]]);
-  };
+  function getAnswer(number: number) {
+    return ([text, checked]: [string, boolean]) => {
+      let newAnswers = [...answers];
+      newAnswers[number - 1] = [text, checked];
+      setAnswers(newAnswers);
+    };
+  }
   return (
     <Portal>
       <Dialog
@@ -109,26 +101,16 @@ export default function AddExercises({ showAddExercises, close }) {
             setQuestion(question);
           }}
         />
-        <TextInputWithCheckbox
-          number="1"
-          sendAnswer={getAnswer1}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="2"
-          sendAnswer={getAnswer2}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="3"
-          sendAnswer={getAnswer3}
-          width={responsiveWidth(70)}
-        />
-        <TextInputWithCheckbox
-          number="4"
-          sendAnswer={getAnswer4}
-          width={responsiveWidth(70)}
-        />
+        {[1, 2, 3, 4].map((e) => {
+          return (
+            <TextInputWithCheckbox
+              key={e}
+              number={e.toString()}
+              sendAnswer={getAnswer(e)}
+              width={responsiveWidth(70)}
+            />
+          );
+        })}
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70), marginTop: 10 }}
