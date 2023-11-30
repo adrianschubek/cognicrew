@@ -14,6 +14,7 @@ import {
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
 import { err } from "../utils.ts";
+import { shuffle } from "../../utils/common.ts";
 
 serve(async (req) => {
   const start = performance.now();
@@ -147,45 +148,48 @@ serve(async (req) => {
       gameData: {
         exercises:
           body.type === 1
-            ? gamedata.sets
-                .map((set) => set.exercises)
-                .flat()
-                .map((exercise) => ({
-                  id: exercise.id,
-                  question: exercise.question,
-                  answers: exercise.answers_exercises.map(
-                    (answer) => answer.answer,
-                  ),
-                  explanations: Array.from({ length: exercise.answers_exercises.length }, () => null),
-                  priority: exercise.priority,
-                  /* get correct answer index */
-                  correct: exercise.answers_exercises.reduce(
-                    (acc, answer, index) =>
-                      answer.is_correct ? [...acc, index] : acc,
-                    [] as number[],
-                  ),
-                }))
-                .sort(
-                  (a, b) => a.priority - b.priority,
-                ) /* TODO: randomize/shuffle */
-                .slice(0, body.numberOfRounds)
+            ? shuffle(
+                gamedata.sets
+                  .map((set) => set.exercises)
+                  .flat()
+                  .map((exercise) => ({
+                    id: exercise.id,
+                    question: exercise.question,
+                    answers: exercise.answers_exercises.map(
+                      (answer) => answer.answer,
+                    ),
+                    explanations: Array.from(
+                      { length: exercise.answers_exercises.length },
+                      () => null,
+                    ),
+                    priority: exercise.priority,
+                    /* get correct answer index */
+                    correct: exercise.answers_exercises.reduce(
+                      (acc, answer, index) =>
+                        answer.is_correct ? [...acc, index] : acc,
+                      [] as number[],
+                    ),
+                  }))
+                  .sort((a, b) => a.priority - b.priority)
+                  .slice(0, body.numberOfRounds),
+              )
             : [],
         flashcards:
           body.type === 0
-            ? gamedata.sets
-                .map((set) => set.flashcards)
-                .flat()
-                .map((flashcard) => ({
-                  id: flashcard.id,
-                  question: flashcard.question,
-                  priority: flashcard.priority,
-                  answer: flashcard.answer,
-                  explanation: null,
-                }))
-                .sort(
-                  (a, b) => a.priority - b.priority,
-                ) /* TODO: randomize/shuffle */
-                .slice(0, body.numberOfRounds)
+            ? shuffle(
+                gamedata.sets
+                  .map((set) => set.flashcards)
+                  .flat()
+                  .map((flashcard) => ({
+                    id: flashcard.id,
+                    question: flashcard.question,
+                    priority: flashcard.priority,
+                    answer: flashcard.answer,
+                    explanation: null,
+                  }))
+                  .sort((a, b) => a.priority - b.priority)
+                  .slice(0, body.numberOfRounds),
+              )
             : [],
       },
       roundDuration: body.roundDuration,
