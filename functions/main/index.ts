@@ -205,7 +205,7 @@ setInterval(async () => {
       newState.players = newState.players.map((player) => ({
         ...player,
         currentCorrect: null,
-        currentTimeNeeded: null,
+        currentTimeNeeded: null
       }));
 
       if (newState.round + 1 <= newState.totalRounds) {
@@ -272,9 +272,8 @@ setInterval(async () => {
 
   const end = performance.now();
   console.log(
-    `${new Date().toISOString()} | main_loop: updated ${
-      publicRoomStates.length
-    } states in ${end - start}ms`,
+    /* use `logs -t` to show timestamps */
+    `main_loop: updated ${publicRoomStates.length} states in ${end - start}ms`,
   );
 }, 1000);
 
