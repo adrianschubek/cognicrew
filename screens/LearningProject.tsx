@@ -129,7 +129,7 @@ export default function LearningProject({ navigation, route }) {
               });
               navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
-              setRoom(data);
+              setRoom(data); //?? still works, but maybe resolve type error, just change Room type to "Record<string, unknown>" ?
             },
             fields: [
               {
