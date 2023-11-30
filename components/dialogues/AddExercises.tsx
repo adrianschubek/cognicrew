@@ -105,7 +105,7 @@ export default function AddExercises({ showAddExercises, close }) {
           return (
             <TextInputWithCheckbox
               key={e}
-              number={e.toString()}
+              number={e}
               sendAnswer={getAnswer(e)}
               width={responsiveWidth(70)}
             />
