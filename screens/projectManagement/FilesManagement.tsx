@@ -117,6 +117,10 @@ export default function FilesManagement() {
     return files.filter((file) => file.extension === extension);
   };
 
+  const dontCategorize = () => {
+
+  };
+
   /**
    * handleDelete - Handles the deletion of the selected file.
    */
@@ -169,7 +173,7 @@ export default function FilesManagement() {
 
               <FileCategory
                 title="Photos"
-                files={categorizeFiles(".txt")}
+                files={dontCategorize()}
                 onDelete={confirmDelete}
               />
               <ScrollView>
@@ -182,6 +186,7 @@ export default function FilesManagement() {
                   />
                 ))}
               </ScrollView>
+              
             </View>
           );
         }}
