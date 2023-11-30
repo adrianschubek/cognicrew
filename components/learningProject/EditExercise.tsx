@@ -31,6 +31,7 @@ import { debounce } from "../../utils/common";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
+  const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
   const [allowUpdate, setAllowUpdate] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [priority, setPriority] = useState<number>(0);
@@ -41,7 +42,6 @@ export default function EditExercise({ listItem }) {
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
-    console.log("updateExercise");
     upsertExercise({
       //@ts-expect-error
       id: listItem.id,
@@ -78,40 +78,13 @@ export default function EditExercise({ listItem }) {
     ["", false, 0],
     ["", false, 0],
   ]);
-  const getAnswer1 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      [text, checked, prevAnswers[0][2]],
-      prevAnswers[1],
-      prevAnswers[2],
-      prevAnswers[3],
-    ]);
-  };
-
-  const getAnswer2 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      [text, checked, prevAnswers[1][2]],
-      prevAnswers[2],
-      prevAnswers[3],
-    ]);
-  };
-
-  const getAnswer3 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      prevAnswers[1],
-      [text, checked, prevAnswers[2][2]],
-      prevAnswers[3],
-    ]);
-  };
-  const getAnswer4 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      prevAnswers[1],
-      prevAnswers[2],
-      [text, checked, prevAnswers[3][2]],
-    ]);
-  };
+  function getAnswer(number: number) {
+    return ([text, checked]: [string, boolean]) => {
+      let newAnswers = [...answers];
+      newAnswers[number - 1] = [text, checked, answers[number - 1][2]];
+      setAnswers(newAnswers);
+    };
+  }
   // Create the debounced function
   const debouncedEditExercise = useCallback(
     debounce((question, answers, priority) => {
@@ -122,7 +95,9 @@ export default function EditExercise({ listItem }) {
   useEffect(() => {
     if (question && answers && priority && isInitialized === true) {
       // Call the debounced function
-      allowUpdate === true ? debouncedEditExercise(question, answers, priority) : setAllowUpdate(true);
+      allowUpdate === true
+        ? debouncedEditExercise(question, answers, priority)
+        : setAllowUpdate(true);
     }
   }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
 
@@ -176,26 +151,16 @@ export default function EditExercise({ listItem }) {
             setQuestion(question);
           }}
         />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[0]}
-          sendAnswer={getAnswer1}
-          number="1"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[1]}
-          sendAnswer={getAnswer2}
-          number="2"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[2]}
-          sendAnswer={getAnswer3}
-          number="3"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[3]}
-          sendAnswer={getAnswer4}
-          number="4"
-        />
+        {array.map((e) => {
+          return (
+            <TextInputWithCheckbox
+              key={e}
+              listItemAnswer={answers[e - 1]}
+              sendAnswer={getAnswer(e)}
+              number={e}
+            />
+          );
+        })}
       </Card.Content>
     </Card>
   );
