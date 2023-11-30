@@ -32,36 +32,43 @@ import { checkForLineBreak, debounce } from "../../utils/common";
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
   const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
-  const [allowUpdate, setAllowUpdate] = useState(false);
+  const [allowUpdate, setAllowUpdate] = useState<boolean>(false);
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [priority, setPriority] = useState<number>(0);
-  const [question, setQuestion] = useState(listItem.question);
+  const [question, setQuestion] = useState<string>(listItem.question as string);
   const { data, error, isLoading } = useAnswersExercises(listItem.id);
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
-    upsertExercise({
-      //@ts-expect-error
-      id: listItem.id,
-      question: question,
-      priority: priority,
-      set_id: listItem.set_id,
-    }).then((res) => {
-      answers.forEach((e, index) => {
-        upsertAnswersExercise({
+    checkForError(
+      () => {
+        upsertExercise({
           //@ts-expect-error
-          id: e[2],
-          answer: e[0],
-          exercise: res[0].id,
-          is_correct: e[1],
-          order_position: index + 1,
-        });
-      });
-    });
+          id: listItem.id,
+          question: question,
+          priority: priority,
+          set_id: listItem.set_id,
+        }).then((res) => {
+          answers.forEach((e, index) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              id: e[2],
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: index + 1,
+            });
+          });
+        }),
+          resetCard();
+      },
+      question,
+      answers,
+    );
   };
   useEffect(() => {
     if (!data || isInitialized) return;
@@ -80,7 +87,7 @@ export default function EditExercise({ listItem }) {
     ["", false, 0],
     ["", false, 0],
   ]);
-  function checkForError(functionToCheck: () => any) {
+  function checkForError(functionToCheck: () => any, question, answers) {
     const questionExists = question !== "";
     const correctAnswerExists = answers.some((e) => e[0] && e[1]);
     if (correctAnswerExists && questionExists) {
@@ -101,6 +108,10 @@ export default function EditExercise({ listItem }) {
       setShowErrorUpload(true);
     }
   }
+  function resetCard() {
+    setErrorText("");
+    setShowErrorUpload(false);
+  }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -116,7 +127,7 @@ export default function EditExercise({ listItem }) {
     [],
   );
   useEffect(() => {
-    if (question && answers && priority && isInitialized === true) {
+    if (isInitialized === true) {
       // Call the debounced function
       allowUpdate === true
         ? debouncedEditExercise(question, answers, priority)
