@@ -80,7 +80,7 @@ export default function AddExercises({ showAddExercises, close }) {
 
   function checkForError(functionToCheck: () => any) {
     const questionExists = question !== "";
-    const correctAnswerExists = answers.some((e) => e[1] === true);
+    const correctAnswerExists = answers.some((e) => e[0] && e[1]);
     if (correctAnswerExists && questionExists && selectedSetId !== null) {
       functionToCheck();
     } else {

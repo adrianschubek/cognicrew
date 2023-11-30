@@ -27,12 +27,14 @@ import {
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { parse } from "react-native-svg";
 import PrioritySelector from "./PrioritySelector";
-import { debounce } from "../../utils/common";
+import { checkForLineBreak, debounce } from "../../utils/common";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
   const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
   const [allowUpdate, setAllowUpdate] = useState(false);
+  const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [priority, setPriority] = useState<number>(0);
   const [question, setQuestion] = useState(listItem.question);
@@ -78,6 +80,27 @@ export default function EditExercise({ listItem }) {
     ["", false, 0],
     ["", false, 0],
   ]);
+  function checkForError(functionToCheck: () => any) {
+    const questionExists = question !== "";
+    const correctAnswerExists = answers.some((e) => e[0] && e[1]);
+    if (correctAnswerExists && questionExists) {
+      functionToCheck();
+    } else {
+      let errorText = "";
+      !questionExists &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "Question to needs to exist",
+        ));
+      !correctAnswerExists &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "At least one correct answer needs to exist",
+        ));
+      setErrorText(errorText);
+      setShowErrorUpload(true);
+    }
+  }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -90,7 +113,7 @@ export default function EditExercise({ listItem }) {
     debounce((question, answers, priority) => {
       updateExercise(question, answers, priority);
     }, 500),
-    [], // dependencies array is empty because debounce and editFlashcard do not change
+    [],
   );
   useEffect(() => {
     if (question && answers && priority && isInitialized === true) {
@@ -99,7 +122,7 @@ export default function EditExercise({ listItem }) {
         ? debouncedEditExercise(question, answers, priority)
         : setAllowUpdate(true);
     }
-  }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
+  }, [question, answers, priority, debouncedEditExercise]);
 
   useEffect(() => {
     if (isInitialized) return;
@@ -161,6 +184,15 @@ export default function EditExercise({ listItem }) {
             />
           );
         })}
+        {showErrorUpload && errorText !== "" && (
+          <HelperText
+            style={{ paddingHorizontal: 0 }}
+            type="error"
+            visible={showErrorUpload}
+          >
+            {errorText}
+          </HelperText>
+        )}
       </Card.Content>
     </Card>
   );
