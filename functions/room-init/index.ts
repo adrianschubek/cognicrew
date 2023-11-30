@@ -13,8 +13,7 @@ import {
   ScreenState,
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { err } from "../utils.ts";
-import { shuffle } from "../../utils/common.ts";
+import { err, shuffle } from "../utils.ts";
 
 serve(async (req) => {
   const start = performance.now();
