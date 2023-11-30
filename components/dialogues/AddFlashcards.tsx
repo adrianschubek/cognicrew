@@ -1,8 +1,9 @@
 import * as React from "react";
-import { StyleSheet, Keyboard } from "react-native";
+import { StyleSheet, Keyboard, View } from "react-native";
 import {
   Button,
   Dialog,
+  HelperText,
   Portal,
   TextInput,
   useTheme,
@@ -16,27 +17,33 @@ import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import { ManagementType } from "../../types/common";
 import { useUpsertFlashcard } from "../../utils/hooks";
+import { checkForLineBreak } from "../../utils/common";
 
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
   const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
   const addFlashcard = () => {
-    upsertFlashcard({
-      //@ts-expect-error
-      question: question,
-      answer: answer,
-      priority: priority,
-      set_id: selectedSetId,
+    checkForError(() => {
+      upsertFlashcard({
+        //@ts-expect-error
+        question: question,
+        answer: answer,
+        priority: priority,
+        set_id: selectedSetId,
+      });
+      setQuestion("");
+      setAnswer("");
+      resetDialogue();
     });
-    setQuestion("");
-    setAnswer("");
-    resetDialogue();
   };
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [priority, setPriority] = useState(5);
   const [selectedSetId, setSelectedSetId] = useState(null);
-  const [showError, setShowError] = useState(false);
+  const [showErrorNoSetSelected, setShowErrorNoSetSelected] =
+    useState<boolean>(false);
+  const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
   const getSelectedSetId = (setId) => {
     setSelectedSetId(setId);
     console.log(setId);
@@ -45,7 +52,24 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
     setSelectedSetId(null);
     close();
     Keyboard.dismiss();
-    setShowError(false);
+    setShowErrorNoSetSelected(false);
+    setShowErrorUpload(false);
+  }
+  function checkForError(functionToCheck: () => any) {
+    const questionExists = question !== "";
+    const answerExists = answer !== "";
+    if (answerExists && questionExists && selectedSetId !== null) {
+      functionToCheck();
+    } else {
+      selectedSetId === null && setShowErrorNoSetSelected(true);
+      let errorText = "";
+      !questionExists &&
+        (errorText += checkForLineBreak(errorText, "Please enter a question"));
+      !answerExists &&
+        (errorText += checkForLineBreak(errorText, "Please enter an answer"));
+      setErrorText(errorText);
+      setShowErrorUpload(true);
+    }
   }
   return (
     <Portal>
@@ -56,40 +80,51 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           resetDialogue();
         }}
       >
-        <SearchWithList
-          mode="select"
-          type={ManagementType.FLASHCARD}
-          searchPlaceholder="Search for flashcard set"
-          sendSetId={getSelectedSetId}
-          noSetSelected={showError}
-        />
+        <View style={{ width: responsiveWidth(70) }}>
+          <SearchWithList
+            mode="select"
+            type={ManagementType.FLASHCARD}
+            searchPlaceholder="Search for flashcard set"
+            sendSetId={getSelectedSetId}
+            noSetSelected={showErrorNoSetSelected}
+          />
 
-        <TextInput
-          style={[styles.textInputStyle]}
-          multiline={true}
-          blurOnSubmit={true}
-          disabled={isMutating}
-          label="Question:"
-          onChangeText={(question) => {
-            setQuestion(question);
-          }}
-        />
-        <TextInput
-          style={styles.textInputStyle}
-          label="Answer:"
-          multiline={true}
-          blurOnSubmit={true}
-          disabled={isMutating}
-          onChangeText={(answer) => {
-            setAnswer(answer);
-          }}
-        />
+          <TextInput
+            style={[styles.textInputStyle]}
+            multiline={true}
+            blurOnSubmit={true}
+            disabled={isMutating}
+            label="Question:"
+            onChangeText={(question) => {
+              setQuestion(question);
+            }}
+          />
+          <TextInput
+            style={styles.textInputStyle}
+            label="Answer:"
+            multiline={true}
+            blurOnSubmit={true}
+            disabled={isMutating}
+            onChangeText={(answer) => {
+              setAnswer(answer);
+            }}
+          />
+          {showErrorUpload && errorText !== "" && (
+            <HelperText
+              style={{ paddingHorizontal: 0 }}
+              type="error"
+              visible={showErrorUpload}
+            >
+              {errorText}
+            </HelperText>
+          )}
+        </View>
         <Dialog.Actions>
           <Button
             style={{ width: responsiveWidth(70), marginTop: 10 }}
             disabled={isMutating}
             onPress={() => {
-              selectedSetId === null ? setShowError(true) : addFlashcard();
+              addFlashcard();
             }}
             mode="contained"
           >

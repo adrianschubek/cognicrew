@@ -99,3 +99,6 @@ export async function handleEdgeError(error: Error): Promise<string> {
     `Something went wrong. This usually indicates an unexpected error inside an edge function. Please try again later. \n\n⚡ Unknown (#69)`
   );
 }
+export function checkForLineBreak(initial: string, addition: string) {
+  return initial === "" ? addition : "\n" + addition;
+}

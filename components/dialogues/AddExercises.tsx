@@ -13,14 +13,12 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import EditFlashcard from "../learningProject/EditFlashcard";
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { ManagementType } from "../../types/common";
 import { useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
-import { error } from "cypress/types/jquery";
-import { err } from "../../functions/utils";
+import { checkForLineBreak } from "../../utils/common";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
@@ -80,9 +78,6 @@ export default function AddExercises({ showAddExercises, close }) {
     });
   };
 
-  function checkForLineBreak(initial: string, addition: string) {
-    return initial === "" ? addition : "\n" + addition;
-  }
   function checkForError(functionToCheck: () => any) {
     const questionExists = question !== "";
     const correctAnswerExists = answers.some((e) => e[1] === true);
@@ -145,7 +140,7 @@ export default function AddExercises({ showAddExercises, close }) {
               />
             );
           })}
-          {showErrorUpload && (
+          {showErrorUpload && errorText !== "" && (
             <HelperText
               style={{ paddingHorizontal: 0 }}
               type="error"
