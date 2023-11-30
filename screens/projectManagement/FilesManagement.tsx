@@ -27,7 +27,7 @@ import ImageItem from "../../components/common/ImageItem";
 
 export default function FilesManagement() {
   const { user } = useAuth();
-  const [files1, setFiles1] = useState<FileObject[]>([]);
+  const [photos, setPhotos] = useState<FileObject[]>([]);
 
   useEffect(() => {
     if (!user) return;
@@ -39,15 +39,15 @@ export default function FilesManagement() {
   const loadImages = async () => {
     const { data } = await supabase.storage.from("files").list(user!.id);
     if (data) {
-      setFiles1(data);
+      setPhotos(data);
     }
   };
 
   const onRemoveImage = async (item: FileObject, listIndex: number) => {
     supabase.storage.from("files").remove([`${user!.id}/${item.name}`]);
-    const newFiles = [...files1];
+    const newFiles = [...photos];
     newFiles.splice(listIndex, 1);
-    setFiles1(newFiles);
+    setPhotos(newFiles);
   };
 
   const onSelectImage = async () => {
@@ -177,7 +177,7 @@ export default function FilesManagement() {
                 onDelete={confirmDelete}
               />
               <ScrollView>
-                {files1.map((item, index) => (
+                {photos.map((item, index) => (
                   <ImageItem
                     key={item.id}
                     item={item}
