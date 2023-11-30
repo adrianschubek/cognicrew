@@ -9,6 +9,7 @@ import {
   StyleSheet,
   VirtualizedList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
@@ -25,9 +26,10 @@ import * as DocumentPicker from "expo-document-picker";
 import { useAuth } from "../../providers/AuthProvider";
 import { FileObject } from "@supabase/storage-js";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 import { supabase } from "../../supabase";
-import { decode } from 'base64-arraybuffer';
+import { decode } from "base64-arraybuffer";
+import ImageItem from "../../components/common/ImageItem";
 
 export default function FilesManagement() {
   const fileUpload = useFileUpload();
@@ -36,9 +38,23 @@ export default function FilesManagement() {
   const deleteFile = useFileDelete();
   const [uploadDialogVisible, setUploadDialogVisible] = useState(false);
 
+  const [otherFiles, setOtherFiles] = useState<FileObject[]>([]); // State for non-image files
+
+  const loadOtherFiles = async () => {
+    const { data } = await supabase.storage.from("files").list(user.id, {
+      // You may want to filter out images if they are stored in the same location
+    });
+    if (data) {
+      setOtherFiles(data.filter(file => !file.name.match(/\.(jpg|jpeg|png)$/i)));
+    }
+  };
+
+
   const refreshFiles = () => {
     fetchFilesList();
   };
+
+  
 
   useEffect(() => {
     fetchFilesList();
@@ -120,21 +136,65 @@ export default function FilesManagement() {
     { id: "2", name: "Dummy1.docx", extension: ".docx" },
     { id: "3", name: "Dummy.xlsx", extension: ".xlsx" },
     { id: "4", name: "Misc.txt", extension: ".txt" },
-    { id: "5", name: "File2.pdf", extension: ".pdf" },
-    { id: "6", name: "Dummy2.docx", extension: ".docx" },
   ]);
 
   const { user } = useAuth();
   const [files1, setFiles1] = useState<FileObject[]>([]);
 
-  useEffect(() => {
+   useEffect(() => {
     if (!user) return;
-
-    // Load user images
     loadImages();
+    loadOtherFiles();
   }, [user]);
 
-  const loadImages = async () => {};
+    // Function to extract file extension
+    const getFileExtension = (filename) => {
+      return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
+    };
+
+    const categorizeOtherFiles = (extension) => {
+      return otherFiles.filter(file => getFileExtension(file.name).toLowerCase() === extension);
+    };
+
+    const handleOtherFileUpload = async () => {
+      try {
+        const result = await DocumentPicker.getDocumentAsync({
+          type: "*/*", // All file types
+        });
+    
+        if (!result.canceled && result.assets && result.assets.length > 0) {
+          const fileAsset = result.assets[0];
+          const uri = fileAsset.uri;
+          const name = fileAsset.name;
+          const fileExtension = name.split('.').pop();
+          const contentType = `application/${fileExtension}`; // A basic assumption of content type
+    
+          // Prepare the file for upload
+          const base64 = await FileSystem.readAsStringAsync(uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          const filePath = `${user.id}/${new Date().getTime()}.${fileExtension}`;
+    
+          // Uploading the file to Supabase
+          await supabase.storage
+            .from("files")
+            .upload(filePath, decode(base64), { contentType });
+    
+          // Refreshing the files list
+          await loadOtherFiles();
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    };
+    
+
+  const loadImages = async () => {
+    const { data } = await supabase.storage.from("files").list(user.id);
+    if (data) {
+      setFiles1(data);
+    }
+  };
 
   const onSelectImage = async () => {
     const options: ImagePicker.ImagePickerOptions = {
@@ -145,14 +205,26 @@ export default function FilesManagement() {
     const result = await ImagePicker.launchImageLibraryAsync(options);
     if (!result.canceled) {
       const img = result.assets[0];
-      const base64 = await FileSystem.readAsStringAsync(img.uri, { encoding: 'base64' });
-      const filePath = `${user.id}/${new Date().getTime()}.${img.type === 'image' ? 'png' : 'mp4'}`;
-      const contentType = img.type === 'image' ? 'image/png' : 'video/mp4';
-      await supabase.storage.from('files').upload(filePath, decode(base64), {contentType});
+      const base64 = await FileSystem.readAsStringAsync(img.uri, {
+        encoding: "base64",
+      });
+      const filePath = `${user.id}/${new Date().getTime()}.${
+        img.type === "image" ? "png" : "mp4"
+      }`;
+      const contentType = img.type === "image" ? "image/png" : "video/mp4";
+      await supabase.storage
+        .from("files")
+        .upload(filePath, decode(base64), { contentType });
       await loadImages();
     }
-    
   };
+
+  const onRemoveImage = async (item: FileObject, listIndex: number) => {
+    supabase.storage.from('files').remove([`${user!.id}/${item.name}`])
+    const newFiles = [...files1]
+    newFiles.splice(listIndex, 1)
+    setFiles1(newFiles)
+  }
 
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -189,6 +261,14 @@ export default function FilesManagement() {
     return files.filter((file) => file.extension === extension);
   };
 
+  const categorizePhotos = () => {
+    // Assuming your image files have extensions like these
+    const imageExtensions = [".jpg", ".jpeg", ".png"];
+    return files1.filter((file) =>
+      imageExtensions.includes(`.${file.name.split(".").pop().toLowerCase()}`),
+    );
+  };
+
   /**
    * handleDelete - Handles the deletion of the selected file.
    */
@@ -218,36 +298,55 @@ export default function FilesManagement() {
         renderItem={() => null}
         getItemCount={() => 0}
         ListHeaderComponent={() => {
-          return (
+          return ( 
             <View style={styles.scrollView}>
               <FileCategory
                 title="PDF Documents (.pdf)"
-                files={categorizeFiles(".pdf")}
-                onDelete={confirmDelete}
+                files={categorizeOtherFiles('pdf')}                onDelete={confirmDelete}
                 onDownload={handleDownload} // Pass the handleDownload function here
               />
               <Divider style={styles.divider} />
               <FileCategory
                 title="Word Documents (.docx)"
-                files={categorizeFiles(".docx")}
-                onDelete={confirmDelete}
+                files={categorizeOtherFiles('docx')}                onDelete={confirmDelete}
                 onDownload={handleDownload} // And here
               />
               <Divider style={styles.divider} />
               <FileCategory
                 title="Excel (.xlsx)"
-                files={categorizeFiles(".xlsx")}
+                files={categorizeOtherFiles("xlsx")}
                 onDelete={confirmDelete}
                 onDownload={handleDownload} // And here
               />
               <Divider style={styles.divider} />
               <FileCategory
                 title="Miscellaneous"
-                files={categorizeFiles(".txt")}
+                files={categorizeOtherFiles("txt")}
                 onDelete={confirmDelete}
                 onDownload={handleDownload} // And here
+              /> 
+              <Divider style={styles.divider} />
+              <FileCategory
+                title="Photos"
+                files={categorizePhotos()}
+                onDelete={onRemoveImage}
+                onDownload={handleDownload}
               />
+               <ScrollView>
+      {files1.map((item, index) => (
+        <ImageItem
+          key={item.id}
+          item={item}
+          userId={user!.id}
+          onRemoveImage={() => onRemoveImage(item, index)}
+        />
+      ))}
+    </ScrollView>
+
             </View>
+
+            
+            
           );
         }}
       ></VirtualizedList>
@@ -259,6 +358,16 @@ export default function FilesManagement() {
         onPress={handleFileSelection} // Update this to call the file selection function
       />
       <View style={styles.container}>
+        <ScrollView>
+          {files1.map((item, index) => (
+            <ImageItem
+              key={item.id}
+              item={item}
+              userId={user!.id}
+              onRemoveImage={() => onRemoveImage(item, index)}
+            />
+          ))}
+        </ScrollView>
         {/* FAB to add images */}
         <TouchableOpacity
           onPress={onSelectImage}
@@ -266,6 +375,12 @@ export default function FilesManagement() {
         ></TouchableOpacity>
       </View>
 
+      <FAB
+        style={styles.fab3}
+        small
+        icon="file-upload"
+        onPress={handleOtherFileUpload}
+      />
       <UploadFileDialog
         visible={uploadDialogVisible}
         onDismiss={() => setUploadDialogVisible(false)}
@@ -323,6 +438,18 @@ const styles = StyleSheet.create({
     bottom: 40,
     right: 30,
     height: 70,
+    backgroundColor: "#2b825b",
+    borderRadius: 100,
+  },
+  fab3: {
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    width: 100,
+    position: "absolute",
+    bottom: 20,
+    right: 30,
+    height: 20,
     backgroundColor: "#2b825b",
     borderRadius: 100,
   },
