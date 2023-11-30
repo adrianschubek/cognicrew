@@ -68,6 +68,10 @@ export type PublicRoomState = {
     | {
         answer: string;
         /**
+         * Explanation of this answer
+         */
+        explanation?: string;
+        /**
          * 0-100 percentage of players who answered this answer
          */
         percentage: number;

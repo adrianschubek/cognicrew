@@ -27,39 +27,48 @@ import {
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { parse } from "react-native-svg";
 import PrioritySelector from "./PrioritySelector";
-import { debounce } from "../../utils/common";
+import { checkForLineBreak, debounce } from "../../utils/common";
 
 export default function EditExercise({ listItem }) {
   const theme = useTheme();
-  const [allowUpdate, setAllowUpdate] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
+  const [allowUpdate, setAllowUpdate] = useState<boolean>(false);
+  const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
+  const [errorText, setErrorText] = useState<string>("");
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [priority, setPriority] = useState<number>(0);
-  const [question, setQuestion] = useState(listItem.question);
+  const [question, setQuestion] = useState<string>(listItem.question as string);
   const { data, error, isLoading } = useAnswersExercises(listItem.id);
   const { isMutating, trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
     useUpsertAnswersExercise();
   const updateExercise = (question, answers, priority) => {
-    console.log("updateExercise");
-    upsertExercise({
-      //@ts-expect-error
-      id: listItem.id,
-      question: question,
-      priority: priority,
-      set_id: listItem.set_id,
-    }).then((res) => {
-      answers.forEach((e, index) => {
-        upsertAnswersExercise({
+    checkForError(
+      () => {
+        upsertExercise({
           //@ts-expect-error
-          id: e[2],
-          answer: e[0],
-          exercise: res[0].id,
-          is_correct: e[1],
-          order_position: index + 1,
-        });
-      });
-    });
+          id: listItem.id,
+          question: question,
+          priority: priority,
+          set_id: listItem.set_id,
+        }).then((res) => {
+          answers.forEach((e, index) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              id: e[2],
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: index + 1,
+            });
+          });
+        }),
+          resetCard();
+      },
+      question,
+      answers,
+    );
   };
   useEffect(() => {
     if (!data || isInitialized) return;
@@ -78,53 +87,53 @@ export default function EditExercise({ listItem }) {
     ["", false, 0],
     ["", false, 0],
   ]);
-  const getAnswer1 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      [text, checked, prevAnswers[0][2]],
-      prevAnswers[1],
-      prevAnswers[2],
-      prevAnswers[3],
-    ]);
-  };
-
-  const getAnswer2 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      [text, checked, prevAnswers[1][2]],
-      prevAnswers[2],
-      prevAnswers[3],
-    ]);
-  };
-
-  const getAnswer3 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      prevAnswers[1],
-      [text, checked, prevAnswers[2][2]],
-      prevAnswers[3],
-    ]);
-  };
-  const getAnswer4 = ([text, checked]) => {
-    setAnswers((prevAnswers) => [
-      prevAnswers[0],
-      prevAnswers[1],
-      prevAnswers[2],
-      [text, checked, prevAnswers[3][2]],
-    ]);
-  };
+  function checkForError(functionToCheck: () => any, question, answers) {
+    const questionExists = question !== "";
+    const correctAnswerExists = answers.some((e) => e[0] && e[1]);
+    if (correctAnswerExists && questionExists) {
+      functionToCheck();
+    } else {
+      let errorText = "";
+      !questionExists &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "Question to needs to exist",
+        ));
+      !correctAnswerExists &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "At least one correct answer needs to exist",
+        ));
+      setErrorText(errorText);
+      setShowErrorUpload(true);
+    }
+  }
+  function resetCard() {
+    setErrorText("");
+    setShowErrorUpload(false);
+  }
+  function getAnswer(number: number) {
+    return ([text, checked]: [string, boolean]) => {
+      let newAnswers = [...answers];
+      newAnswers[number - 1] = [text, checked, answers[number - 1][2]];
+      setAnswers(newAnswers);
+    };
+  }
   // Create the debounced function
   const debouncedEditExercise = useCallback(
     debounce((question, answers, priority) => {
       updateExercise(question, answers, priority);
     }, 500),
-    [], // dependencies array is empty because debounce and editFlashcard do not change
+    [],
   );
   useEffect(() => {
-    if (question && answers && priority && isInitialized === true) {
+    if (isInitialized === true) {
       // Call the debounced function
-      allowUpdate === true ? debouncedEditExercise(question, answers, priority) : setAllowUpdate(true);
+      allowUpdate === true
+        ? debouncedEditExercise(question, answers, priority)
+        : setAllowUpdate(true);
     }
-  }, [question, answers, priority, debouncedEditExercise]); // add debouncedEditFlashcard to dependencies
+  }, [question, answers, priority, debouncedEditExercise]);
 
   useEffect(() => {
     if (isInitialized) return;
@@ -176,26 +185,25 @@ export default function EditExercise({ listItem }) {
             setQuestion(question);
           }}
         />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[0]}
-          sendAnswer={getAnswer1}
-          number="1"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[1]}
-          sendAnswer={getAnswer2}
-          number="2"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[2]}
-          sendAnswer={getAnswer3}
-          number="3"
-        />
-        <TextInputWithCheckbox
-          listItemAnswer={answers[3]}
-          sendAnswer={getAnswer4}
-          number="4"
-        />
+        {array.map((e) => {
+          return (
+            <TextInputWithCheckbox
+              key={e}
+              listItemAnswer={answers[e - 1]}
+              sendAnswer={getAnswer(e)}
+              number={e}
+            />
+          );
+        })}
+        {showErrorUpload && errorText !== "" && (
+          <HelperText
+            style={{ paddingHorizontal: 0 }}
+            type="error"
+            visible={showErrorUpload}
+          >
+            {errorText}
+          </HelperText>
+        )}
       </Card.Content>
     </Card>
   );

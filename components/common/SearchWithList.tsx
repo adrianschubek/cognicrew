@@ -23,6 +23,7 @@ export default function SearchWithList(props: {
   const theme = useTheme();
   const projectId = useProjectStore((state) => state.projectId);
   const [searchQuery, setSearchQuery] = useState("");
+  const [setId, setSetId] = useState(null);
   const { data, isLoading, error } = useSets(props.type, projectId);
   useEffect(() => {
     if (!data) return;
@@ -41,6 +42,7 @@ export default function SearchWithList(props: {
   if (error) return <LoadingOverlay visible={isLoading} />;
   const getSetId = (setId) => {
     props.sendSetId(setId);
+    setSetId(setId);
   };
   return (
     <View style={{ width: responsiveWidth(70), marginBottom: 8 }}>
@@ -66,16 +68,17 @@ export default function SearchWithList(props: {
           close(), Keyboard.dismiss();
         }}
       />
-      {props.noSetSelected && (
-        <HelperText
-          type="error"
-          visible={props.noSetSelected}
-          padding="none"
-          style={{ alignSelf: "flex-start", marginLeft: 16 }}
-        >
-          You have to select a set
-        </HelperText>
-      )}
+      {props.noSetSelected &&
+        !setId /*!setId does that the error message is only shown when the user has not selected a set, 
+        it will be removed when the user selects a set, is this the desired behaviour?*/ && (
+          <HelperText
+            type="error"
+            padding="none"
+            style={{ alignSelf: "flex-start", marginLeft: 16 }}
+          >
+            You have to select a set
+          </HelperText>
+        )}
       {/*)}*/}
     </View>
   );
