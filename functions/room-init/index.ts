@@ -156,6 +156,7 @@ serve(async (req) => {
                   answers: exercise.answers_exercises.map(
                     (answer) => answer.answer,
                   ),
+                  explanations: Array.from({ length: exercise.answers_exercises.length }, () => null),
                   priority: exercise.priority,
                   /* get correct answer index */
                   correct: exercise.answers_exercises.reduce(
@@ -179,6 +180,7 @@ serve(async (req) => {
                   question: flashcard.question,
                   priority: flashcard.priority,
                   answer: flashcard.answer,
+                  explanation: null,
                 }))
                 .sort(
                   (a, b) => a.priority - b.priority,
