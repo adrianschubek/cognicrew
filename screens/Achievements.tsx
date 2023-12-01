@@ -19,8 +19,6 @@ export default function Achievements({ navigation }) {
     setSnackbarVisible(true);
   };
 
-  // FIXME: remove this
-  return null;
 
   return (
     <ScrollView /*style={styles.container}*/

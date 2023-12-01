@@ -27,8 +27,7 @@ export default function AccountManage({ navigation }) {
           tabBarIcon: ({ focused }) => (
             <Icon
               color={focused ? theme.colors.primary : theme.colors.secondary}
-              source={"help"}
-              // source={"trophy"}
+              source={"trophy"}
               size={24}
             />
           ),
@@ -39,9 +38,7 @@ export default function AccountManage({ navigation }) {
                 color: focused ? theme.colors.primary : theme.colors.secondary,
               }}
             >
-              {" "}
-              {/* Achievements */}
-              Secret Feature
+              Achievements
             </Text>
           ),
         }}

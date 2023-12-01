@@ -248,12 +248,6 @@ export default function Lobby({ navigation }) {
               name={"Cognicards"}
               flexDirection="row-reverse"
               function={() => {
-                // FIXME: remove this
-                info({
-                  title: "Coming soon",
-                  message: "Work in progress",
-                });
-                return;
                 confirm({
                   title: "Choose sets",
                   icon: "cards",
