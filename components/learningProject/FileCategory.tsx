@@ -13,21 +13,38 @@ import {
 } from "react-native";
 import FileItem from "./FileItem";
 import { useTheme } from "react-native-paper";
+import * as FileSystem from 'expo-file-system';
+import { supabase } from "../../supabase";
+import { useAuth } from "../../providers/AuthProvider";
+
 
 export default function FileCategory({ title, files, onDelete }) {
   const [expanded, setExpanded] = useState(true);
   const theme = useTheme();
+  const { user } = useAuth();
+
 
   /**
    * handleDownload - Placeholder for file download logic.
    * @param {object} file - The file to download.
    */
 
-  const handleDownload = (file) => {
-    // Placeholder for download logic
-    console.log("Download logic for: ", file);
-  };
+  const handleDownload = async (file) => {
+    try {
+      const publicUrl  = supabase.storage
+        .from('files')
+        .getPublicUrl(`${user.id}/documents/${file.name}`);
 
+  
+      if (publicUrl) {
+        const localUri = FileSystem.documentDirectory + file.name;
+        const { uri } = await FileSystem.downloadAsync(publicUrl.data.publicUrl, localUri);
+        console.log('File downloaded to:', uri);
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
   const toggleExpand = () => {
     setExpanded(!expanded);
   };
