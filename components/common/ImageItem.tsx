@@ -7,11 +7,11 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 
 const ImageItem = ({
   item,
-  userId,
+  projectId,
   onRemoveImage,
 }: {
   item: FileObject;
-  userId: string;
+  projectId: number;
   onRemoveImage: () => void;
 }) => {
   const [image, setImage] = useState<string>("");
@@ -19,7 +19,7 @@ const ImageItem = ({
   // Maybe adjust: This will trigger a "download" each time the component renders
   supabase.storage
     .from("files")
-    .download(`${userId}/photos/${item.name}`)
+    .download(`${projectId}/photos/${item.name}`)
     .then(({ data, error }) => {
       if (error) {
         console.error("Error downloading image:", error.message);
