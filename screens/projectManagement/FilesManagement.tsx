@@ -32,7 +32,7 @@ export default function FilesManagement() {
 
   // obsolete for now
   const onRemoveImage = async (item: FileObject, listIndex: number) => {
-    supabase.storage.from("files").remove([`${user!.id}/${item.name}`]);
+    supabase.storage.from("files").remove([`${projectId}/${item.name}`]);
     const newFiles = [...photos];
     newFiles.splice(listIndex, 1);
     setPhotos(newFiles);
