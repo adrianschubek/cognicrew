@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
-import { useTheme } from "react-native-paper";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import {
   useAnswersExercises,
-  useDeleteExercise,
-  useUpsertAnswersExercise,
-  useUpsertExercise,
 } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 
