@@ -15,12 +15,12 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
  */
 
 const getFileIconSource = (extension) => {
-  switch (extension) {
-    case ".pdf":
+  switch (extension.toLowerCase()) {
+    case "pdf":
       return require("../../assets/pdf.png");
-    case ".docx":
+    case "docx":
       return require("../../assets/docx_icon.svg.png");
-    case ".xlsx":
+    case "xlsx":
       return require("../../assets/xlsx_icon.svg.png");
     default:
       return require("../../assets/OneDrive_Folder_Icon.svg.png");
@@ -29,6 +29,8 @@ const getFileIconSource = (extension) => {
 
 export default function FileItem({ file, onIconPress, onDeletePress }) {
   const theme = useTheme();
+
+  console.log("File extension:", file.extension);
 
   return (
     <View

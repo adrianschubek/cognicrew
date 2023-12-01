@@ -46,7 +46,7 @@ export default function FileCategory({ title, files, onDelete }) {
             <FileItem
               file={item}
               onIconPress={() => handleDownload(item)}
-              onDeletePress={() => onDelete(item.id)}
+              onDeletePress={() => onDelete(item)}
             />
           )}
           keyExtractor={(item) => item.id}
