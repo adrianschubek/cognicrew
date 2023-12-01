@@ -18,14 +18,12 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
-import { use } from "chai";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
   type: ManagementType;
 }) {
   const { listItem, type } = props;
-  const [allowUpdate, setAllowUpdate] = useState<boolean>(false);
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
   const [priority, setPriority] = useState<number>(listItem.priority);
@@ -129,10 +127,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   useEffect(() => {
     // Call the debounced function
-    allowUpdate && question && answerOrAnswers && priority && isInitialized
-      ? (debouncedUpdate(question, answerOrAnswers, priority),
-        console.log(answerOrAnswers))
-      : setAllowUpdate(true);
+    isInitialized && debouncedUpdate(question, answerOrAnswers, priority);
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
   useEffect(() => {
     if (!answerOrAnswers) return;

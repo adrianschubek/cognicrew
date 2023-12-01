@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { use } from "chai";
 
 export default function EditExercise(props: {
   listItem: any;
