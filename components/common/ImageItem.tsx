@@ -7,6 +7,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
 import * as FileSystem from 'expo-file-system';
+import { useAlerts } from "../../utils/hooks";
 
 
 const ImageItem = ({
@@ -18,6 +19,7 @@ const ImageItem = ({
   userId: string;
   onRemoveImage: () => void;
 }) => {
+  const alerts = useAlerts();
   const [image, setImage] = useState<string>("");
   const [downloadUrl, setDownloadUrl] = useState<string>("");
 
@@ -70,7 +72,7 @@ const ImageItem = ({
   const saveToCameraRoll = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+      alerts.error({message:"Sorry, we need camera roll permissions to make this work!"});
       return;
     }
   
@@ -99,7 +101,7 @@ const ImageItem = ({
             // Save the local image to the camera roll
             const asset = await MediaLibrary.createAssetAsync(fileUri);
             await MediaLibrary.createAlbumAsync("Download", asset, false);
-            alert("Saved to camera roll!");
+            alerts.success({message:"Saved to camera roll!"});
           }
         };
         reader.onerror = (error) => {
@@ -109,7 +111,7 @@ const ImageItem = ({
       }
     } catch (error) {
       console.error("Error saving to camera roll:", error);
-      alert(`Error saving to camera roll: ${error.message}`);
+      alerts.error({message:`Error saving to camera roll: ${error.message}`});
     }
   };
   
