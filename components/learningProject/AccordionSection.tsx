@@ -1,6 +1,6 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, List, Divider } from "react-native-paper";
+import { StyleSheet } from "react-native";
+import { List, Divider } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,

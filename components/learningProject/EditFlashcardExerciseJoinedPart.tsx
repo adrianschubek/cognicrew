@@ -18,6 +18,7 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
+import { use } from "chai";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -30,7 +31,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [priority, setPriority] = useState<number>(listItem.priority);
   const [answerOrAnswers, setAnswerOrAnswers] = useState(null);
   const [question, setQuestion] = useState<string>(listItem.question as string);
-
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   //Exercise hooks
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
@@ -73,11 +74,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         });
   };
-  function deleteFlashcardOrExercise() {
+  const deleteFlashcardOrExercise = () => {
     type === ManagementType.EXERCISE
-      ? deleteExercise(listItem.id)
-      : deleteFlashcard(listItem.id);
-  }
+      ? deleteExercise({ id: listItem.id })
+      : deleteFlashcard({ id: listItem.id });
+  };
   const update = (question, answerOrAnswers, priority) => {
     checkForError(
       () => {
@@ -127,15 +128,16 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     [],
   );
   useEffect(() => {
-    setAllowUpdate(true);
-  }, []);
-  useEffect(() => {
     // Call the debounced function
-    allowUpdate
-      ? debouncedUpdate(question, answerOrAnswers, priority)
+    allowUpdate && question && answerOrAnswers && priority && isInitialized
+      ? (debouncedUpdate(question, answerOrAnswers, priority),
+        console.log(answerOrAnswers))
       : setAllowUpdate(true);
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
-
+  useEffect(() => {
+    if (!answerOrAnswers) return;
+    setIsInitialized(true);
+  }, [answerOrAnswers]);
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title

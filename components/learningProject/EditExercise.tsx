@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
-import {
-  useAnswersExercises,
-} from "../../utils/hooks";
+import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import { use } from "chai";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -33,6 +32,7 @@ export default function EditExercise(props: {
     ]);
     setIsInitialized(true);
   }, [data]);
+
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];

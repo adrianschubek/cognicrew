@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { useTheme, TextInput } from "react-native-paper";
+import { TextInput } from "react-native-paper";
 
 export default function EditFlashcard(props: {
   listItem: any;
