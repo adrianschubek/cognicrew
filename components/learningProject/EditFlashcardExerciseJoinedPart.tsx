@@ -39,7 +39,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
   const { trigger: deleteFlashcard } = useDeleteFlashcard();
-  const updateFlashcardOrExercise = (question, answerOrAnswers, priority) => {
+  const updateFlashcardOrExercise = (
+    question: string,
+    answerOrAnswers: any,
+    priority: number,
+  ) => {
     type === ManagementType.EXERCISE
       ? upsertExercise({
           //@ts-expect-error
