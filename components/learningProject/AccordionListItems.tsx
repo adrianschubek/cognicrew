@@ -14,6 +14,7 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useExercises, useFlashcards } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { sortByOrder } from "../../utils/common";
+import EditFlashcardExerciseJoinedPart from "./EditFlashcardExerciseJoinedPart";
 
 export default function AccordionListItems(props: {
   type: ManagementType;
@@ -62,7 +63,10 @@ export default function AccordionListItems(props: {
   const orderedContent = sortByOrder(content, props.orderSetItemsBy);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return noSetItemsAvailable ? (
-    <HelperText type="info" style={{ backgroundColor: theme.colors.secondaryContainer }}>
+    <HelperText
+      type="info"
+      style={{ backgroundColor: theme.colors.secondaryContainer }}
+    >
       There are no {typeName(true)} in this set. Add some via the button on the
       bottom right
     </HelperText>
@@ -78,14 +82,10 @@ export default function AccordionListItems(props: {
           }}
         >
           {
-            props.type === ManagementType.FLASHCARD && (
-              <EditFlashcard listItem={listItem} />
-            ) //if type === flashcard then render <EditFlashcard/> component
-          }
-          {
-            props.type === ManagementType.EXERCISE && (
-              <EditExercise listItem={listItem} />
-            ) //if type === exercise then render <EditExercise/> component
+            <EditFlashcardExerciseJoinedPart
+              listItem={listItem}
+              type={props.type}
+            />
           }
         </List.Accordion>
         <Divider />

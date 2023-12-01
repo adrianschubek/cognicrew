@@ -1,123 +1,22 @@
-import { max, set } from "cypress/types/lodash";
 import * as React from "react";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import {
-  useTheme,
-  Card,
-  TextInput,
-  Icon,
-  IconButton,
-} from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { useDeleteFlashcard, useUpsertFlashcard } from "../../utils/hooks";
-import { use } from "chai";
-import PrioritySelector from "./PrioritySelector";
-import { debounce } from "../../utils/common";
+import { useState } from "react";
+import { useTheme, TextInput } from "react-native-paper";
 
-export default function EditFlashcard({ listItem }) {
-  const theme = useTheme();
-  const [allowUpdate, setAllowUpdate] = useState(false);
-  const [question, setQuestion] = useState(listItem.question);
-  const [answer, setAnswer] = useState(listItem.answer);
-  const [priority, setPriority] = useState(listItem.priority);
-  const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();
-  const { trigger: deleteFlashcard } = useDeleteFlashcard();
-  const editFlashcard = (question, answer, priority) => {
-    upsertFlashcard({
-      //@ts-expect-error
-      id: listItem.id,
-      question: question,
-      answer: answer,
-      priority: priority,
-      set_id: listItem.set_id,
-    });
-  };
-  // Create the debounced function
-  const debouncedEditFlashcard = useCallback(
-    debounce((q, a, p) => {
-      editFlashcard(q, a, p);
-    }, 500),
-    [], // dependencies array is empty because debounce and editFlashcard do not change
-  );
-
-  useEffect(() => {
-    if (question !== "" && answer !== "") {
-      // Call the debounced function
-      allowUpdate === true
-        ? debouncedEditFlashcard(question, answer, priority)
-        : setAllowUpdate(true);
-    }
-  }, [question, answer, priority, debouncedEditFlashcard]); // add debouncedEditFlashcard to dependencies
-  useEffect(() => {
-    if (!listItem.priority) return;
-    setPriority(listItem.priority);
-  }, [listItem.priority]);
+export default function EditFlashcard(props: {
+  listItem: any;
+  sendAnswer: (answer: string) => any;
+}) {
+  const [answer, setAnswer] = useState(props.listItem.answer);
 
   return (
-    <Card elevation={1} style={styles.cardStyle}>
-      <Card.Title
-        title="Edit here:"
-        right={() => (
-          <Fragment>
-            <View
-              style={{
-                flexDirection: "row",
-                marginBottom: 8,
-                marginTop: 8,
-                justifyContent: "flex-end",
-              }}
-            >
-              <PrioritySelector
-                priority={priority}
-                setPriority={(val) => {
-                  setPriority(val);
-                }}
-              />
-              <IconButton
-                icon="delete"
-                onPress={() => deleteFlashcard({ id: listItem.id })}
-                style={{ alignSelf: "center" }}
-              />
-            </View>
-          </Fragment>
-        )}
-      />
-      <Card.Content style={styles.cardContentStyle}>
-        <TextInput
-          style={[styles.textInputStyle, { marginBottom: responsiveHeight(1) }]}
-          multiline={true}
-          label="Question:"
-          value={question}
-          onChangeText={(question) => {
-            setQuestion(question);
-          }}
-        />
-        <TextInput
-          style={styles.textInputStyle}
-          label="Answer:"
-          multiline={true}
-          value={answer}
-          onChangeText={(answer) => {
-            setAnswer(answer);
-          }}
-        />
-      </Card.Content>
-    </Card>
+    <TextInput
+      label="Answer:"
+      multiline={true}
+      value={answer}
+      onChangeText={(answer) => {
+        setAnswer(answer);
+        props.sendAnswer(answer);
+      }}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    width: responsiveWidth(100) - responsiveHeight(2),
-    marginTop: responsiveHeight(1),
-    marginBottom: responsiveHeight(1),
-    alignSelf: "center",
-  },
-  cardContentStyle: {},
-  textInputStyle: {},
-});
