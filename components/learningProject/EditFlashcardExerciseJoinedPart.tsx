@@ -1,71 +1,83 @@
-import { max, set, update } from "cypress/types/lodash";
 import { Fragment, useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import {
-  Text,
-  List,
-  Divider,
-  useTheme,
-  Card,
-  TextInput,
-  Checkbox,
-  IconButton,
-  HelperText,
-} from "react-native-paper";
+import { Card, TextInput, IconButton, HelperText } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { parse } from "react-native-svg";
 import PrioritySelector from "./PrioritySelector";
 import { checkForLineBreak, debounce } from "../../utils/common";
 import { ManagementType } from "../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
-import { useDeleteExercise, useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
+import {
+  useDeleteExercise,
+  useDeleteFlashcard,
+  useUpsertAnswersExercise,
+  useUpsertExercise,
+  useUpsertFlashcard,
+} from "../../utils/hooks";
 
-export default function EditFlashcardExerciseJoinedPart({ listItem, type }) {
-  const theme = useTheme();
+export default function EditFlashcardExerciseJoinedPart(props: {
+  listItem: any;
+  type: ManagementType;
+}) {
+  const { listItem, type } = props;
   const [allowUpdate, setAllowUpdate] = useState<boolean>(false);
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
   const [priority, setPriority] = useState<number>(listItem.priority);
   const [answerOrAnswers, setAnswerOrAnswers] = useState(null);
   const [question, setQuestion] = useState<string>(listItem.question as string);
-  const [upsertFlashcardOrExercise, setUpsertFlashcardOrExercise] =
-    useState<Function>(() => {});
-  const [deleteFlashcardOrExercise, setDeleteFlashcardOrExercise] =
-    useState<Function>(() => {});
-    const { isMutating, trigger: upsertExercise } = useUpsertExercise();
-    const { trigger: deleteExercise } = useDeleteExercise();
-    const { isMutating: isMutating2, trigger: upsertAnswersExercise } =
-      useUpsertAnswersExercise();
-    const updateExercise = (question, answers, priority) => {
-      upsertExercise({
-        //@ts-expect-error
-        id: listItem.id,
-        question: question,
-        priority: priority,
-        set_id: listItem.set_id,
-      }).then((res) => {
-        answers.forEach((e, index) => {
-          upsertAnswersExercise({
-            //@ts-expect-error
-            id: e[2],
-            answer: e[0],
-            exercise: res[0].id,
-            is_correct: e[1],
-            order_position: index + 1,
+
+  //Exercise hooks
+  const { trigger: upsertExercise } = useUpsertExercise();
+  const { trigger: deleteExercise } = useDeleteExercise();
+  const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
+
+  //Flashcard hooks
+  const { trigger: upsertFlashcard } = useUpsertFlashcard();
+  const { trigger: deleteFlashcard } = useDeleteFlashcard();
+  const updateFlashcardOrExercise = (question, answerOrAnswers, priority) => {
+    type === ManagementType.EXERCISE
+      ? upsertExercise({
+          //@ts-expect-error
+          id: listItem.id,
+          question: question,
+          priority: priority,
+          set_id: listItem.set_id,
+        }).then((res) => {
+          //answers need to be updated
+          answerOrAnswers.forEach((e, index) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              id: e[2],
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: index + 1,
+            });
           });
+        })
+      : upsertFlashcard({
+          //@ts-expect-error
+          id: listItem.id,
+          question: question,
+          answer: answerOrAnswers, //update answer
+          priority: priority,
+          set_id: listItem.set_id,
         });
-      });
-    };
+  };
+  function deleteFlashcardOrExercise() {
+    type === ManagementType.EXERCISE
+      ? deleteExercise(listItem.id)
+      : deleteFlashcard(listItem.id);
+  }
   const update = (question, answerOrAnswers, priority) => {
     checkForError(
       () => {
-        ManagementType.EXERCISE && updateExercise(question, answerOrAnswers, priority);
+        updateFlashcardOrExercise(question, answerOrAnswers, priority);
         resetCard();
       },
       question,
@@ -91,7 +103,7 @@ export default function EditFlashcardExerciseJoinedPart({ listItem, type }) {
       !validAnswerExists &&
         (errorText += checkForLineBreak(
           errorText,
-          ManagementType.EXERCISE
+          type === ManagementType.EXERCISE
             ? "At least one correct answer needs to exist"
             : "Answer needs to exist",
         ));
@@ -153,9 +165,9 @@ export default function EditFlashcardExerciseJoinedPart({ listItem, type }) {
           </Fragment>
         )}
       />
-      <Card.Content style={styles.cardContentStyle}>
+      <Card.Content>
         <TextInput
-          style={[styles.textInputStyle, { marginBottom: 8 }]}
+          style={{ marginBottom: 8 }}
           multiline={true}
           label="Question:"
           value={question}
@@ -169,7 +181,10 @@ export default function EditFlashcardExerciseJoinedPart({ listItem, type }) {
             sendAnswers={(val) => setAnswerOrAnswers(val)}
           />
         ) : (
-          <EditFlashcard listItem={listItem} />
+          <EditFlashcard
+            listItem={listItem}
+            sendAnswer={(val) => setAnswerOrAnswers(val)}
+          />
         )}
         {showErrorUpload && errorText !== "" && (
           <HelperText
@@ -192,6 +207,4 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     alignSelf: "center",
   },
-  cardContentStyle: {},
-  textInputStyle: {},
 });

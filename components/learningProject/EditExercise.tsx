@@ -13,7 +13,6 @@ export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
 }) {
-  const theme = useTheme();
   const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([
