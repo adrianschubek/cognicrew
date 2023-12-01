@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { TextInput, useTheme } from "react-native-paper";
 
-export default function PrioritySelector(props: {priority: number, setPriority: (priority: number) => void}) {
+export default function PrioritySelector(props: {
+  priority: number;
+  setPriority: (priority: number) => void;
+}) {
   const theme = useTheme();
   const [priorityStringified, setPriorityStringified] = useState<string>("00");
   function isBetweenZeroAndTen(number: number) {
@@ -30,12 +33,20 @@ export default function PrioritySelector(props: {priority: number, setPriority: 
           justifyContent: "center",
         }}
       >
-        <Text style={{ opacity: 0.7, marginRight: 8, color: theme.colors.onBackground, }}>Priority:</Text>
         <Text
           style={{
             opacity: 0.7,
             marginRight: 8,
-            color: theme.colors.onBackground
+            color: theme.colors.onBackground,
+          }}
+        >
+          Priority:
+        </Text>
+        <Text
+          style={{
+            opacity: 0.7,
+            marginRight: 8,
+            color: theme.colors.onBackground,
           }}
         >
           0-10
@@ -50,7 +61,7 @@ export default function PrioritySelector(props: {priority: number, setPriority: 
         error={isInvalid(parseInt(priorityStringified))}
         outlineColor={theme.colors.primary}
         inputMode="numeric"
-        style={{ backgroundColor: null, width: 50, height: 52}}
+        style={{ backgroundColor: null, width: 50, height: 52 }}
         contentStyle={{}}
         onChangeText={(prio) => {
           setPriorityStringified(prio);
@@ -58,7 +69,7 @@ export default function PrioritySelector(props: {priority: number, setPriority: 
         onBlur={() => {
           let prioNumber = parseInt(priorityStringified);
           priorityStringified !== "" && !isInvalid(prioNumber)
-            ? priorityStringified.length === 2
+            ? priorityStringified.length === 2 && prioNumber < 10
               ? props.setPriority(parseInt(priorityStringified[1]))
               : props.setPriority(prioNumber)
             : setPriorityStringified(addZeroWhenNecessary(props.priority));

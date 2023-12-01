@@ -105,6 +105,7 @@ export type PrivateRoomState = {
       id: number;
       question: string;
       answers: string[];
+      explanations: (string | null)[];
       priority: number;
       correct: number[];
     }[];
@@ -113,6 +114,7 @@ export type PrivateRoomState = {
       question: string;
       priority: number;
       answer: string;
+      explanation: string | null;
     }[];
     /**
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast

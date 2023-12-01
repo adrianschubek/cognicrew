@@ -9,11 +9,14 @@ export default function TextInputWithCheckbox(props: {
   listItemAnswer?: [string, boolean, number];
   [name: string]: any;
 }) {
-  const [answer, setAnswer] = useState<[string, boolean]>(["", false]);
+  const [answerText, setAnswerText] = useState<string>("");
+  const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>(false);
+
   useEffect(() => {
     if (!props.listItemAnswer) return;
-    if (answer[0] !== "" && answer[1] !== false) return;
-    setAnswer([props.listItemAnswer[0], props.listItemAnswer[1]]);
+    if (answerText !== "" && answerIsCorrect !== false) return;
+    setAnswerText(props.listItemAnswer[0]);
+    setAnswerIsCorrect(props.listItemAnswer[1]);
   }, [props.listItemAnswer]);
 
   return (
@@ -26,10 +29,10 @@ export default function TextInputWithCheckbox(props: {
         <TextInput.Icon
           icon={() => (
             <Checkbox
-              status={answer[1] ? "checked" : "unchecked"}
+              status={answerIsCorrect ? "checked" : "unchecked"}
               onPress={() => {
-                setAnswer([answer[0], !answer[1]]);
-                props.sendAnswer([answer[0], !answer[1]]);
+                setAnswerIsCorrect(!answerIsCorrect);
+                props.sendAnswer([answerText, !answerIsCorrect]);
               }}
             />
           )}
@@ -38,10 +41,10 @@ export default function TextInputWithCheckbox(props: {
       label={"Answer " + props.number}
       //multiline={true}
       blurOnSubmit={true}
-      value={answer[0]}
+      value={answerText}
       onChangeText={(text) => {
-        setAnswer([text, answer[1]]);
-        props.sendAnswer([text, answer[1]]);
+        setAnswerText(text);
+        props.sendAnswer([text, answerIsCorrect]);
       }}
     />
   );
