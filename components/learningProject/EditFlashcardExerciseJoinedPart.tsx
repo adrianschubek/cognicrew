@@ -31,8 +31,7 @@ export default function EditFlashcardExerciseJoinedPart({ listItem, type }) {
   const [allowUpdate, setAllowUpdate] = useState<boolean>(false);
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
-  const [priority, setPriority] = useState<number>(0);
+  const [priority, setPriority] = useState<number>(listItem.priority);
   const [answerOrAnswers, setAnswerOrAnswers] = useState(null);
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [upsertFlashcardOrExercise, setUpsertFlashcardOrExercise] =
