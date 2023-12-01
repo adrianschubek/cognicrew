@@ -131,47 +131,50 @@ export default function FilesManagement() {
   }, [user]);
 
   const onSelectDocument = async () => {
+    let result;
     try {
-      const result = await DocumentPicker.getDocumentAsync({
+      result = await DocumentPicker.getDocumentAsync({
         type: "*/*", // Allow all file types
         copyToCacheDirectory: true,
       });
-
-      if (result.assets && result.assets[0]) {
-        const pickedFile = result.assets[0];
-        const uri = pickedFile.uri;
-        const mimeType = pickedFile.mimeType || "application/octet-stream";
-
-        const isImage = mimeType.startsWith("image");
-        let fileExtension = mimeType.split("/").pop();
-        const folderPath = isImage ? "photos" : "documents";
-        const newFileName = `${new Date().getTime()}.${fileExtension}`;
-        const filePath = `${user.id}/${folderPath}/${newFileName}`;
-
-        const base64 = await FileSystem.readAsStringAsync(uri, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        const { error } = await supabase.storage
-          .from("files")
-          .upload(filePath, decode(base64), {
-            contentType: mimeType,
-          });
-
-        if (error) {
-          console.error("Error uploading file:", error.message);
-        } else {
-          console.log("File uploaded successfully:", filePath);
-          // Refresh the lists
-          if (isImage) {
-            await loadImages();
-          } else {
-            await loadFiles();
-          }
-        }
-      }
     } catch (error) {
       console.error("Error picking a document:", error);
+      return;
+    }
+    if (result?.assets && result?.assets[0]) {
+      const pickedFile = result.assets[0];
+      const uri = pickedFile.uri;
+      const mimeType = pickedFile.mimeType || "application/octet-stream";
+
+      const isImage = mimeType.startsWith("image");
+      let fileExtension = mimeType.split("/").pop();
+      const folderPath = isImage ? "photos" : "documents";
+      const newFileName = `${new Date().getTime()}.${fileExtension}`;
+      const filePath = `${user.id}/${folderPath}/${newFileName}`;
+      /* some files, for example some videos seem to not support base64 encoding,
+       no idea how to fix, since it seems to be not a direct problem with the code.
+       It's just silly that you are forced to use Base64 encoding to upload a file*/
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const { error } = await supabase.storage
+        .from("files")
+        .upload(filePath, decode(base64), {
+          contentType: mimeType,
+        });
+
+      if (error) {
+        console.error("Error uploading file:", error.message);
+      } else {
+        console.log("File uploaded successfully:", filePath);
+        // Refresh the lists
+        if (isImage) {
+          await loadImages();
+        } else {
+          await loadFiles();
+        }
+      }
     }
   };
 
@@ -244,7 +247,7 @@ export default function FilesManagement() {
       setVisible(false);
     }
   };
-  
+
   const dontCategorize = () => {};
 
   return (
