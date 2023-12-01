@@ -14,7 +14,6 @@ import {
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import FileCategory from "../../components/learningProject/FileCategory";
-import UploadFileDialog from "../../components/dialogues/UploadFile";
 import { useSoundSystem1 } from "../../utils/hooks";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -245,20 +244,11 @@ export default function FilesManagement() {
       setVisible(false);
     }
   };
-
-  const [uploadDialogVisible, setUploadDialogVisible] = useState(false);
-
+  
   const dontCategorize = () => {};
 
   return (
     <View style={styles.container}>
-      <View style={styles.upperContainer}>
-        <TextWithPlusButton
-          text="Upload File"
-          onPress={() => setUploadDialogVisible(true)}
-        />
-      </View>
-
       <VirtualizedList
         renderItem={() => null}
         getItemCount={() => 0}
@@ -337,11 +327,6 @@ export default function FilesManagement() {
         onPress={onSelectDocument}
       />
       <FAB style={styles.fab2} small icon="camera" onPress={onSelectImage} />
-      <UploadFileDialog
-        visible={uploadDialogVisible}
-        onDismiss={() => setUploadDialogVisible(false)}
-        onSubmit={dontCategorize}
-      />
       {/* Delete confirmation dialog */}
       <Portal>
         <Dialog visible={visible} onDismiss={() => setVisible(false)}>
@@ -362,11 +347,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 20,
-  },
-  upperContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    paddingRight: 10,
   },
   scrollView: {
     paddingHorizontal: 8,
