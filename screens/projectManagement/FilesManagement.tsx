@@ -8,11 +8,9 @@ import {
   View,
   StyleSheet,
   VirtualizedList,
-  TouchableOpacity,
   ScrollView,
 } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
-import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import FileCategory from "../../components/learningProject/FileCategory";
 import { useSoundSystem1 } from "../../utils/hooks";
 import * as ImagePicker from "expo-image-picker";
@@ -23,14 +21,15 @@ import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import ImageItem from "../../components/common/ImageItem";
 import * as DocumentPicker from "expo-document-picker";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function FilesManagement() {
   const { user } = useAuth();
   const [photos, setPhotos] = useState<FileObject[]>([]);
-
+  const projectId = useProjectStore((state) => state.projectId);
   // obsolete for now
   const onRemoveImage = async (item: FileObject, listIndex: number) => {
-    supabase.storage.from("files").remove([`${user!.id}/${item.name}`]);
+    supabase.storage.from("files").remove([`${projectId}/${item.name}`]);
     const newFiles = [...photos];
     newFiles.splice(listIndex, 1);
     setPhotos(newFiles);
@@ -49,7 +48,7 @@ export default function FilesManagement() {
         encoding: "base64",
       });
       // Update the file path to include the 'photos' folder
-      const filePath = `${user.id}/photos/${new Date().getTime()}.${
+      const filePath = `${projectId}/photos/${new Date().getTime()}.${
         img.type === "image" ? "png" : "mp4"
       }`;
       const contentType = img.type === "image" ? "image/png" : "video/mp4";
@@ -69,7 +68,7 @@ export default function FilesManagement() {
 
     const { data, error } = await supabase.storage
       .from("files")
-      .list(`${user.id}/photos`, {
+      .list(`${projectId}/photos`, {
         limit: 100,
         offset: 0,
       });
@@ -91,7 +90,7 @@ export default function FilesManagement() {
 
     const { data, error } = await supabase.storage
       .from("files")
-      .list(`${user.id}/documents`, {
+      .list(`${projectId}/documents`, {
         limit: 100,
         offset: 0,
       });
@@ -150,12 +149,10 @@ export default function FilesManagement() {
       let fileExtension = mimeType.split("/").pop();
       const folderPath = isImage ? "photos" : "documents";
       const newFileName = `${new Date().getTime()}.${fileExtension}`;
-      const filePath = `${user.id}/${folderPath}/${newFileName}`;
-      /* some files, for example some videos seem to not support base64 encoding,
-       no idea how to fix, since it seems to be not a direct problem with the code.
-       It's just silly that you are forced to use Base64 encoding to upload a file*/
+      const filePath = `${projectId}/${folderPath}/${newFileName}`;
+
       const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding: FileSystem?.EncodingType?.Base64,
       });
 
       const { error } = await supabase.storage
@@ -219,7 +216,7 @@ export default function FilesManagement() {
         setPhotos(
           photos.filter(
             (photo) =>
-              `${user.id}/photos/${photo.name}` !== selectedFile.fullPath,
+              `${projectId}/photos/${photo.name}` !== selectedFile.fullPath,
           ),
         );
       } else {
@@ -227,19 +224,19 @@ export default function FilesManagement() {
           return {
             pdf: prevFiles.pdf.filter(
               (file) =>
-                `${user.id}/documents/${file.name}` !== selectedFile.fullPath,
+                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
             ),
             docx: prevFiles.docx.filter(
               (file) =>
-                `${user.id}/documents/${file.name}` !== selectedFile.fullPath,
+                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
             ),
             xlsx: prevFiles.xlsx.filter(
               (file) =>
-                `${user.id}/documents/${file.name}` !== selectedFile.fullPath,
+                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
             ),
             misc: prevFiles.misc.filter(
               (file) =>
-                `${user.id}/documents/${file.name}` !== selectedFile.fullPath,
+                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
             ),
           };
         });
@@ -262,7 +259,7 @@ export default function FilesManagement() {
                 title="PDF Documents (.pdf)"
                 files={files.pdf.map((file) => ({
                   ...file,
-                  fullPath: `${user.id}/documents/${file.name}`,
+                  fullPath: `${projectId}/documents/${file.name}`,
                 }))}
                 onDelete={confirmDelete}
               />
@@ -272,7 +269,7 @@ export default function FilesManagement() {
                 title="Word Documents (.docx)"
                 files={files.docx.map((file) => ({
                   ...file,
-                  fullPath: `${user.id}/documents/${file.name}`,
+                  fullPath: `${projectId}/documents/${file.name}`,
                 }))}
                 onDelete={confirmDelete}
               />
@@ -282,7 +279,7 @@ export default function FilesManagement() {
                 title="Excel Documents (.xlsx)"
                 files={files.xlsx.map((file) => ({
                   ...file,
-                  fullPath: `${user.id}/documents/${file.name}`,
+                  fullPath: `${projectId}/documents/${file.name}`,
                 }))}
                 onDelete={confirmDelete}
               />
@@ -292,7 +289,7 @@ export default function FilesManagement() {
                 title="Miscellaneous"
                 files={files.misc.map((file) => ({
                   ...file,
-                  fullPath: `${user.id}/documents/${file.name}`,
+                  fullPath: `${projectId}/documents/${file.name}`,
                 }))}
                 onDelete={confirmDelete}
               />
@@ -308,11 +305,11 @@ export default function FilesManagement() {
                   <ImageItem
                     key={item.id}
                     item={item}
-                    userId={user.id}
+                    projectId={projectId}
                     onRemoveImage={() =>
                       confirmDelete({
                         ...item,
-                        fullPath: `${user.id}/photos/${item.name}`,
+                        fullPath: `${projectId}/photos/${item.name}`,
                       })
                     }
                   />

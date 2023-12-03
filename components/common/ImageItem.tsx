@@ -12,11 +12,11 @@ import { useAlerts } from "../../utils/hooks";
 
 const ImageItem = ({
   item,
-  userId,
+  projectId,
   onRemoveImage,
 }: {
   item: FileObject;
-  userId: string;
+  projectId: number;
   onRemoveImage: () => void;
 }) => {
   const alerts = useAlerts();
@@ -27,7 +27,7 @@ const ImageItem = ({
   // Maybe adjust: This will trigger a "download" each time the component renders
   supabase.storage
     .from("files")
-    .download(`${userId}/photos/${item.name}`)
+    .download(`${projectId}/photos/${item.name}`)
     .then(({ data, error }) => {
       if (error) {
         console.error("Error downloading image:", error.message);
@@ -46,7 +46,7 @@ const ImageItem = ({
       const fetchImage = async () => {
         const { data, error } = await supabase.storage
           .from("files") // Use the correct bucket name
-          .download(`${userId}/photos/${item.name}`); // Correct path to the file
+          .download(`${projectId}/photos/${item.name}`); // Correct path to the file
     
         if (error) {
           console.error("Error downloading image:", error.message);
@@ -63,7 +63,7 @@ const ImageItem = ({
       };
     
       fetchImage();
-    }, [item, userId]);
+    }, [item, projectId]);
     
 
     
