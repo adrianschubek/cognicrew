@@ -22,7 +22,7 @@ const TextInputDialog = ({ isVisible, onClose, onSubmit }) => {
   return (
     <Portal>
       <Dialog visible={isVisible} onDismiss={onClose}>
-        <Dialog.Title>Enter Your Text</Dialog.Title>
+        <Dialog.Title>Keyboard</Dialog.Title>
         <Dialog.Content>
           <TextInput
             onChangeText={setText}
@@ -33,9 +33,6 @@ const TextInputDialog = ({ isVisible, onClose, onSubmit }) => {
             OK
           </Button>
         </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={onClose}>Cancel</Button>
-        </Dialog.Actions>
       </Dialog>
     </Portal>
   );
