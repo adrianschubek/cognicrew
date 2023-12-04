@@ -12,6 +12,7 @@ import { ManagementType } from "../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import {
+  useDeleteAnswersExercise,
   useDeleteExercise,
   useDeleteFlashcard,
   useUpsertAnswersExercise,
@@ -28,12 +29,14 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [errorText, setErrorText] = useState<string>("");
   const [priority, setPriority] = useState<number>(listItem.priority);
   const [answerOrAnswers, setAnswerOrAnswers] = useState(null);
+  const [initialAnswers, setInitialAnswers] = useState<[string, boolean, number][]>([]);
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   //Exercise hooks
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
+  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
 
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
@@ -51,6 +54,16 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           priority: priority,
           set_id: listItem.set_id,
         }).then((res) => {
+          console.log("initalAnswers: ", initialAnswers, "\n");
+          //delete those answers that should get deleted from the exercise
+          /* initialAnswers
+            .filter((e) => {
+              return answerOrAnswers.some((answer) => answer.id === e[2]);
+            })
+            .forEach((e) => {
+              console.log("e: \n \n", e, "\n");
+              deleteAnswersExercise({ id: e[2] });
+            });*/
           //answers need to be updated
           answerOrAnswers.forEach((e, index) => {
             upsertAnswersExercise({
@@ -133,6 +146,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     if (!answerOrAnswers) return;
     setIsInitialized(true);
   }, [answerOrAnswers]);
+
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title
@@ -180,6 +194,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           <EditExercise
             listItem={listItem}
             sendAnswers={(val) => setAnswerOrAnswers(val)}
+            sendInitialAnswers={(answers) => {
+              setInitialAnswers(answers), console.log("initialAnswers!!!!: ", answers);
+            }}
           />
         ) : (
           <EditFlashcard

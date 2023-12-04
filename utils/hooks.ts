@@ -160,10 +160,11 @@ export function useInsertFriend() {
     (error) => {
       if (error.includes("duplicate key value violates unique constraint")) {
         return "You already sent a friend request or are already friends with this user.";
-      } else if(error.includes("new row violates row-level security policy for table")) {
+      } else if (
+        error.includes("new row violates row-level security policy for table")
+      ) {
         return "You cannot send a friend request to yourself.";
-      }
-      else return error;
+      } else return error;
     },
   );
 }
@@ -407,7 +408,11 @@ export function useUpsertAnswersExercise() {
     ),
   );
 }
-
+export function useDeleteAnswersExercise() {
+  return handleErrors(
+    useDeleteMutation(supabase.from("answers_exercises"), ["id"], "id"),
+  );
+}
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
