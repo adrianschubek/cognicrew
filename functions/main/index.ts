@@ -245,6 +245,7 @@ setInterval(async () => {
         dayjs().valueOf()
     ) {
       // destroy room state and set ingame to false
+      // TODO: dont close lobby instead let stay in obby so hsot can start new game !!!!!!
       await supabase
         .from("public_room_states")
         .delete()
