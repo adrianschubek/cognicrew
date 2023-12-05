@@ -39,17 +39,20 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
+  //exercise specific functions
   async function deleteAnswers(
     initial: [string, boolean, number][],
     answers: [string, boolean, number][],
   ) {
+    console.log("initial: \n \n", initial, "\n");
+    console.log("answers: \n \n", answers, "\n");
     initial
       .filter((e, index) => {
         return answers[index] === undefined;
       })
       .forEach((e) => {
         console.log("delete: \n \n", e, "\n");
-        deleteAnswersExercise({ id: e[2] });
+        deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
       });
   }
   //Flashcard hooks
@@ -62,29 +65,24 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initial: any,
   ) => {
     type === ManagementType.EXERCISE
-      ? deleteAnswers(initial, answerOrAnswers).then(() => {
-          upsertExercise({
-            //@ts-expect-error
-            id: listItem.id,
-            question: question,
-            priority: priority,
-            set_id: listItem.set_id,
-          }).then((res) => {
-            console.log("initalAnswers: ", initial, "\n");
-            //delete those answers that should get deleted from the exercise
-
-            console.log(answerOrAnswers);
-            //setInitialAnswers(answerOrAnswers);
-            //answers need to be updated
-            answerOrAnswers.forEach((e, index) => {
-              upsertAnswersExercise({
-                //@ts-expect-error
-                id: e[2],
-                answer: e[0],
-                exercise: res[0].id,
-                is_correct: e[1],
-                order_position: index + 1,
-              });
+      ? upsertExercise({
+          //@ts-expect-error
+          id: listItem.id,
+          question: question,
+          priority: priority,
+          set_id: listItem.set_id,
+        }).then((res) => {
+          //delete those answers that should get deleted from the exercise
+          deleteAnswers(initial, answerOrAnswers);
+          console.log(answerOrAnswers);
+          //answers need to be updated
+          answerOrAnswers.forEach((e) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: e[2],
             });
           });
         })
@@ -117,6 +115,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       answerOrAnswers,
     );
   };
+
   function checkForError(
     functionToCheck: () => any,
     question,

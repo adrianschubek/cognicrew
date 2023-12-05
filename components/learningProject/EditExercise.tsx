@@ -4,15 +4,13 @@ import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton } from "react-native-paper";
 import { View, Text } from "react-native";
-import { set } from "cypress/types/lodash";
 
 export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswers: (answers: [string, boolean, number][]) => any;
 }) {
-  const {listItem, sendAnswers, sendInitialAnswers} = props;
-  const [array, setArray] = useState<number[]>([]);
+  const { listItem, sendAnswers, sendInitialAnswers } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -21,18 +19,15 @@ export default function EditExercise(props: {
   useEffect(() => {
     if (!isInitialized) return;
     sendAnswers(answers);
-    console.log(answers);
   }, [answers]);
-
   useEffect(() => {
     if (!data || isInitialized) return;
-    setArray(Array.from({ length: data.length }, (_, index) => index + 1));
     const initializingAnswers: [string, boolean, number][] = [];
     data.forEach((answerItem) => {
       initializingAnswers.push([
         answerItem.answer,
         answerItem.is_correct,
-        answerItem.id,
+        answerItem.order_position,
       ]);
     }),
       setAnswers(initializingAnswers);
@@ -45,7 +40,6 @@ export default function EditExercise(props: {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked, answers[number - 1][2]];
       setAnswers(newAnswers);
-      console.log(answers);
     };
   }
 
@@ -70,32 +64,27 @@ export default function EditExercise(props: {
           <IconButton
             icon="minus"
             onPress={() => {
-              if (array.length <= 2) {
+              if (answers.length <= 2) {
                 setShowErrorAnswerBoundaries(true);
                 return;
               }
-              const newArray = [...array];
-              newArray.pop();
-              setArray(newArray);
               const newAnswers = [...answers];
               newAnswers.pop();
               setAnswers(newAnswers);
               setShowErrorAnswerBoundaries(false);
-              //console.log(answers);
             }}
           />
           <IconButton
             icon="plus"
             onPress={() => {
-              if (array.length >= 6) {
+              if (answers.length >= 6) {
                 setShowErrorAnswerBoundaries(true);
                 return;
               }
-              const newArray = [...array, array.length + 1];
-              setArray(newArray);
-              answers.push(["", false, undefined]);
+              const newArray = [...answers];
+              newArray.push(["", false, newArray.length + 1]);
+              setAnswers(newArray);
               setShowErrorAnswerBoundaries(false);
-              //console.log(answers);
             }}
           />
         </View>
@@ -109,13 +98,13 @@ export default function EditExercise(props: {
           You cannot have less than 2 or more than 6 answers
         </HelperText>
       )}
-      {array.map((e) => {
+      {answers.map((e, index) => {
         return (
           <TextInputWithCheckbox
-            key={e}
-            listItemAnswer={answers[e - 1]}
-            sendAnswer={getAnswer(e)}
-            number={e}
+            key={index}
+            listItemAnswer={e}
+            sendAnswer={getAnswer(index + 1)}
+            number={index + 1}
           />
         );
       })}
