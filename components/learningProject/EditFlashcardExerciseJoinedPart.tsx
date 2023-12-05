@@ -44,14 +44,13 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initial: [string, boolean, number][],
     answers: [string, boolean, number][],
   ) {
-    console.log("initial: \n \n", initial, "\n");
-    console.log("answers: \n \n", answers, "\n");
     initial
-      .filter((e, index) => {
+      .filter((initialElem, index) => {
         return answers[index] === undefined;
+        //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
       })
       .forEach((e) => {
-        console.log("delete: \n \n", e, "\n");
+        console.log("delete: \n \n", e[2], "\n");
         deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
       });
   }
