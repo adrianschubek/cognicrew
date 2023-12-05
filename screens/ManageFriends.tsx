@@ -101,7 +101,6 @@ export default function ManageFriends({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )

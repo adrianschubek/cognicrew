@@ -44,7 +44,6 @@ export default function ProjectGroups() {
         "postgres_changes",
         { event: "*", schema: "public", table: "user_learning_projects" },
         (payload) => {
-          console.log("Change received!", payload);
           mutate(); // escalation
         },
       )
@@ -52,7 +51,6 @@ export default function ProjectGroups() {
         "postgres_changes",
         { event: "*", schema: "public", table: "learning_projects" },
         (payload) => {
-          console.log("Change received!", payload);
           // trigger refetch useQuery
           mutate();
         },
