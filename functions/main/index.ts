@@ -205,7 +205,7 @@ setInterval(async () => {
       newState.players = newState.players.map((player) => ({
         ...player,
         currentCorrect: null,
-        currentTimeNeeded: null
+        currentTimeNeeded: null,
       }));
 
       if (newState.round + 1 <= newState.totalRounds) {
