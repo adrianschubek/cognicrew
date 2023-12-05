@@ -38,7 +38,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
-  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
+  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise(); //Complete garbage hook
   //exercise specific functions
   async function deleteAnswers(
     initial: [string, boolean, number][],
