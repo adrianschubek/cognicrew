@@ -45,6 +45,7 @@ export default function EditExercise(props: {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked, answers[number - 1][2]];
       setAnswers(newAnswers);
+      console.log(answers);
     };
   }
 

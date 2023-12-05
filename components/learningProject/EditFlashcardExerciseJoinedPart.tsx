@@ -29,7 +29,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [errorText, setErrorText] = useState<string>("");
   const [priority, setPriority] = useState<number>(listItem.priority);
   const [answerOrAnswers, setAnswerOrAnswers] = useState(null);
-  const [initialAnswers, setInitialAnswers] = useState<[string, boolean, number][]>([]);
+  const [initialAnswers, setInitialAnswers] = useState<
+    [string, boolean, number][]
+  >([]);
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   //Exercise hooks
@@ -37,7 +39,19 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
-
+  async function deleteAnswers(
+    initial: [string, boolean, number][],
+    answers: [string, boolean, number][],
+  ) {
+    initial
+      .filter((e, index) => {
+        return answers[index] === undefined;
+      })
+      .forEach((e) => {
+        console.log("delete: \n \n", e, "\n");
+        deleteAnswersExercise({ id: e[2] });
+      });
+  }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
   const { trigger: deleteFlashcard } = useDeleteFlashcard();
@@ -45,34 +59,32 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     question: string,
     answerOrAnswers: any,
     priority: number,
+    initial: any,
   ) => {
     type === ManagementType.EXERCISE
-      ? upsertExercise({
-          //@ts-expect-error
-          id: listItem.id,
-          question: question,
-          priority: priority,
-          set_id: listItem.set_id,
-        }).then((res) => {
-          console.log("initalAnswers: ", initialAnswers, "\n");
-          //delete those answers that should get deleted from the exercise
-          /* initialAnswers
-            .filter((e) => {
-              return answerOrAnswers.some((answer) => answer.id === e[2]);
-            })
-            .forEach((e) => {
-              console.log("e: \n \n", e, "\n");
-              deleteAnswersExercise({ id: e[2] });
-            });*/
-          //answers need to be updated
-          answerOrAnswers.forEach((e, index) => {
-            upsertAnswersExercise({
-              //@ts-expect-error
-              id: e[2],
-              answer: e[0],
-              exercise: res[0].id,
-              is_correct: e[1],
-              order_position: index + 1,
+      ? deleteAnswers(initial, answerOrAnswers).then(() => {
+          upsertExercise({
+            //@ts-expect-error
+            id: listItem.id,
+            question: question,
+            priority: priority,
+            set_id: listItem.set_id,
+          }).then((res) => {
+            console.log("initalAnswers: ", initial, "\n");
+            //delete those answers that should get deleted from the exercise
+
+            console.log(answerOrAnswers);
+            //setInitialAnswers(answerOrAnswers);
+            //answers need to be updated
+            answerOrAnswers.forEach((e, index) => {
+              upsertAnswersExercise({
+                //@ts-expect-error
+                id: e[2],
+                answer: e[0],
+                exercise: res[0].id,
+                is_correct: e[1],
+                order_position: index + 1,
+              });
             });
           });
         })
@@ -90,10 +102,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       ? deleteExercise({ id: listItem.id })
       : deleteFlashcard({ id: listItem.id });
   };
-  const update = (question, answerOrAnswers, priority) => {
+  const update = (question, answerOrAnswers, priority, initalAnswers) => {
     checkForError(
       () => {
-        updateFlashcardOrExercise(question, answerOrAnswers, priority);
+        updateFlashcardOrExercise(
+          question,
+          answerOrAnswers,
+          priority,
+          initalAnswers,
+        );
         resetCard();
       },
       question,
@@ -133,14 +150,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   }
   // Create the debounced function
   const debouncedUpdate = useCallback(
-    debounce((question, answerOrAnswers, priority) => {
-      update(question, answerOrAnswers, priority);
+    debounce((question, answerOrAnswers, priority, initial) => {
+      update(question, answerOrAnswers, priority, initial);
     }, 500),
     [],
   );
   useEffect(() => {
     // Call the debounced function
-    isInitialized && debouncedUpdate(question, answerOrAnswers, priority);
+    isInitialized &&
+      debouncedUpdate(question, answerOrAnswers, priority, initialAnswers);
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
   useEffect(() => {
     if (!answerOrAnswers) return;
@@ -194,9 +212,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           <EditExercise
             listItem={listItem}
             sendAnswers={(val) => setAnswerOrAnswers(val)}
-            sendInitialAnswers={(answers) => {
-              setInitialAnswers(answers), console.log("initialAnswers!!!!: ", answers);
-            }}
+            sendInitialAnswers={(answers) => setInitialAnswers(answers)}
           />
         ) : (
           <EditFlashcard
