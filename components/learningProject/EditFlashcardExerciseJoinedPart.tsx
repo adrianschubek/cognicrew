@@ -44,15 +44,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initial: [string, boolean, number][],
     answers: [string, boolean, number][],
   ) {
-    initial
-      .filter((initialElem, index) => {
-        return answers[index] === undefined;
-        //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
-      })
-      .forEach((e) => {
-        console.log("delete: \n \n", e[2], "\n");
-        deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
-      });
+    const filteredList = initial.filter((initialElem, index) => {
+      return answers[index] === undefined;
+      //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
+    });
+    console.log("filteredList: ", filteredList);
+    filteredList.forEach((e) => {
+      console.log("delete: \n", e, "\n");
+      deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
+    });
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
@@ -73,8 +73,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
           deleteAnswers(initial, answerOrAnswers);
-          console.log(answerOrAnswers);
+          //console.log(answerOrAnswers);
           //answers need to be updated
+          console.log("answersOrAnswers: ", answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
               //@ts-expect-error
@@ -84,6 +85,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               order_position: e[2],
             });
           });
+          setInitialAnswers(answerOrAnswers);
         })
       : upsertFlashcard({
           //@ts-expect-error
@@ -158,6 +160,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     isInitialized &&
       debouncedUpdate(question, answerOrAnswers, priority, initialAnswers);
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
+
   useEffect(() => {
     if (!answerOrAnswers) return;
     setIsInitialized(true);

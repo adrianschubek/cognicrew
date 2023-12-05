@@ -20,6 +20,7 @@ export default function EditExercise(props: {
     if (!isInitialized) return;
     sendAnswers(answers);
   }, [answers]);
+  
   useEffect(() => {
     if (!data || isInitialized) return;
     const initializingAnswers: [string, boolean, number][] = [];
