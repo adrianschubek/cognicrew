@@ -102,7 +102,6 @@ export type PrivateRoomState = {
    */
   gameData: {
     exercises: {
-      // @deprecated
       id: number;
       question: string;
       answers: string[];
