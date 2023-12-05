@@ -4,12 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  StyleSheet,
-  VirtualizedList,
-  ScrollView,
-} from "react-native";
+import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
 import { useSoundSystem1 } from "../../utils/hooks";
@@ -18,13 +13,11 @@ import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
 import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../../supabase";
-import { useAuth } from "../../providers/AuthProvider";
 import ImageItem from "../../components/common/ImageItem";
 import * as DocumentPicker from "expo-document-picker";
 import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function FilesManagement() {
-  const { user } = useAuth();
   const [photos, setPhotos] = useState<FileObject[]>([]);
   const projectId = useProjectStore((state) => state.projectId);
   // obsolete for now
@@ -61,11 +54,6 @@ export default function FilesManagement() {
 
   // Loads only image files from the 'photos' directory
   const loadImages = async () => {
-    if (!user) {
-      console.error("User not found");
-      return;
-    }
-
     const { data, error } = await supabase.storage
       .from("files")
       .list(`${projectId}/photos`, {
@@ -83,11 +71,6 @@ export default function FilesManagement() {
 
   // Loads files within the "documents" directory
   const loadFiles = async () => {
-    if (!user) {
-      console.error("User not found");
-      return;
-    }
-
     const { data, error } = await supabase.storage
       .from("files")
       .list(`${projectId}/documents`, {
@@ -124,10 +107,9 @@ export default function FilesManagement() {
   };
 
   useEffect(() => {
-    if (!user) return;
     loadImages();
     loadFiles();
-  }, [user]);
+  }, []);
 
   const onSelectDocument = async () => {
     let result;
@@ -202,7 +184,7 @@ export default function FilesManagement() {
   const onDeleteConfirmed = async () => {
     console.log("Attempting to delete:", selectedFile);
 
-    if (!selectedFile || !user) return;
+    if (!selectedFile) return;
 
     const { error } = await supabase.storage
       .from("files")
@@ -244,8 +226,6 @@ export default function FilesManagement() {
       setVisible(false);
     }
   };
-
-  const dontCategorize = () => {};
 
   return (
     <View style={styles.container}>
@@ -297,7 +277,7 @@ export default function FilesManagement() {
 
               <FileCategory
                 title="Photos"
-                files={dontCategorize()}
+                files={() => {}}
                 onDelete={confirmDelete}
               />
               <ScrollView>

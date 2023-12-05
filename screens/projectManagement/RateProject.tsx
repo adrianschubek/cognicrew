@@ -141,7 +141,7 @@ export default function RateProject({
       project_id_param: projectId,
     });
     if (data) {
-      data = data.toFixed(2);
+      data = parseFloat(data.toFixed(2));
       setAvg(data);
     } else {
       setAvg(data);

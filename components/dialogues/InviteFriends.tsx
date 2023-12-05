@@ -143,7 +143,6 @@ export default function InviteFriends({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
         (payload) => {
-          console.log("Change received!", payload);
           fetchFriends();
         },
       )

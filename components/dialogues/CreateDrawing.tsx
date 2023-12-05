@@ -1,29 +1,11 @@
 import * as React from "react";
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import {
   Dialog,
   Portal,
-  TextInput,
-  Text,
   Button,
-  Checkbox,
-  Searchbar,
 } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { useState } from "react";
-import { ScrollView } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
-import { NAVIGATION } from "../../types/common";
-
-import { Canvas } from "../learningRoom/Canvas";
 import { StrokeSettings } from "../learningRoom/DrawingSettings";
-import { COLORS, STROKE_SIZE } from "../learningRoom/Constants";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
 export default function CreateDrawing({ showDrawing, close }) {

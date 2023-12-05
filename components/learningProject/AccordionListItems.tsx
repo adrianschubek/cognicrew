@@ -53,7 +53,6 @@ export default function AccordionListItems(props: {
               : "exercises",
         },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )

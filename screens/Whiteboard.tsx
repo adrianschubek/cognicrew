@@ -1,6 +1,14 @@
 import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { Text, IconButton, useTheme, Divider } from "react-native-paper";
+import {
+  Text,
+  IconButton,
+  useTheme,
+  Divider,
+  PaperProvider,
+  Portal,
+  FAB,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -9,7 +17,6 @@ import { useEffect, useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
-import Slider from "@react-native-community/slider";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useAchievements, useUnlockAchievement } from "../utils/hooks";
@@ -23,10 +30,8 @@ export default function Whiteboard({ navigation }) {
     undoLastAction,
     redoLastAction,
     setSelectedShape,
-    setShapeSize,
     resetActions,
     color,
-    shapeSize,
     selectedShape,
   } = useWhiteboardStore();
 
@@ -102,6 +107,12 @@ export default function Whiteboard({ navigation }) {
     }, []),
   );
 
+  const [plusMenu, setPlusMenu] = React.useState({ open: false });
+
+  const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
+
+  const { open } = plusMenu;
+
   const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
@@ -176,11 +187,7 @@ export default function Whiteboard({ navigation }) {
             />
             <IconButton
               icon="pencil"
-              iconColor={
-                selectedShape === "none" && !isTextToolSelected
-                  ? "#007bff"
-                  : theme.colors.primary
-              }
+              iconColor={theme.colors.primary}
               size={40}
               onPress={() => {
                 setSelectedShape("none");
@@ -188,60 +195,48 @@ export default function Whiteboard({ navigation }) {
                 setDrawing(true);
               }}
             />
-            <IconButton
-              icon="triangle-outline"
-              iconColor={
-                selectedShape === "triangle" ? "#007bff" : theme.colors.primary
-              }
-              size={40}
-              onPress={() => {
-                setSelectedShape("triangle");
-                setTextToolSelected(false);
-              }}
-            />
-            <IconButton
-              icon="square-outline"
-              iconColor={
-                selectedShape === "square" ? "#007bff" : theme.colors.primary
-              }
-              size={40}
-              onPress={() => {
-                setSelectedShape("square");
-                setTextToolSelected(false);
-              }}
-            />
-            <IconButton
-              icon="circle-outline"
-              iconColor={
-                selectedShape === "circle" ? "#007bff" : theme.colors.primary
-              }
-              size={40}
-              onPress={() => {
-                setSelectedShape("circle");
-                setTextToolSelected(false);
-              }}
-            />
-            <IconButton
-              icon="keyboard"
-              iconColor={isTextToolSelected ? "#007bff" : theme.colors.primary}
-              size={40}
-              onPress={() => {
-                setSelectedShape("none");
-                setTextToolSelected(!isTextToolSelected);
-              }}
-            />
-          </View>
-
-          <View style={styles.sliderRow}>
-            <Text style={styles.sliderLabel}>Shape size:</Text>
-            <Slider
-              style={styles.slider}
-              minimumValue={10}
-              maximumValue={100}
-              step={1}
-              value={shapeSize}
-              onValueChange={(value) => setShapeSize(value)}
-            />
+            <Portal>
+              <FAB.Group
+                open={open}
+                visible
+                icon={open ? "minus" : "drawing"}
+                actions={[
+                  {
+                    icon: "keyboard",
+                    label: "Keyboard",
+                    onPress: () => {
+                      setSelectedShape("none");
+                      setTextToolSelected(!isTextToolSelected);
+                    },
+                  },
+                  {
+                    icon: "triangle-outline",
+                    label: "Triangle",
+                    onPress: () => {
+                      setSelectedShape("triangle");
+                      setTextToolSelected(false);
+                    },
+                  },
+                  {
+                    icon: "square-outline",
+                    label: "Square",
+                    onPress: () => {
+                      setSelectedShape("square");
+                      setTextToolSelected(false);
+                    },
+                  },
+                  {
+                    icon: "circle-outline",
+                    label: "Circle",
+                    onPress: () => {
+                      setSelectedShape("circle");
+                      setTextToolSelected(false);
+                    },
+                  },
+                ]}
+                onStateChange={onPlusMenuChange}
+              />
+            </Portal>
           </View>
         </View>
       </SafeAreaView>
@@ -268,7 +263,10 @@ const styles = StyleSheet.create({
   mid: {
     flex: 1,
   },
-  divider: {},
+  divider: {
+    height: 1,
+    backgroundColor: "black",
+  },
   image: {
     marginLeft: responsiveWidth(7),
     width: responsiveWidth(14),
@@ -277,14 +275,13 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     overflow: "hidden",
   },
-
   bottomLeft: {
     flexDirection: "column",
-    alignItems: "center",
+    flex: 0.125,
+    alignItems: "flex-start",
   },
   iconRow: {
     flexDirection: "row",
-    justifyContent: "space-around",
   },
   sliderRow: {
     flexDirection: "row",

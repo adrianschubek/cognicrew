@@ -107,7 +107,6 @@ serve(async (req) => {
                 question,
                 priority,
                 answers_exercises(
-                  id,
                   answer,
                   is_correct
                 )

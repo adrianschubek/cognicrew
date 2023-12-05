@@ -4,7 +4,6 @@ import {
   useDeleteMutation,
   useInsertMutation,
   useQuery,
-  useSubscription,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 
@@ -13,8 +12,6 @@ import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
-import React from "react";
-import { useProjectStore } from "../stores/ProjectStore";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -160,10 +157,11 @@ export function useInsertFriend() {
     (error) => {
       if (error.includes("duplicate key value violates unique constraint")) {
         return "You already sent a friend request or are already friends with this user.";
-      } else if(error.includes("new row violates row-level security policy for table")) {
+      } else if (
+        error.includes("new row violates row-level security policy for table")
+      ) {
         return "You cannot send a friend request to yourself.";
-      }
-      else return error;
+      } else return error;
     },
   );
 }
@@ -376,15 +374,16 @@ export function useDeleteExercise() {
   );
 }
 export function useAnswersExercises(exerciseId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("answers_exercises")
-        .select("id,answer,exercise,is_correct,order_position")
-        .eq("exercise", exerciseId)
-        .order("order_position"),
-    ),
-  );
+  const query = supabase
+    .from("answers_exercises")
+    .select("answer,exercise,is_correct,order_position")
+    .eq("exercise", exerciseId)
+    .order("order_position");
+  const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
+  useEffect(() => {
+    mutate();
+  }, []);
+  return { data, isLoading, error, mutate };
 }
 
 export function useExercisesAndAnswers(setId: number) {
@@ -402,12 +401,20 @@ export function useUpsertAnswersExercise() {
   return handleErrors(
     useUpsertMutation(
       supabase.from("answers_exercises"),
-      ["id"],
-      "id,answer,exercise,is_correct,order_position",
+      ["exercise", "order_position"],
+      "answer,exercise,is_correct,order_position",
     ),
   );
 }
-
+export function useDeleteAnswersExercise() {
+  return handleErrors(
+    useDeleteMutation(
+      supabase.from("answers_exercises"),
+      ["exercise", "order_position"],
+      "exercise,order_position",
+    ),
+  );
+}
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")

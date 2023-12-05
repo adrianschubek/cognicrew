@@ -45,7 +45,6 @@ export default function LinkManagement() {
         "postgres_changes",
         { event: "*", schema: "public", table: "links" },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )

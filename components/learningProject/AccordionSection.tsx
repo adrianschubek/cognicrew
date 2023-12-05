@@ -38,7 +38,6 @@ export default function AccordionSection(props: {
         "postgres_changes",
         { event: "*", schema: "public", table: "sets" },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )
