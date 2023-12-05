@@ -49,6 +49,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
     });
     console.log("filteredList: ", filteredList);
+    console.log("initial: ", initial);
     filteredList.forEach((e) => {
       console.log("delete: \n", e, "\n");
       deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
@@ -73,7 +74,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
           deleteAnswers(initial, answerOrAnswers);
-          //console.log(answerOrAnswers);
           //answers need to be updated
           console.log("answersOrAnswers: ", answerOrAnswers);
           answerOrAnswers.forEach((e) => {

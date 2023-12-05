@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { HelperText, IconButton } from "react-native-paper";
-import { View, Text } from "react-native";
+import { HelperText, IconButton, Text } from "react-native-paper";
+import { View } from "react-native";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -20,7 +20,7 @@ export default function EditExercise(props: {
     if (!isInitialized) return;
     sendAnswers(answers);
   }, [answers]);
-  
+
   useEffect(() => {
     if (!data || isInitialized) return;
     const initializingAnswers: [string, boolean, number][] = [];
