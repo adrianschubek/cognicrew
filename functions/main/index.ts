@@ -257,7 +257,9 @@ setInterval(async () => {
         .eq("id", state.room_id);
     }
 
-    // TODO: maybe: only update when state changed (deep-equal) maybe later. clone newState required
+    // TODO: only update when state changed (deep-equal) maybe later. clone newState required
+    // (+) Less DB Calls (+) Less WebSocket messages server->client 
+    // (-) Increses Latency (-) More Server CPU usage
     // if (deepEqual(state.data, newState)) continue;
 
     // updatedCount++;
