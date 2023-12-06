@@ -6,8 +6,6 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import EditFlashcard from "./EditFlashcard";
-import EditExercise from "./EditExercise";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
@@ -53,7 +51,6 @@ export default function AccordionListItems(props: {
               : "exercises",
         },
         (payload) => {
-          console.log("Change received!", payload);
           mutate();
         },
       )

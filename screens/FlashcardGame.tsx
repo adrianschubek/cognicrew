@@ -6,162 +6,130 @@ import {
   View,
   Image,
 } from "react-native";
-import { TextInput, Text, Button } from "react-native-paper";
+import { TextInput, Text, Button, Dialog } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import CountDown from "react-native-countdown-component";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useFlashcardsMultipleSets, useSoundSystem2 } from "../utils/hooks";
+import { useAlerts, useFlashcardsMultipleSets, useSoundSystem2 } from "../utils/hooks";
+import { useAuth } from "../providers/AuthProvider";
+import { useRoomStateStore } from "../stores/RoomStore";
+import Timer from "../components/IngameComponents/Timer";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
+import { supabase } from "../supabase";
+import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { handleEdgeError } from "../utils/common";
 
 export default function FlashcardGame({ route }) {
   useSoundSystem2();
 
-  const roundDuration = route.params?.roundDuration || 0;
-  const sets = route.params?.sets || [];
-  const numberOfRounds = route.params?.numberOfRounds || 0;
+  const { user } = useAuth();
+  const roomState = useRoomStateStore(
+    (state) => state.roomState,
+  );
 
-  // Fetch flashcards data using the useFlashcards hook when the component mounts
-  const { data: flashcards } = useFlashcardsMultipleSets(sets);
-
-  // Shuffle the flashcards array when it is first loaded
-  const [shuffledFlashcards, setShuffledFlashcards] = useState([]);
+  const { error: errrorAlert } = useAlerts();
+  const [alreadySubmitted, setAlreadySubmitted] = useState(false);
+  const [isInvoking, setIsInvoking] = useState(false);
+  async function answer() {
+    setIsInvoking(true);
+    const { data, error } = await supabase.functions.invoke("room-update", {
+      body: {
+        type: "flashcard-answer",
+        answer: userInput, // get answer
+      } as RoomClientUpdate,
+    });
+    if (error) errrorAlert({ message: await handleEdgeError(error) });
+    else setAlreadySubmitted(true);
+    setIsInvoking(false);
+  }
 
   useEffect(() => {
-    if (flashcards !== undefined && flashcards.length > 0) {
-      setShuffledFlashcards(shuffleArray(flashcards));
-      setCurrentFlashcardIndex(0);
-    }
-  }, [flashcards]);
-
-  const [currentFlashcardIndex, setCurrentFlashcardIndex] = useState(0);
-
-  const showNextFlashcard = () => {
-    if (currentFlashcardIndex < shuffledFlashcards.length - 1) {
-      setCurrentFlashcardIndex(currentFlashcardIndex + 1);
-    } else if (currentFlashcardIndex >= shuffledFlashcards.length - 1) {
-      alert("You finished the Quiz!");
-    }
-  };
-
-  const currentFlashcard = shuffledFlashcards[currentFlashcardIndex];
-
-  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
-  const [showNextButton, setShowNextButton] = useState(false);
-
-  function checkAnswer() {
-    if (currentFlashcard) {
-      const userAnswer = userInput;
-      const correctAnswer = currentFlashcard.answer;
-
-      if (userAnswer === correctAnswer) {
-        // The answer is correct
-        setIsAnswerCorrect(true);
-        setShowNextButton(true);
-        alert("Correct answer!");
-      } else {
-        // The answer is incorrect
-        setIsAnswerCorrect(false);
-        setShowNextButton(false);
-        alert("Incorrect answer. Try again.");
-      }
-    }
-  }
-
-  function handleNext() {
-    setShowNextButton(false);
-    setIsAnswerCorrect(false);
-    setUserInput(""); // Clear the TextInput
-    showNextFlashcard();
-  }
+    setUserInput("");
+    setAlreadySubmitted(false);
+  }, [roomState?.round]);
 
   const [userInput, setUserInput] = useState("");
 
-  const shuffleArray = (array) => {
-    const newArray = [...array];
-    for (let i = newArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-    }
-    // shorten the array according to numberOfRounds if numberOfRounds is smaller
-    // than newArray.length otherwise just take the whole array
-    if (numberOfRounds < newArray.length) {
-      return newArray.slice(0, numberOfRounds);
-    } else {
-      return newArray;
-    }
-  };
+  const MemoTimer = useMemo(
+    () => <Timer roundEndsAt={roomState?.roundEndsAt} onTimeUp={() => {}} />,
+    [roomState?.roundEndsAt],
+  );
+
+  if (!roomState) {
+    return <LoadingOverlay visible />;
+  }
+
+  const currentPlayer = roomState?.players.find(
+    (player) => player.id === user?.id,
+  );
 
   return (
     <>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
-      >
-        <View style={styles.container}>
-          <View style={styles.topRow}>
-            <CountDown
-              style={styles.countDownStyle}
-              until={roundDuration}
-              size={30}
-              onFinish={() => alert("Finished")}
-              digitStyle={{
-                backgroundColor: null,
-                borderWidth: 2,
-                borderColor: "grey",
-              }}
-              digitTxtStyle={{ color: "grey" }}
-              timeToShow={["M", "S"]}
-              timeLabels={{ m: null, s: null }}
-              showSeparator
-            />
-            <View style={[styles.topRightContainer, { alignSelf: "flex-end" }]}>
-              <Image
-                source={{
-                  uri: "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png",
-                }}
-                style={[styles.image, { alignSelf: "flex-end" }]}
-              />
-              <Text>User 1</Text>
-              <Image
-                source={{
-                  uri: "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png",
-                }}
-                style={[styles.image, { alignSelf: "flex-end" }]}
-              />
-              <Text>User 2</Text>
-            </View>
-          </View>
-          <ScrollView contentContainerStyle={styles.scrollContent}>
-            <Text style={styles.questionStyle}>
-              {currentFlashcard ? currentFlashcard.question : ""}
-            </Text>
-          </ScrollView>
-        </View>
+      <ScrollView style={{ paddingTop: 20 }}>
+        <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
+          Question {roomState.round} of {roomState.totalRounds}
+        </Dialog.Title>
+        {MemoTimer}
+        <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
+          {roomState.question}
+        </Text>
         <View style={styles.answerViewStyle}>
           <Text style={styles.answerStyle}> Answer</Text>
           <TextInput
             label="Type your answer"
-            style={styles.answerInputStyle}
+            style={[
+              {
+                marginRight: responsiveWidth(5),
+                flex: 1,
+                backgroundColor: null,
+                borderLeftWidth: 1,
+                borderRightWidth: 1,
+                borderTopWidth: 1,
+                borderColor: "gray",
+              },
+              roomState.screen === ScreenState.ROUND_SOLUTION
+                ? currentPlayer.currentCorrect === true
+                  ? styles.correctAnswer
+                  : styles.wrongAnswer
+                : {},
+            ]}
             value={userInput}
             onChangeText={(text) => setUserInput(text)}
           />
         </View>
-        <View style={styles.submitButtonContainer}>
-          {showNextButton ? (
-            <Button onPress={handleNext}>Next</Button>
-          ) : (
-            <Button onPress={checkAnswer}>Submit</Button>
-          )}
-        </View>
-      </KeyboardAvoidingView>
+        <Button
+            style={{
+              marginTop: 25,
+              paddingVertical: 5,
+              borderRadius: 10,
+              display: alreadySubmitted ? "none" : "flex",
+            }}
+            mode="contained"
+            disabled={isInvoking || userInput.length === 0}
+            onPress={answer}
+          >
+            Submit Answer
+          </Button>
+      </ScrollView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  correctAnswer: {
+    borderColor: "green",
+    borderWidth: 3,
+    //backgroundColor:"green"
+  },
+  wrongAnswer: {
+    borderColor: "red",
+    borderWidth: 3,
+    //backgroundColor:"red"
+  },
   container: {
     flex: 1,
     flexDirection: "column",
@@ -196,18 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: responsiveWidth(5),
     marginRight: 10,
-  },
-  answerInputStyle: {
-    marginRight: responsiveWidth(5),
-    flex: 1,
-    backgroundColor: null,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderTopWidth: 1,
-    borderColor: "gray",
-  },
-  submitButtonContainer: {
-    marginLeft: responsiveWidth(75),
   },
   answerViewStyle: {
     flexDirection: "row",

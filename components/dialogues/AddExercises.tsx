@@ -1,9 +1,10 @@
 import * as React from "react";
-import { StyleSheet, Keyboard, View } from "react-native";
+import { StyleSheet, Keyboard, View, Text } from "react-native";
 import {
   Button,
   Dialog,
   HelperText,
+  IconButton,
   Portal,
   TextInput,
   useTheme,
@@ -22,7 +23,11 @@ import { checkForLineBreak } from "../../utils/common";
 
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
-  const array = Array.from({ length: 4 }, (_, index) => index + 1) as number[];
+  const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
+    useState<boolean>(false);
+  const [array, setArray] = useState(
+    Array.from({ length: 4 }, (_, index) => index + 1) as number[],
+  );
   const [question, setQuestion] = useState<string>("");
   const [showErrorNoSetSelected, setShowErrorNoSetSelected] =
     useState<boolean>(false);
@@ -48,6 +53,7 @@ export default function AddExercises({ showAddExercises, close }) {
     Keyboard.dismiss();
     setShowErrorNoSetSelected(false);
     setShowErrorUpload(false);
+    setArray(Array.from({ length: 4 }, (_, index) => index + 1));
   }
   const addExercise = () => {
     checkForError(() => {
@@ -101,6 +107,7 @@ export default function AddExercises({ showAddExercises, close }) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked];
+      console.log(newAnswers);
       setAnswers(newAnswers);
     };
   }
@@ -130,6 +137,61 @@ export default function AddExercises({ showAddExercises, close }) {
               setQuestion(question);
             }}
           />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginLeft: 8,
+            }}
+          >
+            <Text>Add or remove Answers: </Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
+              <IconButton
+                icon="minus"
+                onPress={() => {
+                  if (array.length <= 2) {
+                    setShowErrorAnswerBoundaries(true);
+                    return;
+                  }
+                  const newArray = [...array];
+                  newArray.pop();
+                  setArray(newArray);
+                  answers.pop();
+                  setShowErrorAnswerBoundaries(false);
+                  //console.log(answers);
+                }}
+              />
+              <IconButton
+                icon="plus"
+                onPress={() => {
+                  if (array.length >= 6) {
+                    setShowErrorAnswerBoundaries(true);
+                    return;
+                  }
+                  const newArray = [...array, array.length + 1];
+                  setArray(newArray);
+                  answers.push(["", false]);
+                  setShowErrorAnswerBoundaries(false);
+                  //console.log(answers);
+                }}
+              />
+            </View>
+          </View>
+          {showErrorAnswerBoundaries && (
+            <HelperText
+              style={{ paddingHorizontal: 0 }}
+              type="error"
+              visible={showErrorAnswerBoundaries}
+            >
+              You cannot have less than 2 or more than 6 answers
+            </HelperText>
+          )}
           {array.map((e) => {
             return (
               <TextInputWithCheckbox

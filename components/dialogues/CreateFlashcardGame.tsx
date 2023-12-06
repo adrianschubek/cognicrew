@@ -9,6 +9,8 @@ import {
   Button,
   Checkbox,
   Searchbar,
+  RadioButton,
+  ProgressBar,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -24,225 +26,208 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
+// Placeholder function to simulate fetching questions
+const fetchQuestions = () => {
+  return [
+    {
+      question: "Which city is the capital of France?",
+      answer: "Paris",
+      correctAnswer: "Paris"
+    },
+    {
+      question: "Wie groß ist Timo's Weihnachtsbaum?",
+      answer: "2cm",
+      correctAnswer: "Timo ist Atheist obwohl sein Vater Theologie studiert hat und besitzt daher keinen Weihnachtsbaum"
+    },
+    {
+      question: "A, B, C und ?",
+      answer: "D",
+      correctAnswer: "D"
+    },
+  ];
+};
+
 export default function CreateFlashcardGame({
   showCreateFlashcardGame,
   close,
 }) {
   const navigation = useNavigation<any>();
-  const minutesRef = useRef(null);
-  const secondsRef = useRef(null);
 
-  // Use separate states for minutes and seconds
-  const [minutes, setMinutes] = useState("");
-  const [seconds, setSeconds] = useState("");
+  const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [checked, setChecked] = useState(null);
+  const [score, setScore] = useState(0);
+  const [answeredQuestions, setAnsweredQuestions] = useState(new Array(questions.length).fill(null));
+  const [reviewTime, setReviewTime] = useState('10m');
+  const [quizComplete, setQuizComplete] = useState(false);
 
-  const computeTimeInSeconds = () => {
-    // Convert the minutes and seconds to integers (default to 0 if empty)
-    const minutesInt = parseInt(minutes) || 0;
-    const secondsInt = parseInt(seconds) || 0;
-
-    // Calculate the total time in seconds
-    const totalTimeInSeconds = minutesInt * 60 + secondsInt || 120;
-
-    return totalTimeInSeconds;
-  };
-
-  const handleTimeChange = (field, text) => {
-    // Ensure that the input is in the format "00:00"
-    const formattedText = text.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-
-    if (field === "minutes") {
-      setMinutes(formattedText.slice(0, 2));
-    } else if (field === "seconds") {
-      setSeconds(formattedText.slice(0, 2));
-    }
-  };
-
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Initialize filteredAccordionSectionItems with an empty array
-  const [filteredAccordionSectionItems, setFilteredAccordionSectionItems] =
-    useState([]);
-
-  //FIXME test projectId is null when not navigation from learning project list.! BUG
-  const projectId = useProjectStore((state) => state.projectId);
-  const { data } = useSets(ManagementType.FLASHCARD, projectId);
-
-  useEffect(() => {
-    if (!data) return;
-    const formattedSetsData = (data ?? []).map((item) => ({
-      ...item,
-      checked: false,
-    }));
-    setFilteredAccordionSectionItems(formattedSetsData);
-  }, [data]);
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    const filteredItems = data
-      .map((item) => ({
-        ...item,
-        checked: false,
-      }))
-      .filter((item) => item.name.toLowerCase().includes(query.toLowerCase()));
-    setFilteredAccordionSectionItems(filteredItems);
-  };
-
-  const [checkedItems, setCheckedItems] = useState([]);
-
-  const checkedItemsToNavigate = checkedItems || filteredAccordionSectionItems;
-
-  const handleCheckboxPress = (id) => {
-    const updatedItems = filteredAccordionSectionItems.map((item) => {
-      if (item.id === id) {
-        return { ...item, checked: !item.checked };
-      }
-      return item;
-    });
-    setFilteredAccordionSectionItems(updatedItems);
-
-    const newCheckedItems = updatedItems.filter((item) => item.checked);
-    setCheckedItems(newCheckedItems);
-  };
-
-  const handleNavigation = (totalTimeInSeconds) => {
-    if (checkedItems === null || checkedItems.length === 0) {
-      // If checkedItems is null or empty, show an alert
-      Alert.alert("Choose Sets", "Choose one or multiple sets to play a game.");
-    } else {
-      // If checkedItems is not null and not empty, navigate to FLASHCARD_GAME
-      navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
-        totalTimeInSeconds,
-        checkedItems,
+  const handleNextQuestion = () => {
+    console.log("NEXT");
+    if (checked) {
+      const isCorrect = questions[currentQuestionIndex].correctAnswer === checked;
+      setAnsweredQuestions(answeredQuestions => {
+        const updatedAnswers = [...answeredQuestions];
+        updatedAnswers[currentQuestionIndex] = isCorrect;
+        return updatedAnswers;
       });
+
+      if (isCorrect) setScore(prevScore => prevScore + 1);
+
+      Alert.alert(
+        isCorrect ? "Correct!" : "Incorrect!",
+        isCorrect
+          ? "You're awesome! Keep it up!"
+          : `The correct answer was: ${questions[currentQuestionIndex].correctAnswer}`,
+        [{ text: "OK", onPress: () => advanceQuestion() }]
+      );
+    } else {
+      Alert.alert("No Answer", "Please select an answer or skip the question.", [{ text: "OK" }]);
     }
   };
+
+  function shuffleArray(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  const resetQuiz = () => {
+    setQuestions(shuffleArray(fetchQuestions()));
+    setCurrentQuestionIndex(0);
+    setChecked(null);
+    setScore(0);
+    setQuizComplete(false);
+    setAnsweredQuestions(new Array(questions.length).fill(null));
+  };
+
+  const advanceQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setChecked(null);
+    } else {
+      setQuizComplete(true);
+    }
+  };
+
+  const handleSkipQuestion = () => {
+    advanceQuestion();
+  };
+
+  const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <>
+    quizComplete ? (
       <Portal>
         <Dialog visible={showCreateFlashcardGame} onDismiss={close}>
-          <Dialog.Title>Flashcard game</Dialog.Title>
+          <Dialog.Title>Quiz Summary</Dialog.Title>
           <Dialog.Content>
-            <Text style={styles.roundDurationStyle}> Round duration</Text>
-            <View style={styles.timerContainer}>
-              <TextInput
-                label="Minutes"
-                style={styles.timerInput}
-                value={minutes}
-                onChangeText={(text) => {
-                  handleTimeChange("minutes", text);
-                  if (text.length === 2) {
-                    secondsRef.current.focus();
-                  }
-                }}
-                ref={minutesRef}
-                onSubmitEditing={() => {
-                  secondsRef.current.focus();
-                }}
-                returnKeyType="next"
-              />
-              <Text style={styles.timerSeparator}>:</Text>
-              <TextInput
-                label="Seconds"
-                style={styles.timerInput}
-                value={seconds}
-                onChangeText={(text) => handleTimeChange("seconds", text)}
-                ref={secondsRef}
-              />
-            </View>
-            <View style={styles.searchContainer}>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={handleSearch}
-                value={searchQuery}
-              />
-            </View>
-            <ScrollView
-              contentContainerStyle={styles.scrollContent}
-              style={styles.scrollContainer}
-            >
-              {filteredAccordionSectionItems.map((learningSet) => (
-                <View key={learningSet.id} style={styles.accordionItem}>
-                  <Text style={styles.accordionTitle}>{learningSet.name}</Text>
-                  <Checkbox
-                    status={learningSet.checked ? "checked" : "unchecked"}
-                    onPress={() => handleCheckboxPress(learningSet.id)}
-                  />
-                </View>
-              ))}
-            </ScrollView>
+            <Text>Your score: {score}/{questions.length}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={close} style={{ marginRight: "auto" }}>
-              Cancel
-            </Button>
-            <Button
-              onPress={() => {
-                const totalTimeInSeconds = computeTimeInSeconds();
-                close();
-                handleNavigation(totalTimeInSeconds);
-              }}
-            >
-              Done
-            </Button>
+            <Button onPress={() => { resetQuiz(); }}>Retake Quiz</Button>
+            <Button onPress={close}>Close</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
-      <View style={styles.container}></View>
-    </>
+    ) :
+      <Portal>
+        <Dialog visible={showCreateFlashcardGame} onDismiss={close}>
+          <Dialog.ScrollArea>
+            <ScrollView contentContainerStyle={styles.scrollView}>
+              <Dialog.Title style={{ textAlign: 'center', alignSelf: 'center' }}>Question {currentQuestionIndex + 1} of {questions.length}</Dialog.Title>
+              <ProgressBar
+                style={styles.progressBar}
+                progress={(currentQuestionIndex + 1) / questions.length}
+                color={'blue'}
+              />
+              <Text style={styles.question}>{currentQuestion.question}</Text>
+              <Text style={styles.reviewQuestion}>When would you like to review this question?</Text>
+              <RadioButton.Group onValueChange={newValue => setReviewTime(newValue)} value={reviewTime}>
+                <View style={styles.reviewOptions}>
+                  <RadioButton.Item label="10m" value="10m" status={reviewTime === '10m' ? 'checked' : 'unchecked'} />
+                  <RadioButton.Item label="1 day" value="1 day" status={reviewTime === '1 day' ? 'checked' : 'unchecked'} />
+                  <RadioButton.Item label="4 days" value="4 days" status={reviewTime === '4 days' ? 'checked' : 'unchecked'} />
+                </View>
+              </RadioButton.Group>
+            </ScrollView>
+          </Dialog.ScrollArea>
+          <Dialog.Actions>
+            <Button onPress={handleSkipQuestion}>Skip question</Button>
+            <Button onPress={handleNextQuestion}>Check</Button>
+            <Button onPress={close}>Done</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: responsiveWidth(100),
-    height: responsiveHeight(100),
+  progressBar: {
+    height: 20,
+    width: '100%',
+    backgroundColor: 'grey',
+    borderColor: '#000',
+    borderWidth: 2,
+    borderRadius: 5
+  },
+  progressIndicator: {
+    height: '100%',
+    borderRadius: 5,
+    backgroundColor: 'green'
+  },
+  summaryScreen: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  roundDurationStyle: {
-    fontSize: 16,
-    marginBottom: -10,
-    fontWeight: "bold",
+  summaryText: {
+    fontSize: responsiveFontSize(2.5),
+    textAlign: 'center',
+    marginBottom: 20,
   },
-  timerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+  scrollView: { //
+    paddingVertical: 20,
   },
-  timerInput: {
+  question: { //
+    fontSize: responsiveFontSize(2.5),
+    textAlign: 'center',
+    alignSelf: 'center',
+    marginBottom: 20,
+    marginTop: 20
+  },
+  optionsContainer: {
+    justifyContent: 'center',
+  },
+  optionsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 10,
+  },
+  optionItem: {
     flex: 1,
-    backgroundColor: null,
-    marginBottom: 2,
+    paddingHorizontal: 10,
   },
-  timerSeparator: {
-    fontSize: 20,
-    fontWeight: "bold",
+  reviewQuestion: {
+    fontSize: responsiveFontSize(2),
+    textAlign: 'center',
+    marginVertical: 20,
   },
-  searchContainer: {
-    borderBottomWidth: 1,
-    borderColor: "gray",
+  reviewOptions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
-  accordionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 2,
+  reviewOption: {
+    fontSize: responsiveFontSize(2),
   },
-  accordionTitle: {
-    fontSize: 16,
-  },
-  dialog: {
-    maxHeight: responsiveHeight(70),
-  },
-  scrollContainer: {
-    maxHeight: responsiveHeight(30),
-    flex: 0,
-  },
-  scrollContent: {
-    paddingVertical: 16,
+  reviewOptionSelected: {
+    fontSize: responsiveFontSize(2),
+    textDecorationLine: 'underline',
   },
 });

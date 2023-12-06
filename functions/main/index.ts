@@ -205,7 +205,7 @@ setInterval(async () => {
       newState.players = newState.players.map((player) => ({
         ...player,
         currentCorrect: null,
-        currentTimeNeeded: null
+        currentTimeNeeded: null,
       }));
 
       if (newState.round + 1 <= newState.totalRounds) {
@@ -245,6 +245,7 @@ setInterval(async () => {
         dayjs().valueOf()
     ) {
       // destroy room state and set ingame to false
+      // TODO: dont close lobby instead let stay in obby so hsot can start new game !!!!!!
       await supabase
         .from("public_room_states")
         .delete()
