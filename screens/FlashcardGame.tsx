@@ -99,6 +99,7 @@ export default function FlashcardGame({ route }) {
             ]}
             value={userInput}
             onChangeText={(text) => setUserInput(text)}
+            editable={!alreadySubmitted}
           />
         </View>
         <Button
@@ -106,7 +107,7 @@ export default function FlashcardGame({ route }) {
               marginTop: 25,
               paddingVertical: 5,
               borderRadius: 10,
-              display: alreadySubmitted ? "none" : "flex",
+              display: alreadySubmitted ? "none" : undefined,
             }}
             mode="contained"
             disabled={isInvoking || userInput.length === 0}
