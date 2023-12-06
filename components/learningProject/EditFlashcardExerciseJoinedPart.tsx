@@ -19,6 +19,7 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -38,7 +39,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
-  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise(); //Complete garbage hook
   //exercise specific functions
   async function deleteAnswers(
     initial: [string, boolean, number][],
@@ -48,12 +48,14 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       return answers[index] === undefined;
       //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
     });
-    console.log("filteredList: ", filteredList);
-    console.log("initial: ", initial);
-    filteredList.forEach((e) => {
-      console.log("delete: \n", e, "\n");
-      deleteAnswersExercise({ exercise: listItem.id, order_position: e[2] });
+    const deletionArray = filteredList.map((e) => {
+      return { exercise: listItem.id as number, order_position: e[2] };
     });
+    console.log("deletionArray: ", deletionArray);
+    let {data, error} = await supabase.rpc("delete_answers_exercise", {
+      answers: deletionArray,
+    });
+    return data;
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
