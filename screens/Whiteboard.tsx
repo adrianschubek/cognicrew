@@ -161,7 +161,7 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
 
-        <Divider style={styles.divider} />
+        <Divider style={styles.divider}/>
 
         <View style={styles.mid}>
           <Canvas
@@ -175,7 +175,7 @@ export default function Whiteboard({ navigation }) {
           />
         </View>
 
-        <Divider style={styles.divider} />
+        <Divider style={styles.divider}/>
 
         <View style={styles.bottomLeft}>
           <View style={styles.iconRow}>

@@ -24,6 +24,8 @@ export const enum NAVIGATION {
   ACCOUNT = "Account",
   SPLASH_INGAME = "SplashIngame",
   END_RESULTS = "EndResults",
+  PROJECT_STATISTICS = "ProjectStatistics",
+  GLOBAL_STATISTICS = "GlobalStatistics"
 }
 export const enum ManagementType {
   FLASHCARD = 0,

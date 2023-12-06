@@ -32,6 +32,8 @@ import RateProject from "../screens/projectManagement/RateProject";
 import EndResults from "../screens/ingame/EndResults";
 import { GameState, ScreenState } from "../functions/rooms";
 import dayjs from "dayjs";
+import GlobalStatistics from "../screens/GlobalStatistics";
+import ProjectStatistics from "../screens/projectManagement/ProjectStatistics";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -121,6 +123,8 @@ function LearningProjectsTab() {
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
       <Stack.Screen name={NAVIGATION.RATE_PROJECT} component={RateProject} />
+
+      <Stack.Screen name={NAVIGATION.PROJECT_STATISTICS} component={ProjectStatistics} />
 
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
@@ -278,10 +282,9 @@ export default function MainNav() {
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
       <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
       <Stack.Screen name={NAVIGATION.END_RESULTS} component={EndResults} />
-      <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-      />
+      <Stack.Screen name={NAVIGATION.FLASHCARD_GAME} component={FlashcardGame}/>
+      <Stack.Screen name={NAVIGATION.GLOBAL_STATISTICS} component={GlobalStatistics}/>
+      
     </Stack.Navigator>
   );
 }

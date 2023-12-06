@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
+import { Button, FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -111,6 +111,21 @@ export default function LearningProject({ navigation, route }) {
           navigation.navigate(NAVIGATION.FILES_MANAGEMENT);
         }}
       />
+
+      <FAB
+       icon={"chart-bar"}
+       onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
+       color={theme.colors.onPrimary}
+       style={{
+         position: "absolute",
+         margin: 16,
+         right: 180,
+         bottom: 0,
+         backgroundColor: theme.colors.primary,
+       }}
+       label={"Project statistics"}
+      />
+      
       <FAB
         icon={"play"}
         onPress={() => {
