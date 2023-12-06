@@ -406,6 +406,7 @@ export function useUpsertAnswersExercise() {
     ),
   );
 }
+//creates race condition with itself when called multiple times
 export function useDeleteAnswersExercise() {
   return handleErrors(
     useDeleteMutation(

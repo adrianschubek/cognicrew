@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Keyboard, View, ScrollView, Text } from "react-native";
+import { StyleSheet, Keyboard, View, Text } from "react-native";
 import {
   Button,
   Dialog,

@@ -12,7 +12,6 @@ import { ManagementType } from "../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import {
-  useDeleteAnswersExercise,
   useDeleteExercise,
   useDeleteFlashcard,
   useUpsertAnswersExercise,
@@ -44,15 +43,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initial: [string, boolean, number][],
     answers: [string, boolean, number][],
   ) {
-    const filteredList = initial.filter((initialElem, index) => {
-      return answers[index] === undefined;
-      //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
-    });
-    const deletionArray = filteredList.map((e) => {
-      return { exercise: listItem.id as number, order_position: e[2] };
-    });
-    console.log("deletionArray: ", deletionArray);
-    let {data, error} = await supabase.rpc("delete_answers_exercise", {
+    const deletionArray = initial
+      .filter((initialElem, index) => {
+        return answers[index] === undefined;
+        //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
+      })
+      .map((e) => {
+        return { exercise: listItem.id as number, order_position: e[2] };
+      });
+    let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
     return data;
