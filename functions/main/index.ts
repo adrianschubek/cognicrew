@@ -241,6 +241,7 @@ setInterval(async () => {
         END_RESULTS_DURATION <
         dayjs().valueOf()
     ) {
+      // After game end / END_RESULTS screen is shown
       // destroy room state and set ingame to false
       // TODO: dont close lobby instead let stay in obby so hsot can start new game !!!!!!
       await supabase
