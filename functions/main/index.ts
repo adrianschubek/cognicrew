@@ -63,9 +63,9 @@ const END_RESULTS_DURATION = 10000;
 setInterval(async () => {
   const start = performance.now();
   // let updatedCount = 0;
-  // TODO: main game state loop here
+  // main game state loop here
 
-  // TODO: for each public_room_state:
+  // for each public_room_state:
   const { data: publicRoomStates } = await supabase
     .from("public_room_states")
     .select("data,room_id");
@@ -80,16 +80,14 @@ setInterval(async () => {
     .from("player_answers")
     .select("*");
 
-  // TODO: wie mentimeter je schneller (und richtig) man antwortet desto mehr Punkte pro Runde
-
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
     )?.data as PrivateRoomState;
-    // Later TODO: |> if players is not in room -> remove them from the players[]. later. Performacne cost?
+    // TODO: |> maybe: if players is not in room -> remove them from the players[]. later. Performacne cost?
 
-    // TODO: |> foreach player in room -> update currentCorrect if player has submitted an answer
+    // |> foreach player in room -> update currentCorrect if player has submitted an answer
     // TODO: only do this when timer ends  ?
     for (const player of newState.players) {
       const playerAnswer = playerAnswers?.find(
@@ -99,8 +97,7 @@ setInterval(async () => {
           pa.round === newState.round,
       );
       if (!playerAnswer) continue;
-      player.currentCorrect =
-        playerAnswer.answer_correct; /* TODO: gameoption: if plr cant change answer -> ignore when currentCorrect !== null */
+      player.currentCorrect = playerAnswer.answer_correct;
       player.currentTimeNeeded = playerAnswer.answer_time;
     }
 
@@ -109,7 +106,7 @@ setInterval(async () => {
      * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~2s + ~3s] -> * OR END_RESULTS
      */
     if (
-      // TODO: |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
+      // |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
       newState.screen === ScreenState.INGAME &&
       (newState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
         newState.players.every((p) => p.currentCorrect !== null))
@@ -172,7 +169,7 @@ setInterval(async () => {
           console.error("invalid game type (#0)");
       }
     } else if (
-      // TODO: |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
+      // |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
       newState.screen === ScreenState.ROUND_SOLUTION &&
       newState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
     ) {
@@ -196,7 +193,7 @@ setInterval(async () => {
         };
       });
     } else if (
-      // TODO: |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
+      // |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
       newState.screen === ScreenState.ROUND_RESULTS &&
       newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
         dayjs().valueOf()
@@ -209,7 +206,7 @@ setInterval(async () => {
       }));
 
       if (newState.round + 1 <= newState.totalRounds) {
-        // TODO: |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
+        // |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
         newState.round += 1;
         newState.roundBeganAt = dayjs().valueOf();
         newState.roundEndsAt =
@@ -233,7 +230,7 @@ setInterval(async () => {
             continue;
         }
       } else {
-        // TODO: |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+        // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
       }
     } else if (
@@ -260,7 +257,7 @@ setInterval(async () => {
         .eq("id", state.room_id);
     }
 
-    // TODO: only update when state changed (deep-equal) maybe later. clone newState required
+    // TODO: maybe: only update when state changed (deep-equal) maybe later. clone newState required
     // if (deepEqual(state.data, newState)) continue;
 
     // updatedCount++;

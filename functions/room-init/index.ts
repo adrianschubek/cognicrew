@@ -140,8 +140,6 @@ serve(async (req) => {
         400,
       );
 
-    // TODO: sort questions/flashacards randomly by priority
-
     const privateState: PrivateRoomState = {
       gameData: {
         exercises:
