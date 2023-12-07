@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ImageSourcePropType,
 } from "react-native";
-import { Button, Text, Divider } from "react-native-paper";
+import { Button, Text, Divider, useTheme } from "react-native-paper";
 import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
 import {
   responsiveHeight,
@@ -26,13 +26,23 @@ export default function LearningProjectCategory(props: {
   flexDirection?: any;
   [name: string]: any;
 }) {
+  const theme = useTheme();
   return (
     <React.Fragment>
-      <TouchableOpacity style={props.style} onPress={props.function || doNothing()}>
+      <TouchableOpacity
+        style={props.style}
+        onPress={props.function || doNothing()}
+      >
         <View
           style={[
             styles.category,
-            { flexDirection: props.flexDirection || "row" },
+            {
+              marginTop: 10,
+              width: responsiveWidth(95),
+              borderRadius: 10,
+              backgroundColor: theme.colors.secondaryContainer,
+              flexDirection: props.flexDirection || "row",
+            },
           ]}
         >
           <Text style={styles.textStyle}> {props.name} </Text>
@@ -44,18 +54,17 @@ export default function LearningProjectCategory(props: {
           />
         </View>
       </TouchableOpacity>
-      <Divider style={styles.dividerStyle} />
+      {/* <Divider style={styles.dividerStyle} /> */}
     </React.Fragment>
   );
 }
 
 const styles = StyleSheet.create({
   category: {
-    width: responsiveWidth(100),
+    // width: responsiveWidth(80),
     height: responsiveHeight(13),
     flexDirection: "row",
     justifyContent: "space-between",
-    //backgroundColor:"red",
   },
   imageStyle: {
     height: responsiveHeight(13),
