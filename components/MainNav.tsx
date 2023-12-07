@@ -124,7 +124,10 @@ function LearningProjectsTab() {
 
       <Stack.Screen name={NAVIGATION.RATE_PROJECT} component={RateProject} />
 
-      <Stack.Screen name={NAVIGATION.PROJECT_STATISTICS} component={ProjectStatistics} />
+      <Stack.Screen
+        name={NAVIGATION.PROJECT_STATISTICS}
+        component={ProjectStatistics}
+      />
 
       <Stack.Screen
         name={NAVIGATION.CREATEEDIT_PROJECT}
@@ -157,14 +160,14 @@ function MainTabs({ navigation }) {
       ) {
         warning({
           key: "server-off",
-          icon: "server-off",
-          title: "Server not responding",
+          icon: "wifi-off",
+          title: "Connection Lost",
           message:
-            "The server is not responding. This may indicate a very high load or an error on the server. You may leave the room or wait. (#68)",
+            "You have lost connection to the server. This can indicate a network issue on your device, a high load or an error on the server. You may leave the room or wait. (#68)",
           okText: "Leave room",
           cancelText: "Wait",
           async okAction(values) {
-            const { error } = await supabase.rpc("leave_room");
+            await supabase.rpc("leave_room");
             setRoom(null);
             setRoomState(null);
           },
@@ -195,7 +198,7 @@ function MainTabs({ navigation }) {
               // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
                 case ScreenState.LOBBY:
-                  if (payload.new.data.host === uid)
+                  if (useRoomStore.getState().room.host === uid)
                     navigation.navigate(NAVIGATION.LOBBY);
                   else navigation.navigate(NAVIGATION.GUEST_LOBBY);
                   break;
@@ -282,9 +285,14 @@ export default function MainNav() {
       <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
       <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
       <Stack.Screen name={NAVIGATION.END_RESULTS} component={EndResults} />
-      <Stack.Screen name={NAVIGATION.FLASHCARD_GAME} component={FlashcardGame}/>
-      <Stack.Screen name={NAVIGATION.GLOBAL_STATISTICS} component={GlobalStatistics}/>
-      
+      <Stack.Screen
+        name={NAVIGATION.FLASHCARD_GAME}
+        component={FlashcardGame}
+      />
+      <Stack.Screen
+        name={NAVIGATION.GLOBAL_STATISTICS}
+        component={GlobalStatistics}
+      />
     </Stack.Navigator>
   );
 }

@@ -242,24 +242,21 @@ setInterval(async () => {
         dayjs().valueOf()
     ) {
       // After game end / END_RESULTS screen is shown
-      // destroy room state and set ingame to false
-      // TODO: dont close lobby instead let stay in obby so hsot can start new game !!!!!!
-      await supabase
-        .from("public_room_states")
-        .delete()
-        .eq("room_id", state.room_id);
-      await supabase
-        .from("private_room_states")
-        .delete()
-        .eq("room_id", state.room_id);
+      // dont close lobby instead let stay in obby so host can start new game
+      newState.screen = ScreenState.LOBBY;
+
+      // TODO: maybe allow host to lock lobby so no new players can join
+      // set ingame to false
       await supabase
         .from("rooms")
         .update({ is_ingame: false })
         .eq("id", state.room_id);
+
+      // TODO: old game data still in room state. maybe delete it?
     }
 
     // TODO: only update when state changed (deep-equal) maybe later. clone newState required
-    // (+) Less DB Calls (+) Less WebSocket messages server->client 
+    // (+) Less DB Calls (+) Less WebSocket messages server->client
     // (-) Increses Latency (-) More Server CPU usage
     // if (deepEqual(state.data, newState)) continue;
 
