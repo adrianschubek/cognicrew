@@ -45,7 +45,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   ) {
     const deletionArray = initial
       .filter((initialElem, index) => {
-        return answers[index] === undefined;
+        return answers[index] === undefined || answers[index][0] === "";
         //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
       })
       .map((e) => {
@@ -74,18 +74,20 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
-          deleteAnswers(initial, answerOrAnswers);
-          //answers need to be updated
-          answerOrAnswers.forEach((e) => {
-            upsertAnswersExercise({
-              //@ts-expect-error
-              answer: e[0],
-              exercise: res[0].id,
-              is_correct: e[1],
-              order_position: e[2],
-            });
-          });
-          setInitialAnswers(answerOrAnswers);
+          deleteAnswers(initial, answerOrAnswers),
+            //answers need to be updated
+            answerOrAnswers.forEach((e) => {
+              e[0] !== ""
+                ? upsertAnswersExercise({
+                    //@ts-expect-error
+                    answer: e[0],
+                    exercise: res[0].id,
+                    is_correct: e[1],
+                    order_position: e[2],
+                  })
+                : null;
+            }),
+            setInitialAnswers(answerOrAnswers);
         })
       : upsertFlashcard({
           //@ts-expect-error
@@ -127,7 +129,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       type === ManagementType.EXERCISE
         ? answerOrAnswers.some((e) => e[0] && e[1])
         : answerOrAnswers !== "";
-    if (validAnswerExists && questionExists) {
+    const atLeastTwoAnswersExist =
+      type === ManagementType.EXERCISE
+        ? answerOrAnswers.filter((e) => e[0] !== "").length >= 2
+        : true;
+    if (validAnswerExists && questionExists && atLeastTwoAnswersExist) {
       functionToCheck();
     } else {
       let errorText = "";
@@ -139,6 +145,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           type === ManagementType.EXERCISE
             ? "At least one correct answer needs to exist"
             : "Answer needs to exist",
+        ));
+      !atLeastTwoAnswersExist &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "There need to be at least two answers",
         ));
       setErrorText(errorText);
       setShowErrorUpload(true);
@@ -158,12 +169,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   useEffect(() => {
     // Call the debounced function
     isInitialized &&
-      debouncedUpdate(
-        question,
-        answerOrAnswers,
-        priority,
-        initialAnswers,
-      );
+      debouncedUpdate(question, answerOrAnswers, priority, initialAnswers);
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
 
   useEffect(() => {

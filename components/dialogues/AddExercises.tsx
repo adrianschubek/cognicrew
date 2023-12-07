@@ -54,6 +54,7 @@ export default function AddExercises({ showAddExercises, close }) {
     Keyboard.dismiss();
     setShowErrorNoSetSelected(false);
     setShowErrorUpload(false);
+    setShowErrorAnswerBoundaries(false);
     setArray(Array.from({ length: 4 }, (_, index) => index + 1));
   }
   const addExercise = () => {
@@ -65,13 +66,15 @@ export default function AddExercises({ showAddExercises, close }) {
         set_id: selectedSetId,
       }).then((res) => {
         answers.forEach((e, index) => {
-          upsertAnswersExercise({
-            //@ts-expect-error
-            answer: e[0],
-            exercise: res[0].id,
-            is_correct: e[1],
-            order_position: index + 1,
-          });
+          e[0] !== ""
+            ? upsertAnswersExercise({
+                //@ts-expect-error
+                answer: e[0],
+                exercise: res[0].id,
+                is_correct: e[1],
+                order_position: index + 1,
+              })
+            : null;
         });
       });
       setQuestion("");
@@ -88,7 +91,15 @@ export default function AddExercises({ showAddExercises, close }) {
   function checkForError(functionToCheck: () => any) {
     const questionExists = question !== "";
     const correctAnswerExists = answers.some((e) => e[0] && e[1]);
-    if (correctAnswerExists && questionExists && selectedSetId !== null) {
+    const atLeastTwoAnswersExist =
+      answers.filter((e) => e[0] !== "").length >= 2;
+    console.log(atLeastTwoAnswersExist);
+    if (
+      atLeastTwoAnswersExist &&
+      correctAnswerExists &&
+      questionExists &&
+      selectedSetId !== null
+    ) {
       functionToCheck();
     } else {
       selectedSetId === null && setShowErrorNoSetSelected(true);
@@ -99,6 +110,11 @@ export default function AddExercises({ showAddExercises, close }) {
         (errorText += checkForLineBreak(
           errorText,
           "Please enter at least one correct answer",
+        ));
+      !atLeastTwoAnswersExist &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "You need at least 2 answers",
         ));
       setErrorText(errorText);
       setShowErrorUpload(true);

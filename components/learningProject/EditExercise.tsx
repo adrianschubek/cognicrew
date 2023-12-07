@@ -21,6 +21,9 @@ export default function EditExercise(props: {
   useEffect(() => {
     if (!isInitialized) return;
     sendAnswers(answers);
+    if (answers.filter((e) => e[0] === "").length > 0 && answers.length > 2) {
+      updateCache(answers.filter((e) => e[0] !== ""));
+    }
   }, [answers]);
 
   useEffect(() => {
@@ -56,6 +59,20 @@ export default function EditExercise(props: {
       )
       .subscribe();
   }, []);
+  function updateCache(newAnswers: [string, boolean, number][]) {
+    const updatedData = {
+      ...oldData,
+      data: newAnswers.map((e) => {
+        return {
+          answer: e[0],
+          is_correct: e[1],
+          order_position: e[2],
+          exercise: listItem.id,
+        };
+      }),
+    };
+    mutate(updatedData, false);
+  }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -91,18 +108,7 @@ export default function EditExercise(props: {
               }
               const newAnswers = [...answers];
               newAnswers.pop();
-              const updatedData = {
-                ...oldData,
-                data: newAnswers.map((e) => {
-                  return {
-                    answer: e[0],
-                    is_correct: e[1],
-                    order_position: e[2],
-                    exercise: listItem.id,
-                  };
-                }),
-              };
-              mutate(updatedData, false);
+              updateCache(newAnswers);
               setAnswers(newAnswers);
               setShowErrorAnswerBoundaries(false);
             }}
