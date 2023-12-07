@@ -115,13 +115,13 @@ export default function LearningProject({ navigation, route }) {
       <FAB
        icon={"chart-bar"}
        onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
-       color={theme.colors.onPrimary}
+       color={theme.colors.onSecondaryContainer}
        style={{
          position: "absolute",
          margin: 16,
          right: 180,
          bottom: 0,
-         backgroundColor: theme.colors.primary,
+         backgroundColor: theme.colors.secondaryContainer,
        }}
        label={"Project statistics"}
       />
