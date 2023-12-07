@@ -74,6 +74,7 @@ setInterval(async () => {
   const { data: privateRoomStates } = await supabase
     .from("private_room_states")
     .select("data,room_id");
+  // This can happen after a game is complete and room is now back in lobby
   if (!privateRoomStates) return; /* deno assert is not null */
 
   const { data: playerAnswers } = await supabase
@@ -187,7 +188,14 @@ setInterval(async () => {
           score: !plr
             ? player.score
             : player.score +
-              (privateState.roundDuration * 1000 - plr.answer_time),
+              /* Score algorithm: 1p per 100ms */
+              Math.min(
+                privateState.roundDuration * 10,
+                Math.max(
+                  0,
+                  privateState.roundDuration * 10 - plr.answer_time / 100,
+                ),
+              ),
           currentCorrect: null,
           currentTimeNeeded: null,
         };
@@ -244,6 +252,7 @@ setInterval(async () => {
       // After game end / END_RESULTS screen is shown
       // dont close lobby instead let stay in obby so host can start new game
       newState.screen = ScreenState.LOBBY;
+      newState.userAnswers = null;
 
       // TODO: maybe allow host to lock lobby so no new players can join
       // set ingame to false
@@ -252,7 +261,11 @@ setInterval(async () => {
         .update({ is_ingame: false })
         .eq("id", state.room_id);
 
-      // TODO: old game data still in room state. maybe delete it?
+      // delete old game data
+      await supabase
+        .from("private_room_states")
+        .delete()
+        .eq("room_id", state.room_id);
     }
 
     // TODO: only update when state changed (deep-equal) maybe later. clone newState required
