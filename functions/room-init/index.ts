@@ -54,12 +54,11 @@ serve(async (req) => {
       .select("*")
       .eq("host", user?.id)
       .eq("id", rid)
-      .eq("is_ingame", false)
       .single();
     if (error)
       return err(
         /* TODO: dont error. instead overwrite room (remove old room states first!)) */
-        "User is not host of room or room is already ingame (#41)",
+        "User is not host of room (#41)",
         400,
       );
 
