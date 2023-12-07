@@ -192,7 +192,7 @@ export default function ExerciseGame({ navigation }) {
                     borderColor: checked.includes(option[1])
                       ? theme.colors.primary
                       : undefined,
-                    borderWidth: checked.includes(option[1]) ? 5 : 0,
+                    borderWidth: checked.includes(option[1]) ? 3 : 0,
                     backgroundColor:
                       roomState.userAnswers[option[1]].isCorrect === true
                         ? theme.colors.primaryContainer
