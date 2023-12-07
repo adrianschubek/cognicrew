@@ -107,7 +107,6 @@ export default function AddExercises({ showAddExercises, close }) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked];
-      console.log(newAnswers);
       setAnswers(newAnswers);
     };
   }
@@ -164,7 +163,6 @@ export default function AddExercises({ showAddExercises, close }) {
                   setArray(newArray);
                   answers.pop();
                   setShowErrorAnswerBoundaries(false);
-                  //console.log(answers);
                 }}
               />
               <IconButton
@@ -178,7 +176,6 @@ export default function AddExercises({ showAddExercises, close }) {
                   setArray(newArray);
                   answers.push(["", false]);
                   setShowErrorAnswerBoundaries(false);
-                  //console.log(answers);
                 }}
               />
             </View>

@@ -76,7 +76,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           //delete those answers that should get deleted from the exercise
           deleteAnswers(initial, answerOrAnswers);
           //answers need to be updated
-          console.log("answersOrAnswers: ", answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
               //@ts-expect-error

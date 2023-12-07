@@ -4,8 +4,6 @@ import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text } from "react-native-paper";
 import { View } from "react-native";
-import { set } from "cypress/types/lodash";
-import { PostgrestSingleResponse } from "@supabase/postgrest-js";
 import { supabase } from "../../supabase";
 
 export default function EditExercise(props: {
@@ -38,7 +36,6 @@ export default function EditExercise(props: {
       setAnswers(initializingAnswers);
     setOldData(data);
     sendInitialAnswers(initializingAnswers);
-    console.log("answers: ", initializingAnswers);
     setIsInitialized(true);
   }, [data]);
   useEffect(() => {
@@ -48,7 +45,13 @@ export default function EditExercise(props: {
         "postgres_changes",
         { event: "*", schema: "public", table: "answers_exercises" },
         (payload) => {
-          mutate();
+          if (
+            (payload.new[0] && (payload.new[0].exercise as number)) ===
+              (listItem.id as number) ||
+            (payload.old[0] && (payload.old[0].exercise as number)) ===
+              (listItem.id as number)
+          )
+            mutate();
         },
       )
       .subscribe();
@@ -99,9 +102,6 @@ export default function EditExercise(props: {
                   };
                 }),
               };
-              console.log("oldData: ", oldData);
-              console.log("newAnswers: ", newAnswers);
-              console.log("updatedData: ", updatedData);
               mutate(updatedData, false);
               setAnswers(newAnswers);
               setShowErrorAnswerBoundaries(false);
