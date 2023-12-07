@@ -21,7 +21,11 @@ export default function EditExercise(props: {
   useEffect(() => {
     if (!isInitialized) return;
     sendAnswers(answers);
-    if (answers.filter((e) => e[0] === "").length > 0 && answers.length > 2) {
+    if (
+      answers.filter((e) => e[0] === "").length > 0 &&
+      answers.length > 2 &&
+      answers.filter((e) => e[0] !== "" && e[1] === true).length > 0
+    ) {
       updateCache(answers.filter((e) => e[0] !== ""));
     }
   }, [answers]);
