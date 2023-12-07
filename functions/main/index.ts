@@ -195,7 +195,7 @@ setInterval(async () => {
                   0,
                   privateState.roundDuration * 10 -
                     /* to account for networking latencies give players -500ms for free */
-                    Math.min(0, plr.answer_time - 500) / 100,
+                    Math.max(0, plr.answer_time - 500) / 100,
                 ),
               ),
           currentCorrect: null,
