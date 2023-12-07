@@ -42,7 +42,7 @@ export default function ProjectStatistics() {
       <View style={styles.categoryStyle}>
         <Text variant="titleLarge">Cognifiles</Text>
         <Text variant="titleMedium">Amount of Files:</Text>
-        <Text variant="titleMedium">Amount of photos:</Text>
+        <Text variant="titleMedium">Amount of photos:</Text> {/*Why is files capitalized and photos not? Should be consistent*/}
       </View>
       <Divider />
       <Divider />
