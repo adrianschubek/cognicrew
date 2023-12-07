@@ -188,15 +188,19 @@ setInterval(async () => {
           score: !plr
             ? player.score
             : player.score +
-              /* Score algorithm: 1p per 100ms */
-              Math.min(
-                privateState.roundDuration * 10,
-                Math.max(
-                  0,
-                  privateState.roundDuration * 10 -
-                    /* to account for networking latencies give players -500ms for free */
-                    Math.max(0, plr.answer_time - 500) / 100,
-                ),
+              /* Score algorithm: 1p per 100ms. [0,100] */
+              Math.round(
+                (Math.min(
+                  privateState.roundDuration * 10,
+                  Math.max(
+                    0,
+                    privateState.roundDuration * 10 -
+                      /* to account for networking latencies give players -500ms for free */
+                      Math.max(0, plr.answer_time - 500) / 100,
+                  ),
+                ) /* Normalize to [0,100] */ /
+                  (privateState.roundDuration * 10)) *
+                  100,
               ),
           currentCorrect: null,
           currentTimeNeeded: null,
