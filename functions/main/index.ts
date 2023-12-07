@@ -260,11 +260,11 @@ setInterval(async () => {
       newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
       // TODO: maybe allow host to lock lobby so no new players can join
-      // set ingame to false
-      await supabase
+      // set ingame to false. Dont actually do this by default.
+     /*  await supabase
         .from("rooms")
         .update({ is_ingame: false })
-        .eq("id", state.room_id);
+        .eq("id", state.room_id); */
 
       // delete old game data
       await supabase
