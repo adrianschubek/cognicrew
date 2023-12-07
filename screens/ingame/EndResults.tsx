@@ -255,7 +255,7 @@ export default function EndResults() {
             marginTop: 20,
           }}
         >
-          {roomState.round < roomState.totalRounds &&
+          {roomState.round === roomState.totalRounds &&
             "Returning to lobby after 10s..."}
         </Text>
       </ScrollView>
