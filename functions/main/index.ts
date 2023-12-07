@@ -259,6 +259,12 @@ setInterval(async () => {
       // dont close lobby instead let stay in obby so host can start new game
       newState.screen = ScreenState.LOBBY;
       newState.userAnswers = null;
+      newState.players = newState.players.map((player) => ({
+        ...player,
+        score: 0,
+        currentCorrect: null,
+        currentTimeNeeded: null,
+      }));
 
       // TODO: maybe allow host to lock lobby so no new players can join
       // set ingame to false
