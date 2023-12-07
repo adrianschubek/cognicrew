@@ -49,6 +49,7 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
+  // TODO: useColorScheme to detect system theme and set it
   const { darkmode, setDarkmode } = usePreferencesStore();
   let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
   const toggleTheme = useCallback(() => setDarkmode(!darkmode), [darkmode]);
