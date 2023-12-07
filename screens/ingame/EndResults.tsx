@@ -4,11 +4,13 @@ import { useEffect, useMemo } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
-  withDelay, withTiming
+  withDelay,
+  withTiming,
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
+import { ScreenState } from "../../functions/rooms";
 export default function EndResults() {
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
@@ -245,6 +247,17 @@ export default function EndResults() {
             </Animated.View>
           );
         })}
+        <Text
+          variant="bodySmall"
+          style={{
+            textAlign: "center",
+            color: theme.colors.onSecondaryContainer,
+            marginTop: 20,
+          }}
+        >
+          {roomState.round < roomState.totalRounds &&
+            "Returning to lobby after 10s..."}
+        </Text>
       </ScrollView>
     </View>
   );

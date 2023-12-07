@@ -162,9 +162,14 @@ export default function ExerciseGame({ navigation }) {
                 : ""
             }`}
             labelStyle={{
-              color: checked.includes(option[1])
-                ? theme.colors.onPrimary
-                : theme.colors.onSecondaryContainer,
+              color:
+                roomState.screen === ScreenState.ROUND_SOLUTION
+                  ? roomState.userAnswers[option[1]].isCorrect === true
+                    ? theme.colors.onPrimaryContainer
+                    : theme.colors.onErrorContainer
+                  : checked.includes(option[1])
+                  ? theme.colors.onPrimary
+                  : theme.colors.onSecondaryContainer,
             }}
             value={option[1].toString()}
             disabled={alreadySubmitted}
@@ -179,17 +184,25 @@ export default function ExerciseGame({ navigation }) {
               {
                 margin: 10,
                 marginVertical: 5,
-                backgroundColor: checked.includes(option[1])
-                  ? theme.colors.primary
-                  : theme.colors.secondaryContainer,
                 borderRadius: 10,
                 paddingVertical: 15,
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
-                ? roomState.userAnswers[option[1]].isCorrect === true
-                  ? styles.correctAnswer
-                  : styles.wrongAnswer
-                : {},
+                ? {
+                    borderColor: checked.includes(option[1])
+                      ? theme.colors.primary
+                      : undefined,
+                    borderWidth: checked.includes(option[1]) ? 5 : 0,
+                    backgroundColor:
+                      roomState.userAnswers[option[1]].isCorrect === true
+                        ? theme.colors.primaryContainer
+                        : theme.colors.errorContainer,
+                  }
+                : {
+                    backgroundColor: checked.includes(option[1])
+                      ? theme.colors.primary
+                      : theme.colors.secondaryContainer,
+                  },
             ]}
           />
         ))}
