@@ -10,7 +10,8 @@ export default function GlobalStatistics() {
   const series = [10, 20, 17]; //hours spent
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
   //see, i am using your terminology here @Alex, that is my way of honouring you
-  const heading ="titleLarge"
+  //const heading = "headlineSmall";
+  const heading2 ="titleLarge"
   const heading3 ="titleMedium"
   const heading4 ="labelLarge"
   //Calculaions of pie chart statistics
@@ -24,7 +25,7 @@ export default function GlobalStatistics() {
 
   return (
     <ScrollView style={styles.container}>
-      <Text variant={heading} style={{ marginBottom: 20 }}>
+      <Text variant={heading2} style={{ marginBottom: 20 }}>
         Global Statistics
       </Text>
       <Divider />
@@ -32,7 +33,7 @@ export default function GlobalStatistics() {
       <Text variant={heading3} style={{ marginBottom: 20 }}>
         Total time spent on this app:{" "}
       </Text>
-      <Text variant={heading} style={[{ marginBottom: 20, marginTop: 30 }]}>
+      <Text variant={heading2} style={[{ marginBottom: 20, marginTop: 30 }]}>
         Files statistics
       </Text>
       <Divider />
@@ -41,7 +42,7 @@ export default function GlobalStatistics() {
         <Text variant={heading3}>Total amount of links:</Text>
         <Text variant={heading3}>Total amount of files: </Text>
       </View>
-      <Text variant={heading} style={[{ marginBottom: 20 }]}>
+      <Text variant={heading2} style={[{ marginBottom: 20 }]}>
         Game statistics
       </Text>
       <Divider />
