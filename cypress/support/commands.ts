@@ -20,8 +20,8 @@ Cypress.Commands.add("openApp", () => {
 });
 
 Cypress.Commands.add("login", () => {
-  cy.get('[data-testid="text-input-flat"]').first().type("foo@bar.de");
-  cy.get('[data-testid="text-input-flat"]').last().type("foobar");
+  cy.get('[data-testid="text-input-flat"]').first().type("5r0yjo@test.de");
+  cy.get('[data-testid="text-input-flat"]').last().type("password");
   cy.get('[data-testid="login-button"]').click();
 });
 
