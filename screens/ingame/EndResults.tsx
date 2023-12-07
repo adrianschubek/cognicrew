@@ -1,72 +1,17 @@
 import { ScrollView, View } from "react-native";
 import { Avatar, Card, Divider, Text, useTheme } from "react-native-paper";
-import { PublicRoomState } from "../../functions/rooms";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Animated, {
   Easing,
   useAnimatedStyle,
-  withDelay,
-  withSpring,
-  withTiming,
+  withDelay, withTiming
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
-import {
-  responsiveHeight,
-  responsiveScreenHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
 import { useRoomStateStore } from "../../stores/RoomStore";
-import { useAuth } from "../../providers/AuthProvider";
 import { getRandomColor } from "../../utils/common";
 export default function EndResults() {
   const roomState = useRoomStateStore((state) => state.roomState);
-  const uid = useAuth().user?.id;
   const theme = useTheme();
-  let self;
-  self = {
-    id: "10",
-    username: "TimoDerBoiii",
-    score: 125,
-    currentCorrect: false,
-    currentDone: false,
-  };
-  const otherPlayers = [
-    {
-      id: "1",
-      username: "Player 1",
-      score: 2,
-      currentCorrect: false,
-      currentDone: false,
-    },
-    {
-      id: "2",
-      username: "Player 2",
-      score: 3,
-      currentCorrect: false,
-      currentDone: false,
-    },
-    {
-      id: "3",
-      username: "Player 3",
-      score: 30,
-      currentCorrect: false,
-      currentDone: false,
-    },
-    {
-      id: "4",
-      username: "Player 4",
-      score: 40,
-      currentCorrect: false,
-      currentDone: false,
-    },
-    {
-      id: "5",
-      username: "Player 5",
-      score: 50,
-      currentCorrect: false,
-      currentDone: false,
-    },
-  ];
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
   //lowest to highest and only the first five  players
