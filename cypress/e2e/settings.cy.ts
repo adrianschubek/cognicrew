@@ -1,7 +1,7 @@
 beforeEach(() => {
   cy.openApp();
   cy.login();
-  cy.get('[href="/SettingsTab"]').click();
+  cy.get('[href="/_main_/SettingsTab"]').click();
 });
 
 it("can toggle dark/light mode", () => {
@@ -15,6 +15,6 @@ it("can toggle dark/light mode", () => {
   cy.get("button").should("not.contain.text", "Lightmode");
 });
 
-it("can change username", () => {
+// it("can change username", () => {
   // todo
-})
+// })
