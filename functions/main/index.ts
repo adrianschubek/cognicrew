@@ -258,8 +258,8 @@ setInterval(async () => {
       // After game end / END_RESULTS screen is shown
       // dont close lobby instead let stay in obby so host can start new game
       newState.screen = ScreenState.LOBBY;
-      newState.userAnswers = null;
-      newState.players = [];
+      // newState.userAnswers = null;
+      // newState.players = [];
 
       // TODO: maybe allow host to lock lobby so no new players can join
       // set ingame to false
@@ -271,6 +271,11 @@ setInterval(async () => {
       // delete old game data
       await supabase
         .from("private_room_states")
+        .delete()
+        .eq("room_id", state.room_id);
+      // delete player answers
+      await supabase
+        .from("player_answers")
         .delete()
         .eq("room_id", state.room_id);
     }
