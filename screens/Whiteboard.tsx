@@ -23,6 +23,7 @@ import { useAchievements, useUnlockAchievement } from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { supabase } from "../supabase";
 
 export default function Whiteboard({ navigation }) {
   const {
@@ -146,14 +147,18 @@ export default function Whiteboard({ navigation }) {
           <View style={styles.topright}>
             <Image
               source={{
-                uri: "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png",
+                uri: supabase.storage
+                  .from("profile-pictures")
+                  .getPublicUrl("icon").data.publicUrl,
               }}
               style={styles.image}
             />
             <Text>User 1</Text>
             <Image
               source={{
-                uri: "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png",
+                uri: supabase.storage
+                  .from("profile-pictures")
+                  .getPublicUrl("icon").data.publicUrl,
               }}
               style={styles.image}
             />
@@ -161,7 +166,7 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
 
-        <Divider style={styles.divider}/>
+        <Divider style={styles.divider} />
 
         <View style={styles.mid}>
           <Canvas
@@ -175,7 +180,7 @@ export default function Whiteboard({ navigation }) {
           />
         </View>
 
-        <Divider style={styles.divider}/>
+        <Divider style={styles.divider} />
 
         <View style={styles.bottomLeft}>
           <View style={styles.iconRow}>

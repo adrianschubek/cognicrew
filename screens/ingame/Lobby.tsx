@@ -141,7 +141,7 @@ export default function Lobby({ navigation }) {
                   {/* <Image
                   source={{
                     uri:
-                      "https://iptk.w101.de/storage/v1/object/public/profile-pictures/icon.png"
+                      supabase.storage.from("profile-pictures").getPublicUrl("icon").data.publicUrl
                   }}
                   style={{
                     width: responsiveWidth(10),

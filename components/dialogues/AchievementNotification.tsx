@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Image } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { supabase } from "../../supabase";
 
 const AchievementNotification = ({
   isVisible,
@@ -42,7 +43,9 @@ const AchievementNotification = ({
         {achievementIconName && (
           <Image
             source={{
-              uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievementIconName}`,
+              uri: supabase.storage
+                .from("achievements")
+                .getPublicUrl(achievementIconName).data.publicUrl,
             }}
             style={styles.icon}
           />

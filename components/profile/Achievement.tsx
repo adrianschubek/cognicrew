@@ -12,6 +12,7 @@ import {
   useUnlockAchievement,
 } from "../../utils/hooks";
 import { Snackbar, Divider, List } from "react-native-paper";
+import { supabase } from "../../supabase";
 
 export default function Achievement() {
   const { user } = useAuth();
@@ -45,7 +46,9 @@ export default function Achievement() {
               left={() => (
                 <Image
                   source={{
-                    uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}`,
+                    uri: supabase.storage
+                      .from("achievements")
+                      .getPublicUrl(achievement.icon_name).data.publicUrl,
                   }}
                   style={styles.image}
                 />
@@ -64,7 +67,9 @@ export default function Achievement() {
               left={() => (
                 <Image
                   source={{
-                    uri: `https://iptk.w101.de/storage/v1/object/public/achievements/${achievement.icon_name}`,
+                    uri: supabase.storage
+                      .from("achievements")
+                      .getPublicUrl(achievement.icon_name).data.publicUrl,
                   }}
                   style={styles.image}
                 />
