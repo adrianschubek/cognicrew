@@ -257,6 +257,7 @@ setInterval(async () => {
       // After game end / END_RESULTS screen is shown
       // dont close lobby instead let stay in obby so host can start new game
       newState.screen = ScreenState.LOBBY;
+      newState.round = 0; // fixes bug where answers not updated in quiz game on startup
       // newState.userAnswers = null;
       // newState.players = [];
 
