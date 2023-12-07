@@ -9,7 +9,10 @@ export default function GlobalStatistics() {
   const widthAndHeight = 100;
   const series = [10, 20, 17]; //hours spent
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
-
+  //see, i am using your terminology here @Alex, that is my way of honouring you
+  const heading ="titleLarge"
+  const heading3 ="titleMedium"
+  const heading4 ="labelLarge"
   //Calculaions of pie chart statistics
   let sumTimeGames = series.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
@@ -21,31 +24,31 @@ export default function GlobalStatistics() {
 
   return (
     <ScrollView style={styles.container}>
-      <Text variant="titleLarge" style={{ marginBottom: 20 }}>
+      <Text variant={heading} style={{ marginBottom: 20 }}>
         Global Statistics
       </Text>
       <Divider />
 
-      <Text variant="titleMedium" style={{ marginBottom: 20 }}>
+      <Text variant={heading3} style={{ marginBottom: 20 }}>
         Total time spent on this app:{" "}
       </Text>
-      <Text variant="titleLarge" style={[{ marginBottom: 20, marginTop: 30 }]}>
+      <Text variant={heading} style={[{ marginBottom: 20, marginTop: 30 }]}>
         Files statistics
       </Text>
       <Divider />
       <View style={{ gap: 20, marginBottom: 30 }}>
-        <Text variant="titleMedium">Total amount of exercises:</Text>
-        <Text variant="titleMedium">Total amount of links:</Text>
-        <Text variant="titleMedium">Total amount of files: </Text>
+        <Text variant={heading3}>Total amount of exercises:</Text>
+        <Text variant={heading3}>Total amount of links:</Text>
+        <Text variant={heading3}>Total amount of files: </Text>
       </View>
-      <Text variant="titleLarge" style={[{ marginBottom: 20 }]}>
+      <Text variant={heading} style={[{ marginBottom: 20 }]}>
         Game statistics
       </Text>
       <Divider />
       <View style={{ gap: 20, marginBottom: 20 }}>
-        <Text variant="titleMedium">Total amount of learning projects:</Text>
-        <Text variant="titleMedium">Total amount of flashcards:</Text>
-        <Text variant="titleMedium">Time spent in learning games:</Text>
+        <Text variant={heading3}>Total amount of learning projects:</Text>
+        <Text variant={heading3}>Total amount of flashcards:</Text>
+        <Text variant={heading3}>Time spent in learning games:</Text>
       </View>
       <View style={styles.piechart}>
         <PieChart
@@ -54,13 +57,13 @@ export default function GlobalStatistics() {
           sliceColor={sliceColor}
         />
         <View style={styles.piechartExplanation}>
-          <Text variant="labelLarge" style={[{ color: sliceColor[0] }]}>
+          <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
             Exercises: {series[0]} hours, {percentExercise} %{" "}
           </Text>
-          <Text variant="labelLarge" style={[{ color: sliceColor[1] }]}>
+          <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
             Flashcards: {series[1]} hours, {percentQuiz} %{" "}
           </Text>
-          <Text variant="labelLarge" style={[{ color: sliceColor[2] }]}>
+          <Text variant={heading4} style={[{ color: sliceColor[2] }]}>
             Whiteboard: {series[2]} hours, {percentWhiteboard} %
           </Text>
         </View>
