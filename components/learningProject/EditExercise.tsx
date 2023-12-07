@@ -4,17 +4,20 @@ import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text } from "react-native-paper";
 import { View } from "react-native";
+import { set } from "cypress/types/lodash";
+import { PostgrestSingleResponse } from "@supabase/postgrest-js";
+import { supabase } from "../../supabase";
 
 export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswers: (answers: [string, boolean, number][]) => any;
-  triggerMutate: boolean;
 }) {
-  const { listItem, sendAnswers, sendInitialAnswers, triggerMutate } = props;
+  const { listItem, sendAnswers, sendInitialAnswers } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [oldData, setOldData] = useState<any>(null);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([]);
   const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
   useEffect(() => {
@@ -33,14 +36,23 @@ export default function EditExercise(props: {
       ]);
     }),
       setAnswers(initializingAnswers);
+    setOldData(data);
     sendInitialAnswers(initializingAnswers);
     console.log("answers: ", initializingAnswers);
     setIsInitialized(true);
   }, [data]);
-
   useEffect(() => {
-    mutate();
-  }, [triggerMutate]);
+    const realtimeAnswers = supabase
+      .channel("answers_exercises_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "answers_exercises" },
+        (payload) => {
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -76,6 +88,21 @@ export default function EditExercise(props: {
               }
               const newAnswers = [...answers];
               newAnswers.pop();
+              const updatedData = {
+                ...oldData,
+                data: newAnswers.map((e) => {
+                  return {
+                    answer: e[0],
+                    is_correct: e[1],
+                    order_position: e[2],
+                    exercise: listItem.id,
+                  };
+                }),
+              };
+              console.log("oldData: ", oldData);
+              console.log("newAnswers: ", newAnswers);
+              console.log("updatedData: ", updatedData);
+              mutate(updatedData, false);
               setAnswers(newAnswers);
               setShowErrorAnswerBoundaries(false);
             }}
