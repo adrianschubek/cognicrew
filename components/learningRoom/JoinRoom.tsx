@@ -21,7 +21,7 @@ export default function JoinRoom({ navigation }) {
   return (
     <React.Fragment>
       <Text style={[styles.container, { textAlign: "center" }]}>
-        Join room via ID:
+        Enter Join Code
       </Text>
       <TextInput
         editable
@@ -42,6 +42,7 @@ export default function JoinRoom({ navigation }) {
         }}
         maxLength={7}
         inputMode="numeric"
+        mode="outlined"
         style={{ textAlign: "center", marginBottom: 10 }}
       />
       <View style={{ flexDirection: "row", gap: 5 }}>

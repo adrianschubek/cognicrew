@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Avatar, Text, Card, IconButton, Button } from "react-native-paper";
+import { Avatar, Text, Card, IconButton, Button, useTheme } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import { useSoundSystem1, useUsername } from "../utils/hooks";
 import { useEffect } from "react";
@@ -11,6 +11,7 @@ import { NAVIGATION } from "../types/common";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
+  const theme = useTheme();
 
   useEffect(() => {
     navigation.setOptions({
@@ -39,12 +40,9 @@ export default function HomeScreen({ navigation }) {
         />
       </View>
       <View style={styles.body}>
-        <Card style={styles.card}>
-          <IconButton
-            icon="door-open"
-            size={20}
-            onPress={() => console.log("Pressed")}
-          />
+        <Card style={styles.card} mode="contained" theme={{
+          colors: { surfaceVariant: theme.colors.primaryContainer },
+        }}>
           <JoinRoom navigation={navigation} />
         </Card>
       </View>
