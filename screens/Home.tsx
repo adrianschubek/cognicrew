@@ -41,7 +41,7 @@ export default function HomeScreen({ navigation }) {
       </View>
       <View style={styles.body}>
         <Card style={styles.card} mode="contained" theme={{
-          colors: { surfaceVariant: theme.colors.primaryContainer },
+          colors: { surfaceVariant: theme.colors.secondaryContainer },
         }}>
           <JoinRoom navigation={navigation} />
         </Card>

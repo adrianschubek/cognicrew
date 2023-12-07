@@ -9,13 +9,14 @@ export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswers: (answers: [string, boolean, number][]) => any;
+  triggerMutate: boolean;
 }) {
-  const { listItem, sendAnswers, sendInitialAnswers } = props;
+  const { listItem, sendAnswers, sendInitialAnswers, triggerMutate } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([]);
-  const { data, error, isLoading } = useAnswersExercises(listItem.id);
+  const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
   useEffect(() => {
     if (!isInitialized) return;
     sendAnswers(answers);
@@ -33,9 +34,13 @@ export default function EditExercise(props: {
     }),
       setAnswers(initializingAnswers);
     sendInitialAnswers(initializingAnswers);
+    console.log("answers: ", initializingAnswers);
     setIsInitialized(true);
   }, [data]);
 
+  useEffect(() => {
+    mutate();
+  }, [triggerMutate]);
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];

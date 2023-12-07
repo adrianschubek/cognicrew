@@ -34,6 +34,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   >([]);
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [triggerMutate, setTriggerMutate] = useState<boolean>(false);
   //Exercise hooks
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
@@ -64,6 +65,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     answerOrAnswers: any,
     priority: number,
     initial: any,
+    triggerMutate: boolean,
   ) => {
     type === ManagementType.EXERCISE
       ? upsertExercise({
@@ -74,7 +76,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
-          deleteAnswers(initial, answerOrAnswers);
+          deleteAnswers(initial, answerOrAnswers).then(() => {
+            setTriggerMutate(!triggerMutate);
+          });
           //answers need to be updated
           console.log("answersOrAnswers: ", answerOrAnswers);
           answerOrAnswers.forEach((e) => {
@@ -102,7 +106,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       ? deleteExercise({ id: listItem.id })
       : deleteFlashcard({ id: listItem.id });
   };
-  const update = (question, answerOrAnswers, priority, initalAnswers) => {
+  const update = (question, answerOrAnswers, priority, initalAnswers, triggerMutate) => {
     checkForError(
       () => {
         updateFlashcardOrExercise(
@@ -110,6 +114,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           answerOrAnswers,
           priority,
           initalAnswers,
+          triggerMutate,
         );
         resetCard();
       },
@@ -151,15 +156,21 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   }
   // Create the debounced function
   const debouncedUpdate = useCallback(
-    debounce((question, answerOrAnswers, priority, initial) => {
-      update(question, answerOrAnswers, priority, initial);
+    debounce((question, answerOrAnswers, priority, initial, triggerMutate) => {
+      update(question, answerOrAnswers, priority, initial, triggerMutate);
     }, 500),
     [],
   );
   useEffect(() => {
     // Call the debounced function
     isInitialized &&
-      debouncedUpdate(question, answerOrAnswers, priority, initialAnswers);
+      debouncedUpdate(
+        question,
+        answerOrAnswers,
+        priority,
+        initialAnswers,
+        triggerMutate,
+      );
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
 
   useEffect(() => {
@@ -215,6 +226,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             listItem={listItem}
             sendAnswers={(val) => setAnswerOrAnswers(val)}
             sendInitialAnswers={(answers) => setInitialAnswers(answers)}
+            triggerMutate={triggerMutate}
           />
         ) : (
           <EditFlashcard
