@@ -109,7 +109,7 @@ export default function ProjectGroups() {
           key={semester}
         >
           <Card.Title title={semester} />
-          {/* TODO: filter projects. hide */}
+          {/* TODO: filter projects. hide  mit paper Menu */}
           {/* <Card.Title title="Hide"></Card.Title>  */}
           <Card.Content style={styles.projectGroupContent}>
             {projectGroups[semester]
