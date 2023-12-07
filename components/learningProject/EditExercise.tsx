@@ -4,6 +4,7 @@ import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text } from "react-native-paper";
 import { View } from "react-native";
+import { supabase } from "../../supabase";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -14,11 +15,19 @@ export default function EditExercise(props: {
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [oldData, setOldData] = useState<any>(null);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([]);
-  const { data, error, isLoading } = useAnswersExercises(listItem.id);
+  const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
   useEffect(() => {
     if (!isInitialized) return;
     sendAnswers(answers);
+    if (
+      answers.filter((e) => e[0] === "").length > 0 &&
+      answers.length > 2 &&
+      answers.filter((e) => e[0] !== "" && e[1] === true).length > 0
+    ) {
+      updateCache(answers.filter((e) => e[0] !== ""));
+    }
   }, [answers]);
 
   useEffect(() => {
@@ -32,10 +41,42 @@ export default function EditExercise(props: {
       ]);
     }),
       setAnswers(initializingAnswers);
+    setOldData(data);
     sendInitialAnswers(initializingAnswers);
     setIsInitialized(true);
   }, [data]);
-
+  useEffect(() => {
+    const realtimeAnswers = supabase
+      .channel("answers_exercises_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "answers_exercises" },
+        (payload) => {
+          if (
+            (payload.new[0] && (payload.new[0].exercise as number)) ===
+              (listItem.id as number) ||
+            (payload.old[0] && (payload.old[0].exercise as number)) ===
+              (listItem.id as number)
+          )
+            mutate();
+        },
+      )
+      .subscribe();
+  }, []);
+  function updateCache(newAnswers: [string, boolean, number][]) {
+    const updatedData = {
+      ...oldData,
+      data: newAnswers.map((e) => {
+        return {
+          answer: e[0],
+          is_correct: e[1],
+          order_position: e[2],
+          exercise: listItem.id,
+        };
+      }),
+    };
+    mutate(updatedData, false);
+  }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -71,6 +112,7 @@ export default function EditExercise(props: {
               }
               const newAnswers = [...answers];
               newAnswers.pop();
+              updateCache(newAnswers);
               setAnswers(newAnswers);
               setShowErrorAnswerBoundaries(false);
             }}

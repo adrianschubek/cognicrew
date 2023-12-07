@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Keyboard, View, Text } from "react-native";
+import { StyleSheet, Keyboard, View } from "react-native";
 import {
   Button,
   Dialog,
@@ -8,6 +8,7 @@ import {
   Portal,
   TextInput,
   useTheme,
+  Text,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -53,6 +54,7 @@ export default function AddExercises({ showAddExercises, close }) {
     Keyboard.dismiss();
     setShowErrorNoSetSelected(false);
     setShowErrorUpload(false);
+    setShowErrorAnswerBoundaries(false);
     setArray(Array.from({ length: 4 }, (_, index) => index + 1));
   }
   const addExercise = () => {
@@ -64,13 +66,15 @@ export default function AddExercises({ showAddExercises, close }) {
         set_id: selectedSetId,
       }).then((res) => {
         answers.forEach((e, index) => {
-          upsertAnswersExercise({
-            //@ts-expect-error
-            answer: e[0],
-            exercise: res[0].id,
-            is_correct: e[1],
-            order_position: index + 1,
-          });
+          e[0] !== ""
+            ? upsertAnswersExercise({
+                //@ts-expect-error
+                answer: e[0],
+                exercise: res[0].id,
+                is_correct: e[1],
+                order_position: index + 1,
+              })
+            : null;
         });
       });
       setQuestion("");
@@ -87,7 +91,15 @@ export default function AddExercises({ showAddExercises, close }) {
   function checkForError(functionToCheck: () => any) {
     const questionExists = question !== "";
     const correctAnswerExists = answers.some((e) => e[0] && e[1]);
-    if (correctAnswerExists && questionExists && selectedSetId !== null) {
+    const atLeastTwoAnswersExist =
+      answers.filter((e) => e[0] !== "").length >= 2;
+    console.log(atLeastTwoAnswersExist);
+    if (
+      atLeastTwoAnswersExist &&
+      correctAnswerExists &&
+      questionExists &&
+      selectedSetId !== null
+    ) {
       functionToCheck();
     } else {
       selectedSetId === null && setShowErrorNoSetSelected(true);
@@ -99,6 +111,11 @@ export default function AddExercises({ showAddExercises, close }) {
           errorText,
           "Please enter at least one correct answer",
         ));
+      !atLeastTwoAnswersExist &&
+        (errorText += checkForLineBreak(
+          errorText,
+          "You need at least 2 answers",
+        ));
       setErrorText(errorText);
       setShowErrorUpload(true);
     }
@@ -107,7 +124,6 @@ export default function AddExercises({ showAddExercises, close }) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked];
-      console.log(newAnswers);
       setAnswers(newAnswers);
     };
   }
@@ -164,7 +180,6 @@ export default function AddExercises({ showAddExercises, close }) {
                   setArray(newArray);
                   answers.pop();
                   setShowErrorAnswerBoundaries(false);
-                  //console.log(answers);
                 }}
               />
               <IconButton
@@ -178,7 +193,6 @@ export default function AddExercises({ showAddExercises, close }) {
                   setArray(newArray);
                   answers.push(["", false]);
                   setShowErrorAnswerBoundaries(false);
-                  //console.log(answers);
                 }}
               />
             </View>
