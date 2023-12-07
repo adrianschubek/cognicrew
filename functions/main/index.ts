@@ -277,7 +277,7 @@ setInterval(async () => {
 
     // TODO: only update when state changed (deep-equal) maybe later. clone newState required
     // (+) Less DB Calls (+) Less WebSocket messages server->client
-    // (-) Increses Latency (-) More Server CPU usage
+    // (-) Increses Latency (-) More Server CPU usage (-) when client suddenly disconnects the state may not be updated a while
     // if (deepEqual(state.data, newState)) continue;
 
     // updatedCount++;
