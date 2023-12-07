@@ -19,8 +19,8 @@ import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
 import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
 import { SWRConfig } from "swr";
-import LoadingOverlay from "./components/alerts/LoadingOverlay";
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
+// import { Appearance, useColorScheme } from "react-native";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -57,6 +57,15 @@ export default function App() {
     () => ({ toggleTheme, darkmode }),
     [toggleTheme, darkmode],
   );
+  // useEffect(() => {
+  //   const subscription = Appearance.addChangeListener(
+  //     (preferences) => {
+  //       const {colorScheme: scheme} = preferences;
+  //       setDarkmode(scheme === 'dark');
+  //     },
+  //   );
+  //   return () => subscription?.remove();
+  // }, [setDarkmode]);
 
   return (
     <PreferencesContext.Provider value={preferences}>
@@ -65,9 +74,6 @@ export default function App() {
           <AuthProvider>
             <SWRConfig
               value={{
-                // FIXME:
-                // revalidateIfStale: false,
-                // revalidateOnFocus: false,
                 provider: () => new Map(),
                 isVisible: () => true,
                 isOnline: () => true,
