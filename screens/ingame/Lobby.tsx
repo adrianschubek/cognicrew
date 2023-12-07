@@ -125,7 +125,7 @@ export default function Lobby({ navigation }) {
           height: "100%",
         }}
       >
-        <View style={{ flex: 1, marginTop: 20 }}>
+        <View style={{ flex: 1, marginTop: 20, alignItems: "center" }}>
           <View style={{ flex: 1 }}>
             <FlatList
               contentContainerStyle={{
@@ -335,14 +335,46 @@ export default function Lobby({ navigation }) {
             />
           </View>
 
-          <View style={{ flex: 4, alignItems: "center" }}>
+          <View style={{ alignItems: "center", marginBottom: 10 }}>
             <Button
               mode="contained"
+              disabled
+              theme={{
+                colors: {
+                  primary: theme.colors.secondaryContainer,
+                  onPrimary: theme.colors.secondary,
+                },
+              }}
               style={{
-                width: responsiveWidth(45),
+                width: responsiveWidth(95),
                 alignSelf: "flex-start",
-                marginTop: 180,
-                margin: 20,
+                marginVertical: 5,
+                borderRadius: 10,
+                paddingVertical: 5,
+              }}
+              onPress={async () => {
+                /* TODO */
+              }}
+              icon={"lock-open-variant-outline"}
+            >
+              Close Room
+            </Button>
+            {/* </View>
+          <View style={{ flex: 4, alignItems: "center" }}> */}
+            <Button
+              mode="contained"
+              theme={{
+                colors: {
+                  primary: theme.colors.errorContainer,
+                  onPrimary: theme.colors.error,
+                },
+              }}
+              style={{
+                width: responsiveWidth(95),
+                alignSelf: "flex-start",
+                marginVertical: 5,
+                borderRadius: 10,
+                paddingVertical: 5,
               }}
               onPress={async () => {
                 const { error } = await supabase.rpc("leave_room");
@@ -351,8 +383,9 @@ export default function Lobby({ navigation }) {
                 setRoomState(null);
                 navigation.navigate(NAVIGATION.HOME);
               }}
+              icon={"trash-can-outline"}
             >
-              Close
+              Delete Room
             </Button>
           </View>
         </View>
