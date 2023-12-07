@@ -195,7 +195,7 @@ export default function ExerciseGame({ navigation }) {
                     borderWidth: checked.includes(option[1]) ? 3 : 0,
                     backgroundColor:
                       roomState.userAnswers[option[1]].isCorrect === true
-                        ? theme.colors.primaryContainer
+                        ? "#4CAF50" /* theme.colors.primaryContainer */
                         : theme.colors.errorContainer,
                   }
                 : {
