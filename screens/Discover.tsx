@@ -138,7 +138,12 @@ if (!data) return null
       <FlatList
         /*TODO : ADDING DIALOG */
         style={styles.flatList}
-        data={data.filter(project=>project.group===selectedSemester)}
+        data={data.filter(
+          (project) =>
+            project.group === selectedSemester &&
+            (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              project.description.toLowerCase().includes(searchQuery.toLowerCase()))
+        )}
         renderItem={({ item, index }) => (
           <Card style={styles.card} 
                 key={index.toString()}
