@@ -22,11 +22,8 @@ export default function EndResults({ navigation }) {
     navigation.addListener("beforeRemove", (e) => {
       // if roomstate screen not this one, then return without confirmation. access store directly bypass react
       if (
-        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
         useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_RESULTS &&
-        useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_SOLUTION
+        ScreenState.ROUND_RESULTS
       )
         return;
 

@@ -41,8 +41,6 @@ export default function FlashcardGame({ route, navigation }) {
       if (
         useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
         useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_RESULTS &&
-        useRoomStateStore.getState().roomState?.screen !==
           ScreenState.ROUND_SOLUTION
       )
         return;
