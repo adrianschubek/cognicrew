@@ -188,6 +188,7 @@ export function useDeleteProjectRating() {
   );
 }
 
+
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -198,6 +199,7 @@ export function useAchievements() {
     ),
   );
 }
+
 
 /**
  * Returns all achievements for a specific user.
