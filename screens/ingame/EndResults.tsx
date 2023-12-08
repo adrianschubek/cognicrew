@@ -27,7 +27,7 @@ export default function EndResults({navigation}) {
       )
         return;
     });
-  }, [navigaton]);
+  }, [navigation]);
 
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
