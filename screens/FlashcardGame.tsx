@@ -36,6 +36,13 @@ export default function FlashcardGame({ route, navigation }) {
   const { confirm } = useAlerts();
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
+      // if roomstate screen not this one, then return without confirmation
+      if (
+        roomState.screen !== ScreenState.INGAME &&
+        roomState.screen !== ScreenState.ROUND_RESULTS &&
+        roomState.screen !== ScreenState.ROUND_SOLUTION
+      )
+        return;
       // Prevent default behavior of leaving the screen
       e.preventDefault();
 
@@ -44,7 +51,7 @@ export default function FlashcardGame({ route, navigation }) {
         title: "Leave room?",
         message: "Do you want to leave this room?",
         icon: "exit-run",
-        okText: "Discard",
+        okText: "Leave",
         okAction: async () => {
           await supabase.rpc("leave_room");
         },

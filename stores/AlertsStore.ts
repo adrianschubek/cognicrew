@@ -243,6 +243,11 @@ type AlertsStoreType = {
    * Removes the current alert from the queue and sets the next alert as the current alert.
    */
   next: () => void;
+  /**
+   * Dismisses the current active alert.
+   * If a key is provided, it will dismiss the current alert only if the key matches.
+   */
+  dismiss: (key?: string) => void;
 };
 
 /**
@@ -253,6 +258,9 @@ type AlertsStoreType = {
 export const useAlertsStore = create<AlertsStoreType>((set, get) => ({
   activeAlert: null,
   alerts: [],
+  dismiss(key) {
+    if (!key || get().activeAlert?.key === key) return get().next();
+  },
   dispatch: (alert: Alert) => {
     // ignore duplicate alerts already in queue
     if (

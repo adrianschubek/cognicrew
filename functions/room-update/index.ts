@@ -128,9 +128,15 @@ serve(async (req) => {
         }
         break;
       }
-      case "reset-lobby":
-        return err("Not implemented (#26)", 501);
+      case "reset-room": {
+        // check if user is host
+        const { data: hostData, error: hostError } = await supabase
+          .from("rooms")
+          .select("host_id")
+          .eq("id", rid)
+          .single();
         break;
+      }
       case "skip-round":
         return err("Not implemented (#27)", 501);
         break;
