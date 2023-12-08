@@ -349,12 +349,11 @@ export default function Lobby({ navigation }) {
                           dismissable: false,
                           okText: "Start Game",
                           okAction: async (values) => {
-                            console.log("Round Duration: " + +values[0]);
-                            console.log("Number of Rounds: " + +values[1]);
                             const { data, error } =
                               await supabase.functions.invoke("room-init", {
                                 body: {
                                   type: ManagementType.BOARD,
+                                  name: values[0],
                                 } as RoomClientInit,
                               });
                             if (error) return handleEdgeError(error);
@@ -363,13 +362,11 @@ export default function Lobby({ navigation }) {
                             {
                               type: "text",
                               label: "Name",
-                              helperText: "Save your cogniboard as...",
+                              helperText: "Optionally save your cogniboard as...",
                               icon: "format-text",
-                              placeholder: "optional",
                               errorText:
                                 "Please enter a value between 0 and 600",
                               required: false,
-                              disabled: true,
                             },
                           ],
                         });
