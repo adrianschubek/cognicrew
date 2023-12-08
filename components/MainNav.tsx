@@ -239,7 +239,7 @@ function MainTabs({ navigation }) {
               }
               info({
                 key: "room-ingame-closed",
-                message: "Room was closed by host or server (#70)",
+                message: "Room was closed by host (#70)",
               });
               setRoom(null);
               setRoomState(null);

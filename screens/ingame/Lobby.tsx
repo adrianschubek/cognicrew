@@ -404,7 +404,7 @@ export default function Lobby({ navigation }) {
               }}
               icon={!room?.is_ingame ? "lock-open-variant-outline" : "lock"}
             >
-              {!room?.is_ingame ? "Room is unlocked" : "Room is locked"}
+              {!room?.is_ingame ? "Room is open" : "Room is closed"}
             </Button>
             {/* </View>
           <View style={{ flex: 4, alignItems: "center" }}> */}
