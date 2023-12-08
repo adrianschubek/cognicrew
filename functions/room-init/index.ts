@@ -86,7 +86,7 @@ serve(async (req) => {
 
     // validate body
     if (body.type !== 0 && body.type !== 1)
-      return err("Invalid type [rint:bvl0]", 400);
+      return err("Invalid type (#421)", 400);
     if (body.sets.length === 0) return err("No sets selected (#42)", 400);
     if (body.roundDuration <= 0 || body.roundDuration > 600)
       return err("Invalid round duration (#43)", 400);
