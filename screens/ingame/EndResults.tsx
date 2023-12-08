@@ -12,20 +12,22 @@ import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
 import { useSoundSystem2 } from "../../utils/hooks";
-export default function EndResults() {
+export default function EndResults({navigation}) {
   useSoundSystem2();
 
   useEffect(() => {
-    // if roomstate screen not this one, then return without confirmation. access store directly bypass react
-    if (
-      useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
-      useRoomStateStore.getState().roomState?.screen !==
-        ScreenState.ROUND_RESULTS &&
-      useRoomStateStore.getState().roomState?.screen !==
-        ScreenState.ROUND_SOLUTION
-    )
-      return;
-  }, []);
+    navigation.addListener("beforeRemove", (e) => {
+      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
+      if (
+        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_RESULTS &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_SOLUTION
+      )
+        return;
+    });
+  }, [navigaton]);
 
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
