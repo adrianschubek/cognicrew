@@ -1,8 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View, BackHandler
-} from "react-native";
+import { StyleSheet, View, BackHandler } from "react-native";
 import { TextInput, Text, Button, Dialog } from "react-native-paper";
 import {
   responsiveHeight,
@@ -11,7 +8,9 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
-  useAlerts, useSoundSystem2
+  useAlerts,
+  useConfirmLeaveLobby,
+  useSoundSystem2,
 } from "../utils/hooks";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
@@ -24,25 +23,11 @@ import { useFocusEffect } from "@react-navigation/native";
 
 export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
+  useConfirmLeaveLobby();
 
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
 
-  useFocusEffect(() => {
-    // React.useCallback(() => {
-      const onBackPress = () => {
-        // (async () => await supabase.rpc("leave_room"))();
-        return true;
-      };
-
-      const listener = BackHandler.addEventListener(
-        "hardwareBackPress",
-        onBackPress,
-      );
-
-      return () => listener.remove();
-    // }, []);
-  });
 
   const { error: errrorAlert } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);

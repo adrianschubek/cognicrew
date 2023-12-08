@@ -13,6 +13,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
   useAchievements,
   useAlerts,
+  useConfirmLeaveLobby,
   useExercisesAndAnswers,
   useSoundSystem2,
   useUnlockAchievement,
@@ -31,6 +32,7 @@ import { set } from "cypress/types/lodash";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
+  useConfirmLeaveLobby();
   const { user } = useAuth();
   const roomState = useRoomStateStore(
     (state) => state.roomState,
