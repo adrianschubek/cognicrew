@@ -32,6 +32,7 @@ export const enum ManagementType {
   EXERCISE = 1,
   FILE = 2,
   LINK = 3,
+  BOARD = 4
 }
 export type orderByPrinciple =
   | "name"

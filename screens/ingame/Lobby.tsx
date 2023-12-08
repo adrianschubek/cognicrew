@@ -330,7 +330,63 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-                navigation.navigate(NAVIGATION.WHITEBOARD);
+                confirm({
+                  title: "Choose cogniboard",
+                  icon: "cards",
+                  dismissable: false,
+                  okText: "Load",
+                  okAction: (setValues) => {
+                    // TODO: load cogniboard. same dialog as below
+                  },
+                  fields: [
+                    {
+                      type: "search-radio",
+                      placeholder: "Search cogniboards",
+                      data: [],
+                      required: true,
+                    },
+                    {
+                      type: "button",
+                      label: "New Cogniboard",
+                      icon: "plus",
+                      action(values) {
+                        confirm({
+                          title: "Configure game",
+                          icon: "cog",
+                          dismissable: false,
+                          okText: "Start Game",
+                          okAction: async (values) => {
+                            console.log("Round Duration: " + +values[0]);
+                            console.log("Number of Rounds: " + +values[1]);
+                            const { data, error } =
+                              await supabase.functions.invoke("room-init", {
+                                body: {
+                                  type: ManagementType.BOARD,
+                                  sets: [],
+                                  roundDuration: +values[0],
+                                  numberOfRounds: +values[1],
+                                },
+                              });
+                            if (error) return handleEdgeError(error);
+                          },
+                          fields: [
+                            {
+                              type: "text",
+                              label: "Name",
+                              helperText: "Save your cogniboard as...",
+                              icon: "format-text",
+                              placeholder: "optional",
+                              errorText:
+                                "Please enter a value between 0 and 600",
+                              required: false,
+                              disabled: true,
+                            },
+                          ],
+                        });
+                      },
+                    },
+                  ],
+                });
               }}
             />
           </View>
