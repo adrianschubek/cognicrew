@@ -11,10 +11,12 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
-import { useSoundSystem2 } from "../../utils/hooks";
-export default function EndResults() {
+import { useAlerts, useConfirmLeaveLobby, useSoundSystem2 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
+export default function EndResults({ navigation }) {
   useSoundSystem2();
+  useConfirmLeaveLobby();
 
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();

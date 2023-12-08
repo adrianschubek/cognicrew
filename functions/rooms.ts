@@ -130,7 +130,7 @@ export type PrivateRoomState = {
 export type RoomClientUpdate =
   | { type: "flashcard-answer"; answer: string }
   | { type: "exercise-answer"; answerIndex: number[] }
-  | { type: "reset-lobby" } /* TOOD: in db set is_ingame back to false */
+  | { type: "reset-room" }
   | { type: "skip-round" }; /* host only */
 
 export type RoomClientInit =

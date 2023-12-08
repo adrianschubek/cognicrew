@@ -13,6 +13,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
   useAchievements,
   useAlerts,
+  useConfirmLeaveLobby,
   useExercisesAndAnswers,
   useSoundSystem2,
   useUnlockAchievement,
@@ -31,28 +32,13 @@ import { set } from "cypress/types/lodash";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
+  useConfirmLeaveLobby();
   const { user } = useAuth();
   const roomState = useRoomStateStore(
     (state) => state.roomState,
   ); /* TODO: memoize */
   const { error: errrorAlert, confirm } = useAlerts();
 
-  useEffect(() => {
-    navigation.addListener("beforeRemove", (e) => {
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        okText: "Discard",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
 
   const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
@@ -212,8 +198,8 @@ export default function ExerciseGame({ navigation }) {
                     borderWidth: checked.includes(option[1]) ? 3 : 0,
                     backgroundColor:
                       roomState.userAnswers[option[1]].isCorrect === true
-                        ? "#4CAF50" /* theme.colors.primaryContainer */
-                        : theme.colors.errorContainer,
+                        ? /* theme.colors.primaryContainer */ "#4CAF50" /* theme.colors.primaryContainer */
+                        : theme.colors.backdrop,
                   }
                 : {
                     backgroundColor: checked.includes(option[1])

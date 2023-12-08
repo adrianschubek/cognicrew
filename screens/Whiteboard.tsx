@@ -19,11 +19,18 @@ import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
-import { useAchievements, useAlerts, useUnlockAchievement } from "../utils/hooks";
+import {
+  useAchievements,
+  useAlerts,
+  useConfirmLeaveLobby,
+  useUnlockAchievement,
+} from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
+import { useRoomStateStore } from "../stores/RoomStore";
+import { ScreenState } from "../functions/rooms";
 
 export default function Whiteboard({ navigation }) {
   const {
@@ -35,24 +42,7 @@ export default function Whiteboard({ navigation }) {
     color,
     selectedShape,
   } = useWhiteboardStore();
-
-  const { confirm } = useAlerts();
-  useEffect(() => {
-    navigation.addListener("beforeRemove", (e) => {
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        okText: "Discard",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
+  useConfirmLeaveLobby();
 
   const { sound, playSound, stopSound, loadSound2 } = useSoundsStore();
   const unlockAchievement = useUnlockAchievement();

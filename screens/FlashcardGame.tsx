@@ -1,22 +1,15 @@
 import * as React from "react";
-import {
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-  Image,
-} from "react-native";
-import { TextInput, Text, Button, Dialog } from "react-native-paper";
+import { StyleSheet, View, BackHandler } from "react-native";
+import { TextInput, Text, Button, Dialog, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import CountDown from "react-native-countdown-component";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   useAlerts,
-  useFlashcardsMultipleSets,
+  useConfirmLeaveLobby,
   useSoundSystem2,
 } from "../utils/hooks";
 import { useAuth } from "../providers/AuthProvider";
@@ -26,30 +19,15 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
+  useConfirmLeaveLobby();
 
+  const theme = useTheme();
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
-
-  const { confirm } = useAlerts();
-  useEffect(() => {
-    navigation.addListener("beforeRemove", (e) => {
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        okText: "Discard",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
 
   const { error: errrorAlert } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
@@ -98,33 +76,37 @@ export default function FlashcardGame({ route, navigation }) {
           {roomState.question}
         </Text>
         <View style={styles.answerViewStyle}>
-          <Text style={styles.answerStyle}> Answer</Text>
           <TextInput
-            label="Type your answer"
+            mode="outlined"
+            autoFocus
             style={[
               {
-                marginRight: responsiveWidth(5),
+                textAlign: "center",
                 flex: 1,
-                backgroundColor: null,
+                marginHorizontal: 10,
+                // backgroundColor: null,
                 borderLeftWidth: 1,
                 borderRightWidth: 1,
                 borderTopWidth: 1,
-                borderColor: "gray",
+                // borderColor: "gray",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
-                  ? styles.correctAnswer
-                  : styles.wrongAnswer
+                  ? { backgroundColor: "#4CAF50" }
+                  : { backgroundColor: theme.colors.errorContainer }
                 : {},
             ]}
             value={userInput}
             onChangeText={(text) => setUserInput(text)}
-            editable={!alreadySubmitted}
+            editable={
+              !alreadySubmitted && roomState.screen === ScreenState.INGAME
+            }
           />
         </View>
         <Button
           style={{
             marginTop: 25,
+            marginHorizontal: 10,
             paddingVertical: 5,
             borderRadius: 10,
             display: alreadySubmitted ? "none" : undefined,
@@ -142,14 +124,14 @@ export default function FlashcardGame({ route, navigation }) {
 
 const styles = StyleSheet.create({
   correctAnswer: {
-    borderColor: "green",
-    borderWidth: 3,
-    //backgroundColor:"green"
+    // borderColor: "green",
+    // borderWidth: 3,
+    backgroundColor: "#4CAF50",
   },
   wrongAnswer: {
-    borderColor: "red",
-    borderWidth: 3,
-    //backgroundColor:"red"
+    // borderColor: "red",
+    // borderWidth: 3,
+    backgroundColor: "red",
   },
   container: {
     flex: 1,
