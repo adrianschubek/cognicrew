@@ -9,9 +9,9 @@ import { supabase } from "../../supabase";
 export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
-  sendInitialAnswers: (answers: [string, boolean, number][]) => any;
+  sendInitialAnswersLength: (InitialAnswersLength: number ) => any;
 }) {
-  const { listItem, sendAnswers, sendInitialAnswers } = props;
+  const { listItem, sendAnswers, sendInitialAnswersLength } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -25,13 +25,12 @@ export default function EditExercise(props: {
     }) as [string, boolean, number][];
     sendAnswers(filteredAnswers);
     console.log("filteredAnswers: ", filteredAnswers);
-    if (
-      answers.filter((e) => e[0] === "").length > 0 &&
-      answers.length > 2 &&
-      answers.filter((e) => e[0] !== "" && e[1] === true).length > 0
+    /*if (
+      filteredAnswers.length > 2 &&
+      filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
       updateCache(filteredAnswers);
-    }
+    }*/
   }, [answers]);
 
   useEffect(() => {
@@ -46,7 +45,7 @@ export default function EditExercise(props: {
     }),
       setAnswers(initializingAnswers);
     setOldData(data);
-    sendInitialAnswers(initializingAnswers);
+    sendInitialAnswersLength(initializingAnswers.length);
     setIsInitialized(true);
   }, [data]);
   useEffect(() => {
