@@ -11,10 +11,11 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
-import { useSoundSystem2 } from "../../utils/hooks";
-export default function EndResults({navigation}) {
-  useSoundSystem2();
+import { useAlerts, useSoundSystem2 } from "../../utils/hooks";
 
+export default function EndResults({ navigation }) {
+  useSoundSystem2();
+  const { confirm } = useAlerts();
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
       // if roomstate screen not this one, then return without confirmation. access store directly bypass react
@@ -26,6 +27,20 @@ export default function EndResults({navigation}) {
           ScreenState.ROUND_SOLUTION
       )
         return;
+
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        key: "leaveroom",
+        title: "Leave room?",
+        message: "Do you want to leave this room?",
+        icon: "exit-run",
+        okText: "Leave",
+        okAction: async () => {
+          await supabase.rpc("leave_room");
+        },
+      });
     });
   }, [navigation]);
 
