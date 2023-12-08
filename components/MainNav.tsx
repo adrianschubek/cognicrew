@@ -290,12 +290,25 @@ export default function MainNav() {
       <Stack.Screen name={"_main_"} component={MainTabs} />
       <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
       <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
-      <Stack.Screen name={NAVIGATION.WHITEBOARD} component={Whiteboard} />
-      <Stack.Screen name={NAVIGATION.EXERCISE_GAME} component={ExerciseGame} />
-      <Stack.Screen name={NAVIGATION.END_RESULTS} component={EndResults} />
+      <Stack.Screen
+        name={NAVIGATION.WHITEBOARD}
+        component={Whiteboard}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={NAVIGATION.EXERCISE_GAME}
+        component={ExerciseGame}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name={NAVIGATION.END_RESULTS}
+        component={EndResults}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_GAME}
         component={FlashcardGame}
+        options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>
   );

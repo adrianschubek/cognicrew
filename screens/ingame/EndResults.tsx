@@ -11,37 +11,12 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
-import { useAlerts, useSoundSystem2 } from "../../utils/hooks";
+import { useAlerts, useConfirmLeaveLobby, useSoundSystem2 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 
 export default function EndResults({ navigation }) {
   useSoundSystem2();
-  const { confirm } = useAlerts();
-  useEffect(() => {
-    // TODO: refactor put in function
-    navigation.addListener("beforeRemove", (e) => {
-      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
-      if (
-        useRoomStateStore.getState().roomState?.screen !==
-        ScreenState.ROUND_RESULTS
-      )
-        return;
-
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        icon: "exit-run",
-        okText: "Leave",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
+  useConfirmLeaveLobby();
 
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
