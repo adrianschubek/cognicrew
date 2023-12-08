@@ -362,7 +362,8 @@ export default function Lobby({ navigation }) {
                             {
                               type: "text",
                               label: "Name",
-                              helperText: "Optionally save your cogniboard as...",
+                              helperText:
+                                "Optionally save your cogniboard as...",
                               icon: "format-text",
                               errorText:
                                 "Please enter a value between 0 and 600",
@@ -381,10 +382,11 @@ export default function Lobby({ navigation }) {
           <View style={{ alignItems: "center", marginBottom: 10 }}>
             <Button
               mode="contained"
-              disabled
               theme={{
                 colors: {
-                  primary: theme.colors.secondaryContainer,
+                  primary: !room?.is_ingame
+                    ? theme.colors.primaryContainer
+                    : theme.colors.secondaryContainer,
                   onPrimary: theme.colors.secondary,
                 },
               }}
@@ -396,11 +398,13 @@ export default function Lobby({ navigation }) {
                 paddingVertical: 5,
               }}
               onPress={async () => {
-                /* TODO */
+                let { data, error } = await supabase.rpc("switch_locked_room");
+                if (error) console.error(error);
+                else room.is_ingame = data;
               }}
-              icon={"lock-open-variant-outline"}
+              icon={!room?.is_ingame ? "lock-open-variant-outline" : "lock"}
             >
-              Close Room
+              {!room?.is_ingame ? "Room is unlocked" : "Room is locked"}
             </Button>
             {/* </View>
           <View style={{ flex: 4, alignItems: "center" }}> */}
