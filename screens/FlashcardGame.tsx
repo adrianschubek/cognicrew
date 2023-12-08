@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, BackHandler } from "react-native";
-import { TextInput, Text, Button, Dialog } from "react-native-paper";
+import { TextInput, Text, Button, Dialog, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -25,6 +25,7 @@ export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
   useConfirmLeaveLobby();
 
+  const theme = useTheme();
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
 
@@ -91,8 +92,8 @@ export default function FlashcardGame({ route, navigation }) {
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
-                  ? styles.correctAnswer
-                  : styles.wrongAnswer
+                  ? { backgroundColor: "#4CAF50" }
+                  : { backgroundColor: theme.colors.errorContainer }
                 : {},
             ]}
             value={userInput}
@@ -121,14 +122,14 @@ export default function FlashcardGame({ route, navigation }) {
 
 const styles = StyleSheet.create({
   correctAnswer: {
-    borderColor: "green",
-    borderWidth: 3,
-    //backgroundColor:"green"
+    // borderColor: "green",
+    // borderWidth: 3,
+    backgroundColor: "#4CAF50",
   },
   wrongAnswer: {
-    borderColor: "red",
-    borderWidth: 3,
-    //backgroundColor:"red"
+    // borderColor: "red",
+    // borderWidth: 3,
+    backgroundColor: "red",
   },
   container: {
     flex: 1,
