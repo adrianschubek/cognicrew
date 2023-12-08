@@ -14,7 +14,11 @@ import {
 import CountDown from "react-native-countdown-component";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import { useAlerts, useFlashcardsMultipleSets, useSoundSystem2 } from "../utils/hooks";
+import {
+  useAlerts,
+  useFlashcardsMultipleSets,
+  useSoundSystem2,
+} from "../utils/hooks";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
 import Timer from "../components/IngameComponents/Timer";
@@ -23,13 +27,29 @@ import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 
-export default function FlashcardGame({ route }) {
+export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
 
   const { user } = useAuth();
-  const roomState = useRoomStateStore(
-    (state) => state.roomState,
-  );
+  const roomState = useRoomStateStore((state) => state.roomState);
+
+  const { confirm } = useAlerts();
+  useEffect(() => {
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        key: "leaveroom",
+        title: "Leave room?",
+        message: "Do you want to leave this room?",
+        okText: "Discard",
+        okAction: async () => {
+          await supabase.rpc("leave_room");
+        },
+      });
+    });
+  }, [navigation]);
 
   const { error: errrorAlert } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
@@ -103,18 +123,18 @@ export default function FlashcardGame({ route }) {
           />
         </View>
         <Button
-            style={{
-              marginTop: 25,
-              paddingVertical: 5,
-              borderRadius: 10,
-              display: alreadySubmitted ? "none" : undefined,
-            }}
-            mode="contained"
-            disabled={isInvoking || userInput.length === 0}
-            onPress={answer}
-          >
-            Submit Answer
-          </Button>
+          style={{
+            marginTop: 25,
+            paddingVertical: 5,
+            borderRadius: 10,
+            display: alreadySubmitted ? "none" : undefined,
+          }}
+          mode="contained"
+          disabled={isInvoking || userInput.length === 0}
+          onPress={answer}
+        >
+          Submit Answer
+        </Button>
       </ScrollView>
     </>
   );

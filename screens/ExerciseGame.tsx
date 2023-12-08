@@ -35,7 +35,24 @@ export default function ExerciseGame({ navigation }) {
   const roomState = useRoomStateStore(
     (state) => state.roomState,
   ); /* TODO: memoize */
-  const { error: errrorAlert } = useAlerts();
+  const { error: errrorAlert, confirm } = useAlerts();
+
+  useEffect(() => {
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        key: "leaveroom",
+        title: "Leave room?",
+        message: "Do you want to leave this room?",
+        okText: "Discard",
+        okAction: async () => {
+          await supabase.rpc("leave_room");
+        },
+      });
+    });
+  }, [navigation]);
 
   const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
