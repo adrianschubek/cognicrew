@@ -19,7 +19,11 @@ import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
-import { useAchievements, useAlerts, useUnlockAchievement } from "../utils/hooks";
+import {
+  useAchievements,
+  useAlerts,
+  useUnlockAchievement,
+} from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
 import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -38,15 +42,17 @@ export default function Whiteboard({ navigation }) {
     selectedShape,
   } = useWhiteboardStore();
 
-  const roomState = useRoomStateStore((state) => state.roomState)
+  const roomState = useRoomStateStore((state) => state.roomState);
   const { confirm } = useAlerts();
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
-       // if roomstate screen not this one, then return without confirmation
-       if (
-        roomState.screen !== ScreenState.INGAME &&
-        roomState.screen !== ScreenState.ROUND_RESULTS &&
-        roomState.screen !== ScreenState.ROUND_SOLUTION
+      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
+      if (
+        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_RESULTS &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_SOLUTION
       )
         return;
       // Prevent default behavior of leaving the screen

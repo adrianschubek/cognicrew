@@ -39,11 +39,13 @@ export default function ExerciseGame({ navigation }) {
 
   useEffect(() => {
     navigation.addListener("beforeRemove", (e) => {
-      // if roomstate screen not this one, then return without confirmation
+      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
       if (
-        roomState.screen !== ScreenState.INGAME &&
-        roomState.screen !== ScreenState.ROUND_RESULTS &&
-        roomState.screen !== ScreenState.ROUND_SOLUTION
+        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_RESULTS &&
+        useRoomStateStore.getState().roomState?.screen !==
+          ScreenState.ROUND_SOLUTION
       )
         return;
 
