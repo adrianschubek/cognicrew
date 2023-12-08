@@ -37,32 +37,6 @@ export default function ExerciseGame({ navigation }) {
   ); /* TODO: memoize */
   const { error: errrorAlert, confirm } = useAlerts();
 
-  useEffect(() => {
-    // TODO: refactor put in function
-    navigation.addListener("beforeRemove", (e) => {
-      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
-      if (
-        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
-        useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_SOLUTION
-      )
-        return;
-
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        icon: "exit-run",
-        okText: "Leave",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
 
   const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
@@ -222,7 +196,7 @@ export default function ExerciseGame({ navigation }) {
                     borderWidth: checked.includes(option[1]) ? 3 : 0,
                     backgroundColor:
                       roomState.userAnswers[option[1]].isCorrect === true
-                        ? "#4CAF50" /* theme.colors.primaryContainer */
+                        ? theme.colors.backdrop //"#4CAF50" /* theme.colors.primaryContainer */
                         : theme.colors.errorContainer,
                   }
                 : {

@@ -1,23 +1,17 @@
 import * as React from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
-  View,
-  Image,
+  View, BackHandler
 } from "react-native";
 import { TextInput, Text, Button, Dialog } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import CountDown from "react-native-countdown-component";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
-  useAlerts,
-  useFlashcardsMultipleSets,
-  useSoundSystem2,
+  useAlerts, useSoundSystem2
 } from "../utils/hooks";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
@@ -26,6 +20,7 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
@@ -33,32 +28,21 @@ export default function FlashcardGame({ route, navigation }) {
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
 
-  const { confirm } = useAlerts();
-  useEffect(() => {
-    // TODO: refactor put in function
-    navigation.addListener("beforeRemove", (e) => {
-      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
-      if (
-        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
-        useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_SOLUTION
-      )
-        return;
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
+  useFocusEffect(() => {
+    // React.useCallback(() => {
+      const onBackPress = () => {
+        // (async () => await supabase.rpc("leave_room"))();
+        return true;
+      };
 
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        icon: "exit-run",
-        okText: "Leave",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
+      const listener = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress,
+      );
+
+      return () => listener.remove();
+    // }, []);
+  });
 
   const { error: errrorAlert } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
