@@ -283,7 +283,7 @@ serve(async (req) => {
     if (errSetIngame) throw errSetIngame;
 
     console.log(
-      `room-init: created game states for room ${rid} "${gamedata.name}"`,
+      `room-init: created game states for room ${rid} "${publicState.game}"`,
     );
     console.log(`room-init: took ${performance.now() - start}ms`);
     return new Response("OK", { status: 200 });
