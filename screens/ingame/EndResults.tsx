@@ -18,6 +18,7 @@ export default function EndResults({ navigation }) {
   useSoundSystem2();
   const { confirm } = useAlerts();
   useEffect(() => {
+    // TODO: refactor put in function
     navigation.addListener("beforeRemove", (e) => {
       // if roomstate screen not this one, then return without confirmation. access store directly bypass react
       if (

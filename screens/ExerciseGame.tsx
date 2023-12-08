@@ -38,6 +38,7 @@ export default function ExerciseGame({ navigation }) {
   const { error: errrorAlert, confirm } = useAlerts();
 
   useEffect(() => {
+    // TODO: refactor put in function
     navigation.addListener("beforeRemove", (e) => {
       // if roomstate screen not this one, then return without confirmation. access store directly bypass react
       if (
