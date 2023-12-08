@@ -88,10 +88,10 @@ export default function FlashcardExerciseManagement({
               setNoSetAvailable(boolean);
             }}
           />
+          {/*View margin for FAB.Group when scrolling down */}
+          <View style={{ marginBottom: 78 }}></View>
         </ScrollView>
       </View>
-      <View style={{ marginTop: 80 }}></View>
-      {/*View margin for FAB.Group when scrolling down */}
       <FAB.Group
         open={open}
         visible
