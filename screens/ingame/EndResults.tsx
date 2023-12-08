@@ -12,6 +12,7 @@ import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
 import { useAlerts, useSoundSystem2 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
 export default function EndResults({ navigation }) {
   useSoundSystem2();
