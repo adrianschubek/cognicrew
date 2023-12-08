@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
-import { Divider, Text, useTheme } from "react-native-paper"; //Text always needs to be imported from react-native-paper @Alex
+import { View, StyleSheet, ScrollView} from "react-native";
+import { Divider, Text  } from "react-native-paper"; 
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import PieChart from "react-native-pie-chart";
 
 export default function GlobalStatistics() {
   //Pie chart variables
   const widthAndHeight = 100;
+
   const series = [10, 20, 17]; //hours spent
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
-  //see, i am using your terminology here @Alex, that is my way of honouring you
-  //const heading = "headlineSmall";
+
   const heading2 ="titleLarge"
   const heading3 ="titleMedium"
   const heading4 ="labelLarge"
@@ -24,12 +25,13 @@ export default function GlobalStatistics() {
   let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
 
   return (
+    <SafeAreaView>
     <ScrollView style={styles.container}>
       <Text variant={heading2} style={{ marginBottom: 20 }}>
         Global Statistics
       </Text>
       <Divider />
-
+      <Text variant={heading3}  style={{ marginBottom: 20 }}>Total amount of learning projects:</Text>
       <Text variant={heading3} style={{ marginBottom: 20 }}>
         Total time spent on this app:{" "}
       </Text>
@@ -39,6 +41,7 @@ export default function GlobalStatistics() {
       <Divider />
       <View style={{ gap: 20, marginBottom: 30 }}>
         <Text variant={heading3}>Total amount of exercises:</Text>
+        <Text variant={heading3}>Total amount of flashcards:</Text>
         <Text variant={heading3}>Total amount of links:</Text>
         <Text variant={heading3}>Total amount of files: </Text>
       </View>
@@ -47,9 +50,8 @@ export default function GlobalStatistics() {
       </Text>
       <Divider />
       <View style={{ gap: 20, marginBottom: 20 }}>
-        <Text variant={heading3}>Total amount of learning projects:</Text>
-        <Text variant={heading3}>Total amount of flashcards:</Text>
-        <Text variant={heading3}>Time spent in learning games:</Text>
+        
+      <Text variant={heading3}>Time spent in learning games:</Text>
       </View>
       <View style={styles.piechart}>
         <PieChart
@@ -71,6 +73,7 @@ export default function GlobalStatistics() {
       </View>
       <Divider />
     </ScrollView>
+    </SafeAreaView>
   );
 }
 

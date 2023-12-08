@@ -89,6 +89,10 @@ function AccountTab() {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION.GLOBAL_STATISTICS}
+        component={GlobalStatistics}
+      />
     </Stack.Navigator>
   );
 }
@@ -235,7 +239,7 @@ function MainTabs({ navigation }) {
               }
               info({
                 key: "room-ingame-closed",
-                message: "Room was closed by host or server (#70)",
+                message: "Room was closed by host (#70)",
               });
               setRoom(null);
               setRoomState(null);
@@ -292,10 +296,6 @@ export default function MainNav() {
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_GAME}
         component={FlashcardGame}
-      />
-      <Stack.Screen
-        name={NAVIGATION.GLOBAL_STATISTICS}
-        component={GlobalStatistics}
       />
     </Stack.Navigator>
   );

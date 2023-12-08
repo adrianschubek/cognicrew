@@ -62,12 +62,14 @@ export default function CreateEditProject({
 
   useEffect(() => {
     navigation.setOptions({
+      gestureEnabled: false,
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
           style={styles.fixHeaderStyles}
           onPress={() => {
             confirm({
+              key: "discard",
               title: "Discard changes?",
               message:
                 "All unsaved changes will be lost. Do you want to continue?",
@@ -77,6 +79,19 @@ export default function CreateEditProject({
           }}
         />
       ),
+    });
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        key: "discard",
+        title: "Discard changes?",
+        message:
+          "You have unsaved changes. Are you sure to discard them and leave the screen?",
+        okText: "Discard",
+        okAction: () => navigation.dispatch(e.data.action),
+      });
     });
   }, [navigation]);
   const { trigger: removeUserFromLearningProject } =
@@ -379,7 +394,7 @@ export default function CreateEditProject({
                 console.log(project);
                 removeUserFromLearningProject({
                   learning_project_id: project.id,
-                  user_id: myid
+                  user_id: myid,
                 });
                 navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
               },

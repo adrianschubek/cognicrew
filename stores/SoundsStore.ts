@@ -23,7 +23,6 @@ export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
   
   loadSound1: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 1");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded: true, isLoaded2: false });
       get().playSound(); 
@@ -34,7 +33,6 @@ export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
 
   loadSound2: async (audioSource) => {
     try {
-      console.log("LOADED SOUND 2");
       const { sound } = await Audio.Sound.createAsync(audioSource);
       set({ sound, isLoaded2: true, isLoaded: false });
       get().playSound();
