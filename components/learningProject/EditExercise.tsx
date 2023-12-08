@@ -20,13 +20,17 @@ export default function EditExercise(props: {
   const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
   useEffect(() => {
     if (!isInitialized) return;
-    sendAnswers(answers);
+    const filteredAnswers = answers.filter((e) => e[0] !== "").map((e, index) => {
+      return [e[0], e[1], index + 1];
+    }) as [string, boolean, number][];
+    sendAnswers(filteredAnswers);
+    console.log("filteredAnswers: ", filteredAnswers);
     if (
       answers.filter((e) => e[0] === "").length > 0 &&
       answers.length > 2 &&
       answers.filter((e) => e[0] !== "" && e[1] === true).length > 0
     ) {
-      updateCache(answers.filter((e) => e[0] !== ""));
+      updateCache(filteredAnswers);
     }
   }, [answers]);
 

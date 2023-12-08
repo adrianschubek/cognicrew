@@ -12,6 +12,7 @@ import { ManagementType } from "../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import {
+  useDeleteAnswersExercise,
   useDeleteExercise,
   useDeleteFlashcard,
   useUpsertAnswersExercise,
@@ -43,13 +44,21 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initial: [string, boolean, number][],
     answers: [string, boolean, number][],
   ) {
-    const deletionArray = initial
-      .filter((initialElem, index) => {
-        return answers[index] === undefined || answers[index][0] === "";
-        //return !answers.some((answerElem) => initialElem[2] === answerElem[2]);
-      })
-      .map((e) => {
-        return { exercise: listItem.id as number, order_position: e[2] };
+    const numberOfAnswersToDelete = initial.length - answers.length;
+    console.log("numberOfAnswersToDelete: ",numberOfAnswersToDelete)
+    if (numberOfAnswersToDelete <= 0) return;
+    const initialLenghtArray = Array.from(
+      { length: initial.length },
+      (_, index) => index + 1,
+    );
+    console.log( "initialLenghtArray: ",initialLenghtArray)
+    const deletionArray = initialLenghtArray
+      .slice(-numberOfAnswersToDelete)
+      .map((orderPosition) => {
+        return {
+          exercise: listItem.id as number,
+          order_position: orderPosition,
+        };
       });
     let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
@@ -77,17 +86,16 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           deleteAnswers(initial, answerOrAnswers),
             //answers need to be updated
             answerOrAnswers.forEach((e) => {
-              e[0] !== ""
-                ? upsertAnswersExercise({
-                    //@ts-expect-error
-                    answer: e[0],
-                    exercise: res[0].id,
-                    is_correct: e[1],
-                    order_position: e[2],
-                  })
-                : null;
-            }),
-            setInitialAnswers(answerOrAnswers);
+              upsertAnswersExercise({
+                //@ts-expect-error
+                answer: e[0],
+                exercise: res[0].id,
+                is_correct: e[1],
+                order_position: e[2],
+              });
+            });
+
+          setInitialAnswers(answerOrAnswers);
         })
       : upsertFlashcard({
           //@ts-expect-error
