@@ -98,7 +98,9 @@ export default function FlashcardGame({ route, navigation }) {
             ]}
             value={userInput}
             onChangeText={(text) => setUserInput(text)}
-            editable={!alreadySubmitted}
+            editable={
+              !alreadySubmitted && roomState.screen === ScreenState.INGAME
+            }
           />
         </View>
         <Button
