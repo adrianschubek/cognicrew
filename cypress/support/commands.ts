@@ -15,9 +15,9 @@ declare namespace Cypress {
 }
 
 // temp fix for Alex' audio player bugs!
-Cypress.on('uncaught:exception', (err, runnable) => {
+/* Cypress.on('uncaught:exception', (err, runnable) => {
   return false;
-});
+}); */
 
 Cypress.Commands.add("openApp", () => {
   cy.viewport("samsung-s10");

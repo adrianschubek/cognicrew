@@ -22,6 +22,7 @@ import { FunctionsHttpError } from "@supabase/supabase-js";
 import { handleEdgeError } from "../../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
 import { toArray } from "../../stores/AlertsStore";
+import { RoomClientInit } from "../../functions/rooms";
 
 export default function Lobby({ navigation }) {
   useSoundSystem1();
@@ -197,11 +198,10 @@ export default function Lobby({ navigation }) {
                               sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],
-                            },
+                            } as RoomClientInit,
                           },
                         );
                         if (error) return handleEdgeError(error);
-                        navigation.navigate(NAVIGATION.EXERCISE_GAME);
                       },
                       fields: [
                         {
@@ -273,17 +273,10 @@ export default function Lobby({ navigation }) {
                               sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],
-                            },
+                            } as RoomClientInit,
                           },
                         );
                         if (error) return handleEdgeError(error);
-
-                        console.log(data);
-                        navigation.navigate(NAVIGATION.FLASHCARD_GAME, {
-                          sets: toArray(setValues[0], (el) => +el),
-                          roundDuration: +values[0],
-                          numberOfRounds: +values[1],
-                        });
                       },
                       fields: [
                         {
@@ -330,7 +323,57 @@ export default function Lobby({ navigation }) {
               path={require("../../assets/teamwork_symbol.png")}
               name={"Cogniboard"}
               function={() => {
-                navigation.navigate(NAVIGATION.WHITEBOARD);
+                confirm({
+                  title: "Choose cogniboard",
+                  icon: "cards",
+                  dismissable: false,
+                  okText: "Load",
+                  okAction: (setValues) => {
+                    // TODO: load cogniboard. same dialog as below
+                  },
+                  fields: [
+                    {
+                      type: "search-radio",
+                      placeholder: "Search cogniboards",
+                      data: [],
+                      required: true,
+                    },
+                    {
+                      type: "button",
+                      label: "New Cogniboard",
+                      icon: "plus",
+                      action(values) {
+                        confirm({
+                          title: "Configure game",
+                          icon: "cog",
+                          dismissable: false,
+                          okText: "Start Game",
+                          okAction: async (values) => {
+                            const { data, error } =
+                              await supabase.functions.invoke("room-init", {
+                                body: {
+                                  type: ManagementType.BOARD,
+                                  name: values[0],
+                                } as RoomClientInit,
+                              });
+                            if (error) return handleEdgeError(error);
+                          },
+                          fields: [
+                            {
+                              type: "text",
+                              label: "Name",
+                              helperText: "Optionally save your cogniboard as...",
+                              icon: "format-text",
+                              errorText:
+                                "Please enter a value between 0 and 600",
+                              required: false,
+                            },
+                          ],
+                        });
+                      },
+                    },
+                  ],
+                });
               }}
             />
           </View>

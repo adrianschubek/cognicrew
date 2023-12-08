@@ -224,6 +224,7 @@ function AlertSyncZustand() {
                         disabled={field.disabled || tempValues[i] === "busy"}
                         style={{ marginTop: 10 }}
                         mode="contained"
+                        icon={field.icon}
                       >
                         {field.label}
                       </Button>
