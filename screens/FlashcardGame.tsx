@@ -43,6 +43,7 @@ export default function FlashcardGame({ route, navigation }) {
         key: "leaveroom",
         title: "Leave room?",
         message: "Do you want to leave this room?",
+        icon: "exit-run",
         okText: "Discard",
         okAction: async () => {
           await supabase.rpc("leave_room");
