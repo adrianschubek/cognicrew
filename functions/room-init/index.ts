@@ -10,6 +10,7 @@ import {
   GameState,
   PrivateRoomState,
   PublicRoomState,
+  RoomClientInit,
   ScreenState,
 } from "../rooms.ts";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
@@ -72,32 +73,27 @@ serve(async (req) => {
       .eq("room_id", rid);
     if (errorUsers) throw errorUsers;
 
-    const body = (await req.json()) as {
-      /**
-       * 0 = flashcard
-       * 1 = quiz
-       */
-      type: 1 /* quiz */ | 0 /* flashcard */;
-      sets: number[];
-      roundDuration: number;
-      numberOfRounds: number;
-    };
+    const body = (await req.json()) as RoomClientInit;
     // console.log(body);
 
-    // validate body
-    if (body.type !== 0 && body.type !== 1)
-      return err("Unknown game type (#421)", 400);
-    if (body.sets.length === 0) return err("No sets selected (#42)", 400);
-    if (body.roundDuration <= 0 || body.roundDuration > 600)
-      return err("Invalid round duration (#43)", 400);
-    if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
-      return err("Invalid number of rounds (#44)", 400);
+    let privateState: PrivateRoomState | undefined;
+    let publicState: PublicRoomState | undefined;
 
-    // private game state
-    const { data: gamedata, error: errorGamedata } = await supabase
-      .from("learning_projects")
-      .select(
-        `id,
+    // validate body
+    switch (body.type) {
+      case 0:
+      case 1: {
+        if (body.sets.length === 0) return err("No sets selected (#42)", 400);
+        if (body.roundDuration <= 0 || body.roundDuration > 600)
+          return err("Invalid round duration (#43)", 400);
+        if (body.numberOfRounds <= 0 || body.numberOfRounds > 100)
+          return err("Invalid number of rounds (#44)", 400);
+
+        // private game state
+        const { data: gamedata, error: errorGamedata } = await supabase
+          .from("learning_projects")
+          .select(
+            `id,
             name,
             sets(
               name,
@@ -116,109 +112,149 @@ serve(async (req) => {
                 priority,
                 answer
               )
-            )`,
-      )
-      .eq("id", pid)
-      .in("sets.id", body.sets)
-      .single();
-    if (errorGamedata || !gamedata) {
-      throw errorGamedata;
+      )`,
+          )
+          .eq("id", pid)
+          .in("sets.id", body.sets)
+          .single();
+        if (errorGamedata || !gamedata) {
+          throw errorGamedata;
+        }
+
+        // check if sets contain at least one exercise/flashcard
+        const exercisesNum = gamedata.sets.flatMap(
+          (set) => set.exercises,
+        ).length;
+        const flashcardsNum = gamedata.sets.flatMap(
+          (set) => set.flashcards,
+        ).length;
+        if (
+          (body.type === 1 && exercisesNum === 0) ||
+          (body.type === 0 && flashcardsNum === 0)
+        )
+          return err(
+            `Selected sets do not contain any ${
+              body.type === 1 ? "questions" : "flashcards"
+            } (#45)`,
+            400,
+          );
+
+        privateState = {
+          gameData: {
+            exercises:
+              body.type === 1
+                ? shuffle(
+                    gamedata.sets
+                      .map((set) => set.exercises)
+                      .flat()
+                      .map((exercise) => ({
+                        id: exercise.id,
+                        question: exercise.question,
+                        answers: exercise.answers_exercises.map(
+                          (answer) => answer.answer,
+                        ),
+                        explanations: Array.from(
+                          { length: exercise.answers_exercises.length },
+                          () => null,
+                        ),
+                        priority: exercise.priority,
+                        /* get correct answer index */
+                        correct: exercise.answers_exercises.reduce(
+                          (acc, answer, index) =>
+                            answer.is_correct ? [...acc, index] : acc,
+                          [] as number[],
+                        ),
+                      }))
+                      .sort((a, b) => a.priority - b.priority)
+                      .slice(0, body.numberOfRounds),
+                  )
+                : [],
+            flashcards:
+              body.type === 0
+                ? shuffle(
+                    gamedata.sets
+                      .map((set) => set.flashcards)
+                      .flat()
+                      .map((flashcard) => ({
+                        id: flashcard.id,
+                        question: flashcard.question,
+                        priority: flashcard.priority,
+                        answer: flashcard.answer,
+                        explanation: null,
+                      }))
+                      .sort((a, b) => a.priority - b.priority)
+                      .slice(0, body.numberOfRounds),
+                  )
+                : [],
+          },
+          roundDuration: body.roundDuration,
+        };
+        console.log(privateState);
+
+        // load first question/flashcard
+        publicState = {
+          players: users.map((user) => ({
+            id: user.id,
+            username: user.username,
+            score: 0,
+            currentCorrect: null,
+            currentTimeNeeded: null,
+            // currentDone: null,
+          })),
+          screen: ScreenState.INGAME,
+          game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
+          totalRounds:
+            body.type === 1
+              ? Math.min(body.numberOfRounds, exercisesNum)
+              : Math.min(body.numberOfRounds, flashcardsNum),
+          round: 1,
+          question:
+            body.type === 1
+              ? privateState.gameData.exercises[0].question
+              : privateState.gameData.flashcards[0].question,
+          possibleAnswers:
+            body.type === 1 ? privateState.gameData.exercises[0].answers : [],
+          userAnswers: null,
+          roundBeganAt: dayjs().valueOf(),
+          roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
+        };
+        // console.log(publicState);
+        break;
+      }
+      case 4:
+        publicState = {
+          players: users.map((user) => ({
+            id: user.id,
+            username: user.username,
+            score: 0,
+            currentCorrect: null,
+            currentTimeNeeded: null,
+          })),
+          screen: ScreenState.INGAME,
+          game: GameState.WHITEBOARD,
+          totalRounds: 0,
+          round: 1,
+          question: "",
+          possibleAnswers: [],
+          userAnswers: null,
+          roundBeganAt: dayjs().valueOf(),
+          roundEndsAt: dayjs().add(1, "day").valueOf(),
+        };
+        privateState = {
+          gameData: {
+            exercises: [],
+            flashcards: [],
+          },
+          roundDuration: 86400 /* 1 day */,
+        };
+        break;
+      default:
+        return err("Unknown game type (#47)", 400);
     }
 
-    // check if sets contain at least one exercise/flashcard
-    const exercisesNum = gamedata.sets.flatMap((set) => set.exercises).length;
-    const flashcardsNum = gamedata.sets.flatMap((set) => set.flashcards).length;
-    if (
-      (body.type === 1 && exercisesNum === 0) ||
-      (body.type === 0 && flashcardsNum === 0)
-    )
-      return err(
-        `Selected sets do not contain any ${
-          body.type === 1 ? "questions" : "flashcards"
-        } (#45)`,
-        400,
-      );
-
-    const privateState: PrivateRoomState = {
-      gameData: {
-        exercises:
-          body.type === 1
-            ? shuffle(
-                gamedata.sets
-                  .map((set) => set.exercises)
-                  .flat()
-                  .map((exercise) => ({
-                    id: exercise.id,
-                    question: exercise.question,
-                    answers: exercise.answers_exercises.map(
-                      (answer) => answer.answer,
-                    ),
-                    explanations: Array.from(
-                      { length: exercise.answers_exercises.length },
-                      () => null,
-                    ),
-                    priority: exercise.priority,
-                    /* get correct answer index */
-                    correct: exercise.answers_exercises.reduce(
-                      (acc, answer, index) =>
-                        answer.is_correct ? [...acc, index] : acc,
-                      [] as number[],
-                    ),
-                  }))
-                  .sort((a, b) => a.priority - b.priority)
-                  .slice(0, body.numberOfRounds),
-              )
-            : [],
-        flashcards:
-          body.type === 0
-            ? shuffle(
-                gamedata.sets
-                  .map((set) => set.flashcards)
-                  .flat()
-                  .map((flashcard) => ({
-                    id: flashcard.id,
-                    question: flashcard.question,
-                    priority: flashcard.priority,
-                    answer: flashcard.answer,
-                    explanation: null,
-                  }))
-                  .sort((a, b) => a.priority - b.priority)
-                  .slice(0, body.numberOfRounds),
-              )
-            : [],
-      },
-      roundDuration: body.roundDuration,
-    };
-    console.log(privateState);
-
-    // load first question/flashcard
-    const publicState: PublicRoomState = {
-      players: users.map((user) => ({
-        id: user.id,
-        username: user.username,
-        score: 0,
-        currentCorrect: null,
-        currentTimeNeeded: null,
-        // currentDone: null,
-      })),
-      screen: ScreenState.INGAME,
-      game: body.type === 0 ? GameState.FLASHCARDS : GameState.EXERCISES,
-      totalRounds:
-        body.type === 1
-          ? Math.min(body.numberOfRounds, exercisesNum)
-          : Math.min(body.numberOfRounds, flashcardsNum),
-      round: 1,
-      question:
-        body.type === 1
-          ? privateState.gameData.exercises[0].question
-          : privateState.gameData.flashcards[0].question,
-      possibleAnswers:
-        body.type === 1 ? privateState.gameData.exercises[0].answers : [],
-      userAnswers: null,
-      roundBeganAt: dayjs().valueOf(),
-      roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
-    };
-    // console.log(publicState);
+    if (!privateState || !publicState) {
+      return err("Could not create game states (#48)");
+    }
 
     // save to db
     const { error: errSavePriv } = await supabase

@@ -139,9 +139,9 @@ export type RoomClientInit =
        * 0 = flashcard, 1 = quiz
        */
       type: 0 | 1;
-      sets: [];
-      roundDuration: 0;
-      numberOfRounds: 0;
+      sets: number[];
+      roundDuration: number;
+      numberOfRounds: number;
     }
   | {
       /**
