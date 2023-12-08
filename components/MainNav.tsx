@@ -214,6 +214,9 @@ function MainTabs({ navigation }) {
                     case GameState.FLASHCARDS:
                       navigation.navigate(NAVIGATION.FLASHCARD_GAME);
                       break;
+                    case GameState.WHITEBOARD:
+                      navigation.navigate(NAVIGATION.WHITEBOARD);
+                      break;
                   }
                   break;
                 case ScreenState.ROUND_RESULTS:
