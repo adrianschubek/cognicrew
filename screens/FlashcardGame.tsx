@@ -28,7 +28,6 @@ export default function FlashcardGame({ route, navigation }) {
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
 
-
   const { error: errrorAlert } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [isInvoking, setIsInvoking] = useState(false);
@@ -76,18 +75,19 @@ export default function FlashcardGame({ route, navigation }) {
           {roomState.question}
         </Text>
         <View style={styles.answerViewStyle}>
-          <Text style={styles.answerStyle}> Answer</Text>
           <TextInput
-            label="Type your answer"
+            mode="outlined"
+            autoFocus
             style={[
               {
-                marginRight: responsiveWidth(5),
+                textAlign: "center",
                 flex: 1,
-                backgroundColor: null,
+                marginHorizontal: 10,
+                // backgroundColor: null,
                 borderLeftWidth: 1,
                 borderRightWidth: 1,
                 borderTopWidth: 1,
-                borderColor: "gray",
+                // borderColor: "gray",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
@@ -103,6 +103,7 @@ export default function FlashcardGame({ route, navigation }) {
         <Button
           style={{
             marginTop: 25,
+            marginHorizontal: 10,
             paddingVertical: 5,
             borderRadius: 10,
             display: alreadySubmitted ? "none" : undefined,
