@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Dialog, PaperProvider, Portal, Text } from "react-native-paper";
+import { Chip, Dialog, PaperProvider, Portal, Text } from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
@@ -79,6 +79,9 @@ if (!data) return null
         value={searchQuery}
       />
       <View>
+      <Chip onPress={() => console.log('Pressed')}>WI 23/24</Chip>
+      <Chip onPress={() => console.log('Pressed')}>SO 23</Chip>
+
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -123,8 +126,7 @@ if (!data) return null
             style={styles.WI23}
             mode="outlined"
             onPress={() => {
-              setSelectedSemester("All");
-              mutate();
+              
             }}
           >
             All
@@ -168,8 +170,10 @@ if (!data) return null
             <Item title={item.name} />
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.id}
+        //keyExtractor={(item) => item.id}
       />
+
+
     </SafeAreaView>
   );
 }
