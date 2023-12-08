@@ -133,112 +133,20 @@ export type RoomClientUpdate =
   | { type: "reset-lobby" } /* TOOD: in db set is_ingame back to false */
   | { type: "skip-round" }; /* host only */
 
-/**
- * sets
- * 
- * {
-  "data": [
-    {
-      "id": 175,
-      "name": "9999",
-      "sets": [
-        {
-          "name": "Mathe",
-          "exercises": [],
-          "flashcards": [
-            {
-              "id": 37,
-              "question": "Uii",
-              "answer": "Oppo"
-            }
-          ]
-        },
-        {
-          "name": "Test",
-          "exercises": [
-            {
-              "id": 66,
-              "question": "Hffg",
-              "answers_exercises": [
-                {
-                  "id": 114,
-                  "answer": "Hgg",
-                  "is_correct": false
-                },
-                {
-                  "id": 115,
-                  "answer": "",
-                  "is_correct": false
-                },
-                {
-                  "id": 116,
-                  "answer": "",
-                  "is_correct": false
-                },
-                {
-                  "id": 117,
-                  "answer": "",
-                  "is_correct": false
-                }
-              ]
-            },
-            {
-              "id": 56,
-              "question": "1+1?",
-              "answers_exercises": [
-                {
-                  "id": 83,
-                  "answer": "",
-                  "is_correct": true
-                },
-                {
-                  "id": 85,
-                  "answer": "2",
-                  "is_correct": true
-                },
-                {
-                  "id": 84,
-                  "answer": "3",
-                  "is_correct": false
-                },
-                {
-                  "id": 82,
-                  "answer": "",
-                  "is_correct": true
-                }
-              ]
-            },
-            {
-              "id": 57,
-              "question": "9999",
-              "answers_exercises": [
-                {
-                  "id": 88,
-                  "answer": "999",
-                  "is_correct": true
-                },
-                {
-                  "id": 87,
-                  "answer": "8888",
-                  "is_correct": false
-                },
-                {
-                  "id": 89,
-                  "answer": "",
-                  "is_correct": false
-                },
-                {
-                  "id": 86,
-                  "answer": "",
-                  "is_correct": false
-                }
-              ]
-            }
-          ],
-          "flashcards": []
-        }
-      ]
+export type RoomClientInit =
+  | {
+      /**
+       * 0 = flashcard, 1 = quiz
+       */
+      type: 0 | 1;
+      sets: [];
+      roundDuration: 0;
+      numberOfRounds: 0;
     }
-  ]
-}
- */
+  | {
+      /**
+       * 4 = whiteboard
+       */
+      type: 4;
+      name: string;
+    };
