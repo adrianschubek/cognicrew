@@ -89,6 +89,10 @@ function AccountTab() {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen
+        name={NAVIGATION.GLOBAL_STATISTICS}
+        component={GlobalStatistics}
+      />
     </Stack.Navigator>
   );
 }
@@ -289,10 +293,6 @@ export default function MainNav() {
       <Stack.Screen
         name={NAVIGATION.FLASHCARD_GAME}
         component={FlashcardGame}
-      />
-      <Stack.Screen
-        name={NAVIGATION.GLOBAL_STATISTICS}
-        component={GlobalStatistics}
       />
     </Stack.Navigator>
   );

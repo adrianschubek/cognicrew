@@ -11,7 +11,11 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
+import { useSoundSystem2 } from "../../utils/hooks";
 export default function EndResults() {
+
+  useSoundSystem2();
+
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
   const allPlayers = roomState.players;
