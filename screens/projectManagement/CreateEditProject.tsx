@@ -62,6 +62,7 @@ export default function CreateEditProject({
 
   useEffect(() => {
     navigation.setOptions({
+      gestureEnabled: false,
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
@@ -77,6 +78,18 @@ export default function CreateEditProject({
           }}
         />
       ),
+    });
+    navigation.addListener("beforeRemove", (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      confirm({
+        title: "Discard changes?",
+        message:
+          "You have unsaved changes. Are you sure to discard them and leave the screen?",
+        okText: "Discard",
+        okAction: () => navigation.dispatch(e.data.action),
+      });
     });
   }, [navigation]);
   const { trigger: removeUserFromLearningProject } =
