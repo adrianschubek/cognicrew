@@ -69,6 +69,7 @@ export default function CreateEditProject({
           style={styles.fixHeaderStyles}
           onPress={() => {
             confirm({
+              key: "discard",
               title: "Discard changes?",
               message:
                 "All unsaved changes will be lost. Do you want to continue?",
@@ -84,6 +85,7 @@ export default function CreateEditProject({
       e.preventDefault();
 
       confirm({
+        key: "discard",
         title: "Discard changes?",
         message:
           "You have unsaved changes. Are you sure to discard them and leave the screen?",
@@ -392,7 +394,7 @@ export default function CreateEditProject({
                 console.log(project);
                 removeUserFromLearningProject({
                   learning_project_id: project.id,
-                  user_id: myid
+                  user_id: myid,
                 });
                 navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
               },
