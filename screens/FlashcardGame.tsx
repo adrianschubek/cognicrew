@@ -155,7 +155,12 @@ export default function FlashcardGame({ route, navigation }) {
                 >
                   <Card
                     mode="outlined"
-                    style={[{ borderColor: theme.colors.primary }]}
+                    style={[
+                      answer.isCorrect
+                        ? { backgroundColor: "#4CAF50" }
+                        : { backgroundColor: theme.colors.backdrop },
+                      { borderColor: theme.colors.primary },
+                    ]}
                   >
                     <Card.Content
                       style={{
@@ -175,10 +180,12 @@ export default function FlashcardGame({ route, navigation }) {
                         <Text
                           variant="titleMedium"
                           key={index}
-                          style={{
-                            color: answer.isCorrect ? "green" : "red",
-                            textAlign: "center",
-                          }}
+                          style={[
+                            answer.isCorrect
+                              ? { color: theme.colors.onBackground }
+                              : { color: theme.colors.onErrorContainer },
+                            { textAlign: "center" },
+                          ]}
                         >
                           {answer.answer} {answer.percentage}%
                         </Text>
