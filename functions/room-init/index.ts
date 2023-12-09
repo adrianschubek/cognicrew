@@ -140,6 +140,7 @@ serve(async (req) => {
           );
 
         privateState = {
+          projectId: pid,
           gameData: {
             exercises:
               body.type === 1
