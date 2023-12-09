@@ -7,6 +7,7 @@ export default function TextInputWithCheckbox(props: {
   number: number;
   sendAnswer?: ([text, checked]: [string, boolean]) => void;
   listItemAnswer?: [string, boolean, number];
+  flex?: number;
   [name: string]: any;
 }) {
   const [answerText, setAnswerText] = useState<string>("");
@@ -23,6 +24,7 @@ export default function TextInputWithCheckbox(props: {
     <TextInput
       style={{
         marginBottom: 8,
+        flex: props.flex || 0,
         width: props.width || "auto",
       }}
       right={
