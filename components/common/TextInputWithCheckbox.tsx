@@ -15,7 +15,6 @@ export default function TextInputWithCheckbox(props: {
 
   useEffect(() => {
     if (!props.listItemAnswer) return;
-    if (answerText !== "" && answerIsCorrect !== false) return;
     setAnswerText(props.listItemAnswer[0]);
     setAnswerIsCorrect(props.listItemAnswer[1]);
   }, [props.listItemAnswer]);

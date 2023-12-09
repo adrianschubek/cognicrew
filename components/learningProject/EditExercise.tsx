@@ -169,8 +169,6 @@ export default function EditExercise(props: {
                   .map((e, index) => {
                     return [e[0], e[1], index + 1];
                   }) as [string, boolean, number][];
-                console.log("?: ", newAnswers);
-                updateCache(newAnswers);
                 setAnswers(newAnswers);
                 setShowErrorAnswerBoundaries(false);
               }}
