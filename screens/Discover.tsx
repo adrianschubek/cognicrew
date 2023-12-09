@@ -16,7 +16,7 @@ import { supabase } from "../supabase";
 import { mutate } from "swr";
 import { useDistinctProjectGroups } from "../utils/hooks";
 
-export default async function Discover() {
+export default function Discover() {
   const theme = useTheme();
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,7 +43,22 @@ export default async function Discover() {
     "WS 20/21",
   ];
 
-  const allDistinctGroups = await useDistinctProjectGroups();
+    // State for distinct project groups
+    const [allDistinctGroups, setAllDistinctGroups] = useState([]);
+
+    // Fetch distinct project groups and update the state
+    useEffect(() => {
+      const fetchDistinctGroups = async () => {
+        try {
+          const distinctGroups = await useDistinctProjectGroups();
+          setAllDistinctGroups(distinctGroups);
+        } catch (error) {
+          console.error('Error fetching distinct project groups:', error.message);
+        }
+      };
+  
+      fetchDistinctGroups();
+    }, []);
 
   // Add state to manage visibility for each card
   const [cardVisibility, setCardVisibility] = useState(Array(data?.length).fill(false));
