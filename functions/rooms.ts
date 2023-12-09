@@ -131,6 +131,8 @@ export type PrivateRoomState = {
 export type UserProjectStats = {
   scoreQuiz: number;
   scoreFlashcards: number;
+  winsQuiz: number;
+  winsFlashcards: number;
 };
 
 /**

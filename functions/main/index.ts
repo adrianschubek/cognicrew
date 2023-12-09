@@ -345,7 +345,28 @@ setInterval(async () => {
         // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
 
+        let gameWonPlayerId;
+        let maxScore = 0; 
+        let draw = true;
+
         for (const player of newState.players) {
+          if(player.score >= maxScore){
+            gameWonPlayerId = player.id;
+            maxScore = player.score;
+            draw = false;
+          }
+        }
+
+        //Check if there are two "winners" reuslting in a draw
+        for (const player of newState.players) {
+          if (player.score == maxScore && player.id != gameWonPlayerId){
+            draw = true;
+            break;
+          }
+        }
+
+        for (const player of newState.players) {
+
           const { data: dbstats, error } = await supabase
             .from("user_learning_projects")
             .select("stats")
@@ -360,19 +381,24 @@ setInterval(async () => {
           const stats: UserProjectStats = dbstats?.stats ?? {
             scoreQuiz: 0,
             scoreFlashcards: 0,
+            winsQuiz: 0,
+            winsFlashcards: 0,
           };
 
           stats.scoreQuiz +=
             newState.game == GameState.EXERCISES ? player.score : 0;
           stats.scoreFlashcards +=
             newState.game == GameState.FLASHCARDS ? player.score : 0;
+          stats.winsQuiz += 
+            newState.game == GameState.EXERCISES && gameWonPlayerId == player.id && !draw ? 1 : 0;
+          stats.winsFlashcards += 
+            newState.game == GameState.FLASHCARDS && gameWonPlayerId == player.id && !draw ? 1 : 0;
 
-          const { error: errUpdate } = await supabase
+          await supabase
             .from("user_learning_projects")
             .update({ stats })
             .eq("user_id", player.id)
             .eq("learning_project_id", privateState.projectId);
-          if (errUpdate) console.error(error);
         }
       }
     } else if (
