@@ -1,44 +1,32 @@
 import * as React from "react";
-import { ScrollView, View, StyleSheet, Alert } from "react-native";
+import { ScrollView, View } from "react-native";
 import {
   Dialog,
-  Portal,
   RadioButton,
   Button,
   Text,
-  ProgressBar,
   useTheme,
 } from "react-native-paper";
-import { responsiveFontSize } from "react-native-responsive-dimensions";
 import {
-  useAchievements,
   useAlerts,
   useConfirmLeaveLobby,
-  useExercisesAndAnswers,
   useSoundSystem2,
-  useUnlockAchievement,
 } from "../utils/hooks";
-import { memo, useEffect, useMemo, useState } from "react";
-import AchievementNotification from "../components/dialogues/AchievementNotification";
+import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
-import { useAuth } from "../providers/AuthProvider";
-import { NAVIGATION } from "../types/common";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
-import { set } from "cypress/types/lodash";
 
 export default function ExerciseGame({ navigation }) {
   useSoundSystem2();
   useConfirmLeaveLobby();
-  const { user } = useAuth();
   const roomState = useRoomStateStore(
     (state) => state.roomState,
   ); /* TODO: memoize */
   const { error: errrorAlert, confirm } = useAlerts();
-
 
   const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
@@ -57,7 +45,7 @@ export default function ExerciseGame({ navigation }) {
     setIsInvoking(true);
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
-        type: "skip-round",
+        type: "skip_round",
       } as RoomClientUpdate,
     });
     if (error) errrorAlert({ message: await handleEdgeError(error) });
@@ -65,16 +53,7 @@ export default function ExerciseGame({ navigation }) {
   }
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [checked, setChecked] = useState([] as number[]);
-  const [quizComplete, setQuizComplete] = useState(false);
-  const unlockAchievement = useUnlockAchievement();
-  const [achievementVisible, setAchievementVisible] = useState(false);
   const theme = useTheme();
-  const { data: achievements } = useAchievements();
-  const [achievementName, setAchievementName] = useState("");
-  const [achievementIcon, setAchievementIcon] = useState("");
-  const currentPlayerIndex = roomState?.players.findIndex(
-    (player) => player.id === user?.id,
-  );
   const handleValueChange = (newValue) => {
     if (checked.includes(newValue)) {
       setChecked(checked.filter((value) => value !== newValue));
@@ -86,22 +65,7 @@ export default function ExerciseGame({ navigation }) {
     setChecked([]);
     setAlreadySubmitted(false);
   }, [roomState?.round]);
-  /*
-      Alert.alert(
-        isCorrect ? "Correct!" : "Incorrect!",
-        isCorrect
-          ? "You're awesome! Keep it up!"
-          : `The correct answer was: ${questions[currentQuestionIndex].correctAnswer}`,
-        [{ text: "OK", onPress: () => advanceQuestion() }],
-      );
-    } else {
-      Alert.alert(
-        "No Answer",
-        "Please select an answer or skip the question.",
-        [{ text: "OK" }],
-      );
-    }
-*/
+
   const answersWithIndexes = (roomState ? roomState.possibleAnswers : []).map(
     (answer, index) => [answer, index],
   ) as [string, number][];
@@ -119,23 +83,6 @@ export default function ExerciseGame({ navigation }) {
     return array;
   }
 
-  const completeQuiz = async () => {
-    const achievementId = 11; // ggf. abändern
-    const { success } = await unlockAchievement(achievementId);
-    if (success) {
-      // Find the achievement with the specific ID and update the state
-      const achievement = achievements?.find((ach) => ach.id === achievementId);
-      setAchievementName(achievement?.name || "Achievement");
-      setAchievementIcon(achievement?.icon_name);
-
-      console.log(`Achievement Unlocked: ${achievement?.name}`);
-      setAchievementVisible(true);
-      setTimeout(() => setAchievementVisible(false), 5000); // Hide after 5 seconds
-    } else {
-      console.log(`Failed to unlock achievement: ID ${achievementId}`);
-    }
-  };
-
   const MemoTimer = useMemo(
     () => <Timer roundEndsAt={roomState?.roundEndsAt} onTimeUp={() => {}} />,
     [roomState?.roundEndsAt],
@@ -145,7 +92,6 @@ export default function ExerciseGame({ navigation }) {
     return <LoadingOverlay visible />;
   }
 
-  // TODO: pack alles in useMemo
   return (
     <>
       <ScrollView style={{ paddingTop: 20 }}>
@@ -246,26 +192,3 @@ export default function ExerciseGame({ navigation }) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  correctAnswer: {
-    borderColor: "green",
-    borderWidth: 3,
-    //backgroundColor:"green"
-  },
-  wrongAnswer: {
-    borderColor: "red",
-    borderWidth: 3,
-    //backgroundColor:"red"
-  },
-  summaryScreen: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  summaryText: {
-    fontSize: 20,
-    textAlign: "center",
-    marginBottom: 20,
-  },
-});

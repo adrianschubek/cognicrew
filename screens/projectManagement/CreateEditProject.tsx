@@ -68,14 +68,7 @@ export default function CreateEditProject({
           {...props}
           style={styles.fixHeaderStyles}
           onPress={() => {
-            confirm({
-              key: "discard",
-              title: "Discard changes?",
-              message:
-                "All unsaved changes will be lost. Do you want to continue?",
-              okText: "Continue",
-              okAction: () => navigation.goBack(),
-            });
+            navigation.goBack();
           }}
         />
       ),

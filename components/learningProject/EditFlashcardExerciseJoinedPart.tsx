@@ -19,8 +19,6 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
-import { supabase } from "../../supabase";
-import Queue from "queue-fifo";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -41,11 +39,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
   //exercise specific
   // Create a queue
-  const updateCacheQueue = new Queue();
+  const updateCacheQueue = new Array();
   // Function to process tasks in the queue
   const processQueue = async () => {
-    while (!updateCacheQueue.isEmpty()) {
-      const task = updateCacheQueue.dequeue() as () => Promise<void>;
+    while (updateCacheQueue.length > 0) {
+      const task = updateCacheQueue.pop() as () => Promise<void>;
       await task();
     }
   };
@@ -69,7 +67,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         };
       });
     deletionArray.forEach((e) => {
-      updateCacheQueue.enqueue(() =>
+      updateCacheQueue.push(() =>
         deleteAnswersExercise({
           exercise: e.exercise,
           order_position: e.order_position,
