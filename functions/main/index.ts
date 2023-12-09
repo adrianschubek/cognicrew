@@ -81,12 +81,12 @@ setInterval(async () => {
     .from("player_answers")
     .select("*");
 
-  // Process commands in queue
+  // Poll all commands from queue
   const { data: commands } = await supabase
     .from("queue")
+    .delete()
     .select("id,room_id,type,data")
-    .order("created_at", { ascending: true })
-    .limit(100);
+    .order("created_at", { ascending: true });
 
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
@@ -109,8 +109,10 @@ setInterval(async () => {
       player.currentTimeNeeded = playerAnswer.answer_time;
     }
 
-    if (commands) {
-      for (const cmd of commands) {
+    // Process commands for this room
+    const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
+    if (roomCmds) {
+      for (const cmd of roomCmds) {
         switch (cmd.type) {
           case "reset_room":
             newState.screen = ScreenState.LOBBY;

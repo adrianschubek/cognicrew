@@ -14,6 +14,7 @@ import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { Json } from "../types/supabase";
+import { RoomClientUpdate } from "../functions/rooms";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -190,7 +191,6 @@ export function useDeleteProjectRating() {
   );
 }
 
-
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -201,7 +201,6 @@ export function useAchievements() {
     ),
   );
 }
-
 
 /**
  * Returns all achievements for a specific user.
@@ -288,15 +287,15 @@ export function useUnlockAchievement() {
 
 export async function useDistinctProjectGroups() {
   let { data, error } = await supabase.rpc("get_distinct_project_groups");
-  const stringArray = data.map(item => item.group);
-  
-  console.log('Distinct groups Array:', stringArray);
+  const stringArray = data.map((item) => item.group);
+
+  console.log("Distinct groups Array:", stringArray);
 
   if (error) {
-    console.error('Error fetching distinct groups:', error.message);
+    console.error("Error fetching distinct groups:", error.message);
     return []; // or handle the error in some way
   } else {
-    console.log('Distinct groups:', data);
+    console.log("Distinct groups:", data);
     return stringArray;
   }
 }
@@ -534,8 +533,11 @@ export function useConfirmLeaveLobby() {
         icon: "exit-run",
         okText: "Leave",
         okAction: async () => {
-          // check if user is host or not
-          await supabase.rpc("leave_room");
+          await supabase.functions.invoke("room-update", {
+            body: {
+              type: "reset_room",
+            } as RoomClientUpdate,
+          });
         },
       });
       return true;
