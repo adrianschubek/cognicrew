@@ -355,8 +355,7 @@ setInterval(async () => {
               .from("user_learning_projects")
               .update({ score_quiz: player.score + data.score_quiz })
               .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId)
-              .select();
+              .eq("learning_project_id", privateState.projectId);
           } else if (newState.game == GameState.FLASHCARDS) {
             let { data } = await supabase
               .from("user_learning_projects")
@@ -367,8 +366,7 @@ setInterval(async () => {
               .from("user_learning_projects")
               .update({ score_cards: player.score + data.score_cards })
               .eq("user_id", player.id)
-              .eq("learning_project_id",privateState.projectId)
-              .select();
+              .eq("learning_project_id",privateState.projectId);
           }
         }
       }
