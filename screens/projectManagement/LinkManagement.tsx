@@ -170,5 +170,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
+    paddingTop: 16,
   },
 });
