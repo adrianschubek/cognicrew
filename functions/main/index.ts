@@ -2,7 +2,12 @@ import { serve } from "https://deno.land/std@0.131.0/http/server.ts";
 import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
-import { GameState, PrivateRoomState, PublicRoomState } from "../rooms.ts";
+import {
+  GameState,
+  PrivateRoomState,
+  PublicRoomState,
+  UserProjectStats,
+} from "../rooms.ts";
 
 console.log("main function started");
 
@@ -341,35 +346,37 @@ setInterval(async () => {
         newState.screen = ScreenState.END_RESULTS;
 
         for (const player of newState.players) {
-          if (newState.game == GameState.EXERCISES) {
-            let { data, error } = await supabase
-              .from("user_learning_projects")
-              .select("score_quiz")
-              .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId)
-              .single();
-            if (!data || error) continue;
+          const { data: dbstats, error } = await supabase
+            .from("user_learning_projects")
+            .select("stats")
+            .eq("user_id", player.id)
+            .eq("learning_project_id", privateState.projectId)
+            .single();
+          if (error) {
+            console.error(error);
+            continue;
+          }
 
-            const { error: error2 } = await supabase
-              .from("user_learning_projects")
-              .update({ score_quiz: player.score + data.score_quiz })
-              .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId);
-            console.log(error2);
-          } else if (newState.game == GameState.FLASHCARDS) {
-            let { data } = await supabase
-              .from("user_learning_projects")
-              .select("score_cards")
-              .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId)
-              .single();
-            if (!data || error) continue;
+          const stats: UserProjectStats = dbstats
+            ? dbstats.stats
+            : {
+                scoreQuiz: 0,
+                scoreFlashcards: 0,
+              };
 
-            await supabase
-              .from("user_learning_projects")
-              .update({ score_cards: player.score + data.score_cards })
-              .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId);
+          stats.scoreQuiz +=
+            newState.game == GameState.EXERCISES ? player.score : 0;
+          stats.scoreFlashcards +=
+            newState.game == GameState.FLASHCARDS ? player.score : 0;
+
+          const { error: errUpdate } = await supabase
+            .from("user_learning_projects")
+            .update({ stats })
+            .eq("user_id", player.id)
+            .eq("learning_project_id", privateState.projectId);
+          if (errUpdate) {
+            console.error(error);
+            continue;
           }
         }
       }

@@ -128,6 +128,11 @@ export type PrivateRoomState = {
   };
 };
 
+export type UserProjectStats = {
+  scoreQuiz: number;
+  scoreFlashcards: number;
+};
+
 /**
  * format for client -> server edge function push
  */
