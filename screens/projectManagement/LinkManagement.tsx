@@ -28,7 +28,7 @@ export default function LinkManagement() {
   useSoundSystem1();
 
   function ensureHttpURL(url: string) {
-    return url.match(/^(https?:\/\/)/) ? url : `http://${url}`;
+    return url.toLowerCase().match(/^(https?:\/\/)/) ? url : `http://${url}`;
   }
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
