@@ -451,6 +451,37 @@ export interface Database {
           }
         ]
       }
+      queue: {
+        Row: {
+          created_at: string
+          data: string | null
+          id: string
+          room_id: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          data?: string | null
+          id?: string
+          room_id?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          data?: string | null
+          id?: string
+          room_id?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "queue_room_id_fkey"
+            columns: ["room_id"]
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       rooms: {
         Row: {
           code: number | null
@@ -652,6 +683,10 @@ export interface Database {
           p_other_userid: string
         }
         Returns: boolean
+      }
+      get_distinct_project_groups: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       get_particular_amount_ratings: {
         Args: {

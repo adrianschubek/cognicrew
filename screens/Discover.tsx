@@ -14,6 +14,7 @@ import { Card, Chip, Dialog, PaperProvider, Portal, Text, useTheme } from "react
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
+import { useDistinctProjectGroups } from "../utils/hooks";
 
 export default function Discover() {
   const theme = useTheme();
@@ -31,6 +32,19 @@ export default function Discover() {
     },
   });
 
+  //TODO replace with actual data
+  const semesters = [
+    "WS 23/24",
+    "So 23",
+    "WS 22/23",
+    "So 22",
+    "WS 21/22",
+    "So 21",
+    "WS 20/21",
+  ];
+
+  const allDistinctGroups = useDistinctProjectGroups();
+
   // Add state to manage visibility for each card
   const [cardVisibility, setCardVisibility] = useState(Array(data?.length).fill(false));
 
@@ -45,87 +59,30 @@ export default function Discover() {
     </View>
   );
 
-
-  const CourseDialog = () => {
-    const [visible, setVisible] = useState(false);
-
-    const showDialog = () => setVisible(true);
-
-    const hideDialog = () => setVisible(false);
-
-    return (
-      <PaperProvider>
-        <View>
-          <Button onPress={showDialog}>Show Dialog</Button>
-          <Portal>
-            <Dialog visible={visible} onDismiss={hideDialog}>
-              <Dialog.Title>Alert</Dialog.Title>
-              <Dialog.Content>
-                <Text variant="bodyMedium">This is simple dialog</Text>
-              </Dialog.Content>
-              <Dialog.Actions>
-                <Button onPress={hideDialog}>Done</Button>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
-        </View>
-      </PaperProvider>
-    );
-  };
 if (!data) return null
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+            <View>
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           pagingEnabled={true}
         >
-          <Button
-            style={styles.semesterFilter}
-            mode="outlined"
-            onPress={() => {
-              setSelectedSemester("Winter 2023/24");
-              mutate();
-              console.log("WI23-Button-Pressed");
-            }}
-          >
-            WI 23/24
-          </Button>
-          <Text> </Text>
-          <Button
-            style={styles.semesterFilter}
-            mode="outlined"
-            onPress={() => {
-              setSelectedSemester("Summer 2023");
-              mutate();
-              console.log("*TODO*");
-            }}
-          >
-            SO 23
-          </Button>
-          <Text> </Text>
-          <Button
-            style={styles.semesterFilter}
-            mode="outlined"
-            onPress={() => {
-              setSelectedSemester("Winter 2022/23");
-              mutate();
-            }}
-          >
-            WI 22/23
-          </Button>
-          <Text> </Text>
-          <Button
-            style={styles.semesterFilter}
-            mode="outlined"
-            onPress={() => {
-              
-            }}
-          >
-            All
-          </Button>
+          {semesters.map((semester, index) => (
+            <Button
+              key={index.toString()}
+              style={styles.semesterFilter}
+              mode="outlined"
+              onPress={() => {
+                setSelectedSemester(semester);
+                mutate();
+                console.log(`${semester}-Button-Pressed`);
+              }}
+            >
+              {semester}
+            </Button>
+          ))}
         </ScrollView>
       </View>
       <Searchbar
@@ -161,7 +118,9 @@ if (!data) return null
                   <Text variant="bodyMedium">{item.description}</Text>
                   <Text variant="bodyMedium">{item.group}</Text>
                   <View style={styles.horizontalCardButtons}>
-                  <Button buttonColor={theme.colors.primary} textColor="white">
+                  <Button buttonColor={theme.colors.primary} 
+                          textColor="white"
+                          onPress={() => {console.log("Clone pressed")}}>
                       Clone
                     </Button>
                   </View>
@@ -207,5 +166,6 @@ const styles = StyleSheet.create({
   },
   semesterFilter: {
     marginBottom: 5,
+    marginRight: 5,
   },
 });
