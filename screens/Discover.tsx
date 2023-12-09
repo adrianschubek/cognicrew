@@ -40,7 +40,27 @@ export default function Discover() {
     },
   });
 
-  //TODO Handle "All" group properly
+  const customSort = (a, b) => {
+    const extractNumber = (str) => {
+      const match = str.match(/\d+/); // Extracts the number part
+      return match ? parseInt(match[0], 10) : NaN;
+    };
+    const numA = extractNumber(a);
+    const numB = extractNumber(b);
+  
+    // If both are numbers, compare them in descending order
+    if (!isNaN(numA) && !isNaN(numB)) {
+      return numB - numA;
+    }
+    // If only one is a number prioritize non-number strings
+    if (!isNaN(numA) || !isNaN(numB)) {
+      return isNaN(numA) ? -1 : 1;
+    }
+    // If neither is a number, compare them as strings
+    return a.localeCompare(b);
+  };
+
+  //TODO Handle "All" group properly (currently only showing projects with group "All")
   // State for distinct project groups
   const [allDistinctGroups, setAllDistinctGroups] = useState([]);
 
@@ -49,7 +69,7 @@ export default function Discover() {
       const fetchDistinctGroups = async () => {
         try {
           const distinctGroups = await useDistinctProjectGroups();
-          setAllDistinctGroups(distinctGroups);
+          setAllDistinctGroups(distinctGroups.sort(customSort));
         } catch (error) {
           console.error('Error fetching distinct project groups:', error.message);
         }
