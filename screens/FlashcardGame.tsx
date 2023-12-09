@@ -158,8 +158,10 @@ export default function FlashcardGame({ route, navigation }) {
                     style={[
                       answer.isCorrect
                         ? { backgroundColor: "#4CAF50" }
-                        : { backgroundColor: theme.colors.backdrop },
-                      { borderColor: theme.colors.primary },
+                        : { backgroundColor: theme.colors.elevation.level2 },
+                      answer.answer === userInput
+                        ? { borderColor: theme.colors.primary }
+                        : { borderColor: null, borderWidth: 0 },
                     ]}
                   >
                     <Card.Content
