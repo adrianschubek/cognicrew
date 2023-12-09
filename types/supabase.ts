@@ -686,7 +686,9 @@ export interface Database {
       }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
-        Returns: Json
+        Returns: {
+          group: string
+        }[]
       }
       get_particular_amount_ratings: {
         Args: {
