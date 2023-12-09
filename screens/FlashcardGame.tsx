@@ -84,11 +84,6 @@ export default function FlashcardGame({ route, navigation }) {
                 textAlign: "center",
                 flex: 1,
                 marginHorizontal: 10,
-                // backgroundColor: null,
-                borderLeftWidth: 1,
-                borderRightWidth: 1,
-                borderTopWidth: 1,
-                // borderColor: "gray",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
