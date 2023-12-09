@@ -30,8 +30,8 @@ export default function EditExercise(props: {
       filteredAnswers.length >= 2 &&
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
-      //console.log("update in useEffect: ", filteredAnswers)
-      updateCache(filteredAnswers);
+      console.log("update in useEffect: ", filteredAnswers)
+      //updateCache(filteredAnswers);
     }
   }, [answers]);
 
@@ -63,13 +63,13 @@ export default function EditExercise(props: {
             (payload.old[0] && (payload.old[0].exercise as number)) ===
               (listItem.id as number)
           )
-          //console.log("realtimeAnswers: ", payload);
+          console.log("realtimeAnswers: ", payload);
             mutate();
         },
       )
       .subscribe();
   }, []);
-  function updateCache(newAnswers: [string, boolean, number][]) {
+  async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
       ...oldData,
       data: newAnswers.map((e) => {
@@ -102,7 +102,7 @@ export default function EditExercise(props: {
           marginLeft: 8,
         }}
       >
-        <Text>Add or remove Answers: </Text>
+        <Text>Add Answers: </Text>
         <View
           style={{
             flexDirection: "row",

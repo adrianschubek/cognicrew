@@ -48,6 +48,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       { length: initialLength },
       (_, index) => index + 1,
     );
+    //console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
     const deletionArray = initialLenghtArray
       .slice(-numberOfAnswersToDelete)
       .map((orderPosition) => {
@@ -59,7 +60,8 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
-    setInitialAnswersLength(answers.length);
+    //console.log("InitialLength: ", initialLength);
+    //console.log("answersLength: ", answers.length);
     return data;
   }
   //Flashcard hooks
@@ -81,16 +83,17 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
           deleteAnswers(initialLength, answerOrAnswers),
-            //answers need to be updated
-            answerOrAnswers.forEach((e) => {
-              upsertAnswersExercise({
-                //@ts-expect-error
-                answer: e[0],
-                exercise: res[0].id,
-                is_correct: e[1],
-                order_position: e[2],
-              });
+            setInitialAnswersLength(answerOrAnswers.length);
+          //answers need to be updated
+          answerOrAnswers.forEach((e) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: e[2],
             });
+          });
         })
       : upsertFlashcard({
           //@ts-expect-error
