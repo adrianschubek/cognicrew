@@ -5,7 +5,14 @@ import {
   BackHandler,
   KeyboardAvoidingView,
 } from "react-native";
-import { TextInput, Text, Button, Dialog, useTheme } from "react-native-paper";
+import {
+  TextInput,
+  Text,
+  Button,
+  Dialog,
+  useTheme,
+  Card,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -25,6 +32,7 @@ import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
+import Animated from "react-native-reanimated";
 
 export default function FlashcardGame({ route, navigation }) {
   useSoundSystem2();
@@ -84,6 +92,7 @@ export default function FlashcardGame({ route, navigation }) {
             flexDirection: "column",
             justifyContent: "flex-start",
             flex: 2,
+            marginHorizontal: 10,
           }}
         >
           <Text
@@ -98,7 +107,6 @@ export default function FlashcardGame({ route, navigation }) {
             style={[
               {
                 textAlign: "center",
-                marginHorizontal: 10,
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
@@ -132,21 +140,52 @@ export default function FlashcardGame({ route, navigation }) {
               justifyContent: "flex-start",
               alignItems: "flex-end",
               paddingTop: 16,
-              paddingRight: 16,
             }}
           >
             {roomState.screen === ScreenState.ROUND_SOLUTION &&
               roomState.userAnswers.map((answer, index) => (
-                <Text
-                  variant="titleLarge"
+                <Animated.View
                   key={index}
-                  style={{
-                    color: answer.isCorrect ? "green" : "red",
-                    marginBottom: 10,
-                  }}
+                  style={[
+                    {
+                      width: "100%",
+                      height: 70,
+                    },
+                  ]}
                 >
-                  {answer.answer} {answer.percentage}%
-                </Text>
+                  <Card
+                    mode="outlined"
+                    style={[{ borderColor: theme.colors.primary }]}
+                  >
+                    <Card.Content
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          marginLeft: 5,
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                          gap: 5,
+                        }}
+                      >
+                        <Text
+                          variant="titleMedium"
+                          key={index}
+                          style={{
+                            color: answer.isCorrect ? "green" : "red",
+                            textAlign: "center",
+                          }}
+                        >
+                          {answer.answer} {answer.percentage}%
+                        </Text>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                </Animated.View>
               ))}
           </View>
         </View>
@@ -166,5 +205,4 @@ const styles = StyleSheet.create({
     // borderWidth: 3,
     backgroundColor: "red",
   },
-
 });
