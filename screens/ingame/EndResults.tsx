@@ -19,6 +19,7 @@ export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
 
   const roomState = useRoomStateStore((state) => state.roomState);
+ 
   const theme = useTheme();
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
@@ -66,6 +67,7 @@ export default function EndResults({ navigation }) {
   if (highestScore > 250) {
     maxheight = 250 / highestScore;
   }
+
   return (
     <View
       style={{

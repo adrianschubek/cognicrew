@@ -82,7 +82,6 @@ export default function ProjectStatistics() {
 
   async function calcCountLinks() {
     let { data, error } = await supabase.from('links').select('*')
-    console.log(data);
     if (error) {
       console.error('Error fetching data:', error);
     } else {
@@ -100,7 +99,6 @@ export default function ProjectStatistics() {
           throw error;
         }
         const fileCount = data.length;
-        console.log(`Number of files in ${folderName} ${fileCount}`);
         return fileCount;
       } else {
         let { data, error } = await supabase.storage.from("files").list(`${projectId}/photos`);
@@ -108,7 +106,6 @@ export default function ProjectStatistics() {
           throw error;
         }
         const fileCount = data.length;
-        console.log(`Number of files in ${folderName} ${fileCount}`);
         return fileCount;
       }
     } catch (error) {
