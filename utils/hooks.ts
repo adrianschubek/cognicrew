@@ -15,6 +15,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
+import { handleEdgeError } from "./common";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -533,11 +534,12 @@ export function useConfirmLeaveLobby() {
         icon: "exit-run",
         okText: "Leave",
         okAction: async () => {
-          await supabase.functions.invoke("room-update", {
+          const { error } = await supabase.functions.invoke("room-update", {
             body: {
               type: "reset_room",
             } as RoomClientUpdate,
           });
+          if (error) return await handleEdgeError(error);
         },
       });
       return true;

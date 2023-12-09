@@ -82,11 +82,13 @@ setInterval(async () => {
     .select("*");
 
   // Poll all commands from queue
-  const { data: commands } = await supabase
+  const { data: commands, error } = await supabase
     .from("queue")
     .delete()
+    .neq("type", null)
     .select("id,room_id,type,data")
     .order("created_at", { ascending: true });
+  if (error) console.error("queue: ", error);
 
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
@@ -115,6 +117,7 @@ setInterval(async () => {
       for (const cmd of roomCmds) {
         switch (cmd.type) {
           case "reset_room":
+            console.log("reset_room");
             newState.screen = ScreenState.LOBBY;
             newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
@@ -317,9 +320,9 @@ setInterval(async () => {
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
-    `main_loop: ${
-      publicRoomStates.length
-    } states and ${commands?.length} commands processed in ${end - start}ms`,
+    `main_loop: ${publicRoomStates.length} states and ${
+      commands?.length ?? 0
+    } commands processed in ${end - start}ms`,
   );
 }, 1000);
 
