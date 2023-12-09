@@ -348,9 +348,7 @@ setInterval(async () => {
               .eq("user_id", player.id)
               .eq("learning_project_id", privateState.projectId)
               .single();
-            console.log("=====");
-            console.log(data, error);
-            console.log("=====");
+            if (!data || error) continue;
 
             const { error: error2 } = await supabase
               .from("user_learning_projects")
@@ -365,6 +363,8 @@ setInterval(async () => {
               .eq("user_id", player.id)
               .eq("learning_project_id", privateState.projectId)
               .single();
+            if (!data || error) continue;
+
             await supabase
               .from("user_learning_projects")
               .update({ score_cards: player.score + data.score_cards })
