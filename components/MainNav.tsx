@@ -229,7 +229,7 @@ function MainTabs({ navigation }) {
               break;
             case "DELETE":
               if (payload.old.room_id !== room?.id) {
-                // FIXME: Fixes bug if room id not mismatch
+                // Fixes bug if room id mismatch
                 console.log(
                   "ignoring room_id mismatch on DELETE ",
                   payload.old.room_id,

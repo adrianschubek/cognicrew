@@ -11,7 +11,6 @@ type RoomStore = {
 
 /**
  * Current room info without any room state.
- * //FIXME: removed persist bc it was creating bug project -> null on rejin startup.
  */
 export const useRoomStore = create<RoomStore>((set, get) => ({
   room: null,
