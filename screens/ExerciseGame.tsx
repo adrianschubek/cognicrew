@@ -45,7 +45,7 @@ export default function ExerciseGame({ navigation }) {
     setIsInvoking(true);
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
-        type: "exercise-answer",
+        type: "exercise_answer",
         answerIndex: checked, // between 0 and 3 // TODO: get selected Answers
       } as RoomClientUpdate,
     });

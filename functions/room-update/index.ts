@@ -80,8 +80,8 @@ serve(async (req) => {
       return err("Could not fetch game data (#23)", 500);
 
     switch (body.type) {
-      case "flashcard-answer":
-      case "exercise-answer": {
+      case "flashcard_answer":
+      case "exercise_answer": {
         // |check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
         // store "true" or "false" in db
 
@@ -104,7 +104,7 @@ serve(async (req) => {
           round: publicState.round,
           /* correct === user_answers */
           answer_correct:
-            body.type === "exercise-answer"
+            body.type === "exercise_answer"
               ? privateState.gameData.exercises[
                   publicState.round - 1
                 ].correct.every((e) => body.answerIndex.includes(e)) &&
@@ -119,7 +119,7 @@ serve(async (req) => {
           answered_at: dayjs().valueOf(),
           answer_time: dayjs().valueOf() - publicState.roundBeganAt,
           answer:
-            body.type === "exercise-answer"
+            body.type === "exercise_answer"
               ? body.answerIndex.toString()
               : body.answer,
         });
@@ -128,16 +128,31 @@ serve(async (req) => {
         }
         break;
       }
-      case "reset-room": {
+      case "reset_room": {
+        // => reset room back to lobby if host. ---nein otherwise leave room (clientside return true to leave room for non host)
         // check if user is host
         const { data: hostData, error: hostError } = await supabase
           .from("rooms")
-          .select("host_id")
+          .select("host")
           .eq("id", rid)
           .single();
+        if (hostError || !hostData)
+          return err("Could not fetch host (#26)", 500);
+
+        if (hostData.host !== user.id) await supabaseUser.rpc("leave_room");
+        else {
+          // reset room
+          // submit command to queue table so that main thread can poll queue for changes and execute it
+          const { error: errSaveQueue } = await supabase.from("queue").insert({
+            room_id: rid,
+            type: "reset_room",
+            data: null,
+          });
+          if (errSaveQueue) return err("Could not queue command (#30)", 500);
+        }
         break;
       }
-      case "skip-round":
+      case "skip_round":
         return err("Not implemented (#27)", 501);
         break;
       default:

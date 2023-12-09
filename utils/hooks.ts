@@ -531,6 +531,7 @@ export function useConfirmLeaveLobby() {
         icon: "exit-run",
         okText: "Leave",
         okAction: async () => {
+          // check if user is host or not
           await supabase.rpc("leave_room");
         },
       });

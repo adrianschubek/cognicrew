@@ -128,10 +128,10 @@ export type PrivateRoomState = {
  * format for client -> server edge function push
  */
 export type RoomClientUpdate =
-  | { type: "flashcard-answer"; answer: string }
-  | { type: "exercise-answer"; answerIndex: number[] }
-  | { type: "reset-room" }
-  | { type: "skip-round" }; /* host only */
+  | { type: "flashcard_answer"; answer: string }
+  | { type: "exercise_answer"; answerIndex: number[] }
+  | { type: "reset_room" }
+  | { type: "skip_round" }; /* host only */
 
 export type RoomClientInit =
   | {

@@ -36,7 +36,7 @@ export default function FlashcardGame({ route, navigation }) {
     setIsInvoking(true);
     const { data, error } = await supabase.functions.invoke("room-update", {
       body: {
-        type: "flashcard-answer",
+        type: "flashcard_answer",
         answer: userInput, // get answer
       } as RoomClientUpdate,
     });
