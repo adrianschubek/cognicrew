@@ -21,6 +21,7 @@ import {
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
+import { FAB } from "react-native-paper";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();
@@ -32,7 +33,9 @@ export default function LinkManagement() {
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
-
+  const [FABOpen, setFABOpen] = useState({ open: false });
+  const onStateChange = ({ open }) => setFABOpen({ open });
+  const { open } = FABOpen;
   useEffect(() => {
     if (!data) return;
     setLinkItems(data);
@@ -110,20 +113,29 @@ export default function LinkManagement() {
     });
   }
   return (
-    <View style={styles.container}>
-      <StatusBar />
-      <View style={styles.upperContainer}>
-        <TextWithPlusButton
-          text="Add new link"
-          onPress={() => {
-            openAddEditLinkDialog();
-          }}
-        />
+    <>
+      <View style={styles.container}>
+        <StatusBar />
+        <ScrollView>
+          <LinkCards links={linkItems} onEdit={handleEdit} />
+          {/*View margin for FAB.Group when scrolling down */}
+          <View style={{ marginBottom: 78 }}></View>
+        </ScrollView>
       </View>
-      <ScrollView>
-        <LinkCards links={linkItems} onEdit={handleEdit} />
-      </ScrollView>
-    </View>
+      <FAB.Group
+        open={open}
+        visible
+        icon={open ? "card-text" : "plus"}
+        actions={[
+          {
+            icon: "plus",
+            label: "Add new " + "link",
+            onPress: openAddEditLinkDialog,
+          },
+        ]}
+        onStateChange={onStateChange}
+      />
+    </>
   );
 }
 
@@ -135,11 +147,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-  upperContainer: {
-    flex: 0,
-    width: responsiveWidth(100),
-    flexDirection: "row",
-    justifyContent: "flex-end",
   },
 });
