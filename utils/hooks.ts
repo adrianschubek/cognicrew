@@ -189,6 +189,7 @@ export function useDeleteProjectRating() {
   );
 }
 
+
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -199,6 +200,7 @@ export function useAchievements() {
     ),
   );
 }
+
 
 /**
  * Returns all achievements for a specific user.
@@ -281,6 +283,16 @@ export function useUnlockAchievement() {
   };
 
   return unlockAchievement;
+}
+
+export async function useDistinctProjectGroups() {
+  let { data, error } = await supabase.rpc("get_distinct_project_groups");
+  console.log(data);
+  if (error) {
+    console.error('Error fetching distinct groups:', error.message);
+  } else {
+    console.log('Distinct groups:', data);
+  }
 }
 
 //Returns all Sets

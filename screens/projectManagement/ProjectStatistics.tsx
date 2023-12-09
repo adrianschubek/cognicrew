@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Divider, Text } from "react-native-paper";
 
 import PieChart from "react-native-pie-chart";
+import { useAuth } from "../../providers/AuthProvider";
+import { useProjectStore } from "../../stores/ProjectStore";
+import { supabase } from "../../supabase";
 
 export default function ProjectStatistics() {
 
@@ -44,6 +47,78 @@ export default function ProjectStatistics() {
     ));
   }
 
+  const { user } = useAuth();
+  const projectId = useProjectStore((state) => state.projectId);
+
+  //const count = useStatisticsByProject();
+
+  const [countExercises, setCountExercises] = useState(null);
+  const [countFlashcards, setCountFlashcards] = useState(null);
+  const [countLinks, setCountLinks] = useState(null);
+  const [countDocuments, setCountDocuments] = useState(null);
+  const [countPhotos, setCountPhotos] = useState(null);
+
+  async function calcCountExercises() {
+    let { count, error } = await supabase.from('learning_projects').select('*, sets(id, exercises(id))', {count: 'exact', head: true}).eq('id', projectId); //this only counts projects
+    console.log(count);
+    //still have to restrict it to only exercises with correct project id
+    setCountExercises(count);
+  }
+
+  async function calcCountFlashcards() {
+    let { count, error } = await supabase.from('flashcards').select('*', { count: 'exact', head: true });
+    //still have to restrict it to only exercises with correct project id
+    setCountFlashcards(count);
+  }
+
+  async function calcCountLinks() {
+    let { count, error } = await supabase.from('links').select('*', { count: 'exact', head: true }).eq("learning_project", projectId);
+    //still have to restrict it to only exercises with correct project id
+    setCountLinks(count);
+  }
+
+  async function calcCountFiles(folderName) {
+    try {
+      if(folderName == "documents") {
+        let { data, error } = await supabase.storage.from("files").list(`${projectId}/documents`);
+        if (error) {
+          throw error;
+        }
+        const fileCount = data.length;
+        console.log(`Number of files in ${folderName} ${fileCount}`);
+        return fileCount;
+      } else {
+        let { data, error } = await supabase.storage.from("files").list(`${projectId}/photos`);
+        if (error) {
+          throw error;
+        }
+        const fileCount = data.length;
+        console.log(`Number of files in ${folderName} ${fileCount}`);
+        return fileCount;
+      }
+    } catch (error) {
+      console.error('Error counting files', error.message);
+    }
+    //still have to restrict it to only exercises with correct project id
+  }
+
+  useEffect(() => {
+  const fetchData = async () => {
+    try{
+    calcCountExercises();
+    calcCountFlashcards();
+    calcCountLinks();
+    const documentsCount = await calcCountFiles('documents');
+    const photosCount = await calcCountFiles('photos');
+    setCountDocuments(documentsCount);
+    setCountPhotos(photosCount);
+    } catch (error) {
+      console.error('Error in fetching data:', error.message);
+    }
+  };
+  fetchData();
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <Text
@@ -55,23 +130,23 @@ export default function ProjectStatistics() {
       <Divider />
       <View style={styles.categoryStyle}>
         <Text variant={heading2}>CogniCards</Text>
-        <Text variant={heading3}>Amount of cards:</Text>
+        <Text variant={heading3}>Amount of cards: {countFlashcards}</Text>
       </View>
       <Divider />
       <View style={styles.categoryStyle}>
         <Text variant={heading2}>CogniCises</Text>
-        <Text variant={heading3}>Amount of exercises:</Text>
+        <Text variant={heading3}>Amount of exercises: {countExercises}</Text>
       </View>
       <Divider />
       <View style={styles.categoryStyle}>
         <Text variant={heading2}>CogniLinks</Text>
-        <Text variant={heading3}>Amount of links:</Text>
+        <Text variant={heading3}>Amount of links: {countLinks}</Text>
       </View>
       <Divider />
       <View style={styles.categoryStyle}>
         <Text variant={heading2}>Cognifiles</Text>
-        <Text variant={heading3}>Amount of files:</Text>
-        <Text variant={heading3}>Amount of photos:</Text>
+        <Text variant={heading3}>Amount of files: {countDocuments}</Text>
+        <Text variant={heading3}>Amount of photos: {countPhotos}</Text>
       </View>
 
       <Text
