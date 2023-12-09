@@ -295,6 +295,8 @@ export default function FilesManagement() {
                   />
                 ))}
               </ScrollView>
+              {/*View margin for FAB.Group when scrolling down */}
+              <View style={{ marginBottom: 86 }}></View>
             </View>
           );
         }}
@@ -325,8 +327,9 @@ export default function FilesManagement() {
 }
 const styles = StyleSheet.create({
   container: {
+    marginTop: -8,
     flex: 1,
-    paddingTop: 20,
+    paddingTop: 8,
   },
   scrollView: {
     paddingHorizontal: 8,
