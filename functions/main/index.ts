@@ -342,13 +342,13 @@ setInterval(async () => {
 
         for (const player of newState.players) {
           if (newState.game == GameState.EXERCISES) {
-            let { data } = await supabase
+            let { data, error } = await supabase
               .from("user_learning_projects")
               .select("score_quiz")
               .eq("user_id", player.id)
               .eq("learning_project_id", privateState.projectId);
               console.log("=====")
-              console.log(data);
+              console.log(data, error);
               console.log("=====")
               
             await supabase
