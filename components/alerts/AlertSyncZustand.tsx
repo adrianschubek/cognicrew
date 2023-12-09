@@ -38,7 +38,7 @@ function AlertSyncZustand() {
 
   const [values, setValues] = useState<string[]>([]);
   const [tempError, setTempError] = useState<string | null>(null);
-  const [busy, setBusy] = useState<boolean>(false); // FIXME performance bottleneck. too many states
+  const [busy, setBusy] = useState<boolean>(false);
 
   const [tempValues, setTempValues] = useState<string[]>([]);
 
