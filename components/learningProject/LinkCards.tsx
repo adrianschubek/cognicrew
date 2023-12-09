@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Linking,
   TouchableOpacity,
+  View,
 } from "react-native";
 import {
   responsiveWidth,
@@ -73,12 +74,30 @@ export default function LinkCards({ links, onEdit }) {
         title={link.title}
         subtitle={link.subtitle}
         left={() => (
-          <TouchableOpacity onPress={() => openLink(link.link_url)}>
-            <Image
-              source={{ uri: getIconForLink(link.link_url) }}
-              style={styles.iconStyle}
+          <View
+            style={{
+              alignItems: "center",
+              marginRight: 10,
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{ width: 30, height: 30 }}
+              onPress={() => openLink(link.link_url)}
+            >
+              <Image
+                source={{ uri: getIconForLink(link.link_url) }}
+                style={{ height: 30 }}
+                width={30}
+              />
+            </TouchableOpacity>
+            <IconButton
+              icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
+              onPress={() =>
+                setExpandedId(expandedId === link.id ? null : link.id)
+              }
             />
-          </TouchableOpacity>
+          </View>
         )}
         right={() => (
           <>
@@ -121,10 +140,6 @@ export default function LinkCards({ links, onEdit }) {
           </Text>
         </Card.Content>
       )}
-      <IconButton
-        icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
-        onPress={() => setExpandedId(expandedId === link.id ? null : link.id)}
-      />
     </Card>
   ));
 }
@@ -138,6 +153,5 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 30,
     height: 30,
-    marginRight: 10,
   },
 });
