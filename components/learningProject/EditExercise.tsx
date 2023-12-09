@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
 import { useAnswersExercises } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { HelperText, IconButton, Text } from "react-native-paper";
+import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
 import Queue from "queue-fifo";
+import { use } from "chai";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -19,6 +20,9 @@ export default function EditExercise(props: {
   const [oldData, setOldData] = useState<any>(null);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([]);
   const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
+  const [showAnswerDeletionOptions, setShowAnswerDeletionOptions] =
+    useState<boolean>(false);
+  const theme = useTheme();
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -91,7 +95,7 @@ export default function EditExercise(props: {
           marginLeft: 8,
         }}
       >
-        <Text>Add Answers: </Text>
+        <Text>Add or remove Answers: </Text>
         <View
           style={{
             flexDirection: "row",
@@ -109,6 +113,12 @@ export default function EditExercise(props: {
               newArray.push(["", false, newArray.length + 1]);
               setAnswers(newArray);
               setShowErrorAnswerBoundaries(false);
+            }}
+          />
+          <IconButton
+            icon={showAnswerDeletionOptions ? "check" : "minus"}
+            onPress={() => {
+              setShowAnswerDeletionOptions(!showAnswerDeletionOptions);
             }}
           />
         </View>
@@ -134,23 +144,25 @@ export default function EditExercise(props: {
               number={index + 1}
               flex={1}
             />
-            <IconButton
-              icon="minus"
-              onPress={() => {
-                if (answers.length <= 2) {
-                  setShowErrorAnswerBoundaries(true);
-                  return;
-                }
-                const newAnswers = [...answers]
-                  .filter((e) => e[2] !== index + 1)
-                  .map((e, index) => {
-                    return [e[0], e[1], index + 1];
-                  }) as [string, boolean, number][];
-                //console.log("when Minus pressed: ", newAnswers);
-                setAnswers(newAnswers);
-                setShowErrorAnswerBoundaries(false);
-              }}
-            />
+            {showAnswerDeletionOptions && (
+              <IconButton
+                icon="close"
+                onPress={() => {
+                  if (answers.length <= 2) {
+                    setShowErrorAnswerBoundaries(true);
+                    return;
+                  }
+                  const newAnswers = [...answers]
+                    .filter((e) => e[2] !== index + 1)
+                    .map((e, index) => {
+                      return [e[0], e[1], index + 1];
+                    }) as [string, boolean, number][];
+                  //console.log("when Minus pressed: ", newAnswers);
+                  setAnswers(newAnswers);
+                  setShowErrorAnswerBoundaries(false);
+                }}
+              />
+            )}
           </View>
         );
       })}
