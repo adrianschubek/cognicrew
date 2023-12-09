@@ -357,12 +357,12 @@ setInterval(async () => {
             continue;
           }
 
-          const stats: UserProjectStats = dbstats
-            ? dbstats.stats
-            : {
-                scoreQuiz: 0,
-                scoreFlashcards: 0,
-              };
+          console.log(dbstats);
+          console.log(dbstats.stats);
+          const stats: UserProjectStats = dbstats?.stats ?? {
+            scoreQuiz: 0,
+            scoreFlashcards: 0,
+          };
 
           stats.scoreQuiz +=
             newState.game == GameState.EXERCISES ? player.score : 0;
