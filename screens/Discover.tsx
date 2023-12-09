@@ -10,18 +10,26 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Card, Chip, Dialog, PaperProvider, Portal, Text, useTheme } from "react-native-paper";
+import {
+  Card,
+  Chip,
+  Dialog,
+  PaperProvider,
+  Portal,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
 import { useDistinctProjectGroups } from "../utils/hooks";
 
-export default async function Discover() {
+export default function Discover() {
   const theme = useTheme();
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data , mutate } = useQuery(supabase.rpc("public_projects"), {
+  const { data, mutate } = useQuery(supabase.rpc("public_projects"), {
     onSuccess(data, key, config) {
       console.log("Data fetched successfully:", data.data);
     },
@@ -43,10 +51,33 @@ export default async function Discover() {
     "WS 20/21",
   ];
 
-  const allDistinctGroups = await useDistinctProjectGroups();
+  // State for distinct project groups
+  const [allDistinctGroups, setAllDistinctGroups] = useState([]);
+
+  // Fetch distinct project groups and update the state
+  useEffect(() => {
+    /*@Fabian: This code crashes app:
+      Error fetching distinct project groups: Objects are not valid as a React child (found: object with keys {group}). 
+      If you meant to render a collection of children, use an array instead.   
+      */
+    /*
+      const fetchDistinctGroups = async () => {
+        try {
+          const distinctGroups = await useDistinctProjectGroups();
+          setAllDistinctGroups(distinctGroups);
+        } catch (error) {
+          console.error('Error fetching distinct project groups:', error.message);
+        }
+      };
+  
+      fetchDistinctGroups();
+      */
+  }, []);
 
   // Add state to manage visibility for each card
-  const [cardVisibility, setCardVisibility] = useState(Array(data?.length).fill(false));
+  const [cardVisibility, setCardVisibility] = useState(
+    Array(data?.length).fill(false),
+  );
 
   const onChangeSearch = (query) => setSearchQuery(query);
   const [visible, setVisible] = useState(false);
@@ -59,30 +90,31 @@ export default async function Discover() {
     </View>
   );
 
-if (!data) return null
+  if (!data) return null;
 
   return (
     <SafeAreaView style={styles.container}>
-            <View>
+      <View>
         <ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           pagingEnabled={true}
         >
-          {allDistinctGroups && allDistinctGroups.map((semester, index) => (
-            <Button
-              key={index.toString()}
-              style={styles.semesterFilter}
-              mode="outlined"
-              onPress={() => {
-                setSelectedSemester(semester);
-                mutate();
-                console.log(`${semester}-Button-Pressed`);
-              }}
-            >
-              {semester}
-            </Button>
-          ))}
+          {allDistinctGroups &&
+            allDistinctGroups.map((semester, index) => (
+              <Button
+                key={index.toString()}
+                style={styles.semesterFilter}
+                mode="outlined"
+                onPress={() => {
+                  setSelectedSemester(semester);
+                  mutate();
+                  console.log(`${semester}-Button-Pressed`);
+                }}
+              >
+                {semester}
+              </Button>
+            ))}
         </ScrollView>
       </View>
       <Searchbar
@@ -91,7 +123,7 @@ if (!data) return null
         onChangeText={onChangeSearch}
         value={searchQuery}
       />
-      
+
       <FlatList
         /*TODO : ADDING DIALOG */
         style={styles.flatList}
@@ -99,28 +131,35 @@ if (!data) return null
           (project) =>
             project.group === selectedSemester &&
             (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              project.description.toLowerCase().includes(searchQuery.toLowerCase()))
+              project.description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())),
         )}
         renderItem={({ item, index }) => (
-          <Card style={styles.card} 
-                key={index.toString()}
-                onPress={() => {
-                  // Toggle visibility for the pressed card
-                  const updatedVisibility = [...cardVisibility];
-                  updatedVisibility[index] = !updatedVisibility[index];
-                  setCardVisibility(updatedVisibility);
-                }}
-                >
-            <Card.Title title={item.name} titleVariant="titleLarge"/>
+          <Card
+            style={styles.card}
+            key={index.toString()}
+            onPress={() => {
+              // Toggle visibility for the pressed card
+              const updatedVisibility = [...cardVisibility];
+              updatedVisibility[index] = !updatedVisibility[index];
+              setCardVisibility(updatedVisibility);
+            }}
+          >
+            <Card.Title title={item.name} titleVariant="titleLarge" />
             <Card.Content>
               {cardVisibility[index] && (
                 <>
                   <Text variant="bodyMedium">{item.description}</Text>
                   <Text variant="bodyMedium">{item.group}</Text>
                   <View style={styles.horizontalCardButtons}>
-                  <Button buttonColor={theme.colors.primary} 
-                          textColor="white"
-                          onPress={() => {console.log("Clone pressed")}}>
+                    <Button
+                      buttonColor={theme.colors.primary}
+                      textColor="white"
+                      onPress={() => {
+                        console.log("Clone pressed");
+                      }}
+                    >
                       Clone
                     </Button>
                   </View>
@@ -131,8 +170,6 @@ if (!data) return null
         )}
         //keyExtractor={(item) => item.id}
       />
-
-
     </SafeAreaView>
   );
 }
@@ -154,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   card: {
-    margin: 3
+    margin: 3,
   },
   horizontalCardButtons: {
     flexDirection: "row",

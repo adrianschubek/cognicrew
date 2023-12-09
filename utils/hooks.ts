@@ -288,7 +288,7 @@ export function useUnlockAchievement() {
 
 export async function useDistinctProjectGroups() {
   let { data, error } = await supabase.rpc("get_distinct_project_groups");
-  
+  console.log(data);
   if (error) {
     console.error('Error fetching distinct groups:', error.message);
     return []; // or handle the error in some way

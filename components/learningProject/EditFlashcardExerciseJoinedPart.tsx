@@ -20,6 +20,7 @@ import {
   useUpsertFlashcard,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
+import Queue from "queue-fifo";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -37,7 +38,17 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
-  //exercise specific functions
+  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
+  //exercise specific
+  // Create a queue
+  const updateCacheQueue = new Queue();
+  // Function to process tasks in the queue
+  const processQueue = async () => {
+    while (!updateCacheQueue.isEmpty()) {
+      const task = updateCacheQueue.dequeue() as () => Promise<void>;
+      await task();
+    }
+  };
   async function deleteAnswers(
     initialLength: number,
     answers: [string, boolean, number][],
@@ -48,6 +59,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       { length: initialLength },
       (_, index) => index + 1,
     );
+    //console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
     const deletionArray = initialLenghtArray
       .slice(-numberOfAnswersToDelete)
       .map((orderPosition) => {
@@ -56,11 +68,22 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           order_position: orderPosition,
         };
       });
-    let { data, error } = await supabase.rpc("delete_answers_exercise", {
+    deletionArray.forEach((e) => {
+      updateCacheQueue.enqueue(() =>
+        deleteAnswersExercise({
+          exercise: e.exercise,
+          order_position: e.order_position,
+        }),
+      );
+    });
+    processQueue();
+
+    /*let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
-    setInitialAnswersLength(answers.length);
-    return data;
+    //console.log("InitialLength: ", initialLength);
+    //console.log("answersLength: ", answers.length);
+    return data;*/
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
@@ -81,16 +104,17 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         }).then((res) => {
           //delete those answers that should get deleted from the exercise
           deleteAnswers(initialLength, answerOrAnswers),
-            //answers need to be updated
-            answerOrAnswers.forEach((e) => {
-              upsertAnswersExercise({
-                //@ts-expect-error
-                answer: e[0],
-                exercise: res[0].id,
-                is_correct: e[1],
-                order_position: e[2],
-              });
+            setInitialAnswersLength(answerOrAnswers.length);
+          //answers need to be updated
+          answerOrAnswers.forEach((e) => {
+            upsertAnswersExercise({
+              //@ts-expect-error
+              answer: e[0],
+              exercise: res[0].id,
+              is_correct: e[1],
+              order_position: e[2],
             });
+          });
         })
       : upsertFlashcard({
           //@ts-expect-error
