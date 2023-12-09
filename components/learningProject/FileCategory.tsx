@@ -47,7 +47,7 @@ export default function FileCategory({ title, files, onDelete }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleExpand} style={styles.headerContainer}>
-        <Text variant={header} style={styles.header}>
+        <Text variant={header}>
           {title}
         </Text>
       </TouchableOpacity>
@@ -76,8 +76,5 @@ const styles = StyleSheet.create({
   headerContainer: {
     paddingTop: 10,
     paddingBottom: 5,
-  },
-  header: {
-   
   },
 });

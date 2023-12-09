@@ -21,17 +21,21 @@ import {
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
-import { FAB } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();
   useSoundSystem1();
 
   function ensureHttpURL(url: string) {
-    return url.match(/^(https?:\/\/)/i)[0] ? url.slice(0,5).toLowerCase() + url.slice(5) : `http://${url}`;
+    return url.match(/^(https?:\/\/)/i)
+      ? url.slice(0, 5).toLowerCase() + url.slice(5)
+      : `http://${url}`;
   }
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
+  const [noLinkCardAvailable, setNoLinkCardAvailable] =
+    useState<boolean>(false);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
@@ -40,6 +44,7 @@ export default function LinkManagement() {
   useEffect(() => {
     if (!data) return;
     setLinkItems(data);
+    setNoLinkCardAvailable(data.length === 0);
   }, [data]);
 
   useEffect(() => {
@@ -115,14 +120,31 @@ export default function LinkManagement() {
   }
   return (
     <>
-      <View style={styles.container}>
-        <StatusBar />
+      <StatusBar />
+      {noLinkCardAvailable && (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginHorizontal: 16,
+          }}
+        >
+          <Text variant="titleMedium" style={{ textAlign: "center" }}>
+            Welcome to your link management space {"\n"}
+            Currently you don't have any links {"\n"}
+            {"\n"}Click on the plus button to create one!
+          </Text>
+        </View>
+      )}
+      <View style={[noLinkCardAvailable ? { flex: 0 } : styles.container]}>
         <ScrollView>
           <LinkCards links={linkItems} onEdit={handleEdit} />
           {/*View margin for FAB.Group when scrolling down */}
           <View style={{ marginBottom: 78 }}></View>
         </ScrollView>
       </View>
+
       <FAB.Group
         open={open}
         visible
