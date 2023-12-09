@@ -339,6 +339,34 @@ setInterval(async () => {
       } else {
         // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
+
+        for (const player of newState.players) {
+          if (newState.game == GameState.EXERCISES) {
+            let { data } = await supabase
+              .from("user_learning_projects")
+              .select("score_quiz")
+              .eq("user_id", player.id)
+              .eq("learning_project_id", state.room_id);
+            await supabase
+              .from("user_learning_projects")
+              .update({ score_quiz: player.score + data.score_quiz })
+              .eq("user_id", player.id)
+              .eq("learning_project_id", state.room_id)
+              .select();
+          } else if (newState.game == GameState.FLASHCARDS) {
+            let { data } = await supabase
+              .from("user_learning_projects")
+              .select("score_cards")
+              .eq("user_id", player.id)
+              .eq("learning_project_id", state.room_id);
+            await supabase
+              .from("user_learning_projects")
+              .update({ score_cards: player.score + data.score_cards })
+              .eq("user_id", player.id)
+              .eq("learning_project_id", state.room_id)
+              .select();
+          }
+        }
       }
     } else if (
       newState.screen === ScreenState.END_RESULTS &&
