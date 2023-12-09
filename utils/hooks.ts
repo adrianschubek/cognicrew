@@ -529,8 +529,8 @@ export function useConfirmLeaveLobby() {
     const onBackPress = () => {
       confirm({
         key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
+        title: "Leave game?",
+        message: "Do you want to leave this game and return to lobby?",
         icon: "exit-run",
         okText: "Leave",
         okAction: async () => {
