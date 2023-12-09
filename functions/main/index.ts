@@ -81,6 +81,13 @@ setInterval(async () => {
     .from("player_answers")
     .select("*");
 
+  // Process commands in queue
+  const { data: commands } = await supabase
+    .from("queue")
+    .select("id,room_id,type,data")
+    .order("created_at", { ascending: true })
+    .limit(100);
+
   for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
     const privateState = privateRoomStates.find(
@@ -100,6 +107,27 @@ setInterval(async () => {
       if (!playerAnswer) continue;
       player.currentCorrect = playerAnswer.answer_correct;
       player.currentTimeNeeded = playerAnswer.answer_time;
+    }
+
+    if (commands) {
+      for (const cmd of commands) {
+        switch (cmd.type) {
+          case "reset_room":
+            newState.screen = ScreenState.LOBBY;
+            newState.round = 0; // fixes bug where answers not updated in quiz game on startup
+
+            // delete old game data
+            await supabase
+              .from("private_room_states")
+              .delete()
+              .eq("room_id", state.room_id);
+            // delete player answers
+            await supabase
+              .from("player_answers")
+              .delete()
+              .eq("room_id", state.room_id);
+        }
+      }
     }
 
     /**
@@ -259,13 +287,6 @@ setInterval(async () => {
       newState.screen = ScreenState.LOBBY;
       newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
-      // TODO: maybe allow host to lock lobby so no new players can join
-      // set ingame to false. Dont actually do this by default.
-     /*  await supabase
-        .from("rooms")
-        .update({ is_ingame: false })
-        .eq("id", state.room_id); */
-
       // delete old game data
       await supabase
         .from("private_room_states")
@@ -294,7 +315,9 @@ setInterval(async () => {
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
-    `main_loop: updated ${publicRoomStates.length} states in ${end - start}ms`,
+    `main_loop: ${
+      publicRoomStates.length
+    } states and ${commands?.length} commands processed in ${end - start}ms`,
   );
 }, 1000);
 
