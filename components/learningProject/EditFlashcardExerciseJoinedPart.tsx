@@ -39,8 +39,14 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
   //exercise specific
   // Create a queue
-  const updateCacheQueue = [];
+  const updateCacheQueue = new Array();
   // Function to process tasks in the queue
+  const processQueue = async () => {
+    while (updateCacheQueue.length > 0) {
+      const task = updateCacheQueue.pop() as () => Promise<void>;
+      await task();
+    }
+  };
   async function deleteAnswers(
     initialLength: number,
     answers: [string, boolean, number][],
@@ -60,17 +66,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           order_position: orderPosition,
         };
       });
-    deletionArray.forEach((e) =>
+    deletionArray.forEach((e) => {
       updateCacheQueue.push(() =>
         deleteAnswersExercise({
           exercise: e.exercise,
           order_position: e.order_position,
         }),
-      ),
-    );
-    (async () => {
-      while (updateCacheQueue.length > 0) await updateCacheQueue.pop();
-    })();
+      );
+    });
+    processQueue();
 
     /*let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
