@@ -346,7 +346,8 @@ setInterval(async () => {
               .from("user_learning_projects")
               .select("score_quiz")
               .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId);
+              .eq("learning_project_id", privateState.projectId)
+              .single();
             console.log("=====");
             console.log(data, error);
             console.log("=====");
@@ -362,7 +363,8 @@ setInterval(async () => {
               .from("user_learning_projects")
               .select("score_cards")
               .eq("user_id", player.id)
-              .eq("learning_project_id", privateState.projectId);
+              .eq("learning_project_id", privateState.projectId)
+              .single();
             await supabase
               .from("user_learning_projects")
               .update({ score_cards: player.score + data.score_cards })
