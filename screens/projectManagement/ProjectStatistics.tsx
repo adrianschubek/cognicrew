@@ -59,23 +59,38 @@ export default function ProjectStatistics() {
   const [countPhotos, setCountPhotos] = useState(null);
 
   async function calcCountExercises() {
-    let { count, error } = await supabase.from('learning_projects').select('*, sets(id, exercises(id))', {count: 'exact', head: true}).eq('id', projectId); //this only counts projects
-    console.log(count);
-    //still have to restrict it to only exercises with correct project id
+    let { data, error } = await supabase.from('exercises').select('*, sets(*, learning_projects(*))')
+    if (error) {
+      console.error('Error fetching data:', error);
+    } else {
+    const filteredArray = data.filter(item => item.sets.project_id === projectId);
+    const count = filteredArray? filteredArray.length : 0;
     setCountExercises(count);
+    }
   }
 
   async function calcCountFlashcards() {
-    let { count, error } = await supabase.from('flashcards').select('*', { count: 'exact', head: true });
-    //still have to restrict it to only exercises with correct project id
+    let { data, error } = await supabase.from('flashcards').select('*, sets(*, learning_projects(*))')
+    if (error) {
+      console.error('Error fetching data:', error);
+    } else {
+    const filteredArray = data.filter(item => item.sets.project_id === projectId);
+    const count = filteredArray? filteredArray.length : 0;
     setCountFlashcards(count);
+  }
   }
 
   async function calcCountLinks() {
-    let { count, error } = await supabase.from('links').select('*', { count: 'exact', head: true }).eq("learning_project", projectId);
-    //still have to restrict it to only exercises with correct project id
+    let { data, error } = await supabase.from('links').select('*')
+    console.log(data);
+    if (error) {
+      console.error('Error fetching data:', error);
+    } else {
+    const filteredArray = data.filter(item => item.learning_project === projectId);
+    const count = filteredArray? filteredArray.length : 0;
     setCountLinks(count);
   }
+}
 
   async function calcCountFiles(folderName) {
     try {
@@ -99,7 +114,6 @@ export default function ProjectStatistics() {
     } catch (error) {
       console.error('Error counting files', error.message);
     }
-    //still have to restrict it to only exercises with correct project id
   }
 
   useEffect(() => {
@@ -130,7 +144,7 @@ export default function ProjectStatistics() {
       <Divider />
       <View style={styles.categoryStyle}>
         <Text variant={heading2}>CogniCards</Text>
-        <Text variant={heading3}>Amount of cards: {countFlashcards}</Text>
+        <Text variant={heading3}>Amount of flashcards: {countFlashcards}</Text>
       </View>
       <Divider />
       <View style={styles.categoryStyle}>
