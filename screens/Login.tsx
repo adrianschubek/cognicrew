@@ -57,14 +57,12 @@ export default function Login({ navigation }) {
         <TextInput
           style={styles.dataInput}
           label="E-Mail"
-          placeholder="Max Mustermann"
           value={email}
           onChangeText={(text) => setEmail(text)}
         />
         <TextInput
           style={[styles.dataInput, { marginTop: 8 }]}
           label="Password"
-          placeholder="your password"
           onSubmitEditing={async () => {
             setLoginDisabled(true);
             const { error, data } = await supabase.auth.signInWithPassword({

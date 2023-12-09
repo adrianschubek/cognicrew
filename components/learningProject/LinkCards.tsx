@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Linking,
   TouchableOpacity,
+  View,
 } from "react-native";
 import {
   responsiveWidth,
@@ -18,14 +19,14 @@ export default function LinkCards({ links, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const getIconForLink = (URL) => {
+  const getIconForLink = (u) => {
+    const url = new URL(u);
     const youtubePatterns = ["youtube.com", "youtu.be"];
     const youtubeIcon =
       "https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png";
-    const defaultIcon = URL + "/favicon.ico";
-
+    const defaultIcon = url.protocol + url.hostname + "/favicon.ico";
     const isYouTubeURL = youtubePatterns.some((pattern) =>
-      URL.toLowerCase().includes(pattern),
+      u.toLowerCase().includes(pattern),
     );
     return isYouTubeURL ? youtubeIcon : defaultIcon;
   };
@@ -73,12 +74,30 @@ export default function LinkCards({ links, onEdit }) {
         title={link.title}
         subtitle={link.subtitle}
         left={() => (
-          <TouchableOpacity onPress={() => openLink(link.link_url)}>
-            <Image
-              source={{ uri: getIconForLink(link.link_url) }}
-              style={styles.iconStyle}
+          <View
+            style={{
+              alignItems: "center",
+              marginRight: 10,
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity
+              style={{ width: 30, height: 30 }}
+              onPress={() => openLink(link.link_url)}
+            >
+              <Image
+                source={{ uri: getIconForLink(link.link_url) }}
+                style={{ height: 30 }}
+                width={30}
+              />
+            </TouchableOpacity>
+            <IconButton
+              icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
+              onPress={() =>
+                setExpandedId(expandedId === link.id ? null : link.id)
+              }
             />
-          </TouchableOpacity>
+          </View>
         )}
         right={() => (
           <>
@@ -121,10 +140,6 @@ export default function LinkCards({ links, onEdit }) {
           </Text>
         </Card.Content>
       )}
-      <IconButton
-        icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
-        onPress={() => setExpandedId(expandedId === link.id ? null : link.id)}
-      />
     </Card>
   ));
 }
@@ -138,6 +153,5 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 30,
     height: 30,
-    marginRight: 10,
   },
 });

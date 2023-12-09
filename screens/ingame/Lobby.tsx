@@ -400,7 +400,9 @@ export default function Lobby({ navigation }) {
               onPress={async () => {
                 let { data, error } = await supabase.rpc("switch_locked_room");
                 if (error) console.error(error);
-                else room.is_ingame = data;
+                else {
+                  setRoom({ ...room, is_ingame: data });
+                }
               }}
               icon={!room?.is_ingame ? "lock-open-variant-outline" : "lock"}
             >

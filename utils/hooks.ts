@@ -529,9 +529,9 @@ export function useConfirmLeaveLobby() {
     const onBackPress = () => {
       confirm({
         key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        icon: "exit-run",
+        title: "Leave game?",
+        message: "Do you want to leave this game and return to lobby?",
+        icon: "location-exit",
         okText: "Leave",
         okAction: async () => {
           const { error } = await supabase.functions.invoke("room-update", {

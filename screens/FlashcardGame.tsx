@@ -1,5 +1,10 @@
 import * as React from "react";
-import { StyleSheet, View, BackHandler } from "react-native";
+import {
+  StyleSheet,
+  View,
+  BackHandler,
+  KeyboardAvoidingView,
+} from "react-native";
 import { TextInput, Text, Button, Dialog, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
@@ -67,28 +72,33 @@ export default function FlashcardGame({ route, navigation }) {
 
   return (
     <>
-      <ScrollView style={{ paddingTop: 20 }}>
-        <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
-          Question {roomState.round} of {roomState.totalRounds}
-        </Dialog.Title>
-        {MemoTimer}
-        <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
-          {roomState.question}
-        </Text>
-        <View style={styles.answerViewStyle}>
+      <View style={{ paddingVertical: 20, flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
+            Question {roomState.round} of {roomState.totalRounds}
+          </Dialog.Title>
+          {MemoTimer}
+        </View>
+        <View
+          style={{
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            flex: 2,
+          }}
+        >
+          <Text
+            variant="headlineSmall"
+            style={{ textAlign: "center", marginVertical: 20 }}
+          >
+            {roomState.question}
+          </Text>
           <TextInput
             mode="outlined"
             autoFocus
             style={[
               {
                 textAlign: "center",
-                flex: 1,
                 marginHorizontal: 10,
-                // backgroundColor: null,
-                borderLeftWidth: 1,
-                borderRightWidth: 1,
-                borderTopWidth: 1,
-                // borderColor: "gray",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
@@ -102,22 +112,45 @@ export default function FlashcardGame({ route, navigation }) {
               !alreadySubmitted && roomState.screen === ScreenState.INGAME
             }
           />
+          <Button
+            style={{
+              marginTop: 25,
+              marginHorizontal: 10,
+              paddingVertical: 5,
+              borderRadius: 10,
+              display: alreadySubmitted ? "none" : undefined,
+            }}
+            mode="contained"
+            disabled={isInvoking || userInput.length === 0}
+            onPress={answer}
+          >
+            Submit Answer
+          </Button>
+          <View
+            style={{
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "flex-end",
+              paddingTop: 16,
+              paddingRight: 16,
+            }}
+          >
+            {roomState.screen === ScreenState.ROUND_SOLUTION &&
+              roomState.userAnswers.map((answer, index) => (
+                <Text
+                  variant="titleLarge"
+                  key={index}
+                  style={{
+                    color: answer.isCorrect ? "green" : "red",
+                    marginBottom: 10,
+                  }}
+                >
+                  {answer.answer} {answer.percentage}%
+                </Text>
+              ))}
+          </View>
         </View>
-        <Button
-          style={{
-            marginTop: 25,
-            marginHorizontal: 10,
-            paddingVertical: 5,
-            borderRadius: 10,
-            display: alreadySubmitted ? "none" : undefined,
-          }}
-          mode="contained"
-          disabled={isInvoking || userInput.length === 0}
-          onPress={answer}
-        >
-          Submit Answer
-        </Button>
-      </ScrollView>
+      </View>
     </>
   );
 }
@@ -133,46 +166,5 @@ const styles = StyleSheet.create({
     // borderWidth: 3,
     backgroundColor: "red",
   },
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  countDownStyle: {
-    marginLeft: responsiveWidth(27.5),
-    marginRight: responsiveWidth(15),
-  },
-  topRightContainer: {
-    marginTop: 3,
-    flexDirection: "column",
-    alignItems: "flex-end",
-  },
-  topRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  image: {
-    width: responsiveWidth(10),
-    height: responsiveHeight(5),
-    marginRight: 3,
-    borderRadius: 20,
-    overflow: "hidden",
-    alignItems: "flex-end",
-  },
-  questionStyle: {
-    fontSize: 18,
-  },
-  answerStyle: {
-    fontSize: 18,
-    marginLeft: responsiveWidth(5),
-    marginRight: 10,
-  },
-  answerViewStyle: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  scrollContent: {
-    paddingVertical: 16,
-  },
+
 });

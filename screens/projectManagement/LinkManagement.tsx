@@ -28,7 +28,7 @@ export default function LinkManagement() {
   useSoundSystem1();
 
   function ensureHttpURL(url: string) {
-    return url.toLowerCase().match(/^(https?:\/\/)/) ? url : `http://${url}`;
+    return url.match(/^(https?:\/\/)/i)[0] ? url.slice(0,5).toLowerCase() + url.slice(5) : `http://${url}`;
   }
   const projectId = useProjectStore((state) => state.projectId);
   const { data, isLoading, error, mutate } = useLinks(projectId);
@@ -36,6 +36,7 @@ export default function LinkManagement() {
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
   const { open } = FABOpen;
+
   useEffect(() => {
     if (!data) return;
     setLinkItems(data);
