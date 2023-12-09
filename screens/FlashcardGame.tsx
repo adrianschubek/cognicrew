@@ -112,6 +112,28 @@ export default function FlashcardGame({ route, navigation }) {
         >
           Submit Answer
         </Button>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            paddingTop: 16,
+            paddingRight: 16,
+          }}
+        >
+          {roomState.screen === ScreenState.ROUND_SOLUTION &&
+            roomState.userAnswers.map((answer, index) => (
+              <Text
+                key={index}
+                style={{
+                  fontSize: 20,
+                  color: answer.isCorrect ? "green" : "red",
+                }}
+              >
+                {answer.answer} {answer.percentage}%
+              </Text>
+            ))}
+        </View>
       </ScrollView>
     </>
   );
