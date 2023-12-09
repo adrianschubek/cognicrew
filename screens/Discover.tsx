@@ -40,27 +40,12 @@ export default function Discover() {
     },
   });
 
-  //TODO replace with actual data
-  const semesters = [
-    "WS 23/24",
-    "So 23",
-    "WS 22/23",
-    "So 22",
-    "WS 21/22",
-    "So 21",
-    "WS 20/21",
-  ];
-
+  //TODO Handle "All" group properly
   // State for distinct project groups
   const [allDistinctGroups, setAllDistinctGroups] = useState([]);
 
   // Fetch distinct project groups and update the state
   useEffect(() => {
-    /*@Fabian: This code crashes app:
-      Error fetching distinct project groups: Objects are not valid as a React child (found: object with keys {group}). 
-      If you meant to render a collection of children, use an array instead.   
-      */
-    /*
       const fetchDistinctGroups = async () => {
         try {
           const distinctGroups = await useDistinctProjectGroups();
@@ -69,9 +54,7 @@ export default function Discover() {
           console.error('Error fetching distinct project groups:', error.message);
         }
       };
-  
       fetchDistinctGroups();
-      */
   }, []);
 
   // Add state to manage visibility for each card
