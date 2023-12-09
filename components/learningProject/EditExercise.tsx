@@ -30,8 +30,8 @@ export default function EditExercise(props: {
       filteredAnswers.length >= 2 &&
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
-      console.log("update in useEffect: ", filteredAnswers)
-      //updateCache(filteredAnswers);
+      //console.log("update in useEffect: ", filteredAnswers);
+      updateCache(filteredAnswers);
     }
   }, [answers]);
 
@@ -63,8 +63,8 @@ export default function EditExercise(props: {
             (payload.old[0] && (payload.old[0].exercise as number)) ===
               (listItem.id as number)
           )
-          console.log("realtimeAnswers: ", payload);
-            mutate();
+            console.log("realtimeAnswers: ", payload);
+          mutate();
         },
       )
       .subscribe();
