@@ -22,6 +22,7 @@ import { useSoundsStore } from "../stores/SoundsStore";
 import {
   useAchievements,
   useAlerts,
+  useConfirmLeaveLobby,
   useUnlockAchievement,
 } from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
@@ -41,36 +42,7 @@ export default function Whiteboard({ navigation }) {
     color,
     selectedShape,
   } = useWhiteboardStore();
-
-  const roomState = useRoomStateStore((state) => state.roomState);
-  const { confirm } = useAlerts();
-  useEffect(() => {
-    // TODO: refactor put in function
-    navigation.addListener("beforeRemove", (e) => {
-      // if roomstate screen not this one, then return without confirmation. access store directly bypass react
-      if (
-        useRoomStateStore.getState().roomState?.screen !== ScreenState.INGAME &&
-        useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_RESULTS &&
-        useRoomStateStore.getState().roomState?.screen !==
-          ScreenState.ROUND_SOLUTION
-      )
-        return;
-      // Prevent default behavior of leaving the screen
-      e.preventDefault();
-
-      confirm({
-        key: "leaveroom",
-        title: "Leave room?",
-        message: "Do you want to leave this room?",
-        icon: "exit-run",
-        okText: "Leave",
-        okAction: async () => {
-          await supabase.rpc("leave_room");
-        },
-      });
-    });
-  }, [navigation]);
+  useConfirmLeaveLobby();
 
   const { sound, playSound, stopSound, loadSound2 } = useSoundsStore();
   const unlockAchievement = useUnlockAchievement();

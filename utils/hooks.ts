@@ -12,6 +12,7 @@ import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -188,6 +189,7 @@ export function useDeleteProjectRating() {
   );
 }
 
+
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -198,6 +200,7 @@ export function useAchievements() {
     ),
   );
 }
+
 
 /**
  * Returns all achievements for a specific user.
@@ -512,4 +515,30 @@ export function useAlerts() {
       });
     },
   };
+}
+
+export function useConfirmLeaveLobby() {
+  const { confirm } = useAlerts();
+  useFocusEffect(() => {
+    const onBackPress = () => {
+      confirm({
+        key: "leaveroom",
+        title: "Leave room?",
+        message: "Do you want to leave this room?",
+        icon: "exit-run",
+        okText: "Leave",
+        okAction: async () => {
+          await supabase.rpc("leave_room");
+        },
+      });
+      return true;
+    };
+
+    const listener = BackHandler.addEventListener(
+      "hardwareBackPress",
+      onBackPress,
+    );
+
+    return () => listener.remove();
+  });
 }
