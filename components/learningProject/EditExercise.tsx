@@ -5,6 +5,7 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
+import Queue from "queue-fifo";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -18,6 +19,7 @@ export default function EditExercise(props: {
   const [oldData, setOldData] = useState<any>(null);
   const [answers, setAnswers] = useState<[string, boolean, number][]>([]);
   const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
+
   useEffect(() => {
     if (!isInitialized) return;
     const filteredAnswers = answers
@@ -26,13 +28,6 @@ export default function EditExercise(props: {
         return [e[0], e[1], index + 1];
       }) as [string, boolean, number][];
     sendAnswers(filteredAnswers);
-    if (
-      filteredAnswers.length >= 2 &&
-      filteredAnswers.filter((e) => e[1] === true).length > 0
-    ) {
-      //console.log("update in useEffect: ", filteredAnswers);
-      updateCache(filteredAnswers);
-    }
   }, [answers]);
 
   useEffect(() => {
@@ -57,19 +52,13 @@ export default function EditExercise(props: {
         "postgres_changes",
         { event: "*", schema: "public", table: "answers_exercises" },
         (payload) => {
-          if (
-            (payload.new[0] && (payload.new[0].exercise as number)) ===
-              (listItem.id as number) ||
-            (payload.old[0] && (payload.old[0].exercise as number)) ===
-              (listItem.id as number)
-          )
-            console.log("realtimeAnswers: ", payload);
+          console.log("realtimeAnswers: ", payload);
           mutate();
         },
       )
       .subscribe();
   }, []);
-  async function updateCache(newAnswers: [string, boolean, number][]) {
+  /*async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
       ...oldData,
       data: newAnswers.map((e) => {
@@ -82,7 +71,7 @@ export default function EditExercise(props: {
       }),
     };
     mutate(updatedData, false);
-  }
+  }*/
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
