@@ -18,14 +18,14 @@ export default function LinkCards({ links, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const getIconForLink = (URL) => {
+  const getIconForLink = (u) => {
+    const url = new URL(u);
     const youtubePatterns = ["youtube.com", "youtu.be"];
     const youtubeIcon =
       "https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png";
-    const defaultIcon = URL + "/favicon.ico";
-
+    const defaultIcon = url.protocol + url.hostname + "/favicon.ico";
     const isYouTubeURL = youtubePatterns.some((pattern) =>
-      URL.toLowerCase().includes(pattern),
+      u.toLowerCase().includes(pattern),
     );
     return isYouTubeURL ? youtubeIcon : defaultIcon;
   };
