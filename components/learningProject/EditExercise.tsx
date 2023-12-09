@@ -5,8 +5,6 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
-import Queue from "queue-fifo";
-import { use } from "chai";
 
 export default function EditExercise(props: {
   listItem: any;
