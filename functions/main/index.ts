@@ -54,7 +54,7 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
-const ROUND_SOLUTION_DURATION = 3000; // ms
+const ROUND_SOLUTION_DURATION = 3000_000; // ms //FIXME: change back
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
@@ -200,8 +200,64 @@ setInterval(async () => {
           );
           break;
         }
-        case GameState.FLASHCARDS:
+        case GameState.FLASHCARDS: {
+          let submittedAnswers = 0;
+          const roundAnswers = {
+            ...privateState.gameData.flashcards[newState.round - 1],
+            answers:
+              privateState.gameData.flashcards[newState.round - 1].answer.split(
+                ",",
+              ),
+          };
+          const playerAnswersForRound =
+            playerAnswers?.filter(
+              (pa) =>
+                pa.room_id === state.room_id && pa.round === newState.round,
+            ) ?? [];
+          let answersWithCountWithIsCorrect: [string, number, boolean][] =
+            roundAnswers.answers
+              .map((answer, i) => [
+                answer,
+                0,
+                roundAnswers.answers.includes(answer),
+              ])
+              .concat(
+                playerAnswersForRound?.flatMap((pa) =>
+                  pa.answer
+                    .split(",")
+                    .map((ans) => [ans, 0, roundAnswers.answers.includes(ans)]),
+                ) ?? [],
+              )
+              .filter(
+                (v, i, a) => a.findIndex((t) => t[0] === v[0]) === i,
+              ); /* remove duplicates */
+
+          for (const pa of playerAnswersForRound) {
+            submittedAnswers += pa.answer.split(",").length;
+            console.log(submittedAnswers);
+            answersWithCountWithIsCorrect = answersWithCountWithIsCorrect.map(
+              ([answer, count, isCorrect], i) => [
+                answer,
+                count +
+                  (pa.answer.split(",").some((a: string) => a === answer)
+                    ? 1
+                    : 0),
+                isCorrect,
+              ],
+            );
+            newState.userAnswers = answersWithCountWithIsCorrect.map(
+              ([answer, count, isCorrect]) => ({
+                answer,
+                percentage: Math.max(
+                  0,
+                  Math.min(100, Math.floor((count / submittedAnswers) * 100)),
+                ),
+                isCorrect,
+              }),
+            );
+          }
           break;
+        }
         case GameState.WHITEBOARD:
           break;
         default:
