@@ -357,8 +357,6 @@ setInterval(async () => {
             continue;
           }
 
-          console.log(dbstats);
-          console.log(dbstats.stats);
           const stats: UserProjectStats = dbstats?.stats ?? {
             scoreQuiz: 0,
             scoreFlashcards: 0,
@@ -374,10 +372,7 @@ setInterval(async () => {
             .update({ stats })
             .eq("user_id", player.id)
             .eq("learning_project_id", privateState.projectId);
-          if (errUpdate) {
-            console.error(error);
-            continue;
-          }
+          if (errUpdate) console.error(error);
         }
       }
     } else if (
