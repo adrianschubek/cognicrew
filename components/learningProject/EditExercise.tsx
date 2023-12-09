@@ -30,6 +30,7 @@ export default function EditExercise(props: {
       filteredAnswers.length >= 2 &&
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
+      //console.log("update in useEffect: ", filteredAnswers)
       updateCache(filteredAnswers);
     }
   }, [answers]);
@@ -62,6 +63,7 @@ export default function EditExercise(props: {
             (payload.old[0] && (payload.old[0].exercise as number)) ===
               (listItem.id as number)
           )
+          //console.log("realtimeAnswers: ", payload);
             mutate();
         },
       )
@@ -107,20 +109,6 @@ export default function EditExercise(props: {
             justifyContent: "flex-end",
           }}
         >
-          <IconButton
-            icon="minus"
-            onPress={() => {
-              if (answers.length <= 2) {
-                setShowErrorAnswerBoundaries(true);
-                return;
-              }
-              const newAnswers = [...answers];
-              newAnswers.pop();
-              updateCache(newAnswers);
-              setAnswers(newAnswers);
-              setShowErrorAnswerBoundaries(false);
-            }}
-          />
           <IconButton
             icon="plus"
             onPress={() => {
@@ -169,6 +157,7 @@ export default function EditExercise(props: {
                   .map((e, index) => {
                     return [e[0], e[1], index + 1];
                   }) as [string, boolean, number][];
+                //console.log("when Minus pressed: ", newAnswers);
                 setAnswers(newAnswers);
                 setShowErrorAnswerBoundaries(false);
               }}
