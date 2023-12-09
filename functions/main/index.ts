@@ -54,7 +54,7 @@ enum GameState {
   WHITEBOARD = "whiteboard",
 }
 
-const ROUND_SOLUTION_DURATION = 3000; // ms 
+const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
@@ -347,15 +347,16 @@ setInterval(async () => {
               .select("score_quiz")
               .eq("user_id", player.id)
               .eq("learning_project_id", privateState.projectId);
-              console.log("=====")
-              console.log(data, error);
-              console.log("=====")
-              
-            await supabase
+            console.log("=====");
+            console.log(data, error);
+            console.log("=====");
+
+            const { error: error2 } = await supabase
               .from("user_learning_projects")
               .update({ score_quiz: player.score + data.score_quiz })
               .eq("user_id", player.id)
               .eq("learning_project_id", privateState.projectId);
+            console.log(error2);
           } else if (newState.game == GameState.FLASHCARDS) {
             let { data } = await supabase
               .from("user_learning_projects")
@@ -366,7 +367,7 @@ setInterval(async () => {
               .from("user_learning_projects")
               .update({ score_cards: player.score + data.score_cards })
               .eq("user_id", player.id)
-              .eq("learning_project_id",privateState.projectId);
+              .eq("learning_project_id", privateState.projectId);
           }
         }
       }
