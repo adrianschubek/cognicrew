@@ -346,11 +346,11 @@ setInterval(async () => {
         newState.screen = ScreenState.END_RESULTS;
 
         let gameWonPlayerId;
-        let maxScore = 0; 
+        let maxScore = 0;
         let draw = true;
 
         for (const player of newState.players) {
-          if(player.score >= maxScore){
+          if (player.score >= maxScore) {
             gameWonPlayerId = player.id;
             maxScore = player.score;
             draw = false;
@@ -359,14 +359,13 @@ setInterval(async () => {
 
         //Check if there are two "winners" reuslting in a draw
         for (const player of newState.players) {
-          if (player.score == maxScore && player.id != gameWonPlayerId){
+          if (player.score == maxScore && player.id != gameWonPlayerId) {
             draw = true;
             break;
           }
         }
 
         for (const player of newState.players) {
-
           const { data: dbstats, error } = await supabase
             .from("user_learning_projects")
             .select("stats")
@@ -389,16 +388,25 @@ setInterval(async () => {
             newState.game == GameState.EXERCISES ? player.score : 0;
           stats.scoreFlashcards +=
             newState.game == GameState.FLASHCARDS ? player.score : 0;
-          stats.winsQuiz += 
-            newState.game == GameState.EXERCISES && gameWonPlayerId == player.id && !draw ? 1 : 0;
-          stats.winsFlashcards += 
-            newState.game == GameState.FLASHCARDS && gameWonPlayerId == player.id && !draw ? 1 : 0;
+          stats.winsQuiz +=
+            newState.game == GameState.EXERCISES &&
+            gameWonPlayerId == player.id &&
+            !draw
+              ? 1
+              : 0;
+          stats.winsFlashcards +=
+            newState.game == GameState.FLASHCARDS &&
+            gameWonPlayerId == player.id &&
+            !draw
+              ? 1
+              : 0;
 
-          await supabase
+          const { error: errUpdate } = await supabase
             .from("user_learning_projects")
             .update({ stats })
             .eq("user_id", player.id)
             .eq("learning_project_id", privateState.projectId);
+          if (errUpdate) console.error(errUpdate);
         }
       }
     } else if (
