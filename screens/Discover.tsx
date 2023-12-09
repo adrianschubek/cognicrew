@@ -16,7 +16,7 @@ import { supabase } from "../supabase";
 import { mutate } from "swr";
 import { useDistinctProjectGroups } from "../utils/hooks";
 
-export default function Discover() {
+export default async function Discover() {
   const theme = useTheme();
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,7 +43,7 @@ export default function Discover() {
     "WS 20/21",
   ];
 
-  const allDistinctGroups = useDistinctProjectGroups();
+  const allDistinctGroups = await useDistinctProjectGroups();
 
   // Add state to manage visibility for each card
   const [cardVisibility, setCardVisibility] = useState(Array(data?.length).fill(false));
@@ -69,7 +69,7 @@ if (!data) return null
           showsHorizontalScrollIndicator={false}
           pagingEnabled={true}
         >
-          {semesters.map((semester, index) => (
+          {allDistinctGroups && allDistinctGroups.map((semester, index) => (
             <Button
               key={index.toString()}
               style={styles.semesterFilter}
