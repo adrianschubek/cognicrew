@@ -94,6 +94,10 @@ export type PublicRoomState = {
  */
 export type PrivateRoomState = {
   /**
+   * Learning project id
+   */
+  projectId: number;
+  /**
    * Round duration in seconds
    */
   roundDuration: number;
