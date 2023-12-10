@@ -438,8 +438,9 @@ export function useDeleteAnswersExercise() {
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
-    .select("id,link_url,learning_project,title,subtitle,description")
-    .eq("learning_project", projectId);
+    .select("created_at,id,link_url,learning_project,title,subtitle,description")
+    .eq("learning_project", projectId)
+    .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();

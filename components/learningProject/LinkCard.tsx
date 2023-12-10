@@ -163,9 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: responsiveWidth(90),
     marginBottom: 16,
-  },
-  iconStyle: {
-    width: 30,
-    height: 30,
+    //paddingBottom: 8,
+    //backgroundColor:"green"
   },
 });
