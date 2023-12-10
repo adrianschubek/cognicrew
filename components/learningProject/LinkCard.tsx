@@ -71,7 +71,7 @@ export default function LinkCard({ link, onEdit }) {
       accessibilityLabel={`Link titled ${link.title}`}
     >
       <Card.Title
-        titleStyle={{ marginTop: 0, marginBottom: 16 }}
+        titleStyle={{ marginTop: 0, marginBottom:  link.subtitle !== "" ? 16 : 36 }}
         title={link.title}
         subtitle={link.subtitle}
         left={() => (
