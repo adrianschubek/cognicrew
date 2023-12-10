@@ -147,7 +147,7 @@ export default function LinkCard({ link, onEdit }) {
       />
       {expandedId === link.id && (
         <Card.Content>
-          <Text>
+          <Text style={{ marginLeft: 10 }}>
             {typeof link.description === "string"
               ? link.description
               : "Invalid description"}
