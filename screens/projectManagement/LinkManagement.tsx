@@ -127,7 +127,6 @@ export default function LinkManagement() {
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
-            marginHorizontal: 16,
           }}
         >
           <Text variant="titleMedium" style={{ textAlign: "center" }}>
@@ -138,7 +137,7 @@ export default function LinkManagement() {
         </View>
       )}
       <View style={[noLinkCardAvailable ? { flex: 0 } : styles.container]}>
-        <ScrollView>
+        <ScrollView style={{ paddingHorizontal: 16 }}>
           {linkItems.map((linkItem, index) => {
             return <LinkCard key={index} link={linkItem} onEdit={handleEdit} />;
           })}
