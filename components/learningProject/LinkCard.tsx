@@ -15,7 +15,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useDeleteLink } from "../../utils/hooks";
 
-export default function LinkCards({ links, onEdit }) {
+export default function LinkCard({ link, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -61,7 +61,7 @@ export default function LinkCards({ links, onEdit }) {
     }
   };
 
-  return links.map((link) => (
+  return (
     <Card
       elevation={1}
       style={styles.cardStyle}
@@ -155,7 +155,7 @@ export default function LinkCards({ links, onEdit }) {
         </Card.Content>
       )}
     </Card>
-  ));
+  );
 }
 
 const styles = StyleSheet.create({

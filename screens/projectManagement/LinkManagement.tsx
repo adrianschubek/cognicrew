@@ -11,7 +11,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import LinkCards from "../../components/learningProject/LinkCards";
+import LinkCard from "../../components/learningProject/LinkCard";
 import {
   useAlerts,
   useLinks,
@@ -139,7 +139,10 @@ export default function LinkManagement() {
       )}
       <View style={[noLinkCardAvailable ? { flex: 0 } : styles.container]}>
         <ScrollView>
-          <LinkCards links={linkItems} onEdit={handleEdit} />
+          {linkItems.map((linkItem, index) => {
+            return <LinkCard key={index} link={linkItem} onEdit={handleEdit} />;
+          })}
+
           {/*View margin for FAB.Group when scrolling down */}
           <View style={{ marginBottom: 78 }}></View>
         </ScrollView>
