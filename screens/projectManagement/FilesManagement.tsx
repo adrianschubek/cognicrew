@@ -3,7 +3,7 @@
  * It handles file uploads, deletions, and categorizes files for display.
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
@@ -226,7 +226,12 @@ export default function FilesManagement() {
       setVisible(false);
     }
   };
-
+  const categories = [
+    { title: "PDF Documents (.pdf)", files: files.pdf },
+    { title: "Word Documents (.docx)", files: files.docx },
+    { title: "Excel Documents (.xlsx)", files: files.xlsx },
+    { title: "Miscellaneous", files: files.misc },
+  ];
   return (
     <View style={styles.container}>
       <VirtualizedList
@@ -235,46 +240,19 @@ export default function FilesManagement() {
         ListHeaderComponent={() => {
           return (
             <View style={styles.scrollView}>
-              <FileCategory
-                title="PDF Documents (.pdf)"
-                files={files.pdf.map((file) => ({
-                  ...file,
-                  fullPath: `${projectId}/documents/${file.name}`,
-                }))}
-                onDelete={confirmDelete}
-              />
-              <Divider style={styles.divider} />
-
-              <FileCategory
-                title="Word Documents (.docx)"
-                files={files.docx.map((file) => ({
-                  ...file,
-                  fullPath: `${projectId}/documents/${file.name}`,
-                }))}
-                onDelete={confirmDelete}
-              />
-              <Divider style={styles.divider} />
-
-              <FileCategory
-                title="Excel Documents (.xlsx)"
-                files={files.xlsx.map((file) => ({
-                  ...file,
-                  fullPath: `${projectId}/documents/${file.name}`,
-                }))}
-                onDelete={confirmDelete}
-              />
-              <Divider style={styles.divider} />
-
-              <FileCategory
-                title="Miscellaneous"
-                files={files.misc.map((file) => ({
-                  ...file,
-                  fullPath: `${projectId}/documents/${file.name}`,
-                }))}
-                onDelete={confirmDelete}
-              />
-              <Divider style={styles.divider} />
-
+              {categories.map((category, index) => (
+                <Fragment key={index}>
+                  <FileCategory
+                    title={category.title}
+                    files={category.files.map((file) => ({
+                      ...file,
+                      fullPath: `${projectId}/documents/${file.name}`,
+                    }))}
+                    onDelete={confirmDelete}
+                  />
+                  <Divider style={{ marginHorizontal: 8 }} />
+                </Fragment>
+              ))}
               <FileCategory
                 title="Photos"
                 files={() => {}}
@@ -333,9 +311,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingHorizontal: 8,
-  },
-  divider: {
-    marginHorizontal: 8,
   },
   fab: {
     position: "absolute",

@@ -137,7 +137,7 @@ export default function LinkManagement() {
         </View>
       )}
       <View style={[noLinkCardAvailable ? { flex: 0 } : styles.container]}>
-        <ScrollView style={{ paddingHorizontal: 16 }}>
+        <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>
           {linkItems.map((linkItem, index) => {
             return <LinkCard key={index} link={linkItem} onEdit={handleEdit} />;
           })}
@@ -172,6 +172,5 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 16,
   },
 });
