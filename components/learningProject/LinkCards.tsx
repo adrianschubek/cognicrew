@@ -71,6 +71,7 @@ export default function LinkCards({ links, onEdit }) {
       accessibilityLabel={`Link titled ${link.title}`}
     >
       <Card.Title
+        titleStyle={{ marginTop: 0, marginBottom: 16 }}
         title={link.title}
         subtitle={link.subtitle}
         left={() => (
@@ -79,6 +80,7 @@ export default function LinkCards({ links, onEdit }) {
               alignItems: "center",
               marginRight: 10,
               justifyContent: "center",
+              marginTop: 8,
             }}
           >
             <TouchableOpacity
@@ -92,6 +94,7 @@ export default function LinkCards({ links, onEdit }) {
               />
             </TouchableOpacity>
             <IconButton
+              style={{ margin: 0, padding: 0, marginTop: 8 }}
               icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
               onPress={() =>
                 setExpandedId(expandedId === link.id ? null : link.id)
@@ -100,9 +103,20 @@ export default function LinkCards({ links, onEdit }) {
           </View>
         )}
         right={() => (
-          <>
-            <IconButton icon="share" onPress={() => onShare(link)} />
+          <View
+            style={{
+              flexDirection: "column",
+              alignItems: "center",
+              marginTop: 8,
+            }}
+          >
+            <IconButton
+              style={{ margin: 0, padding: 0 }}
+              icon="share"
+              onPress={() => onShare(link)}
+            />
             <Menu
+              style={{ margin: 0, padding: 0 }}
               visible={menuVisible === link.id}
               onDismiss={() => setMenuVisible(false)}
               anchor={
@@ -128,7 +142,7 @@ export default function LinkCards({ links, onEdit }) {
                 title="Edit"
               />
             </Menu>
-          </>
+          </View>
         )}
       />
       {expandedId === link.id && (
