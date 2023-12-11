@@ -376,7 +376,7 @@ setInterval(async () => {
             console.error(error);
             continue;
           }
-
+          
           const stats: UserProjectStats = dbstats?.stats ?? {
             scoreQuiz: 0,
             scoreFlashcards: 0,

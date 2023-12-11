@@ -79,6 +79,10 @@ export type PublicRoomState = {
       }[]
     | null;
   /**
+   * Game began at timestamp milliseconds
+   */
+  gameBeganAt: number;
+  /**
    * Round began at timestamp milliseconds
    */
   roundBeganAt: number;

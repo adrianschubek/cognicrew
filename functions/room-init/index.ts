@@ -216,6 +216,7 @@ serve(async (req) => {
           possibleAnswers:
             body.type === 1 ? privateState.gameData.exercises[0].answers : [],
           userAnswers: null,
+          gameBeganAt: dayjs().valueOf(),
           roundBeganAt: dayjs().valueOf(),
           roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
         };
@@ -238,10 +239,12 @@ serve(async (req) => {
           question: "",
           possibleAnswers: [],
           userAnswers: null,
+          gameBeganAt: dayjs().valueOf(),
           roundBeganAt: dayjs().valueOf(),
           roundEndsAt: dayjs().add(1, "day").valueOf(),
         };
         privateState = {
+          projectId: pid,
           gameData: {
             exercises: [],
             flashcards: [],
