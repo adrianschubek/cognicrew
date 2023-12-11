@@ -88,19 +88,24 @@ export default function FlashcardGame({ route, navigation }) {
           {MemoTimer}
         </View>
         <View
+          style={{ flex: 2, marginHorizontal: 10, justifyContent: "center" }}
+        >
+          <Card style={{ paddingVertical: 20 }}>
+            <Card.Content>
+              <Text variant="headlineSmall" style={{ textAlign: "center" }}>
+                {roomState.question}
+              </Text>
+            </Card.Content>
+          </Card>
+        </View>
+        <View
           style={{
             flexDirection: "column",
             justifyContent: "flex-start",
-            flex: 2,
+            flex: 3,
             marginHorizontal: 10,
           }}
         >
-          <Text
-            variant="headlineSmall"
-            style={{ textAlign: "center", marginVertical: 20 }}
-          >
-            {roomState.question}
-          </Text>
           <TextInput
             mode="outlined"
             autoFocus
