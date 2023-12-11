@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Divider, Text } from "react-native-paper";
+import { Card, Divider, Text, useTheme } from "react-native-paper";
 
 import PieChart from "react-native-pie-chart";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
+import StatisticCategory from "../../components/profile/StatisticCategory";
 
 export default function ProjectStatistics() {
-
+  const theme = useTheme();
   const heading = "headlineSmall";
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
@@ -24,7 +25,6 @@ export default function ProjectStatistics() {
   let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
   let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
   let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
-
 
   function rainbowText(inputText) {
     const rainbowColors = [
@@ -59,49 +59,63 @@ export default function ProjectStatistics() {
   const [countPhotos, setCountPhotos] = useState(null);
 
   async function calcCountExercises() {
-    let { data, error } = await supabase.from('exercises').select('*, sets(*, learning_projects(*))')
+    let { data, error } = await supabase
+      .from("exercises")
+      .select("*, sets(*, learning_projects(*))");
     if (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } else {
-    const filteredArray = data.filter(item => item.sets.project_id === projectId);
-    const count = filteredArray? filteredArray.length : 0;
-    setCountExercises(count);
+      const filteredArray = data.filter(
+        (item) => item.sets.project_id === projectId,
+      );
+      const count = filteredArray ? filteredArray.length : 0;
+      setCountExercises(count);
     }
   }
 
   async function calcCountFlashcards() {
-    let { data, error } = await supabase.from('flashcards').select('*, sets(*, learning_projects(*))')
+    let { data, error } = await supabase
+      .from("flashcards")
+      .select("*, sets(*, learning_projects(*))");
     if (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } else {
-    const filteredArray = data.filter(item => item.sets.project_id === projectId);
-    const count = filteredArray? filteredArray.length : 0;
-    setCountFlashcards(count);
-  }
+      const filteredArray = data.filter(
+        (item) => item.sets.project_id === projectId,
+      );
+      const count = filteredArray ? filteredArray.length : 0;
+      setCountFlashcards(count);
+    }
   }
 
   async function calcCountLinks() {
-    let { data, error } = await supabase.from('links').select('*')
+    let { data, error } = await supabase.from("links").select("*");
     if (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } else {
-    const filteredArray = data.filter(item => item.learning_project === projectId);
-    const count = filteredArray? filteredArray.length : 0;
-    setCountLinks(count);
+      const filteredArray = data.filter(
+        (item) => item.learning_project === projectId,
+      );
+      const count = filteredArray ? filteredArray.length : 0;
+      setCountLinks(count);
+    }
   }
-}
 
   async function calcCountFiles(folderName) {
     try {
-      if(folderName == "documents") {
-        let { data, error } = await supabase.storage.from("files").list(`${projectId}/documents`);
+      if (folderName == "documents") {
+        let { data, error } = await supabase.storage
+          .from("files")
+          .list(`${projectId}/documents`);
         if (error) {
           throw error;
         }
         const fileCount = data.length;
         return fileCount;
       } else {
-        let { data, error } = await supabase.storage.from("files").list(`${projectId}/photos`);
+        let { data, error } = await supabase.storage
+          .from("files")
+          .list(`${projectId}/photos`);
         if (error) {
           throw error;
         }
@@ -109,98 +123,122 @@ export default function ProjectStatistics() {
         return fileCount;
       }
     } catch (error) {
-      console.error('Error counting files', error.message);
+      console.error("Error counting files", error.message);
     }
   }
 
   useEffect(() => {
-  const fetchData = async () => {
-    try{
-    calcCountExercises();
-    calcCountFlashcards();
-    calcCountLinks();
-    const documentsCount = await calcCountFiles('documents');
-    const photosCount = await calcCountFiles('photos');
-    setCountDocuments(documentsCount);
-    setCountPhotos(photosCount);
-    } catch (error) {
-      console.error('Error in fetching data:', error.message);
-    }
-  };
-  fetchData();
+    const fetchData = async () => {
+      try {
+        calcCountExercises();
+        calcCountFlashcards();
+        calcCountLinks();
+        const documentsCount = await calcCountFiles("documents");
+        const photosCount = await calcCountFiles("photos");
+        setCountDocuments(documentsCount);
+        setCountPhotos(photosCount);
+      } catch (error) {
+        console.error("Error in fetching data:", error.message);
+      }
+    };
+    fetchData();
   }, []);
 
   return (
     <ScrollView style={styles.container}>
-      <Text
-        variant={heading}
-        style={[{ marginBottom: 20, marginTop: 30, fontWeight: "bold" }]}
-      >
-        Files statistics
-      </Text>
+      <Card>
+        <Card.Title
+          titleVariant={heading}
+          title="File statistics"
+          style={{ backgroundColor: theme.colors.background }}
+        ></Card.Title>
+      </Card>
+      <StatisticCategory
+        data={{
+          title: "CogniCards",
+          dataPoints: [`Amount of flashcards: ${countFlashcards}`],
+        }}
+      ></StatisticCategory>
       <Divider />
-      <View style={styles.categoryStyle}>
-        <Text variant={heading2}>CogniCards</Text>
-        <Text variant={heading3}>Amount of flashcards: {countFlashcards}</Text>
-      </View>
+      <StatisticCategory
+        data={{
+          title: "CogniCises",
+          dataPoints: [`Amount of exercises: ${countExercises}`],
+        }}
+      ></StatisticCategory>
       <Divider />
-      <View style={styles.categoryStyle}>
-        <Text variant={heading2}>CogniCises</Text>
-        <Text variant={heading3}>Amount of exercises: {countExercises}</Text>
-      </View>
+      <StatisticCategory
+        data={{
+          title: "CogniLinks",
+          dataPoints: [`Amount of links: ${countLinks}`],
+        }}
+      ></StatisticCategory>
       <Divider />
-      <View style={styles.categoryStyle}>
-        <Text variant={heading2}>CogniLinks</Text>
-        <Text variant={heading3}>Amount of links: {countLinks}</Text>
-      </View>
+      <StatisticCategory
+        data={{
+          title: "Cognifiles",
+          dataPoints: [
+            `Amount of files: ${countDocuments}`,
+            `Amount of photos: ${countPhotos}`,
+          ],
+        }}
+      ></StatisticCategory>
       <Divider />
+      <Card>
+        <Card.Title
+          titleVariant={heading}
+          title="Leaderboard"
+          style={{ backgroundColor: theme.colors.background }}
+        ></Card.Title>
+      </Card>
       <View style={styles.categoryStyle}>
-        <Text variant={heading2}>Cognifiles</Text>
-        <Text variant={heading3}>Amount of files: {countDocuments}</Text>
-        <Text variant={heading3}>Amount of photos: {countPhotos}</Text>
-      </View>
-
-      <Text
-        variant={heading}
-        style={[{ marginBottom: 20, marginTop: 30, fontWeight: "bold" }]}
-      >
-        Leaderboard
-      </Text>
-      <Divider />
-      <View style={styles.categoryStyle}>
-        <Text variant={heading2}>Relative time spent on each game:</Text>
-        <View style={styles.piechart}>
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={series}
-            sliceColor={sliceColor}
-          />
-          <View style={styles.piechartExplanation}>
-            <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-              CogniQuiz: {series[0]} hours, {percentExercise} %{" "}
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-              Amount of CogniQuiz wins:
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-              CogniScore - CogniQuiz:
-            </Text>
-            <Divider />
-            <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-              CogniCards: {series[1]} hours, {percentQuiz} %{" "}
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-              Amount of CogniCards wins:
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-              CogniScore - CogniCards:
-            </Text>
-            <Divider />
-            <Text variant={heading4} style={[{ color: sliceColor[2] }]}>
-              Whiteboard: {series[2]} hours, {percentWhiteboard} %
-            </Text>
-          </View>
-        </View>
+        <Card>
+          <Card.Title
+            titleVariant={heading3}
+            title="Relative time spent on each game"
+            style={{ backgroundColor: theme.colors.background }}
+          ></Card.Title>
+          <Card.Content
+            style={{
+              backgroundColor: theme.colors.background,
+            }}
+          >
+            <View style={styles.piechart}>
+              <View style={styles.piechartExplanation}>
+                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
+                  CogniQuiz: {series[0]} hours, {percentExercise} %{" "}
+                </Text>
+                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
+                  Amount of CogniQuiz wins:
+                </Text>
+                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
+                  CogniScore - CogniQuiz:
+                </Text>
+                <Divider />
+                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
+                  CogniCards: {series[1]} hours, {percentQuiz} %{" "}
+                </Text>
+                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
+                  Amount of CogniCards wins:
+                </Text>
+                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
+                  CogniScore - CogniCards:
+                </Text>
+                <Divider />
+                <Text variant={heading4} style={[{ color: sliceColor[2] }]}>
+                  Whiteboard: {series[2]} hours, {percentWhiteboard} %
+                </Text>
+              </View>
+              <View>
+                <PieChart
+                  widthAndHeight={widthAndHeight}
+                  series={series}
+                  sliceColor={sliceColor}
+                />
+              </View>
+            </View>
+          </Card.Content>
+        </Card>
 
         <Divider />
 
@@ -223,12 +261,12 @@ const styles = StyleSheet.create({
   },
   piechart: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 20,
   },
   piechartExplanation: {
     flexDirection: "column",
-    marginLeft: 20,
     gap: 20,
   },
 });
