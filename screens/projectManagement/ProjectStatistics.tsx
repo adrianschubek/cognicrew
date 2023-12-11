@@ -59,6 +59,15 @@ export default function ProjectStatistics() {
   const [countDocuments, setCountDocuments] = useState(null);
   const [countPhotos, setCountPhotos] = useState(null);
 
+  const [countQuizWins, setQuizWins] = useState(null);
+  const [countQuizScore, setQuizScore] = useState(null);
+  const [countCardsWins, setCardsWins] = useState(null);
+  const [countCardsScore, setCardsScore] = useState(null);
+
+  const [countRankUnderFriends, setRankUnderFriends] = useState(null);
+  const [countRankGlobal, setRankGlobal] = useState(null);
+  
+
   async function calcCountExercises() {
     let { data, error } = await supabase
       .from("exercises")
@@ -128,6 +137,29 @@ export default function ProjectStatistics() {
     }
   }
 
+  async function calcGameStats() {
+    let { data, error } = await supabase
+      .from("user_learning_projects")
+      .select("stats")
+      .eq("learning_project_id", projectId); 
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      setCardsScore(data[0]["stats"]["scoreFlashcards"]);
+      setCardsWins(data[0]["stats"]["winsFlashcards"]);
+      setQuizScore(data[0]["stats"]["scoreQuiz"]);
+      setQuizWins(data[0]["stats"]["winsQuiz"]);
+    }
+  }
+
+  async function calcRankUnderFriends() {
+      //TODO
+  }
+
+  async function calcRankGlobal() {
+      //TODO
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -138,6 +170,9 @@ export default function ProjectStatistics() {
         const photosCount = await calcCountFiles("photos");
         setCountDocuments(documentsCount);
         setCountPhotos(photosCount);
+        calcGameStats();
+        calcRankUnderFriends();
+        calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }
@@ -188,16 +223,16 @@ export default function ProjectStatistics() {
         {
           dataPoints: [
             `CogniQuiz: ${series[0]} hours, ${percentExercise} %`,
-            `Amount of CogniQuiz wins:`,
-            `CogniScore - CogniQuiz:`,
+            `Amount of CogniQuiz wins: ${countQuizWins}`,
+            `CogniScore - CogniQuiz: ${countQuizScore}`,
           ],
           textColor: sliceColor[0],
         },
         {
           dataPoints: [
             `CogniCards: ${series[1]} hours, ${percentQuiz} %`,
-            `Amount of CogniCards wins:`,
-            `CogniScore - CogniCards:`,
+            `Amount of CogniCards wins: ${countCardsWins}`,
+            `CogniScore - CogniCards: ${countCardsScore}`,
           ],
           textColor: sliceColor[1],
         },

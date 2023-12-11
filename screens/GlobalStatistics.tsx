@@ -28,6 +28,8 @@ export default function GlobalStatistics() {
   const [countDocuments, setCountDocuments] = useState(null);
   const [countPhotos, setCountPhotos] = useState(null);
 
+  const [countLearningProjects, setCountLearningProjects] = useState(null);
+
   const { user } = useAuth();
 
   async function calcCountExercises() {
@@ -88,6 +90,15 @@ export default function GlobalStatistics() {
     return fileCount;
   }
 
+  async function calcCountLearningProjects() {
+    const { count, error } = await supabase
+      .from("user_learning_projects")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id",user.id);
+    setCountLearningProjects(count);
+  }
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -98,6 +109,7 @@ export default function GlobalStatistics() {
         const photosCount = await calcCountFiles("photos");
         setCountDocuments(documentsCount);
         setCountPhotos(photosCount);
+        calcCountLearningProjects();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }
@@ -110,7 +122,7 @@ export default function GlobalStatistics() {
       dataPointCategories: [
         {
           dataPoints: [
-            `Total amount of learning projects:`,
+            `Total amount of learning projects: ${countLearningProjects}`,
             `Total time spent on this app:`,
           ],
         },
