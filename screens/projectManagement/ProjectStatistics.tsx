@@ -143,7 +143,27 @@ export default function ProjectStatistics() {
     };
     fetchData();
   }, []);
-
+  const fileStatistics = [
+    {
+      title: "CogniCards",
+      dataPoints: [`Amount of flashcards: ${countFlashcards}`],
+    },
+    {
+      title: "CogniCises",
+      dataPoints: [`Amount of exercises: ${countExercises}`],
+    },
+    {
+      title: "CogniLinks",
+      dataPoints: [`Amount of links: ${countLinks}`],
+    },
+    {
+      title: "Cognifiles",
+      dataPoints: [
+        `Amount of files: ${countDocuments}`,
+        `Amount of photos: ${countPhotos}`,
+      ],
+    },
+  ];
   return (
     <ScrollView style={styles.container}>
       <Card>
@@ -153,33 +173,17 @@ export default function ProjectStatistics() {
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>
-      <StatisticCategory
-        data={{
-          title: "CogniCards",
-          dataPoints: [`Amount of flashcards: ${countFlashcards}`],
-        }}
-      ></StatisticCategory>
-      <StatisticCategory
-        data={{
-          title: "CogniCises",
-          dataPoints: [`Amount of exercises: ${countExercises}`],
-        }}
-      ></StatisticCategory>
-      <StatisticCategory
-        data={{
-          title: "CogniLinks",
-          dataPoints: [`Amount of links: ${countLinks}`],
-        }}
-      ></StatisticCategory>
-      <StatisticCategory
-        data={{
-          title: "Cognifiles",
-          dataPoints: [
-            `Amount of files: ${countDocuments}`,
-            `Amount of photos: ${countPhotos}`,
-          ],
-        }}
-      ></StatisticCategory>
+      {fileStatistics.map((item, index) => {
+        return (
+          <StatisticCategory
+            key={index}
+            data={{
+              title: item.title,
+              dataPoints: item.dataPoints,
+            }}
+          ></StatisticCategory>
+        );
+      })}
       <Card>
         <Card.Title
           titleVariant={heading}
