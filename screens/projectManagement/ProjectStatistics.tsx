@@ -159,21 +159,18 @@ export default function ProjectStatistics() {
           dataPoints: [`Amount of flashcards: ${countFlashcards}`],
         }}
       ></StatisticCategory>
-      <Divider />
       <StatisticCategory
         data={{
           title: "CogniCises",
           dataPoints: [`Amount of exercises: ${countExercises}`],
         }}
       ></StatisticCategory>
-      <Divider />
       <StatisticCategory
         data={{
           title: "CogniLinks",
           dataPoints: [`Amount of links: ${countLinks}`],
         }}
       ></StatisticCategory>
-      <Divider />
       <StatisticCategory
         data={{
           title: "Cognifiles",
@@ -183,7 +180,6 @@ export default function ProjectStatistics() {
           ],
         }}
       ></StatisticCategory>
-      <Divider />
       <Card>
         <Card.Title
           titleVariant={heading}
@@ -229,19 +225,15 @@ export default function ProjectStatistics() {
                   Whiteboard: {series[2]} hours, {percentWhiteboard} %
                 </Text>
               </View>
-              <View>
-                <PieChart
-                  widthAndHeight={widthAndHeight}
-                  series={series}
-                  sliceColor={sliceColor}
-                />
-              </View>
+              <PieChart
+                widthAndHeight={widthAndHeight}
+                series={series}
+                sliceColor={sliceColor}
+              />
             </View>
           </Card.Content>
         </Card>
-
         <Divider />
-
         <Text variant={heading2}>{rainbowText("Global rank:")}</Text>
         <Text variant={heading2}>{rainbowText("Rank under friends:")}</Text>
       </View>

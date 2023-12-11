@@ -1,4 +1,4 @@
-import { Card, Text, useTheme } from "react-native-paper";
+import { Card, Divider, Text, useTheme } from "react-native-paper";
 import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
 
 export default function statisticCategory(props: {
@@ -34,6 +34,7 @@ export default function statisticCategory(props: {
           })}
         </Card.Content>
       </Card>
+      <Divider style={{marginHorizontal:10}}/>
     </>
   );
 }
