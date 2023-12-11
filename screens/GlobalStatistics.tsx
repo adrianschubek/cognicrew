@@ -6,6 +6,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PieChart from "react-native-pie-chart";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
+import StatisticCategory from "../components/profile/StatisticCategory";
 
 export default function GlobalStatistics() {
   //Pie chart variables
@@ -13,7 +14,7 @@ export default function GlobalStatistics() {
 
   const series = [10, 20, 17]; //hours spent
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
-
+  const heading = "headlineSmall";
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
   const heading4 = "labelLarge";
@@ -71,7 +72,7 @@ export default function GlobalStatistics() {
           let { data, error } = await supabase.storage
             .from("files")
             .list(`${projectIdArr[i]}/documents`);
-  
+
           if (error) {
             throw error;
           }
@@ -88,10 +89,8 @@ export default function GlobalStatistics() {
       } catch (error) {
         console.error("Error counting files", error.message);
       }
-
     }
     return fileCount;
-
   }
 
   useEffect(() => {
@@ -110,37 +109,49 @@ export default function GlobalStatistics() {
     };
     fetchData();
   }, []);
-
+  const statistics = [
+    {
+      title: "Global statistics",
+      dataPointCategories: [
+        {
+          dataPoints: [
+            `Total amount of learning projects:`,
+            `Total time spent on this app:`,
+          ],
+        },
+      ],
+    },
+    {
+      title: "File statistics",
+      dataPointCategories: [
+        {
+          dataPoints: [
+            `Total amount of exercises: ${countExercises}`,
+            `Total amount of flashcards: ${countFlashcards}`,
+            `Total amount of links: ${countLinks}`,
+            `Total amount of documents: ${countDocuments}`,
+            `Total amount of photos: ${countPhotos}`,
+          ],
+        },
+      ],
+    },
+  ];
   return (
     <SafeAreaView>
       <ScrollView style={styles.container}>
-        <Text variant={heading2} style={{ marginBottom: 20 }}>
-          Global Statistics
-        </Text>
-        <Divider />
-        <Text variant={heading3} style={{ marginBottom: 20 }}>
-          Total amount of learning projects:
-        </Text>
-        <Text variant={heading3} style={{ marginBottom: 20 }}>
-          Total time spent on this app:{" "}
-        </Text>
-        <Text variant={heading2} style={[{ marginBottom: 20, marginTop: 30 }]}>
-          Files statistics
-        </Text>
-        <Divider />
-        <View style={{ gap: 20, marginBottom: 30 }}>
-          <Text variant={heading3}>
-            Total amount of exercises: {countExercises}
-          </Text>
-          <Text variant={heading3}>
-            Total amount of flashcards: {countFlashcards}
-          </Text>
-          <Text variant={heading3}>Total amount of links: {countLinks}</Text>
-          <Text variant={heading3}>
-            Total amount of documents: {countDocuments}
-          </Text>
-          <Text variant={heading3}>Total amount of photos: {countPhotos}</Text>
-        </View>
+        {statistics.map((item, index) => {
+          return (
+            <StatisticCategory
+              key={index}
+              titleVariant="headlineSmall"
+              textVariant="bodyLarge"
+              data={{
+                title: item.title,
+                dataPointCategories: item.dataPointCategories,
+              }}
+            ></StatisticCategory>
+          );
+        })}
         <Text variant={heading2} style={[{ marginBottom: 20 }]}>
           Game statistics
         </Text>

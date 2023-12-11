@@ -146,21 +146,37 @@ export default function ProjectStatistics() {
   const fileStatistics = [
     {
       title: "CogniCards",
-      dataPoints: [`Amount of flashcards: ${countFlashcards}`],
+      dataPointCategories: [
+        {
+          dataPoints: [`Amount of flashcards: ${countFlashcards}`],
+        },
+      ],
     },
     {
       title: "CogniCises",
-      dataPoints: [`Amount of exercises: ${countExercises}`],
+      dataPointCategories: [
+        {
+          dataPoints: [`Amount of exercises: ${countExercises}`],
+        },
+      ],
     },
     {
       title: "CogniLinks",
-      dataPoints: [`Amount of links: ${countLinks}`],
+      dataPointCategories: [
+        {
+          dataPoints: [`Amount of links: ${countLinks}`],
+        },
+      ],
     },
     {
       title: "Cognifiles",
-      dataPoints: [
-        `Amount of files: ${countDocuments}`,
-        `Amount of photos: ${countPhotos}`,
+      dataPointCategories: [
+        {
+          dataPoints: [
+            `Amount of files: ${countDocuments}`,
+            `Amount of photos: ${countPhotos}`,
+          ],
+        },
       ],
     },
   ];
@@ -179,7 +195,7 @@ export default function ProjectStatistics() {
             key={index}
             data={{
               title: item.title,
-              dataPoints: item.dataPoints,
+              dataPointCategories: item.dataPointCategories,
             }}
           ></StatisticCategory>
         );
