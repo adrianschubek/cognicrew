@@ -29,8 +29,18 @@ export type PublicRoomState = {
    * Connected players
    */
   players: {
+    /**
+     * user id
+     */
     id: string;
     username: string;
+    /**
+     * Whether the user is the host of this room
+     */
+    isHost: boolean;
+    /**
+     * game score
+     */
     score: number;
     /**
      * Whether the user answered correctly in the current round.

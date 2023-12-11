@@ -197,6 +197,7 @@ serve(async (req) => {
           players: users.map((user) => ({
             id: user.id,
             username: user.username,
+            isHost: user.id === data.host,
             score: 0,
             currentCorrect: null,
             currentTimeNeeded: null,
@@ -228,6 +229,7 @@ serve(async (req) => {
           players: users.map((user) => ({
             id: user.id,
             username: user.username,
+            isHost: user.id === data.host,
             score: 0,
             currentCorrect: null,
             currentTimeNeeded: null,
