@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Divider, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import PieChart from "react-native-pie-chart";
+import { StatusBar } from "expo-status-bar";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import StatisticCategory from "../components/profile/StatisticCategory";
@@ -14,10 +13,6 @@ export default function GlobalStatistics() {
 
   const series = [10, 20, 17]; //hours spent
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
-  const heading = "headlineSmall";
-  const heading2 = "titleLarge";
-  const heading3 = "titleMedium";
-  const heading4 = "labelLarge";
   //Calculaions of pie chart statistics
   let sumTimeGames = series.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
@@ -135,10 +130,36 @@ export default function GlobalStatistics() {
         },
       ],
     },
+    {
+      title: "Game statistics",
+      dataPointCategories: [
+        {
+          dataPoints: [`Exercises: ${series[0]} hours, ${percentExercise} %`],
+          textColor: sliceColor[0],
+        },
+        {
+          dataPoints: [`Flashcards: ${series[1]} hours, ${percentQuiz} %`],
+          textColor: sliceColor[1],
+        },
+
+        {
+          dataPoints: [
+            `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
+          ],
+          textColor: sliceColor[2],
+        },
+      ],
+      pieChart: {
+        widthAndHeight: widthAndHeight,
+        series: series,
+        sliceColor: sliceColor,
+      },
+    },
   ];
   return (
-    <SafeAreaView>
-      <ScrollView style={styles.container}>
+    <SafeAreaView style={{ marginTop: -28 }}>
+      <StatusBar style="auto" />
+      <ScrollView>
         {statistics.map((item, index) => {
           return (
             <StatisticCategory
@@ -149,54 +170,12 @@ export default function GlobalStatistics() {
                 title: item.title,
                 dataPointCategories: item.dataPointCategories,
               }}
+              pieChart={item.pieChart}
             ></StatisticCategory>
           );
         })}
-        <Text variant={heading2} style={[{ marginBottom: 20 }]}>
-          Game statistics
-        </Text>
-        <Divider />
-        <View style={{ gap: 20, marginBottom: 20 }}>
-          <Text variant={heading3}>Time spent in learning games:</Text>
-        </View>
-        <View style={styles.piechart}>
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={series}
-            sliceColor={sliceColor}
-          />
-          <View style={styles.piechartExplanation}>
-            <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-              Exercises: {series[0]} hours, {percentExercise} %{" "}
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-              Flashcards: {series[1]} hours, {percentQuiz} %{" "}
-            </Text>
-            <Text variant={heading4} style={[{ color: sliceColor[2] }]}>
-              Whiteboard: {series[2]} hours, {percentWhiteboard} %
-            </Text>
-          </View>
-        </View>
         <Divider />
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-  },
-  piechart: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  piechartExplanation: {
-    flexDirection: "column",
-    marginLeft: 20,
-    gap: 20,
-  },
-});

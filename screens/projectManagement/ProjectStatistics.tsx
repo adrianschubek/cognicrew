@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Card, Divider, Text, useTheme } from "react-native-paper";
 
@@ -180,8 +181,44 @@ export default function ProjectStatistics() {
       ],
     },
   ];
+  const leaderboard = [
+    {
+      title: "Relative time spent on each game",
+      dataPointCategories: [
+        {
+          dataPoints: [
+            `CogniQuiz: ${series[0]} hours, ${percentExercise} %`,
+            `Amount of CogniQuiz wins:`,
+            `CogniScore - CogniQuiz:`,
+          ],
+          textColor: sliceColor[0],
+        },
+        {
+          dataPoints: [
+            `CogniCards: ${series[1]} hours, ${percentQuiz} %`,
+            `Amount of CogniCards wins:`,
+            `CogniScore - CogniCards:`,
+          ],
+          textColor: sliceColor[1],
+        },
+
+        {
+          dataPoints: [
+            `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
+          ],
+          textColor: sliceColor[2],
+        },
+      ],
+      pieChart: {
+        widthAndHeight: widthAndHeight,
+        series: series,
+        sliceColor: sliceColor,
+      },
+    },
+  ];
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView>
+      <StatusBar style="auto" />
       <Card>
         <Card.Title
           titleVariant={heading}
@@ -207,52 +244,19 @@ export default function ProjectStatistics() {
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>
-      <View style={styles.categoryStyle}>
-        <Card>
-          <Card.Title
-            titleVariant={heading3}
-            title="Relative time spent on each game"
-            style={{ backgroundColor: theme.colors.background }}
-          ></Card.Title>
-          <Card.Content
-            style={{
-              backgroundColor: theme.colors.background,
-            }}
-          >
-            <View style={styles.piechart}>
-              <View style={styles.piechartExplanation}>
-                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-                  CogniQuiz: {series[0]} hours, {percentExercise} %{" "}
-                </Text>
-                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-                  Amount of CogniQuiz wins:
-                </Text>
-                <Text variant={heading4} style={[{ color: sliceColor[0] }]}>
-                  CogniScore - CogniQuiz:
-                </Text>
-                <Divider />
-                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-                  CogniCards: {series[1]} hours, {percentQuiz} %{" "}
-                </Text>
-                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-                  Amount of CogniCards wins:
-                </Text>
-                <Text variant={heading4} style={[{ color: sliceColor[1] }]}>
-                  CogniScore - CogniCards:
-                </Text>
-                <Divider />
-                <Text variant={heading4} style={[{ color: sliceColor[2] }]}>
-                  Whiteboard: {series[2]} hours, {percentWhiteboard} %
-                </Text>
-              </View>
-              <PieChart
-                widthAndHeight={widthAndHeight}
-                series={series}
-                sliceColor={sliceColor}
-              />
-            </View>
-          </Card.Content>
-        </Card>
+      <View style={{ gap: 20, marginBottom: 20 }}>
+        {leaderboard.map((item, index) => {
+          return (
+            <StatisticCategory
+              key={index}
+              data={{
+                title: item.title,
+                dataPointCategories: item.dataPointCategories,
+              }}
+              pieChart={item.pieChart}
+            ></StatisticCategory>
+          );
+        })}
         <Divider />
         <Text variant={heading2}>{rainbowText("Global rank:")}</Text>
         <Text variant={heading2}>{rainbowText("Rank under friends:")}</Text>
@@ -260,25 +264,3 @@ export default function ProjectStatistics() {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    //flex: 1,
-    //justifyContent: 'center',
-    //alignItems: 'center',
-  },
-  categoryStyle: {
-    gap: 20,
-    marginBottom: 20,
-  },
-  piechart: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  piechartExplanation: {
-    flexDirection: "column",
-    gap: 20,
-  },
-});
