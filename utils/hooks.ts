@@ -1,6 +1,7 @@
 import { useAuth } from "../providers/AuthProvider";
 import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
+  PostgrestError,
   useDeleteMutation,
   useInsertMutation,
   useQuery,
@@ -8,7 +9,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,6 +17,10 @@ import { BackHandler } from "react-native";
 import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
+import { useCacheUpdateStore } from "../stores/CacheUpdateStore";
+import { KeyedMutator } from "swr";
+import { PostgrestSingleResponse } from "@supabase/postgrest-js";
+import { set } from "cypress/types/lodash";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -404,16 +409,51 @@ export function useAnswersExercises(exerciseId: number) {
   }, []);
   return { data, isLoading, error, mutate };
 }
-
 export function useExercisesAndAnswers(setId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("exercises")
-        .select("id,question,priority,set_id,answers_exercises(exercise)")
-        .eq("set_id", setId),
-    ),
+  const query = supabase
+    .from("exercises")
+    .select("id,question,priority,set_id,answers_exercises(exercise)")
+    .eq("set_id", setId);
+  const cacheUpdateLocked = useCacheUpdateStore(
+    (state) => state.cacheUpdateLocked,
   );
+  const [result, setResult] = useState<{
+    data: {
+      id: number;
+      question: string;
+      priority: number;
+      set_id: number;
+      answers_exercises: {
+        exercise: number;
+      }[];
+    }[];
+    isLoading: boolean;
+    error: PostgrestError;
+    mutate: KeyedMutator<
+      PostgrestSingleResponse<
+        {
+          id: number;
+          question: string;
+          priority: number;
+          set_id: number;
+          answers_exercises: {
+            exercise: number;
+          }[];
+        }[]
+      >
+    >;
+  }>({
+    data: [],
+    isLoading: false,
+    error: null,
+    mutate: null,
+  });
+  useEffect(() => {
+    if (!cacheUpdateLocked) {
+      setResult(handleErrors(useQuery(query)));
+    }
+  }, [cacheUpdateLocked]);
+  return result;
 }
 
 export function useUpsertAnswersExercise() {
@@ -438,7 +478,9 @@ export function useDeleteAnswersExercise() {
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
-    .select("created_at,id,link_url,learning_project,title,subtitle,description")
+    .select(
+      "created_at,id,link_url,learning_project,title,subtitle,description",
+    )
     .eq("learning_project", projectId)
     .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));

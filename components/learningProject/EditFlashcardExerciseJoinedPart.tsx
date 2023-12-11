@@ -19,6 +19,7 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -66,7 +67,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           order_position: orderPosition,
         };
       });
-    deletionArray.forEach((e) => {
+  /*  deletionArray.forEach((e) => {
       updateCacheQueue.push(() =>
         deleteAnswersExercise({
           exercise: e.exercise,
@@ -74,14 +75,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         }),
       );
     });
-    processQueue();
-
-    /*let { data, error } = await supabase.rpc("delete_answers_exercise", {
+    processQueue();*/
+    let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
-    //console.log("InitialLength: ", initialLength);
-    //console.log("answersLength: ", answers.length);
-    return data;*/
+    return data;
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();

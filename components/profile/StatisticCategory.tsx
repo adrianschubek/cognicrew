@@ -55,10 +55,9 @@ export default function statisticCategory(props: {
                         </Text>
                       );
                     })}
-
-                    {
-                      categoryIndex !== data.dataPointCategories.length - 1 && <Divider />
-                    }
+                    {categoryIndex !== data.dataPointCategories.length - 1 && (
+                      <Divider />
+                    )}
                   </Fragment>
                 );
               })}

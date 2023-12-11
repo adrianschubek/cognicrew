@@ -5,6 +5,7 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
+import { useCacheUpdateStore } from "../../stores/CacheUpdateStore";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -21,7 +22,15 @@ export default function EditExercise(props: {
   const [showAnswerDeletionOptions, setShowAnswerDeletionOptions] =
     useState<boolean>(false);
   const theme = useTheme();
-
+  const lockCacheUpdate = useCacheUpdateStore((state) => state.lockCacheUpdate);
+  const freeCacheUpdate = useCacheUpdateStore((state) => state.freeCacheUpdate);
+  const updateCacheQueue = new Array();
+  const processQueue = async () => {
+    while (updateCacheQueue.length > 0) {
+      const task = updateCacheQueue.shift() as () => Promise<void>;
+      await task();
+    }
+  };
   useEffect(() => {
     if (!isInitialized) return;
     const filteredAnswers = answers
@@ -30,6 +39,15 @@ export default function EditExercise(props: {
         return [e[0], e[1], index + 1];
       }) as [string, boolean, number][];
     sendAnswers(filteredAnswers);
+    if (
+      filteredAnswers.length >= 2 &&
+      filteredAnswers.filter((e) => e[1] === true).length > 0
+    ) {
+      while (!(updateCacheQueue.length === 0)) {
+        updateCacheQueue.shift();
+      }
+      updateCacheQueue.push(() => updateCache(filteredAnswers));
+    }
   }, [answers]);
 
   useEffect(() => {
@@ -48,6 +66,7 @@ export default function EditExercise(props: {
     setIsInitialized(true);
   }, [data]);
   useEffect(() => {
+    lockCacheUpdate();
     const realtimeAnswers = supabase
       .channel("answers_exercises_all")
       .on(
@@ -59,8 +78,13 @@ export default function EditExercise(props: {
         },
       )
       .subscribe();
+    return () => {
+      processQueue().then(() => {
+        freeCacheUpdate();
+      });
+    };
   }, []);
-  /*async function updateCache(newAnswers: [string, boolean, number][]) {
+  async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
       ...oldData,
       data: newAnswers.map((e) => {
@@ -73,7 +97,7 @@ export default function EditExercise(props: {
       }),
     };
     mutate(updatedData, false);
-  }*/
+  }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -82,7 +106,7 @@ export default function EditExercise(props: {
     };
   }
 
-  if (error) return <LoadingOverlay visible={isLoading} />;
+  if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <>
       <View
