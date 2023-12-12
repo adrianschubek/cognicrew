@@ -104,7 +104,7 @@ export default function EditExercise(props: {
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
       sendAnswers(filteredAnswers);
-      updateCache(filteredAnswers);
+      //updateCache(filteredAnswers);
     }
   }
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
