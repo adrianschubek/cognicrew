@@ -133,6 +133,9 @@ export type UserProjectStats = {
   scoreFlashcards: number;
   winsQuiz: number;
   winsFlashcards: number;
+  timeSpentQuiz: number;
+  timeSpentFlashcards: number;
+  timeSpentWhiteboard: number;
 };
 
 /**

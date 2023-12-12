@@ -3,11 +3,15 @@ import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Card, Divider, Text, useTheme } from "react-native-paper";
 
-import PieChart from "react-native-pie-chart";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
+import PieChart from "react-native-pie-chart";
+
+import TimerScreen from "../../components/learningRoom/TimeTracker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTimerStore } from "../../stores/TimerStore";
 
 export default function ProjectStatistics() {
   const theme = useTheme();
@@ -15,17 +19,6 @@ export default function ProjectStatistics() {
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
   const heading4 = "labelLarge";
-
-  const widthAndHeight = 100;
-  const series = [123, 321, 123];
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-  let sumTimeGames = series.reduce(
-    (accumulator, currentValue) => accumulator + currentValue,
-    0,
-  );
-  let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
-  let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
-  let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
 
   function rainbowText(inputText) {
     const rainbowColors = [
@@ -64,9 +57,28 @@ export default function ProjectStatistics() {
   const [countCardsWins, setCardsWins] = useState(null);
   const [countCardsScore, setCardsScore] = useState(null);
 
+  const [timeQuiz, setTimeSpentQuiz] = useState(null);
+  const [timeCards,  setTimeSpentCards] = useState(null);
+  const [timeBoard,  setTimeSpentBoard] = useState(null);
+
+
   const [countRankUnderFriends, setRankUnderFriends] = useState(null);
   const [countRankGlobal, setRankGlobal] = useState(null);
-  
+
+  const widthAndHeight = 100;
+  const series = [formatTimeSpent(timeQuiz), formatTimeSpent(timeCards), formatTimeSpent(timeBoard)];
+  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
+  let sumTimeGames = series.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+  let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
+  let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
+  let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
+
+  function formatTimeSpent(seconds) {
+    return (seconds / 60 / 60).toFixed(2);
+  }
 
   async function calcCountExercises() {
     let { data, error } = await supabase
@@ -149,6 +161,9 @@ export default function ProjectStatistics() {
       setCardsWins(data[0]["stats"]["winsFlashcards"]);
       setQuizScore(data[0]["stats"]["scoreQuiz"]);
       setQuizWins(data[0]["stats"]["winsQuiz"]);
+      setTimeSpentQuiz(data[0]["stats"]["timeSpentQuiz"]);
+      setTimeSpentCards(data[0]["stats"]["timeSpentFlashcards"]);
+      setTimeSpentBoard(data[0]["stats"]["timeSpentWhiteboard"]);
     }
   }
 
@@ -253,6 +268,7 @@ export default function ProjectStatistics() {
   ];
   return (
     <ScrollView>
+      <TimerScreen />
       <StatusBar style="auto" />
       <Card>
         <Card.Title

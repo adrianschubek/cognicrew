@@ -9,6 +9,7 @@ import {
   UserProjectStats,
 } from "../rooms.ts";
 
+
 console.log("main function started");
 
 const JWT_SECRET = Deno.env.get("JWT_SECRET");
@@ -382,6 +383,9 @@ setInterval(async () => {
             scoreFlashcards: 0,
             winsQuiz: 0,
             winsFlashcards: 0,
+            timeSpentQuiz: 0,
+            timeSpentFlashcards: 0,
+            timeSpentWhiteboard: 0,
           };
 
           stats.scoreQuiz +=
@@ -400,6 +404,15 @@ setInterval(async () => {
             !draw
               ? 1
               : 0;
+
+          timeSpent = newState.roundEndsAt - newState.roundBeganAt;
+          stats.timeSpentQuiz +=
+             newState.game == GameState.EXERCISES ? timeSpent : 0;
+          stats.timeSpentFlashcards +=
+             newState.game == GameState.FLASHCARDS ? timeSpent : 0;
+          stats.timeSpentWhiteboard +=
+             newState.game == GameState.WHITEBOARD? 0 : 0; //TODO
+
 
           const { error: errUpdate } = await supabase
             .from("user_learning_projects")
