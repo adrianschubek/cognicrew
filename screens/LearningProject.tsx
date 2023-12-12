@@ -10,7 +10,8 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { ManagementType, NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
-import { useAlerts, useSoundSystem1 } from "../utils/hooks";
+import { useSoundSystem1 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";

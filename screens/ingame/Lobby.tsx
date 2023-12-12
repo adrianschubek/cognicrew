@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAlerts, toArray } from "react-native-paper-fastalerts";
 import {
-  useAlerts,
   useSets,
   useSoundSystem1,
   useUsernamesByRoom,
@@ -21,7 +21,6 @@ import { responsiveWidth } from "react-native-responsive-dimensions";
 import { FunctionsHttpError } from "@supabase/supabase-js";
 import { handleEdgeError } from "../../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
-import { toArray } from "../../stores/AlertsStore";
 import { RoomClientInit } from "../../functions/rooms";
 
 export default function Lobby({ navigation }) {

@@ -8,10 +8,10 @@ import {
   useTheme,
 } from "react-native-paper";
 import {
-  useAlerts,
   useConfirmLeaveLobby,
   useSoundSystem2,
 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";

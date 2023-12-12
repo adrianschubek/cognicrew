@@ -9,7 +9,6 @@ import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
-  useAlerts,
   useDeleteProjectRating,
   useSoundSystem1,
   useUpsertProjectRating,
@@ -21,6 +20,7 @@ import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { debounce } from "../../utils/common";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function RateProject({
   navigation,
