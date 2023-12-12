@@ -17,7 +17,7 @@ import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
-import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
+import { AlertContainer } from "react-native-paper-fastalerts";
 import { SWRConfig } from "swr";
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 // import { Appearance, useColorScheme } from "react-native";
@@ -79,7 +79,7 @@ export default function App() {
                 isOnline: () => true,
               }}
             >
-              <AlertSyncZustand />
+              <AlertContainer />
               <GlobalLoadingOverlay />
               <MainNav />
             </SWRConfig>

@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
 import { Tooltip, IconButton, Icon, useTheme, Text } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
-import { useAlerts, useSoundSystem1 } from "../utils/hooks";
+import { useSoundSystem1 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect } from "react";
 import Discover from "./Discover";
 

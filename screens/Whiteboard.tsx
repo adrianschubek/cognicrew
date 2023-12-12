@@ -21,7 +21,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
 import {
   useAchievements,
-  useAlerts,
   useConfirmLeaveLobby,
   useUnlockAchievement,
 } from "../utils/hooks";

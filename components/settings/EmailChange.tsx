@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="email" />;
 

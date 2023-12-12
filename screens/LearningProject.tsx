@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Button, FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
+import { FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -10,7 +10,8 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { ManagementType, NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
-import { useAlerts, useSoundSystem1 } from "../utils/hooks";
+import { useSoundSystem1 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
@@ -28,16 +29,14 @@ export default function LearningProject({ navigation, route }) {
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
 
-  
- const projectId = useProjectStore((state) => state.projectId);
-
+  const projectId = useProjectStore((state) => state.projectId);
 
   useEffect(() => {
     navigation.setOptions({
       title: project.name,
       headerRight: () => (
         <>
-           <Tooltip title="Rate project">
+          <Tooltip title="Rate project">
             <IconButton
               icon="star"
               onPress={() => {
@@ -111,19 +110,19 @@ export default function LearningProject({ navigation, route }) {
       />
 
       <FAB
-       icon={"chart-bar"}
-       onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
-       color={theme.colors.onSecondaryContainer}
-       style={{
-         position: "absolute",
-         margin: 16,
-         right: 180,
-         bottom: 0,
-         backgroundColor: theme.colors.secondaryContainer,
-       }}
-       label={"Project statistics"}
+        icon={"chart-bar"}
+        onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
+        color={theme.colors.onSecondaryContainer}
+        style={{
+          position: "absolute",
+          margin: 16,
+          right: 180,
+          bottom: 0,
+          backgroundColor: theme.colors.secondaryContainer,
+        }}
+        label={"Project statistics"}
       />
-      
+
       <FAB
         icon={"play"}
         onPress={() => {
@@ -142,8 +141,7 @@ export default function LearningProject({ navigation, route }) {
               });
               navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
-              setRoom(data); //?? still works, but maybe resolve type error, just change Room type to "Record<string, unknown>" ?
-              // =>> TOOD: https://supabase.com/docs/reference/javascript/db-returns lösung ^^
+              setRoom(data as any);
             },
             fields: [
               {
@@ -155,8 +153,7 @@ export default function LearningProject({ navigation, route }) {
                 label: "Password",
                 type: "number",
                 icon: "key",
-                helperText:
-                  "A password required to join. Optional.",
+                helperText: "A password required to join. Optional.",
                 validator: (value) => /^[0-9]{0,6}$/.test(value),
                 errorText: "Room code must be between 0 and 6 digits",
               },

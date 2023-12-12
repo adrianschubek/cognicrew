@@ -7,7 +7,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
 import * as FileSystem from 'expo-file-system';
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 
 const ImageItem = ({

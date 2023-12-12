@@ -13,7 +13,7 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import { supabase } from "../../supabase";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function Register({ showRegister, close }) {
   const [username, setUsername] = useState("");

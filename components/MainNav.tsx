@@ -27,7 +27,7 @@ import { useRoomStateStore, useRoomStore } from "../stores/RoomStore";
 import { useEffect } from "react";
 import GuestLobby from "../screens/ingame/GuestLobby";
 import { supabase } from "../supabase";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import RateProject from "../screens/projectManagement/RateProject";
 import EndResults from "../screens/ingame/EndResults";
 import { GameState, ScreenState } from "../functions/rooms";
