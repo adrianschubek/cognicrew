@@ -22,9 +22,7 @@ export default function LearningProject({ navigation, route }) {
   const { project } = route.params;
   const { confirm, info, error: errorAlert } = useAlerts();
   const theme = useTheme();
-
   const setRoom = useRoomStore((state) => state.setRoom);
-
   const reset = useProjectStore((state) => state.reset);
   useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
   const setProjectId = useProjectStore((state) => state.setProjectId);

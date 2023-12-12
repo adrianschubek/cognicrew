@@ -19,6 +19,7 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
 } from "../../utils/hooks";
+import { supabase } from "../../supabase";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -38,15 +39,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
   //exercise specific
-  // Create a queue
-  const updateCacheQueue = new Array();
-  // Function to process tasks in the queue
-  const processQueue = async () => {
-    while (updateCacheQueue.length > 0) {
-      const task = updateCacheQueue.pop() as () => Promise<void>;
-      await task();
-    }
-  };
   async function deleteAnswers(
     initialLength: number,
     answers: [string, boolean, number][],
@@ -57,7 +49,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       { length: initialLength },
       (_, index) => index + 1,
     );
-    //console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
     const deletionArray = initialLenghtArray
       .slice(-numberOfAnswersToDelete)
       .map((orderPosition) => {
@@ -66,22 +57,18 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           order_position: orderPosition,
         };
       });
-    deletionArray.forEach((e) => {
-      updateCacheQueue.push(() =>
-        deleteAnswersExercise({
-          exercise: e.exercise,
-          order_position: e.order_position,
-        }),
-      );
-    });
-    processQueue();
-
-    /*let { data, error } = await supabase.rpc("delete_answers_exercise", {
+    //console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
+    let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
-    //console.log("InitialLength: ", initialLength);
-    //console.log("answersLength: ", answers.length);
-    return data;*/
+    console.log("error: ", error);
+    return data;
+   /* for (const e of deletionArray) {
+      await deleteAnswersExercise({
+        exercise: e.exercise,
+        order_position: e.order_position,
+      });
+    }*/
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
@@ -93,17 +80,18 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     initialLength: number,
   ) => {
     type === ManagementType.EXERCISE
-      ? upsertExercise({
+      ? (setInitialAnswersLength(answerOrAnswers.length),
+        upsertExercise({
           //@ts-expect-error
           id: listItem.id,
           question: question,
           priority: priority,
           set_id: listItem.set_id,
         }).then((res) => {
-          //delete those answers that should get deleted from the exercise
-          deleteAnswers(initialLength, answerOrAnswers),
-            setInitialAnswersLength(answerOrAnswers.length);
           //answers need to be updated
+          //console.log("initialAnswersLength: ", initialLength);
+          //console.log("answerOrAnswers ", answerOrAnswers);
+          deleteAnswers(initialLength, answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
               //@ts-expect-error
@@ -113,7 +101,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               order_position: e[2],
             });
           });
-        })
+        }))
       : upsertFlashcard({
           //@ts-expect-error
           id: listItem.id,
@@ -184,24 +172,24 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setErrorText("");
     setShowErrorUpload(false);
   }
-  // Create the debounced function
-  const debouncedUpdate = useCallback(
-    debounce((question, answerOrAnswers, priority, initialLength) => {
+  const updateDebounceApplied = debounce(
+    (question, answerOrAnswers, priority, initialLength) => {
       update(question, answerOrAnswers, priority, initialLength);
-    }, 500),
-    [],
+    },
+    500,
   );
+  const debouncedUpdate = useCallback(updateDebounceApplied, []);
   useEffect(() => {
     // Call the debounced function
-    isInitialized &&
+    if (isInitialized) {
       debouncedUpdate(
         question,
         answerOrAnswers,
         priority,
         initialAnswersLength,
       );
+    }
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
-
   useEffect(() => {
     if (!answerOrAnswers) return;
     setIsInitialized(true);
