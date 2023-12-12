@@ -9,9 +9,6 @@ import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
 import PieChart from "react-native-pie-chart";
 
-import TimerScreen from "../../components/learningRoom/TimeTracker";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTimerStore } from "../../stores/TimerStore";
 
 export default function ProjectStatistics() {
   const theme = useTheme();
