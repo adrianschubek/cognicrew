@@ -417,43 +417,11 @@ export function useExercisesAndAnswers(setId: number) {
   const cacheUpdateLocked = useCacheUpdateStore(
     (state) => state.cacheUpdateLocked,
   );
-  const [result, setResult] = useState<{
-    data: {
-      id: number;
-      question: string;
-      priority: number;
-      set_id: number;
-      answers_exercises: {
-        exercise: number;
-      }[];
-    }[];
-    isLoading: boolean;
-    error: PostgrestError;
-    mutate: KeyedMutator<
-      PostgrestSingleResponse<
-        {
-          id: number;
-          question: string;
-          priority: number;
-          set_id: number;
-          answers_exercises: {
-            exercise: number;
-          }[];
-        }[]
-      >
-    >;
-  }>({
-    data: [],
-    isLoading: false,
-    error: null,
-    mutate: null,
-  });
   useEffect(() => {
-    if (!cacheUpdateLocked) {
-      setResult(handleErrors(useQuery(query)));
-    }
-  }, [cacheUpdateLocked]);
-  return result;
+    mutate();
+  }, []);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  return { data, error, isLoading, mutate };
 }
 
 export function useUpsertAnswersExercise() {

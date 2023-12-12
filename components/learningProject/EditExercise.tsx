@@ -6,6 +6,7 @@ import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
 import { useCacheUpdateStore } from "../../stores/CacheUpdateStore";
+import { isEqual } from "lodash";
 
 export default function EditExercise(props: {
   listItem: any;
@@ -22,36 +23,14 @@ export default function EditExercise(props: {
   const [showAnswerDeletionOptions, setShowAnswerDeletionOptions] =
     useState<boolean>(false);
   const theme = useTheme();
-  const lockCacheUpdate = useCacheUpdateStore((state) => state.lockCacheUpdate);
-  const freeCacheUpdate = useCacheUpdateStore((state) => state.freeCacheUpdate);
-  const updateCacheQueue = new Array();
-  const processQueue = async () => {
-    while (updateCacheQueue.length > 0) {
-      const task = updateCacheQueue.shift() as () => Promise<void>;
-      await task();
-    }
-  };
+
   useEffect(() => {
     if (!isInitialized) return;
-    const filteredAnswers = answers
-      .filter((e) => e[0] !== "")
-      .map((e, index) => {
-        return [e[0], e[1], index + 1];
-      }) as [string, boolean, number][];
-    sendAnswers(filteredAnswers);
-    if (
-      filteredAnswers.length >= 2 &&
-      filteredAnswers.filter((e) => e[1] === true).length > 0
-    ) {
-      while (!(updateCacheQueue.length === 0)) {
-        updateCacheQueue.shift();
-      }
-      updateCacheQueue.push(() => updateCache(filteredAnswers));
-    }
+    console.log("answers: ", answers);
   }, [answers]);
 
   useEffect(() => {
-    if (!data || isInitialized) return;
+    if (!data) return;
     const initializingAnswers: [string, boolean, number][] = [];
     data.forEach((answerItem) => {
       initializingAnswers.push([
@@ -59,53 +38,56 @@ export default function EditExercise(props: {
         answerItem.is_correct,
         answerItem.order_position,
       ]);
-    }),
-      setAnswers(initializingAnswers);
+    });
+    if (!isInitialized) setAnswers(initializingAnswers);
+    else {
+      replaceInitialElements(answers, initializingAnswers);
+    }
     setOldData(data);
     sendInitialAnswersLength(initializingAnswers.length);
     setIsInitialized(true);
   }, [data]);
   useEffect(() => {
-    lockCacheUpdate();
     const realtimeAnswers = supabase
       .channel("answers_exercises_all")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "answers_exercises" },
         (payload) => {
-          console.log("realtimeAnswers: ", payload);
+          //console.log("realtimeAnswers: ", payload);
           mutate();
         },
       )
       .subscribe();
-    return () => {
-      processQueue().then(() => {
-        freeCacheUpdate();
-      });
-    };
   }, []);
-  async function updateCache(newAnswers: [string, boolean, number][]) {
-    const updatedData = {
-      ...oldData,
-      data: newAnswers.map((e) => {
-        return {
-          answer: e[0],
-          is_correct: e[1],
-          order_position: e[2],
-          exercise: listItem.id,
-        };
-      }),
-    };
-    mutate(updatedData, false);
+  function replaceInitialElements(
+    array: [string, boolean, number][],
+    replacementArray: [string, boolean, number][],
+  ) {
+    const remainingAnswers = array.slice(replacementArray.length);
+    return [...replacementArray, ...remainingAnswers];
   }
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
       newAnswers[number - 1] = [text, checked, answers[number - 1][2]];
       setAnswers(newAnswers);
+      sendfilteredAnswers(newAnswers);
     };
   }
-
+  function sendfilteredAnswers(answers: [string, boolean, number][]) {
+    const filteredAnswers = answers
+      .filter((e) => e[0] !== "")
+      .map((e, index) => {
+        return [e[0], e[1], index + 1];
+      }) as [string, boolean, number][];
+    if (
+      filteredAnswers.length >= 2 &&
+      filteredAnswers.filter((e) => e[1] === true).length > 0
+    ) {
+      sendAnswers(filteredAnswers);
+    }
+  }
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <>
@@ -181,6 +163,7 @@ export default function EditExercise(props: {
                     }) as [string, boolean, number][];
                   //console.log("when Minus pressed: ", newAnswers);
                   setAnswers(newAnswers);
+                  sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);
                 }}
               />
