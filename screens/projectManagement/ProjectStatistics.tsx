@@ -69,9 +69,9 @@ export default function ProjectStatistics() {
 
   const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 
-  const percentExercise = sumTimeGames === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
-  const percentQuiz = sumTimeGames === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard = sumTimeGames === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+  const percentExercise = series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz = series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard = series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
 
   
 

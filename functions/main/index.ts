@@ -9,7 +9,6 @@ import {
   UserProjectStats,
 } from "../rooms.ts";
 
-
 console.log("main function started");
 
 const JWT_SECRET = Deno.env.get("JWT_SECRET");
@@ -64,7 +63,85 @@ const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
-// listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
+async function updateStats(
+  publicState: PublicRoomState,
+  privateState: PrivateRoomState,
+) {
+  let gameWonPlayerId;
+  let maxScore = 0;
+  let draw = true;
+
+  for (const player of publicState.players) {
+    if (player.score >= maxScore) {
+      gameWonPlayerId = player.id;
+      maxScore = player.score;
+      draw = false;
+    }
+  }
+
+  //Check if there are two "winners" reuslting in a draw
+  for (const player of publicState.players) {
+    if (player.score == maxScore && player.id != gameWonPlayerId) {
+      draw = true;
+      break;
+    }
+  }
+
+  for (const player of publicState.players) {
+    const { data: dbstats, error } = await supabase
+      .from("user_learning_projects")
+      .select("stats")
+      .eq("user_id", player.id)
+      .eq("learning_project_id", privateState.projectId)
+      .single();
+    if (error) {
+      console.error(error);
+      continue;
+    }
+
+    const stats: UserProjectStats = dbstats?.stats ?? {
+      scoreQuiz: 0,
+      scoreFlashcards: 0,
+      winsQuiz: 0,
+      winsFlashcards: 0,
+      timeSpentQuiz: 0,
+      timeSpentFlashcards: 0,
+      timeSpentWhiteboard: 0,
+    };
+
+    stats.scoreQuiz +=
+      publicState.game == GameState.EXERCISES ? player.score : 0;
+    stats.scoreFlashcards +=
+      publicState.game == GameState.FLASHCARDS ? player.score : 0;
+    stats.winsQuiz +=
+      publicState.game == GameState.EXERCISES &&
+      gameWonPlayerId == player.id &&
+      !draw
+        ? 1
+        : 0;
+    stats.winsFlashcards +=
+      publicState.game == GameState.FLASHCARDS &&
+      gameWonPlayerId == player.id &&
+      !draw
+        ? 1
+        : 0;
+
+    const timeSpent = dayjs().valueOf() - publicState.gameBeganAt;
+    stats.timeSpentQuiz +=
+      publicState.game == GameState.EXERCISES ? timeSpent : 0;
+    stats.timeSpentFlashcards +=
+      publicState.game == GameState.FLASHCARDS ? timeSpent : 0;
+    stats.timeSpentWhiteboard +=
+      publicState.game == GameState.WHITEBOARD ? timeSpent : 0;
+
+    const { error: errUpdate } = await supabase
+      .from("user_learning_projects")
+      .update({ stats })
+      .eq("user_id", player.id)
+      .eq("learning_project_id", privateState.projectId);
+    if (errUpdate) console.error(errUpdate);
+  }
+}
 
 setInterval(async () => {
   const start = performance.now();
@@ -124,6 +201,9 @@ setInterval(async () => {
         switch (cmd.type) {
           case "reset_room":
             console.log("reset_room");
+
+            await updateStats(newState, privateState);
+
             newState.screen = ScreenState.LOBBY;
             newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
@@ -137,6 +217,9 @@ setInterval(async () => {
               .from("player_answers")
               .delete()
               .eq("room_id", state.room_id);
+            break;
+          default:
+            console.error(`Unhandled command type '${cmd.type}'`);
         }
       }
     }
@@ -346,81 +429,7 @@ setInterval(async () => {
         // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
 
-        let gameWonPlayerId;
-        let maxScore = 0;
-        let draw = true;
-
-        for (const player of newState.players) {
-          if (player.score >= maxScore) {
-            gameWonPlayerId = player.id;
-            maxScore = player.score;
-            draw = false;
-          }
-        }
-
-        //Check if there are two "winners" reuslting in a draw
-        for (const player of newState.players) {
-          if (player.score == maxScore && player.id != gameWonPlayerId) {
-            draw = true;
-            break;
-          }
-        }
-
-        for (const player of newState.players) {
-          const { data: dbstats, error } = await supabase
-            .from("user_learning_projects")
-            .select("stats")
-            .eq("user_id", player.id)
-            .eq("learning_project_id", privateState.projectId)
-            .single();
-          if (error) {
-            console.error(error);
-            continue;
-          }
-          
-          const stats: UserProjectStats = dbstats?.stats ?? {
-            scoreQuiz: 0,
-            scoreFlashcards: 0,
-            winsQuiz: 0,
-            winsFlashcards: 0,
-            timeSpentQuiz: 0,
-            timeSpentFlashcards: 0,
-            timeSpentWhiteboard: 0,
-          };
-
-          stats.scoreQuiz +=
-            newState.game == GameState.EXERCISES ? player.score : 0;
-          stats.scoreFlashcards +=
-            newState.game == GameState.FLASHCARDS ? player.score : 0;
-          stats.winsQuiz +=
-            newState.game == GameState.EXERCISES &&
-            gameWonPlayerId == player.id &&
-            !draw
-              ? 1
-              : 0;
-          stats.winsFlashcards +=
-            newState.game == GameState.FLASHCARDS &&
-            gameWonPlayerId == player.id &&
-            !draw
-              ? 1
-              : 0;
-
-          const timeSpent = dayjs().valueOf() - newState.gameBeganAt;
-          stats.timeSpentQuiz +=
-             newState.game == GameState.EXERCISES ? timeSpent : 0;
-          stats.timeSpentFlashcards +=
-             newState.game == GameState.FLASHCARDS ? timeSpent : 0;
-          stats.timeSpentWhiteboard +=
-             newState.game == GameState.WHITEBOARD? timeSpent : 0;
-
-
-          const { error: errUpdate } = await supabase
-            .from("user_learning_projects")
-            .update({ stats })
-            .eq("user_id", player.id)
-            .eq("learning_project_id", privateState.projectId);
-          if (errUpdate) console.error(errUpdate);
-        }
+        await updateStats(newState, privateState);
       }
     } else if (
       newState.screen === ScreenState.END_RESULTS &&

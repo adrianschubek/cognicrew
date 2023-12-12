@@ -9,21 +9,23 @@ import StatisticCategory from "../components/profile/StatisticCategory";
 
 export default function GlobalStatistics() {
 
+  const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
+  const [totalTimeCards, setTotalTimeSpentCards] = useState(null);
+  const [totalTimeBoard, setTotalTimeSpentBoard] = useState(null);
+
+
   const widthAndHeight = 100;
-  const series = [10, 10, 10];
-
-  // Filter out values that are 0
+  const series = [parseFloat(formatTimeSpent(totalTimeQuiz)), parseFloat(formatTimeSpent(totalTimeCards)), parseFloat(formatTimeSpent(totalTimeBoard))];
   const filteredSeries = series.filter((value) => value !== 0);
-
   const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
-
   const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+  const percentExercise = series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz = series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard = series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
 
-  const percentExercise = sumTimeGames === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
-  const percentQuiz = sumTimeGames === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard = sumTimeGames === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
-
-  
+  function formatTimeSpent(milliseconds) {
+    return (milliseconds / 60 / 60 /60).toFixed(2);
+  }
 
   const [countExercises, setCountExercises] = useState(null);
   const [countFlashcards, setCountFlashcards] = useState(null);
@@ -34,6 +36,29 @@ export default function GlobalStatistics() {
   const [countLearningProjects, setCountLearningProjects] = useState(null);
 
   const { user } = useAuth();
+
+  async function calcGameStats() {
+    let { data, error } = await supabase
+      .from("user_learning_projects")
+      .select("stats")
+      .eq("user_id", user.id); 
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      let helperTotalTimeQuiz = 0;
+      let helperTotalTimeCards = 0;
+      let helperTotalTimeBoard = 0;
+      for (let i = 0; i < data.length; i++) {
+        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentQuiz"]);
+        helperTotalTimeQuiz += data[i]["stats"]["timeSpentQuiz"];
+        helperTotalTimeCards += data[i]["stats"]["timeSpentFlashcards"];
+        helperTotalTimeBoard += data[i]["stats"]["timeSpentWhiteboard"];
+      }
+      setTotalTimeSpentQuiz(helperTotalTimeQuiz);
+      setTotalTimeSpentCards(helperTotalTimeCards);
+      setTotalTimeSpentBoard(helperTotalTimeBoard);
+    }
+  }
 
   async function calcCountExercises() {
     const { count, error } = await supabase
@@ -113,6 +138,7 @@ export default function GlobalStatistics() {
         setCountDocuments(documentsCount);
         setCountPhotos(photosCount);
         calcCountLearningProjects();
+        calcGameStats();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }
@@ -164,11 +190,13 @@ export default function GlobalStatistics() {
           textColor: sliceColor[2],
         },
       ],
-      pieChart: {
-        widthAndHeight: widthAndHeight,
-        series: series,
-        sliceColor: sliceColor,
-      },
+      ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
+        pieChart: {
+          widthAndHeight: widthAndHeight,
+          series: filteredSeries,
+          sliceColor: sliceColor,
+        },
+      }),
     },
   ];
   return (
