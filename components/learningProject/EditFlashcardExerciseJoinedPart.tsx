@@ -58,12 +58,18 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         };
       });
     console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
-    console.log("deletionArray: ", deletionArray);
-    let { data, error } = await supabase.rpc("delete_answers_exercise", {
+    console.log("initialAnswersLength: ", initialLength);
+    /*let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
     console.log("data: ", error);
-    return data;
+    return data;*/
+    for (const e of deletionArray) {
+      await deleteAnswersExercise({
+        exercise: e.exercise,
+        order_position: e.order_position,
+      });
+    }
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();
@@ -83,6 +89,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //answers need to be updated
+          deleteAnswers(initialLength, answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
               //@ts-expect-error
@@ -90,10 +97,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               exercise: res[0].id,
               is_correct: e[1],
               order_position: e[2],
-            }).then(() => {
-              if (e[2] === answerOrAnswers.length) {
-                deleteAnswers(initialLength, answerOrAnswers);
-              }
             });
           });
         })

@@ -42,11 +42,11 @@ export default function EditExercise(props: {
     if (!isInitialized) {
       setAnswers(initializingAnswers);
       sendAnswers(initializingAnswers);
+      sendInitialAnswersLength(initializingAnswers.length);
     } else {
       replaceInitialElements(answers, initializingAnswers);
     }
     setOldData(data);
-    sendInitialAnswersLength(initializingAnswers.length);
     setIsInitialized(true);
   }, [data]);
   useEffect(() => {
@@ -62,7 +62,7 @@ export default function EditExercise(props: {
       )
       .subscribe();
   }, []);
-     async function updateCache(newAnswers: [string, boolean, number][]) {
+  async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
       ...oldData,
       data: newAnswers.map((e) => {
