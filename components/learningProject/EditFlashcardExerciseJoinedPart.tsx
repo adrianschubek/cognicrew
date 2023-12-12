@@ -174,6 +174,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   useEffect(() => {
     // Call the debounced function
+    console.log("isInitialized: ", isInitialized)
     isInitialized &&
       debouncedUpdate(
         question,

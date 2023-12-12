@@ -39,8 +39,10 @@ export default function EditExercise(props: {
         answerItem.order_position,
       ]);
     });
-    if (!isInitialized) setAnswers(initializingAnswers);
-    else {
+    if (!isInitialized) {
+      setAnswers(initializingAnswers);
+      sendAnswers(initializingAnswers);
+    } else {
       replaceInitialElements(answers, initializingAnswers);
     }
     setOldData(data);
@@ -60,6 +62,21 @@ export default function EditExercise(props: {
       )
       .subscribe();
   }, []);
+     async function updateCache(newAnswers: [string, boolean, number][]) {
+    const updatedData = {
+      ...oldData,
+      data: newAnswers.map((e) => {
+        return {
+          answer: e[0],
+          is_correct: e[1],
+          order_position: e[2],
+          exercise: listItem.id,
+        };
+      }),
+    };
+
+    await mutate(updatedData, false);
+  }
   function replaceInitialElements(
     array: [string, boolean, number][],
     replacementArray: [string, boolean, number][],
@@ -76,6 +93,7 @@ export default function EditExercise(props: {
     };
   }
   function sendfilteredAnswers(answers: [string, boolean, number][]) {
+    console.log("answers: ", answers);
     const filteredAnswers = answers
       .filter((e) => e[0] !== "")
       .map((e, index) => {
@@ -86,6 +104,7 @@ export default function EditExercise(props: {
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
       sendAnswers(filteredAnswers);
+      updateCache(filteredAnswers);
     }
   }
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
