@@ -7,7 +7,6 @@ import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
-import PieChart from "react-native-pie-chart";
 
 
 export default function ProjectStatistics() {
@@ -41,8 +40,6 @@ export default function ProjectStatistics() {
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
 
-  //const count = useStatisticsByProject();
-
   const [countExercises, setCountExercises] = useState(null);
   const [countFlashcards, setCountFlashcards] = useState(null);
   const [countLinks, setCountLinks] = useState(null);
@@ -55,26 +52,32 @@ export default function ProjectStatistics() {
   const [countCardsScore, setCardsScore] = useState(null);
 
   const [timeQuiz, setTimeSpentQuiz] = useState(null);
-  const [timeCards,  setTimeSpentCards] = useState(null);
-  const [timeBoard,  setTimeSpentBoard] = useState(null);
+  const [timeCards, setTimeSpentCards] = useState(null);
+  const [timeBoard, setTimeSpentBoard] = useState(null);
 
 
   const [countRankUnderFriends, setRankUnderFriends] = useState(null);
   const [countRankGlobal, setRankGlobal] = useState(null);
 
   const widthAndHeight = 100;
-  const series = [formatTimeSpent(timeQuiz), formatTimeSpent(timeCards), formatTimeSpent(timeBoard)];
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-  let sumTimeGames = series.reduce(
-    (accumulator, currentValue) => accumulator + currentValue,
-    0,
-  );
-  let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
-  let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
-  let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
+  const series = [parseFloat(formatTimeSpent(timeQuiz)), parseFloat(formatTimeSpent(timeCards)), parseFloat(formatTimeSpent(timeBoard))];
 
-  function formatTimeSpent(seconds) {
-    return (seconds / 60 / 60).toFixed(2);
+  // Filter out values that are 0
+  const filteredSeries = series.filter((value) => value !== 0);
+
+  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
+
+  const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+  const percentExercise = sumTimeGames === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz = sumTimeGames === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard = sumTimeGames === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+
+  
+
+
+  function formatTimeSpent(milliseconds) {
+    return (milliseconds / 60 / 60 /60).toFixed(2);
   }
 
   async function calcCountExercises() {
@@ -256,11 +259,13 @@ export default function ProjectStatistics() {
           textColor: sliceColor[2],
         },
       ],
-      pieChart: {
-        widthAndHeight: widthAndHeight,
-        series: series,
-        sliceColor: sliceColor,
-      },
+      ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
+        pieChart: {
+          widthAndHeight: widthAndHeight,
+          series: filteredSeries,
+          sliceColor: sliceColor,
+        },
+      }),
     },
   ];
   return (
