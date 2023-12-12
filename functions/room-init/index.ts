@@ -236,7 +236,7 @@ serve(async (req) => {
           })),
           screen: ScreenState.INGAME,
           game: GameState.WHITEBOARD,
-          totalRounds: 0,
+          totalRounds: 1,
           round: 1,
           question: "",
           possibleAnswers: [],
