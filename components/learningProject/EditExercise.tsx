@@ -5,7 +5,6 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
 import { supabase } from "../../supabase";
-import { useCacheUpdateStore } from "../../stores/CacheUpdateStore";
 import { isEqual } from "lodash";
 
 export default function EditExercise(props: {

@@ -17,7 +17,6 @@ import { BackHandler } from "react-native";
 import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
-import { useCacheUpdateStore } from "../stores/CacheUpdateStore";
 import { KeyedMutator } from "swr";
 import { PostgrestSingleResponse } from "@supabase/postgrest-js";
 import { set } from "cypress/types/lodash";
@@ -414,9 +413,6 @@ export function useExercisesAndAnswers(setId: number) {
     .from("exercises")
     .select("id,question,priority,set_id,answers_exercises(exercise)")
     .eq("set_id", setId);
-  const cacheUpdateLocked = useCacheUpdateStore(
-    (state) => state.cacheUpdateLocked,
-  );
   useEffect(() => {
     mutate();
   }, []);
