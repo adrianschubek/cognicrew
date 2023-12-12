@@ -6,11 +6,9 @@ import {
   Button,
   Text,
   useTheme,
+  IconButton,
 } from "react-native-paper";
-import {
-  useConfirmLeaveLobby,
-  useSoundSystem2,
-} from "../utils/hooks";
+import { useConfirmLeaveLobby, useSoundSystem2 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
@@ -95,9 +93,46 @@ export default function ExerciseGame({ navigation }) {
   return (
     <>
       <ScrollView style={{ paddingTop: 20 }}>
-        <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
+        <IconButton
+          mode="contained"
+          style={{
+            //backgroundColor: theme.colors.error,
+            position: "absolute",
+            left: 0,
+            top: 8,
+            borderRadius: 10,
+            backgroundColor: theme.colors.background,
+            transform: [{ rotateZ: "180deg" }],
+          }}
+          icon="logout"
+          //iconColor={theme.colors.onErrorContainer}
+          onPress={() => {
+            confirm({
+              key: "leaveroom",
+              title: "Leave game?",
+              message: "Do you want to leave this game and return to lobby?",
+              icon: "location-exit",
+              okText: "Leave",
+              okAction: async () => {
+                const { error } = await supabase.functions.invoke("room-update", {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate,
+                });
+                if (error) return await handleEdgeError(error);
+              },
+            });
+          }}
+        />
+        <Dialog.Title
+          style={{
+            textAlign: "center",
+            alignSelf: "center",
+          }}
+        >
           Question {roomState.round} of {roomState.totalRounds}
         </Dialog.Title>
+
         {MemoTimer}
         <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
           {roomState.question}
