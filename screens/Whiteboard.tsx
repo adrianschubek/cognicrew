@@ -30,9 +30,8 @@ import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useRoomStateStore } from "../stores/RoomStore";
-import { RoomClientUpdate, RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { handleEdgeError } from "../utils/common";
 import { handleEdgeError } from "../utils/common";
 
 export default function Whiteboard({ navigation }) {
