@@ -11,8 +11,9 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { ScreenState } from "../../functions/rooms";
-import { useAlerts, useConfirmLeaveLobby, useSoundSystem2 } from "../../utils/hooks";
+import { useConfirmLeaveLobby, useSoundSystem2 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function EndResults({ navigation }) {
   useSoundSystem2();

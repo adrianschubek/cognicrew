@@ -11,7 +11,7 @@ import PasswordForgotten from "../components/dialogues/PasswordForgotten";
 import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
   // TODO: only save password when "remember me" is checked

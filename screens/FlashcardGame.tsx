@@ -20,10 +20,10 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
-  useAlerts,
   useConfirmLeaveLobby,
   useSoundSystem2,
 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
 import Timer from "../components/IngameComponents/Timer";

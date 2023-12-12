@@ -16,8 +16,8 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
+import { useAlerts } from "react-native-paper-fastalerts";
 import {
-  useAlerts,
   useDeleteProject,
   useRemoveUserFromLearningProject,
   useSoundSystem1,

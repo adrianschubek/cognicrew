@@ -1,5 +1,4 @@
 import { useAuth } from "../providers/AuthProvider";
-import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
   useDeleteMutation,
   useInsertMutation,
@@ -15,6 +14,10 @@ import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { KeyedMutator } from "swr";
+import { PostgrestSingleResponse } from "@supabase/postgrest-js";
+import { set } from "cypress/types/lodash";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -466,63 +469,6 @@ export function useDeleteProject() {
   return handleErrors(
     useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"),
   );
-}
-
-/**
- * Display alerts.
- * @returns functions to display alerts.
- */
-export function useAlerts() {
-  const dispatch = useAlertsStore((state) => state.dispatch);
-
-  return {
-    alert: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "",
-        ...config,
-      });
-    },
-    /**
-     * Creates a success alert using the given config.
-     */
-    success: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "check",
-        title: "Success",
-        ...config,
-      });
-    },
-    error: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "alert-decagram",
-        title: "Error",
-        ...config,
-      });
-    },
-    warning: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "alert",
-        title: "Warning",
-        ...config,
-      });
-    },
-    info: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "information-outline",
-        title: "Info",
-        ...config,
-      });
-    },
-    confirm: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "help-box",
-        title: "Confirm",
-        cancelText: "Cancel",
-        okText: "OK",
-        ...config,
-      });
-    },
-  };
 }
 
 export function useConfirmLeaveLobby() {

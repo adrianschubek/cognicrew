@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Avatar, Card, useTheme, Text } from "react-native-paper";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../../supabase";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import { getRandomColor } from "../../utils/common";
