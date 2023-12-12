@@ -405,7 +405,7 @@ setInterval(async () => {
               ? 1
               : 0;
 
-          let timeSpent = newState.roundEndsAt - newState.roundBeganAt;
+          const timeSpent = newState.roundEndsAt - newState.roundBeganAt;
           stats.timeSpentQuiz +=
              newState.game == GameState.EXERCISES ? timeSpent : 0;
           stats.timeSpentFlashcards +=
