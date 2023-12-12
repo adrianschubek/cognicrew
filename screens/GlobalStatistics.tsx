@@ -8,19 +8,22 @@ import { useAuth } from "../providers/AuthProvider";
 import StatisticCategory from "../components/profile/StatisticCategory";
 
 export default function GlobalStatistics() {
-  //Pie chart variables
-  const widthAndHeight = 100;
 
-  const series = [10, 20, 17]; //hours spent
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"]; //colors
-  //Calculaions of pie chart statistics
-  let sumTimeGames = series.reduce(
-    (accumulator, currentValue) => accumulator + currentValue,
-    0,
-  );
-  let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
-  let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
-  let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
+  const widthAndHeight = 100;
+  const series = [10, 10, 10];
+
+  // Filter out values that are 0
+  const filteredSeries = series.filter((value) => value !== 0);
+
+  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
+
+  const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+  const percentExercise = sumTimeGames === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz = sumTimeGames === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard = sumTimeGames === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+
+  
 
   const [countExercises, setCountExercises] = useState(null);
   const [countFlashcards, setCountFlashcards] = useState(null);
