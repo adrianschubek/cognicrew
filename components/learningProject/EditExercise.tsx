@@ -97,7 +97,7 @@ export default function EditExercise(props: {
     const filteredAnswers = answers
       .filter((e) => e[0] !== "")
       .map((e, index) => {
-        return [e[0], e[1], index + 1];
+        return [e[0], e[1], e[2]];
       }) as [string, boolean, number][];
     if (
       filteredAnswers.length >= 2 &&
