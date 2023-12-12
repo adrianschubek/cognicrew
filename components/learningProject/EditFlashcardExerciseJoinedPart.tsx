@@ -57,7 +57,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           order_position: orderPosition,
         };
       });
-    console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
+    //console.log("numberOfAnswersToDelete: ", numberOfAnswersToDelete);
     let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
@@ -89,8 +89,8 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //answers need to be updated
-          console.log("initialAnswersLength: ", initialLength);
-          console.log("answerOrAnswers ", answerOrAnswers);
+          //console.log("initialAnswersLength: ", initialLength);
+          //console.log("answerOrAnswers ", answerOrAnswers);
           deleteAnswers(initialLength, answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
