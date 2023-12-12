@@ -265,7 +265,6 @@ export default function ProjectStatistics() {
   ];
   return (
     <ScrollView>
-      <TimerScreen />
       <StatusBar style="auto" />
       <Card>
         <Card.Title
