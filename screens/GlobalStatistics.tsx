@@ -50,9 +50,11 @@ export default function GlobalStatistics() {
       let helperTotalTimeBoard = 0;
       for (let i = 0; i < data.length; i++) {
         console.log('Element at index', i, ':', data[i]["stats"]["timeSpentQuiz"]);
+        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentCards"]);
+        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentBoard"]);
         helperTotalTimeQuiz += data[i]["stats"]["timeSpentQuiz"];
-        helperTotalTimeCards += data[i]["stats"]["timeSpentFlashcards"];
-        helperTotalTimeBoard += data[i]["stats"]["timeSpentWhiteboard"];
+        helperTotalTimeCards += data[i]["stats"]["timeSpentCards"];
+        helperTotalTimeBoard += data[i]["stats"]["timeSpentBoard"];
       }
       setTotalTimeSpentQuiz(helperTotalTimeQuiz);
       setTotalTimeSpentCards(helperTotalTimeCards);

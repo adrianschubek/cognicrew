@@ -8,7 +8,6 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
 
-
 export default function ProjectStatistics() {
   const theme = useTheme();
   const heading = "headlineSmall";
@@ -55,29 +54,33 @@ export default function ProjectStatistics() {
   const [timeCards, setTimeSpentCards] = useState(null);
   const [timeBoard, setTimeSpentBoard] = useState(null);
 
-
   const [countRankUnderFriends, setRankUnderFriends] = useState(null);
   const [countRankGlobal, setRankGlobal] = useState(null);
 
   const widthAndHeight = 100;
-  const series = [parseFloat(formatTimeSpent(timeQuiz)), parseFloat(formatTimeSpent(timeCards)), parseFloat(formatTimeSpent(timeBoard))];
-
-  // Filter out values that are 0
+  const series = [
+    parseFloat(formatTimeSpent(timeQuiz)),
+    parseFloat(formatTimeSpent(timeCards)),
+    parseFloat(formatTimeSpent(timeBoard)),
+  ];
   const filteredSeries = series.filter((value) => value !== 0);
-
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
-
-  const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-  const percentExercise = series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
-  const percentQuiz = series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard = series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
-
-  
-
+  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(
+    0,
+    filteredSeries.length,
+  );
+  const sumTimeGames = filteredSeries.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+  const percentExercise =
+    series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz =
+    series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard =
+    series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
 
   function formatTimeSpent(milliseconds) {
-    return (milliseconds / 60 / 60 /60).toFixed(2);
+    return (milliseconds / 60 / 60 / 60).toFixed(2);
   }
 
   async function calcCountExercises() {
@@ -153,7 +156,7 @@ export default function ProjectStatistics() {
     let { data, error } = await supabase
       .from("user_learning_projects")
       .select("stats")
-      .eq("learning_project_id", projectId); 
+      .eq("learning_project_id", projectId);
     if (error) {
       console.error("Error fetching data:", error);
     } else {
@@ -168,11 +171,16 @@ export default function ProjectStatistics() {
   }
 
   async function calcRankUnderFriends() {
-      //TODO
+    //TODO
   }
 
   async function calcRankGlobal() {
-      //TODO
+    let { data, error } = await supabase.rpc("get_user_global_rank", {
+      user_id_param: user.id,
+    });
+    console.log(error);
+      console.log(data);
+      setRankGlobal(data);
   }
 
   useEffect(() => {
@@ -310,8 +318,12 @@ export default function ProjectStatistics() {
           );
         })}
         <Divider />
-        <Text variant={heading2}>{rainbowText("Global rank:")}</Text>
-        <Text variant={heading2}>{rainbowText("Rank under friends:")}</Text>
+        <Text variant={heading2}>
+          {rainbowText(`Global rank: ${countRankGlobal}`)}
+        </Text>
+        <Text variant={heading2}>
+          {rainbowText(`Rank under friends: ${countRankUnderFriends}`)}
+        </Text>
       </View>
     </ScrollView>
   );

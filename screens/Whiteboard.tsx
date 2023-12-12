@@ -8,6 +8,7 @@ import {
   PaperProvider,
   Portal,
   FAB,
+  Button,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -29,7 +30,8 @@ import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useRoomStateStore } from "../stores/RoomStore";
-import { ScreenState } from "../functions/rooms";
+import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { handleEdgeError } from "../utils/common";
 
 export default function Whiteboard({ navigation }) {
   const {
@@ -191,6 +193,21 @@ export default function Whiteboard({ navigation }) {
 
         <View style={styles.bottomLeft}>
           <View style={styles.iconRow}>
+           <IconButton
+              icon="cat"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={async () => {
+                const { error } = await supabase.functions.invoke("room-update",
+                {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate
+                });
+                console.log(await handleEdgeError(error));
+              }
+              }
+            />
             <IconButton
               icon="delete"
               iconColor={theme.colors.primary}
