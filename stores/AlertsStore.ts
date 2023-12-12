@@ -100,6 +100,25 @@ type DropdownInput = CommonInput & {
   data: { key: string; value: string }[];
 };
 
+type CustomInput = CommonInput & {
+  type: "custom";
+  /**
+   * The render function to use for the input.
+   * @param value The current value of the input.
+   * @param setValue The function to use to set the value of the input.
+   * @param allValues All input values in the alert.
+   * @param tempValue The temporary internal value of the input.
+   * @param setTempValue The function to use to set the temporary internal value of the input.
+   */
+  render: (
+    value: string,
+    setValue: (newVal: string) => void,
+    allValues: string[],
+    tempValue: string,
+    setTempValue: (newVal: string) => void,
+  ) => JSX.Element;
+};
+
 type AlertField =
   | TextInput
   | CheckboxInput
@@ -107,7 +126,8 @@ type AlertField =
   | SearchSelectInput
   | SelectInput
   | RadioInput
-  | SearchRadioInput;
+  | SearchRadioInput
+  | CustomInput;
 // | DropdownInput;
 
 /* export function isTextInput(input: AlertField): input is TextInput {

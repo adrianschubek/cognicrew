@@ -29,8 +29,18 @@ export type PublicRoomState = {
    * Connected players
    */
   players: {
+    /**
+     * user id
+     */
     id: string;
     username: string;
+    /**
+     * Whether the user is the host of this room
+     */
+    isHost: boolean;
+    /**
+     * game score
+     */
     score: number;
     /**
      * Whether the user answered correctly in the current round.
@@ -78,6 +88,10 @@ export type PublicRoomState = {
         isCorrect: boolean;
       }[]
     | null;
+  /**
+   * Game began at timestamp milliseconds
+   */
+  gameBeganAt: number;
   /**
    * Round began at timestamp milliseconds
    */
@@ -142,10 +156,36 @@ export type UserProjectStats = {
  * format for client -> server edge function push
  */
 export type RoomClientUpdate =
-  | { type: "flashcard_answer"; answer: string }
-  | { type: "exercise_answer"; answerIndex: number[] }
-  | { type: "reset_room" }
-  | { type: "skip_round" }; /* host only */
+  | {
+      /**
+       * Submits the answer for the current question.
+       * @param answer user answer
+       */
+      type: "flashcard_answer";
+      answer: string;
+    }
+  | {
+      /**
+       * Submits the answer for the current question.
+       * @param answerIndex index of possibleAnswers array
+       */
+      type: "exercise_answer";
+      answerIndex: number[];
+    }
+  | {
+      /**
+       * Resets the room to the lobby state if the user is the host.
+       * Otherwise, the user will be kicked from the room.
+       */
+      type: "reset_room";
+    }
+  | {
+      /**
+       * Skips the current round if the user is the host.
+       * //TODO
+       */
+      type: "skip_round";
+    };
 
 export type RoomClientInit =
   | {

@@ -452,6 +452,14 @@ function AlertSyncZustand() {
                         </HelperText>
                       )}
                     </>
+                  ) : field.type === "custom" ? (
+                    field.render(
+                      values[i],
+                      (newValue) => (values[i] = newValue),
+                      values,
+                      tempValues[i],
+                      (newValue) => (tempValues[i] = newValue),
+                    )
                   ) : (
                     <Text>Unknown field type: {field.type}</Text>
                   )}
