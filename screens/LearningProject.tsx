@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
-import { Button, FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
+import { FAB, IconButton, Tooltip, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,

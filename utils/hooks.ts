@@ -1,25 +1,20 @@
 import { useAuth } from "../providers/AuthProvider";
 import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
-  PostgrestError,
   useDeleteMutation,
   useInsertMutation,
   useQuery,
-  useUpsertMutation,
+  useUpsertMutation
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
-import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
-import { KeyedMutator } from "swr";
-import { PostgrestSingleResponse } from "@supabase/postgrest-js";
-import { set } from "cypress/types/lodash";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
