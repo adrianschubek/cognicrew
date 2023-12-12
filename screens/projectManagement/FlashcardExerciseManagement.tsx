@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
-import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { useSoundSystem1 } from "../../utils/hooks";
 import AddExercises from "../../components/dialogues/AddExercises";
 
 export default function FlashcardExerciseManagement({

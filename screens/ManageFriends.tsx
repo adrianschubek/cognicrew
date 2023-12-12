@@ -16,11 +16,12 @@ import {
 } from "react-native-responsive-dimensions";
 import {
   friendIdsAndNames,
-  useAlerts,
+  
   useDeleteFriend,
   useFriends,
   useInsertFriend,
 } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";

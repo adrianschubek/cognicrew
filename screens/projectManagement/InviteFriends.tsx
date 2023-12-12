@@ -19,12 +19,12 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import InviteFriendDialog from "../../components/dialogues/InviteFriendDialog";
 import {
   friendIdsAndNames,
-  useAlerts,
   useSoundSystem1,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../../components/manageFriends/FriendItem";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 
 export default function InviteFriends({ navigation }) {

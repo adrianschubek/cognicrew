@@ -11,7 +11,7 @@ import { useState } from "react";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { NAVIGATION } from "../../types/common";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { useRoomStore } from "../../stores/RoomStore";
 
 export default function JoinRoom({ navigation }) {

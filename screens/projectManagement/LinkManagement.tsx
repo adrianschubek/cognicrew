@@ -13,7 +13,6 @@ import {
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCard from "../../components/learningProject/LinkCard";
 import {
-  useAlerts,
   useLinks,
   useSoundSystem1,
   useUpsertLink,
@@ -22,6 +21,7 @@ import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import { FAB, Text } from "react-native-paper";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();

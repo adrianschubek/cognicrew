@@ -9,7 +9,8 @@ import {
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
-import { useAlerts, useUsername } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
