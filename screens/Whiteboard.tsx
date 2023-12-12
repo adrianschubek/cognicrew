@@ -30,10 +30,13 @@ import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useRoomStateStore } from "../stores/RoomStore";
-import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { RoomClientUpdate, RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { handleEdgeError } from "../utils/common";
 import { handleEdgeError } from "../utils/common";
 
 export default function Whiteboard({ navigation }) {
+  const { error: errrorAlert, confirm } = useAlerts();
   const {
     addAction,
     undoLastAction,
@@ -140,6 +143,34 @@ export default function Whiteboard({ navigation }) {
       >
         <View style={styles.top}>
           <View style={styles.topleft}>
+          <IconButton
+          mode="contained"
+          style={{
+            //backgroundColor: theme.colors.error,
+            borderRadius: 10,
+            backgroundColor: theme.colors.background,
+            transform: [{ rotateZ: "180deg" }],
+          }}
+          icon="logout"
+          //iconColor={theme.colors.onErrorContainer}
+          onPress={() => {
+            confirm({
+              key: "leaveroom",
+              title: "Leave game?",
+              message: "Do you want to leave this game and return to lobby?",
+              icon: "location-exit",
+              okText: "Leave",
+              okAction: async () => {
+                const { error } = await supabase.functions.invoke("room-update", {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate,
+                });
+                if (error) return await handleEdgeError(error);
+              },
+            });
+          }}
+        />
             <IconButton
               icon="undo"
               iconColor={theme.colors.primary}

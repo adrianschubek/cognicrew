@@ -3,11 +3,8 @@ import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useAlerts,
-  useSoundSystem1,
-  useUsernamesByRoom,
-} from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { useSoundSystem1, useUsernamesByRoom } from "../../utils/hooks";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
 import React from "react";
