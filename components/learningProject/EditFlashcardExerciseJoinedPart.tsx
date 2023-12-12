@@ -62,6 +62,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     let { data, error } = await supabase.rpc("delete_answers_exercise", {
       answers: deletionArray,
     });
+    console.log("data: ", error);
     return data;
   }
   //Flashcard hooks
@@ -81,9 +82,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           priority: priority,
           set_id: listItem.set_id,
         }).then((res) => {
-          //delete those answers that should get deleted from the exercise
-          deleteAnswers(initialLength, answerOrAnswers),
-            setInitialAnswersLength(answerOrAnswers.length);
           //answers need to be updated
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
@@ -92,6 +90,10 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               exercise: res[0].id,
               is_correct: e[1],
               order_position: e[2],
+            }).then(() => {
+              if (e[2] === answerOrAnswers.length) {
+                deleteAnswers(initialLength, answerOrAnswers);
+              }
             });
           });
         })
@@ -174,16 +176,16 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   useEffect(() => {
     // Call the debounced function
-    console.log("isInitialized: ", isInitialized)
-    isInitialized &&
-      debouncedUpdate(
-        question,
-        answerOrAnswers,
-        priority,
-        initialAnswersLength,
-      );
+    if (isInitialized) {
+      setInitialAnswersLength(answerOrAnswers.length),
+        debouncedUpdate(
+          question,
+          answerOrAnswers,
+          priority,
+          initialAnswersLength,
+        );
+    }
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
-
   useEffect(() => {
     if (!answerOrAnswers) return;
     setIsInitialized(true);

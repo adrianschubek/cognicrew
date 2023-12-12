@@ -26,7 +26,7 @@ export default function EditExercise(props: {
 
   useEffect(() => {
     if (!isInitialized) return;
-    console.log("answers: ", answers);
+    //console.log("answers: ", answers);
   }, [answers]);
 
   useEffect(() => {
