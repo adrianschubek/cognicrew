@@ -411,7 +411,7 @@ setInterval(async () => {
           stats.timeSpentFlashcards +=
              newState.game == GameState.FLASHCARDS ? timeSpent : 0;
           stats.timeSpentWhiteboard +=
-             newState.game == GameState.WHITEBOARD? 0 : 0; //TODO
+             newState.game == GameState.WHITEBOARD? timeSpent : 0;
 
 
           const { error: errUpdate } = await supabase
