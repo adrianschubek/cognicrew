@@ -93,7 +93,7 @@ export default function EditExercise(props: {
     };
   }
   function sendfilteredAnswers(answers: [string, boolean, number][]) {
-    console.log("answers: ", answers);
+    //console.log("answers: ", answers);
     const filteredAnswers = answers
       .filter((e) => e[0] !== "")
       .map((e, index) => {
@@ -104,7 +104,7 @@ export default function EditExercise(props: {
       filteredAnswers.filter((e) => e[1] === true).length > 0
     ) {
       sendAnswers(filteredAnswers);
-      //updateCache(filteredAnswers);
+      updateCache(filteredAnswers);
     }
   }
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
