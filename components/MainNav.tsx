@@ -38,7 +38,6 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function MainTab() {
-  const theme = useTheme();
 
   return (
     <Stack.Navigator>
