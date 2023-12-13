@@ -664,6 +664,12 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      clone_project: {
+        Args: {
+          project_id_to_clone: number
+        }
+        Returns: undefined
+      }
       create_room: {
         Args: {
           p_project_id: number
@@ -704,6 +710,16 @@ export interface Database {
           user_id_param: string
         }
         Returns: number
+      }
+      get_user_rank_and_id: {
+        Args: {
+          user_id_param: string
+          project_id_param: number
+        }
+        Returns: {
+          user_id: string
+          user_rank: number
+        }[]
       }
       get_usernames: {
         Args: {
