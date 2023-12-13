@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Divider, Text } from "react-native-paper";
+import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { supabase } from "../supabase";
@@ -14,17 +14,89 @@ export default function GlobalStatistics() {
   const [totalTimeBoard, setTotalTimeSpentBoard] = useState(null);
 
 
-  const widthAndHeight = 100;
-  const series = [parseFloat(formatTimeSpent(totalTimeQuiz)), parseFloat(formatTimeSpent(totalTimeCards)), parseFloat(formatTimeSpent(totalTimeBoard))];
-  const filteredSeries = series.filter((value) => value !== 0);
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
-  const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-  const percentExercise = series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
-  const percentQuiz = series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard = series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+  const lightTheme = {
+    ...LightTheme,
+    colors: {
+      ...LightTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#000000",
+      globalRank:  "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
 
-  function formatTimeSpent(milliseconds) {
-    return (milliseconds / 60 / 60 /60).toFixed(2);
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#FFFFFF",
+      globalRank: "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
+
+  
+  const { dark } = useTheme(); 
+  const theme = dark ? darkTheme : lightTheme;
+
+  const widthAndHeight = 100;
+  const series = [
+    parseFloat(formatTimeSpent(totalTimeQuiz)),
+    parseFloat(formatTimeSpent(totalTimeCards)),
+    parseFloat(formatTimeSpent(totalTimeBoard)),
+  ];
+  const filteredSeries = series.filter((value) => value !== 0);
+  const sumTimeGames = filteredSeries.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+  const percentExercise =
+    series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz =
+    series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard =
+    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
+
+  function formatTimeSpent(milliseconds: number) {
+    return (milliseconds / 60 / 60 / 60).toFixed(2);
+  }
+
+  function calcColors() {
+    const quizGotTime = series[0] === 0 ? false : true;
+    const cardsGotTime = series[1] === 0 ? false : true;
+    const whiteboardGotTime = series[2] === 0 ? false : true;
+
+    const state =
+      (quizGotTime ? 1 : 0) |
+      (cardsGotTime ? 2 : 0) |
+      (whiteboardGotTime ? 4 : 0);
+
+    switch (state) {
+      case 0: 
+      return [[], [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero]];
+      case 1:
+      return[[theme.colors.pieChartFirst], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero]];
+      case 2: 
+      return[[theme.colors.pieChartSecond], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero]];
+      case 3: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond], theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+      case 4:
+      return[[theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 5: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 6: 
+      return[[theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      case 7:
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      default:
+        console.log("Something went wrong");
+        return[[], theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+    }
   }
 
   const [countExercises, setCountExercises] = useState(null);
@@ -49,12 +121,9 @@ export default function GlobalStatistics() {
       let helperTotalTimeCards = 0;
       let helperTotalTimeBoard = 0;
       for (let i = 0; i < data.length; i++) {
-        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentQuiz"]);
-        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentCards"]);
-        console.log('Element at index', i, ':', data[i]["stats"]["timeSpentBoard"]);
         helperTotalTimeQuiz += data[i]["stats"]["timeSpentQuiz"];
-        helperTotalTimeCards += data[i]["stats"]["timeSpentCards"];
-        helperTotalTimeBoard += data[i]["stats"]["timeSpentBoard"];
+        helperTotalTimeCards += data[i]["stats"]["timeSpentFlashcards"];
+        helperTotalTimeBoard += data[i]["stats"]["timeSpentWhiteboard"];
       }
       setTotalTimeSpentQuiz(helperTotalTimeQuiz);
       setTotalTimeSpentCards(helperTotalTimeCards);
@@ -178,25 +247,25 @@ export default function GlobalStatistics() {
       dataPointCategories: [
         {
           dataPoints: [`Exercises: ${series[0]} hours, ${percentExercise} %`],
-          textColor: sliceColor[0],
+          textColor: calcColors()[1][0],
         },
         {
           dataPoints: [`Flashcards: ${series[1]} hours, ${percentQuiz} %`],
-          textColor: sliceColor[1],
+          textColor: calcColors()[1][1],
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: sliceColor[2],
+          textColor: calcColors()[1][2],
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
         pieChart: {
           widthAndHeight: widthAndHeight,
           series: filteredSeries,
-          sliceColor: sliceColor,
+          sliceColor: calcColors()[0],
         },
       }),
     },
@@ -209,8 +278,8 @@ export default function GlobalStatistics() {
           return (
             <StatisticCategory
               key={index}
-              titleVariant="headlineSmall"
-              textVariant="bodyLarge"
+              //titleVariant="headlineSmall"
+              //textVariant="bodyLarge"
               data={{
                 title: item.title,
                 dataPointCategories: item.dataPointCategories,
