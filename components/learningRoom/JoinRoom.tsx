@@ -19,6 +19,12 @@ export default function Foo({ navigation }) {
           onPress={async () => {
             alert({
               message: "What is the capital of Germany?",
+              okText: "Submit 🔥",
+              okAction(values) {
+                if (values[0] === "b") {
+                  alert({ message: "Correct 🤗" });
+                } else return "Wrong 😅 Try again.";
+              },
               fields: [
                 {
                   type: "radio",
@@ -30,11 +36,6 @@ export default function Foo({ navigation }) {
                   ],
                 },
               ],
-              okAction(values) {
-                if (values[0] === "b") {
-                  alert({ message: "Correct🤗" });
-                } else return "Wrong😅";
-              },
             });
           }}
 
