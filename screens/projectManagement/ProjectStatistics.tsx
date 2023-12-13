@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
 
 import { useAuth } from "../../providers/AuthProvider";
@@ -13,31 +13,32 @@ export default function ProjectStatistics() {
   
   const lightTheme = {
     ...LightTheme,
-    myOwnProperty: true,
     colors: {
       ...LightTheme.colors,
       pieChartFirst: "#4893B0",
       pieChartSecond: "#663399",
       pieChartThird: "#93CCA1",
-      isZero: "#000000"
+      isZero: "#000000",
+      globalRank:  "#d4af37",
+      friendRank: "#843da3"
     },
   };
 
   const darkTheme = {
     ...DarkTheme,
-    myOwnProperty: true,
     colors: {
       ...DarkTheme.colors,
-      pieChartFirst: "4893B0",
+      pieChartFirst: "#4893B0",
       pieChartSecond: "#663399",
       pieChartThird: "#93CCA1",
-      isZero: "#000000"
+      isZero: "#FFFFFF",
+      globalRank: "#d4af37",
+      friendRank: "#843da3"
     },
   };
 
-  const isDarkMode = false;
-
-  const theme = isDarkMode ? darkTheme : lightTheme;
+  const { dark } = useTheme(); 
+  const theme = dark ? darkTheme : lightTheme;
 
 
 
@@ -45,27 +46,6 @@ export default function ProjectStatistics() {
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
   const heading4 = "labelLarge";
-
-  function rainbowText(inputText) {
-    const rainbowColors = [
-      "red",
-      "orange",
-      "yellow",
-      "green",
-      "blue",
-      "indigo",
-      "violet",
-    ];
-
-    return inputText.split("").map((char, index) => (
-      <Text
-        key={index}
-        style={[{ color: rainbowColors[index % rainbowColors.length] }]}
-      >
-        {char}
-      </Text>
-    ));
-  }
 
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
@@ -95,11 +75,6 @@ export default function ProjectStatistics() {
     parseFloat(formatTimeSpent(timeBoard)),
   ];
   const filteredSeries = series.filter((value) => value !== 0);
-  const sliceColor = [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird].slice(
-    0,
-    filteredSeries.length,
-  );
-
   const sumTimeGames = filteredSeries.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
     0,
@@ -127,23 +102,24 @@ export default function ProjectStatistics() {
 
     switch (state) {
       case 0: 
-        return[theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+      return [[], [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero]];
       case 1:
-      return[theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero];
+      return[[theme.colors.pieChartFirst], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero]];
       case 2: 
-      return[theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero];
+      return[[theme.colors.pieChartSecond], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero]];
       case 3: 
-      return[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond], theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
       case 4:
-      return[theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird];
+      return[[theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird]];
       case 5: 
-      return[theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird];
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird]];
       case 6: 
-      return[theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird];
+      return[[theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
       case 7:
-      return[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird];
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
       default:
-        return[theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+        console.log("Something went wrong");
+        return[[], theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
     }
   }
 
@@ -325,7 +301,7 @@ export default function ProjectStatistics() {
             `Amount of CogniQuiz wins: ${countQuizWins}`,
             `CogniScore - CogniQuiz: ${countQuizScore}`,
           ],
-          textColor: calcColors()[0],
+          textColor: calcColors()[1][0],
         },
         {
           dataPoints: [
@@ -333,21 +309,21 @@ export default function ProjectStatistics() {
             `Amount of CogniCards wins: ${countCardsWins}`,
             `CogniScore - CogniCards: ${countCardsScore}`,
           ],
-          textColor: calcColors()[1],
+          textColor: calcColors()[1][1],
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: calcColors()[2],
+          textColor: calcColors()[1][2],
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
         pieChart: {
           widthAndHeight: widthAndHeight,
           series: filteredSeries,
-          sliceColor: sliceColor,
+          sliceColor: calcColors()[0],
         },
       }),
     },
@@ -394,11 +370,11 @@ export default function ProjectStatistics() {
           );
         })}
         <Divider />
-        <Text variant={heading2}>
-          {rainbowText(`Global rank: ${countRankGlobal}`)}
+        <Text variant={heading2} style={[{color : theme.colors.globalRank}]}>
+          {`Global rank: ${countRankGlobal}`}
         </Text>
-        <Text variant={heading2}>
-          {rainbowText(`Rank under friends: ${countRankUnderFriends}`)}
+        <Text variant={heading2} style={[{color : theme.colors.friendRank}]}>
+          {`Rank under friends: ${countRankUnderFriends}`}
         </Text>
       </View>
     </ScrollView>
