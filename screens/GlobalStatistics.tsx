@@ -223,7 +223,7 @@ export default function GlobalStatistics() {
         {
           dataPoints: [
             `Total amount of learning projects: ${countLearningProjects}`,
-            `Total time spent on this app:`,
+            `Total time spent playing CogniGames: ${series[0] + series[1] + series[2]} hours`,
           ],
         },
       ],
