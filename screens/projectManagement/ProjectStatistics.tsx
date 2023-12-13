@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Card, Divider, Text, useTheme } from "react-native-paper";
+import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
 
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -9,7 +9,38 @@ import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
 
 export default function ProjectStatistics() {
-  const theme = useTheme();
+
+  
+  const lightTheme = {
+    ...LightTheme,
+    myOwnProperty: true,
+    colors: {
+      ...LightTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#000000"
+    },
+  };
+
+  const darkTheme = {
+    ...DarkTheme,
+    myOwnProperty: true,
+    colors: {
+      ...DarkTheme.colors,
+      pieChartFirst: "4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#000000"
+    },
+  };
+
+  const isDarkMode = false;
+
+  const theme = isDarkMode ? darkTheme : lightTheme;
+
+
+
   const heading = "headlineSmall";
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
@@ -64,23 +95,56 @@ export default function ProjectStatistics() {
     parseFloat(formatTimeSpent(timeBoard)),
   ];
   const filteredSeries = series.filter((value) => value !== 0);
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(
+  const sliceColor = [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird].slice(
     0,
     filteredSeries.length,
   );
+
   const sumTimeGames = filteredSeries.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
     0,
   );
   const percentExercise =
-    series[0] === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
+    series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
   const percentQuiz =
-    series[1] === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
+    series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
   const percentWhiteboard =
-    series[2] === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
-  function formatTimeSpent(milliseconds) {
+  function formatTimeSpent(milliseconds: number) {
     return (milliseconds / 60 / 60 / 60).toFixed(2);
+  }
+
+  function calcColors() {
+    const quizGotTime = series[0] === 0 ? false : true;
+    const cardsGotTime = series[1] === 0 ? false : true;
+    const whiteboardGotTime = series[2] === 0 ? false : true;
+
+    const state =
+      (quizGotTime ? 1 : 0) |
+      (cardsGotTime ? 2 : 0) |
+      (whiteboardGotTime ? 4 : 0);
+
+    switch (state) {
+      case 0: 
+        return[theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+      case 1:
+      return[theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero];
+      case 2: 
+      return[theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero];
+      case 3: 
+      return[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+      case 4:
+      return[theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird];
+      case 5: 
+      return[theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird];
+      case 6: 
+      return[theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird];
+      case 7:
+      return[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird];
+      default:
+        return[theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+    }
   }
 
   async function calcCountExercises() {
@@ -173,13 +237,13 @@ export default function ProjectStatistics() {
   async function calcRankUnderFriends() {
     let { data, error } = await supabase.rpc("get_user_rank_and_id", {
       user_id_param: user.id,
-      project_id_param: projectId
+      project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
-      if(data[i]["user_id"] == user.id){
+      if (data[i]["user_id"] == user.id) {
         setRankUnderFriends(data[i]["user_rank"]);
         break;
-      } 
+      }
     }
   }
 
@@ -188,7 +252,7 @@ export default function ProjectStatistics() {
       project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
-      if(data[i]["user_id"] == user.id){
+      if (data[i]["user_id"] == user.id) {
         setRankGlobal(data[i]["user_rank"]);
         break;
       }
@@ -261,7 +325,7 @@ export default function ProjectStatistics() {
             `Amount of CogniQuiz wins: ${countQuizWins}`,
             `CogniScore - CogniQuiz: ${countQuizScore}`,
           ],
-          textColor: sliceColor[0],
+          textColor: calcColors()[0],
         },
         {
           dataPoints: [
@@ -269,14 +333,14 @@ export default function ProjectStatistics() {
             `Amount of CogniCards wins: ${countCardsWins}`,
             `CogniScore - CogniCards: ${countCardsScore}`,
           ],
-          textColor: sliceColor[1],
+          textColor: calcColors()[1],
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: sliceColor[2],
+          textColor: calcColors()[2],
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
