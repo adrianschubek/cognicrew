@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useContext, useState } from "react";
 import { NAVIGATION } from "../../types/common";
-import { useAlerts } from "react-native-paper-fastalerts";
+import { toArray, useAlerts } from "react-native-paper-fastalerts";
 import { PreferencesContext } from "../../stores/PreferencesContext";
 
 export default function Foo({ navigation }) {
@@ -18,16 +18,12 @@ export default function Foo({ navigation }) {
 
           onPress={async () => {
             alert({
-              message: "What is the capital of Germany?",
-              okText: "Submit 🔥",
               okAction(values) {
-                if (values[0] === "b") {
-                  alert({ message: "Correct 🤗" });
-                } else return "Wrong 😅 Try again.";
+                const arr = toArray(values[0]); // e.g: ->  ["b", "l", "m"]
               },
               fields: [
                 {
-                  type: "radio",
+                  type: "select",
                   data: [
                     { key: "Berlin", value: "b" },
                     { key: "Paris", value: "p" },
@@ -37,8 +33,13 @@ export default function Foo({ navigation }) {
                 },
               ],
             });
-          }}
 
+            alert({
+              title: ""
+            })
+
+          }}
+          
           style={{ marginRight: "auto", flex: 1 }}
         >
           Alert
