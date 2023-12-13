@@ -285,6 +285,7 @@ export default function MainNav() {
     </Stack.Navigator>
   ) : (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="xxxx" component={HomeScreen}/>
       <Stack.Screen name={"_main_"} component={MainTabs} />
       <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
       <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
