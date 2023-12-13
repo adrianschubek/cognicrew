@@ -175,8 +175,6 @@ export default function ProjectStatistics() {
       user_id_param: user.id,
       project_id_param: projectId
     });
-    console.log(data)
-    console.log(error)
     for (let i = 0; i < data.length; i++) {
       if(data[i]["user_id"] == user.id){
         setRankUnderFriends(data[i]["user_rank"]);
@@ -187,9 +185,14 @@ export default function ProjectStatistics() {
 
   async function calcRankGlobal() {
     let { data, error } = await supabase.rpc("get_user_global_rank", {
-      user_id_param: user.id,
+      project_id_param: projectId,
     });
-      setRankGlobal(data);
+    for (let i = 0; i < data.length; i++) {
+      if(data[i]["user_id"] == user.id){
+        setRankGlobal(data[i]["user_rank"]);
+        break;
+      }
+    }
   }
 
   useEffect(() => {
