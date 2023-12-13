@@ -15,20 +15,17 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import TextWithPlusButton from "../common/TextWithPlusButton";
-import InviteFriendDialog from "./InviteFriendDialog";
+import TextWithPlusButton from "../components/common/TextWithPlusButton";
+import InviteFriendDialog from "../components/dialogues/InviteFriendDialog";
 import {
   friendIdsAndNames,
-} from "../../utils/hooks";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { supabase } from "../../supabase";
-import { useProjectStore } from "../../stores/ProjectStore";
-import FriendItem from "../manageFriends/FriendItem";
+} from "../utils/hooks";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
+import { supabase } from "../supabase";
+import { useProjectStore } from "../stores/ProjectStore";
+import FriendItem from "../components/manageFriends/FriendItem";
 import { useAlerts } from "react-native-paper-fastalerts";
 
-/**
- * @deprecated delete this. useAlerts hook instead
- */
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
   const { info } = useAlerts();
