@@ -47,6 +47,9 @@ const fetchQuestions = () => {
   ];
 };
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function CreateFlashcardGame({
   showCreateFlashcardGame,
   close,

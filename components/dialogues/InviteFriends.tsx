@@ -26,7 +26,9 @@ import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../manageFriends/FriendItem";
 
-
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
   const { info } = useAlerts();

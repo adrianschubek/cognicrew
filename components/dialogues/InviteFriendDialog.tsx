@@ -1,6 +1,9 @@
 import React from "react";
 import { Dialog, Paragraph, Button } from 'react-native-paper';
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 const InviteFriendDialog = ({ showInviteDialog, friend, sendInvite, close }) => {
   return (
     <Dialog visible={showInviteDialog} onDismiss={close}>

@@ -9,6 +9,9 @@ import {
 } from "react-native-paper";
 import { responsiveHeight } from "react-native-responsive-dimensions";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 const TextInputDialog = ({ isVisible, onClose, onSubmit }) => {
   const theme = useTheme();
   const [text, setText] = useState("");

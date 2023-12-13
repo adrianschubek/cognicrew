@@ -25,6 +25,9 @@ const fetchQuestions = () => {
   ];
 };
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function CreateQuizGame({ showCreateQuizGame, close }) {
   const [questions, setQuestions] = useState(shuffleArray(fetchQuestions()));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);

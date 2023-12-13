@@ -5,6 +5,9 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function PasswordForgotten({ showPasswordForgotten, close }) {
   const [emailInputPasswordForgotten, setEmailInputPasswordForgotten] =
     useState("");

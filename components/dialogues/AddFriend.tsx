@@ -12,6 +12,9 @@ import {
 } from "react-native-paper";
 import { responsiveFontSize, responsiveHeight } from "react-native-responsive-dimensions";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function AddFriend({showAddFriendPopup, close, addFriend}){
     const theme = useTheme();
     const [newFriendName, setNewFriendName] = useState("");
