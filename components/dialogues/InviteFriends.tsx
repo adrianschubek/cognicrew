@@ -19,12 +19,12 @@ import TextWithPlusButton from "../common/TextWithPlusButton";
 import InviteFriendDialog from "./InviteFriendDialog";
 import {
   friendIdsAndNames,
-  useAlerts,
 } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../manageFriends/FriendItem";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 /**
  * @deprecated delete this. useAlerts hook instead
