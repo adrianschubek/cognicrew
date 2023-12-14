@@ -25,6 +25,7 @@ import { mutate } from "swr";
 import { handleErrors, useAlerts, useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 
+//TODO realtime updating
 export default function Discover() {
   const theme = useTheme();
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
@@ -157,6 +158,26 @@ export default function Discover() {
           .order("created_at");
           return query;
         };
+
+        const fetchFiles = async (filePath: string, limit?: number) => {
+          try {
+            const { data, error } = await supabase.storage.from('files').list(filePath, {
+              limit: limit || 100,
+              offset: 0,
+            });
+        
+            if (error) {
+              console.error('Error fetching files:', error.message);
+              return null; // Return null or handle the error as needed
+            }
+        
+            return data; // Return the list of files
+          } catch (error) {
+            console.error('Error in fetchFiles:', error.message);
+            return null; // Return null or handle the error as needed
+          }
+        };
+        
     
   
         interface SetType {
@@ -312,13 +333,11 @@ export default function Discover() {
                           console.log("Existing Exercise Id", exercise.id);
                           console.log("Upserted Exercise Id", upsertedExerciseId);
 
-                      //TODO get exercise answers and upsert answers
                       // Fetch answers for the existing exercise
                       const answers = await fetchAnswers(exercise.id);
 
                       if (answers && answers.data && Array.isArray(answers.data)) {
                         answers.data.map(async (answer) => {
-                          //TODO upsertAnswers
                           await supabase
                           .from("answers_exercises")
                           .upsert([
@@ -355,18 +374,37 @@ export default function Discover() {
                       ]);
                   })
               }
-              // FILES
+              // TODO FILES
+              // Fetch files for the existing project
+              // documents
+/*              const documents = await fetchFiles(`${project.id}/documents`);
+              console.log("Documents: ", documents);
+              try {
+                // Use the copy method to clone files to the destination folder
+                await Promise.all(
+                  documents.map(async (file) => {
+                    const sourcePath = `${project.id}/documents/${file.name}`;
+                    const destinationPath = `${upsertedProjectId}/documents/${file.name}`;
+            
+                    await supabase.storage.from('files').copy(sourcePath, destinationPath);
+                  })
+                );
+              } catch (error) {
+                console.error(`Error copying files`, error.message);
+                throw error;
+              }
+
         
             success({
               message: "The Project has been cloned.",
-            });
+            }); */
           } catch (error) {
             errorAlert({
               message: "There was an error trying to clone the project.",
             });
             console.error("Save error:", error.message);
           }
-        };
+        }; 
         
   
 
@@ -455,9 +493,6 @@ export default function Discover() {
     </SafeAreaView>
   );
 }
-function errorAlert(arg0: { message: string }) {
-  throw new Error("Function not implemented.");
-}
 
 const styles = StyleSheet.create({
   container: {
@@ -488,4 +523,3 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 });
-
