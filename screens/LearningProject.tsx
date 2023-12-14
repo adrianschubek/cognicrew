@@ -177,7 +177,7 @@ export default function LearningProject({ navigation, route }) {
                 type: "number",
                 helperText: "The maximum amount of players in this room.",
                 icon: "account-group",
-                defaultValue: "2",
+                defaultValue: "10",
                 validator: (value) => /^[1-9][0-9]?$|^100$/.test(value),
                 errorText: "Size must be between 1 and 100",
               },

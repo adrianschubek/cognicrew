@@ -115,10 +115,6 @@ export default function Lobby({ navigation }) {
 
   return (
     <>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
-      />
       <SafeAreaView
         style={{
           width: "100%",
