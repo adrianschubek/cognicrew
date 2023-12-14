@@ -3,7 +3,7 @@ import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { Avatar, Text, Card, IconButton, Button, useTheme } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
-import { useSoundSystem1, useUsername } from "../utils/hooks";
+import { useUsername } from "../utils/hooks";
 import { useEffect } from "react";
 
 //for testing purposes
@@ -25,7 +25,6 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  useSoundSystem1();
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />

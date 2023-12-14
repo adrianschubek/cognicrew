@@ -6,13 +6,12 @@ import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { useEffect, useMemo, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
-import { useSoundSystem1, useUsername } from "../utils/hooks";
+import { useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
 
 function Room({ room }) {
-  useSoundSystem1();
 
   const theme = useTheme();
   const { data: username } = useUsername();

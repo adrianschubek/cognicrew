@@ -9,7 +9,6 @@ import {
 import { supabase } from "../supabase";
 import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
-import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { RoomClientUpdate } from "../functions/rooms";
@@ -19,41 +18,6 @@ import { KeyedMutator } from "swr";
 import { PostgrestSingleResponse } from "@supabase/postgrest-js";
 import { set } from "cypress/types/lodash";
 
-export function useSoundSystem1() {
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded } = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require("../assets/sounds/musicmusicmusic.mp3");
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
-
-export function useSoundSystem2() {
-  const { playSound, stopSound, loadSound2 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded2 } = useSoundsStore.getState();
-      if (!isLoaded2) {
-        const audioSource = require("../assets/sounds/Tetris.mp3");
-        loadSound2(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
 
 /**
  * Handles errors thrown by the given supabase query.

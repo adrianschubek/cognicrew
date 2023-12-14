@@ -5,7 +5,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts, toArray } from "react-native-paper-fastalerts";
 import {
   useSets,
-  useSoundSystem1,
   useUsernamesByRoom,
 } from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
@@ -24,7 +23,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RoomClientInit } from "../../functions/rooms";
 
 export default function Lobby({ navigation }) {
-  useSoundSystem1();
 
   const theme = useTheme();
   const { confirm, alert, info } = useAlerts();

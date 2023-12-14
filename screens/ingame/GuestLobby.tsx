@@ -4,13 +4,12 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useSoundSystem1, useUsernamesByRoom } from "../../utils/hooks";
+import { useUsernamesByRoom } from "../../utils/hooks";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
 import React from "react";
 
 export default function GuestLobby() {
-  useSoundSystem1();
 
   const theme = useTheme();
   const { confirm } = useAlerts();

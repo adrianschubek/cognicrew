@@ -19,7 +19,6 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import InviteFriendDialog from "../../components/dialogues/InviteFriendDialog";
 import {
   friendIdsAndNames,
-  useSoundSystem1,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -28,8 +27,6 @@ import { useAlerts } from "react-native-paper-fastalerts";
 
 
 export default function InviteFriends({ navigation }) {
-
-  useSoundSystem1();
   
   const theme = useTheme();
   const { info } = useAlerts();

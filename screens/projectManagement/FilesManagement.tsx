@@ -7,7 +7,6 @@ import React, { useState, useEffect, Fragment } from "react";
 import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
-import { useSoundSystem1 } from "../../utils/hooks";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
 import { decode } from "base64-arraybuffer";
@@ -156,8 +155,6 @@ export default function FilesManagement() {
       }
     }
   };
-
-  useSoundSystem1();
 
   const [visible, setVisible] = useState(false);
 

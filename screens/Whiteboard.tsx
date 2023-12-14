@@ -47,7 +47,7 @@ export default function Whiteboard({ navigation }) {
   } = useWhiteboardStore();
   useConfirmLeaveLobby();
 
-  const { sound, playSound, stopSound, loadSound2 } = useSoundsStore();
+  const { setInGame } = useSoundsStore();
   const unlockAchievement = useUnlockAchievement();
   const [achievementVisible, setAchievementVisible] = useState(false);
   const [achievementName, setAchievementName] = useState("");
@@ -97,27 +97,13 @@ export default function Whiteboard({ navigation }) {
   };
 
   useEffect(() => {
+    setInGame(true);
     unlockFirstTimeAchievement();
+    return () => {
+      setInGame(false);
+    };
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded2, isLoaded } = useSoundsStore.getState();
-
-      if (!isLoaded2) {
-        const audioSource = require("../assets/sounds/Tetris.mp3");
-        loadSound2(audioSource);
-      } else {
-        console.log("play tetris");
-        playSound();
-      }
-
-      return () => {
-        console.log("Component unmounted");
-        stopSound();
-      };
-    }, []),
-  );
 
   const [plusMenu, setPlusMenu] = React.useState({ open: false });
 

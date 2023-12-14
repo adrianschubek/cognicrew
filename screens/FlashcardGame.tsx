@@ -22,7 +22,6 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   useConfirmLeaveLobby,
-  useSoundSystem2,
 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
@@ -34,9 +33,11 @@ import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 export default function FlashcardGame({ route, navigation }) {
-  useSoundSystem2();
+  const { setInGame } = useSoundsStore();
+
   useConfirmLeaveLobby();
   const theme = useTheme();
   const { user } = useAuth();
@@ -62,6 +63,13 @@ export default function FlashcardGame({ route, navigation }) {
     setUserInput("");
     setAlreadySubmitted(false);
   }, [roomState?.round]);
+
+  useEffect(() => {
+    setInGame(true);
+    return () => {
+      setInGame(false);
+    };
+  }, []);
 
   const [userInput, setUserInput] = useState("");
 

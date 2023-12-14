@@ -10,7 +10,6 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useDeleteProjectRating,
-  useSoundSystem1,
   useUpsertProjectRating,
   useUsername,
 } from "../../utils/hooks";
@@ -33,7 +32,6 @@ export default function RateProject({
     };
   };
 }) {
-  useSoundSystem1();
 
   const { edit: project } = route.params;
 

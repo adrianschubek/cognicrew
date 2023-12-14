@@ -8,7 +8,7 @@ import {
   useTheme,
   IconButton,
 } from "react-native-paper";
-import { useConfirmLeaveLobby, useSoundSystem2 } from "../utils/hooks";
+import { useConfirmLeaveLobby } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
@@ -17,9 +17,9 @@ import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 export default function ExerciseGame({ navigation }) {
-  useSoundSystem2();
   useConfirmLeaveLobby();
   const roomState = useRoomStateStore(
     (state) => state.roomState,
@@ -59,6 +59,15 @@ export default function ExerciseGame({ navigation }) {
       setChecked([...checked, newValue]);
     }
   };
+  const { setInGame } = useSoundsStore();
+
+  useEffect(() => {
+    setInGame(true);
+    return () => {
+      setInGame(false);
+    };
+  }, []);
+
   useEffect(() => {
     setChecked([]);
     setAlreadySubmitted(false);
