@@ -1,11 +1,11 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput, Text } from "react-native-paper";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function TimeSelection() {
-  const minutesRef = React.useRef(null);
-  const secondsRef = React.useRef(null);
+  const minutesRef = useRef(null);
+  const secondsRef = useRef(null);
 
   // Use separate states for minutes and seconds
   const [minutes, setMinutes] = useState("");
