@@ -8,12 +8,13 @@ import {
   PaperProvider,
   Portal,
   FAB,
+  Button,
 } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
@@ -21,7 +22,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
 import {
   useAchievements,
-  useAlerts,
   useConfirmLeaveLobby,
   useUnlockAchievement,
 } from "../utils/hooks";
@@ -30,9 +30,12 @@ import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
 import { useRoomStateStore } from "../stores/RoomStore";
-import { ScreenState } from "../functions/rooms";
+import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { handleEdgeError } from "../utils/common";
 
 export default function Whiteboard({ navigation }) {
+  const { error: errrorAlert, confirm } = useAlerts();
   const {
     addAction,
     undoLastAction,
@@ -44,7 +47,7 @@ export default function Whiteboard({ navigation }) {
   } = useWhiteboardStore();
   useConfirmLeaveLobby();
 
-  const { sound, playSound, stopSound, loadSound2 } = useSoundsStore();
+  const { setInGame } = useSoundsStore();
   const unlockAchievement = useUnlockAchievement();
   const [achievementVisible, setAchievementVisible] = useState(false);
   const [achievementName, setAchievementName] = useState("");
@@ -94,29 +97,15 @@ export default function Whiteboard({ navigation }) {
   };
 
   useEffect(() => {
+    setInGame(true);
     unlockFirstTimeAchievement();
+    return () => {
+      setInGame(false);
+    };
   }, []);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const { isLoaded2, isLoaded } = useSoundsStore.getState();
 
-      if (!isLoaded2) {
-        const audioSource = require("../assets/sounds/Tetris.mp3");
-        loadSound2(audioSource);
-      } else {
-        console.log("play tetris");
-        playSound();
-      }
-
-      return () => {
-        console.log("Component unmounted");
-        stopSound();
-      };
-    }, []),
-  );
-
-  const [plusMenu, setPlusMenu] = React.useState({ open: false });
+  const [plusMenu, setPlusMenu] = useState({ open: false });
 
   const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
 
@@ -139,6 +128,34 @@ export default function Whiteboard({ navigation }) {
       >
         <View style={styles.top}>
           <View style={styles.topleft}>
+          <IconButton
+          mode="contained"
+          style={{
+            //backgroundColor: theme.colors.error,
+            borderRadius: 10,
+            backgroundColor: theme.colors.background,
+            transform: [{ rotateZ: "180deg" }],
+          }}
+          icon="logout"
+          //iconColor={theme.colors.onErrorContainer}
+          onPress={() => {
+            confirm({
+              key: "leaveroom",
+              title: "Leave game?",
+              message: "Do you want to leave this game and return to lobby?",
+              icon: "location-exit",
+              okText: "Leave",
+              okAction: async () => {
+                const { error } = await supabase.functions.invoke("room-update", {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate,
+                });
+                if (error) return await handleEdgeError(error);
+              },
+            });
+          }}
+        />
             <IconButton
               icon="undo"
               iconColor={theme.colors.primary}
@@ -192,6 +209,21 @@ export default function Whiteboard({ navigation }) {
 
         <View style={styles.bottomLeft}>
           <View style={styles.iconRow}>
+           <IconButton
+              icon="cat"
+              iconColor={theme.colors.primary}
+              size={40}
+              onPress={async () => {
+                const { error } = await supabase.functions.invoke("room-update",
+                {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate
+                });
+                console.log(await handleEdgeError(error));
+              }
+              }
+            />
             <IconButton
               icon="delete"
               iconColor={theme.colors.primary}

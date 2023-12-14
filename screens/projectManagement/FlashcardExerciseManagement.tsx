@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
-import { useAlerts, useSoundSystem1 } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import AddExercises from "../../components/dialogues/AddExercises";
 
 export default function FlashcardExerciseManagement({
@@ -17,7 +17,6 @@ export default function FlashcardExerciseManagement({
   route: { params: { type: ManagementType } };
   navigation: any;
 }) {
-  useSoundSystem1();
   const theme = useTheme();
   const { confirm } = useAlerts();
   const type = route.params.type;

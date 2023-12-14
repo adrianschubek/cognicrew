@@ -6,12 +6,10 @@ import {
   Button,
   Text,
   useTheme,
+  IconButton,
 } from "react-native-paper";
-import {
-  useAlerts,
-  useConfirmLeaveLobby,
-  useSoundSystem2,
-} from "../utils/hooks";
+import { useConfirmLeaveLobby } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -19,9 +17,9 @@ import { supabase } from "../supabase";
 import Timer from "../components/IngameComponents/Timer";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 export default function ExerciseGame({ navigation }) {
-  useSoundSystem2();
   useConfirmLeaveLobby();
   const roomState = useRoomStateStore(
     (state) => state.roomState,
@@ -61,6 +59,15 @@ export default function ExerciseGame({ navigation }) {
       setChecked([...checked, newValue]);
     }
   };
+  const { setInGame } = useSoundsStore();
+
+  useEffect(() => {
+    setInGame(true);
+    return () => {
+      setInGame(false);
+    };
+  }, []);
+
   useEffect(() => {
     setChecked([]);
     setAlreadySubmitted(false);
@@ -95,9 +102,46 @@ export default function ExerciseGame({ navigation }) {
   return (
     <>
       <ScrollView style={{ paddingTop: 20 }}>
-        <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
+        <IconButton
+          mode="contained"
+          style={{
+            //backgroundColor: theme.colors.error,
+            position: "absolute",
+            left: 0,
+            top: 8,
+            borderRadius: 10,
+            backgroundColor: theme.colors.background,
+            transform: [{ rotateZ: "180deg" }],
+          }}
+          icon="logout"
+          //iconColor={theme.colors.onErrorContainer}
+          onPress={() => {
+            confirm({
+              key: "leaveroom",
+              title: "Leave game?",
+              message: "Do you want to leave this game and return to lobby?",
+              icon: "location-exit",
+              okText: "Leave",
+              okAction: async () => {
+                const { error } = await supabase.functions.invoke("room-update", {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate,
+                });
+                if (error) return await handleEdgeError(error);
+              },
+            });
+          }}
+        />
+        <Dialog.Title
+          style={{
+            textAlign: "center",
+            alignSelf: "center",
+          }}
+        >
           Question {roomState.round} of {roomState.totalRounds}
         </Dialog.Title>
+
         {MemoTimer}
         <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
           {roomState.question}

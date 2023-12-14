@@ -16,11 +16,10 @@ import {
   useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
+import { useAlerts } from "react-native-paper-fastalerts";
 import {
-  useAlerts,
   useDeleteProject,
   useRemoveUserFromLearningProject,
-  useSoundSystem1,
   useUsername,
 } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
@@ -44,7 +43,6 @@ export default function CreateEditProject({
    * edit == null => create new project
    * edit = project objekt
    */
-  useSoundSystem1();
 
   const { edit: project } = route.params;
 

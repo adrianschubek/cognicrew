@@ -8,6 +8,9 @@ import {
 import { StrokeSettings } from "../learningRoom/DrawingSettings";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function CreateDrawing({ showDrawing, close }) {
   const { color, setColor, setStroke, stroke } = useWhiteboardStore();
   return (

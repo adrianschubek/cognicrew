@@ -9,7 +9,6 @@ import {
   UserProjectStats,
 } from "../rooms.ts";
 
-
 console.log("main function started");
 
 const JWT_SECRET = Deno.env.get("JWT_SECRET");
@@ -38,8 +37,40 @@ async function verifyJWT(jwt: string): Promise<boolean> {
   }
   return true;
 }
-// TODO: Whiteboard realtime use Presence!!
-// TODO: https://supabase.com/docs/guides/realtime/presence#sending-state
+
+/**
+ * Game Loop interval helpers
+ */
+
+let gameLoopIntervalId: number | null = null;
+async function startGameLoop(handler: () => Promise<void>, interval: number) {
+  if (gameLoopIntervalId === null) {
+    await handler();
+    gameLoopIntervalId = setInterval(handler, interval);
+  } else {
+    console.warn(
+      "Interval is already running. Stop it first before starting a new one.",
+    );
+  }
+}
+
+function stopGameLoop() {
+  if (gameLoopIntervalId !== null) {
+    clearInterval(gameLoopIntervalId);
+    gameLoopIntervalId = null;
+  } else {
+    console.warn("No interval is currently running.");
+  }
+}
+
+async function updateGameLoop(
+  handler: () => Promise<void>,
+  newInterval: number,
+) {
+  stopGameLoop();
+  await startGameLoop(handler, newInterval);
+}
+
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -64,12 +95,95 @@ const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
-// listen for realtime update from user_submitted_answers then update public_room_state -> ne race dontion mit game loop unten!
+async function updateStats(
+  publicState: PublicRoomState,
+  privateState: PrivateRoomState,
+) {
+  let gameWonPlayerId;
+  let maxScore = 0;
+  let draw = true;
 
-setInterval(async () => {
+  for (const player of publicState.players) {
+    if (player.score >= maxScore) {
+      gameWonPlayerId = player.id;
+      maxScore = player.score;
+      draw = false;
+    }
+  }
+
+  //Check if there are two "winners" reuslting in a draw
+  for (const player of publicState.players) {
+    if (player.score == maxScore && player.id != gameWonPlayerId) {
+      draw = true;
+      break;
+    }
+  }
+
+  for (const player of publicState.players) {
+    const { data: dbstats, error } = await supabase
+      .from("user_learning_projects")
+      .select("stats")
+      .eq("user_id", player.id)
+      .eq("learning_project_id", privateState.projectId)
+      .single();
+    if (error) {
+      console.error(error);
+      continue;
+    }
+
+    const stats: UserProjectStats = dbstats?.stats ?? {
+      scoreQuiz: 0,
+      scoreFlashcards: 0,
+      winsQuiz: 0,
+      winsFlashcards: 0,
+      timeSpentQuiz: 0,
+      timeSpentFlashcards: 0,
+      timeSpentWhiteboard: 0,
+    };
+
+    stats.scoreQuiz +=
+      publicState.game == GameState.EXERCISES ? player.score : 0;
+    stats.scoreFlashcards +=
+      publicState.game == GameState.FLASHCARDS ? player.score : 0;
+    stats.winsQuiz +=
+      publicState.game == GameState.EXERCISES &&
+      gameWonPlayerId == player.id &&
+      !draw
+        ? 1
+        : 0;
+    stats.winsFlashcards +=
+      publicState.game == GameState.FLASHCARDS &&
+      gameWonPlayerId == player.id &&
+      !draw
+        ? 1
+        : 0;
+
+    const timeSpent = dayjs().valueOf() - publicState.gameBeganAt;
+    stats.timeSpentQuiz +=
+      publicState.game == GameState.EXERCISES ? timeSpent : 0;
+    stats.timeSpentFlashcards +=
+      publicState.game == GameState.FLASHCARDS ? timeSpent : 0;
+    stats.timeSpentWhiteboard +=
+      publicState.game == GameState.WHITEBOARD ? timeSpent : 0;
+
+    const { error: errUpdate } = await supabase
+      .from("user_learning_projects")
+      .update({ stats })
+      .eq("user_id", player.id)
+      .eq("learning_project_id", privateState.projectId);
+    if (errUpdate) console.error(errUpdate);
+  }
+}
+
+// TODO:
+// async function handleState for each screen state
+
+// listen for updates in public room states then update game loop interval.
+
+async function mainLoop() {
+  // main game loop here
   const start = performance.now();
   // let updatedCount = 0;
-  // main game state loop here
 
   // for each public_room_state:
   const { data: publicRoomStates } = await supabase
@@ -124,6 +238,9 @@ setInterval(async () => {
         switch (cmd.type) {
           case "reset_room":
             console.log("reset_room");
+
+            await updateStats(newState, privateState);
+
             newState.screen = ScreenState.LOBBY;
             newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
@@ -137,6 +254,9 @@ setInterval(async () => {
               .from("player_answers")
               .delete()
               .eq("room_id", state.room_id);
+            break;
+          default:
+            console.error(`Unhandled command type '${cmd.type}'`);
         }
       }
     }
@@ -346,81 +466,7 @@ setInterval(async () => {
         // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
         newState.screen = ScreenState.END_RESULTS;
 
-        let gameWonPlayerId;
-        let maxScore = 0;
-        let draw = true;
-
-        for (const player of newState.players) {
-          if (player.score >= maxScore) {
-            gameWonPlayerId = player.id;
-            maxScore = player.score;
-            draw = false;
-          }
-        }
-
-        //Check if there are two "winners" reuslting in a draw
-        for (const player of newState.players) {
-          if (player.score == maxScore && player.id != gameWonPlayerId) {
-            draw = true;
-            break;
-          }
-        }
-
-        for (const player of newState.players) {
-          const { data: dbstats, error } = await supabase
-            .from("user_learning_projects")
-            .select("stats")
-            .eq("user_id", player.id)
-            .eq("learning_project_id", privateState.projectId)
-            .single();
-          if (error) {
-            console.error(error);
-            continue;
-          }
-          
-          const stats: UserProjectStats = dbstats?.stats ?? {
-            scoreQuiz: 0,
-            scoreFlashcards: 0,
-            winsQuiz: 0,
-            winsFlashcards: 0,
-            timeSpentQuiz: 0,
-            timeSpentFlashcards: 0,
-            timeSpentWhiteboard: 0,
-          };
-
-          stats.scoreQuiz +=
-            newState.game == GameState.EXERCISES ? player.score : 0;
-          stats.scoreFlashcards +=
-            newState.game == GameState.FLASHCARDS ? player.score : 0;
-          stats.winsQuiz +=
-            newState.game == GameState.EXERCISES &&
-            gameWonPlayerId == player.id &&
-            !draw
-              ? 1
-              : 0;
-          stats.winsFlashcards +=
-            newState.game == GameState.FLASHCARDS &&
-            gameWonPlayerId == player.id &&
-            !draw
-              ? 1
-              : 0;
-
-          let timeSpent = newState.roundEndsAt - newState.roundBeganAt;
-          stats.timeSpentQuiz +=
-             newState.game == GameState.EXERCISES ? timeSpent : 0;
-          stats.timeSpentFlashcards +=
-             newState.game == GameState.FLASHCARDS ? timeSpent : 0;
-          stats.timeSpentWhiteboard +=
-             newState.game == GameState.WHITEBOARD? 0 : 0; //TODO
-
-
-          const { error: errUpdate } = await supabase
-            .from("user_learning_projects")
-            .update({ stats })
-            .eq("user_id", player.id)
-            .eq("learning_project_id", privateState.projectId);
-          if (errUpdate) console.error(errUpdate);
-        }
+        await updateStats(newState, privateState);
       }
     } else if (
       newState.screen === ScreenState.END_RESULTS &&
@@ -467,7 +513,8 @@ setInterval(async () => {
       commands?.length ?? 0
     } commands processed in ${end - start}ms`,
   );
-}, 1000);
+}
+startGameLoop(mainLoop, 1000);
 
 serve(async (req: Request) => {
   if (req.method !== "OPTIONS" && VERIFY_JWT) {

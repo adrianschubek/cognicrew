@@ -1,58 +1,20 @@
 import { useAuth } from "../providers/AuthProvider";
-import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
   useDeleteMutation,
   useInsertMutation,
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-
+import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../supabase";
 import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
-import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
-import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
-
-export function useSoundSystem1() {
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded } = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require("../assets/sounds/musicmusicmusic.mp3");
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
-
-export function useSoundSystem2() {
-  const { playSound, stopSound, loadSound2 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded2 } = useSoundsStore.getState();
-      if (!isLoaded2) {
-        const audioSource = require("../assets/sounds/Tetris.mp3");
-        loadSound2(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
-
+import { useAlerts } from "react-native-paper-fastalerts";
+import useSWR, { KeyedMutator } from "swr";
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
@@ -404,16 +366,16 @@ export function useAnswersExercises(exerciseId: number) {
   }, []);
   return { data, isLoading, error, mutate };
 }
-
 export function useExercisesAndAnswers(setId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("exercises")
-        .select("id,question,priority,set_id,answers_exercises(exercise)")
-        .eq("set_id", setId),
-    ),
-  );
+  const query = supabase
+    .from("exercises")
+    .select("id,question,priority,set_id,answers_exercises(exercise)")
+    .eq("set_id", setId);
+  useEffect(() => {
+    mutate();
+  }, []);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  return { data, error, isLoading, mutate };
 }
 
 export function useUpsertAnswersExercise() {
@@ -438,7 +400,9 @@ export function useDeleteAnswersExercise() {
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
-    .select("created_at,id,link_url,learning_project,title,subtitle,description")
+    .select(
+      "created_at,id,link_url,learning_project,title,subtitle,description",
+    )
     .eq("learning_project", projectId)
     .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
@@ -467,60 +431,23 @@ export function useDeleteProject() {
   );
 }
 
-/**
- * Display alerts.
- * @returns functions to display alerts.
- */
-export function useAlerts() {
-  const dispatch = useAlertsStore((state) => state.dispatch);
+export function useFiles(filePath: string, limit?: number) {
+  const fetchFiles = () =>
+    supabase.storage.from("files").list(filePath, {
+      limit: limit ? limit : 100,
+      offset: 0,
+    });
 
+  const {
+    data,
+    error,
+    mutate,
+  } = handleErrors(useSWR(["images", filePath], fetchFiles));
   return {
-    alert: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "",
-        ...config,
-      });
-    },
-    /**
-     * Creates a success alert using the given config.
-     */
-    success: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "check",
-        title: "Success",
-        ...config,
-      });
-    },
-    error: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "alert-decagram",
-        title: "Error",
-        ...config,
-      });
-    },
-    warning: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "alert",
-        title: "Warning",
-        ...config,
-      });
-    },
-    info: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "information-outline",
-        title: "Info",
-        ...config,
-      });
-    },
-    confirm: (config: Partial<Alert>) => {
-      dispatch({
-        icon: "help-box",
-        title: "Confirm",
-        cancelText: "Cancel",
-        okText: "OK",
-        ...config,
-      });
-    },
+    data,
+    isLoading: !error && !data,
+    error: error,
+    mutate,
   };
 }
 

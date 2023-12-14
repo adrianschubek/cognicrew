@@ -22,6 +22,9 @@ import { ManagementType } from "../../types/common";
 import { useUpsertAnswersExercise, useUpsertExercise } from "../../utils/hooks";
 import { checkForLineBreak } from "../../utils/common";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function AddExercises({ showAddExercises, close }) {
   const theme = useTheme();
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =

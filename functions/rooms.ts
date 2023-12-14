@@ -181,6 +181,12 @@ export type RoomClientUpdate =
     }
   | {
       /**
+       * Skips all round and sets the game to the end state if the user is the host.
+       */
+      type: "end_game";
+    }
+  | {
+      /**
        * Skips the current round if the user is the host.
        * //TODO
        */

@@ -1,19 +1,15 @@
 import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { PacmanIndicator as LoadingAnimation } from "react-native-indicators";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useAlerts,
-  useSoundSystem1,
-  useUsernamesByRoom,
-} from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
+import { useUsernamesByRoom } from "../../utils/hooks";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
 import { supabase } from "../../supabase";
 import React from "react";
 
 export default function GuestLobby() {
-  useSoundSystem1();
 
   const theme = useTheme();
   const { confirm } = useAlerts();
@@ -28,7 +24,7 @@ export default function GuestLobby() {
 
   const { warning } = useAlerts();
 
-  const [userList, setUserList] = React.useState<string[]>([]);
+  const [userList, setUserList] = useState<string[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {

@@ -707,9 +707,22 @@ export interface Database {
       }
       get_user_global_rank: {
         Args: {
-          user_id_param: string
+          project_id_param: number
         }
-        Returns: number
+        Returns: {
+          user_id: string
+          user_rank: number
+        }[]
+      }
+      get_user_rank_and_id: {
+        Args: {
+          user_id_param: string
+          project_id_param: number
+        }
+        Returns: {
+          user_id: string
+          user_rank: number
+        }[]
       }
       get_usernames: {
         Args: {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Avatar, Button, Card, TextInput, useTheme } from "react-native-paper";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
-import { useAlerts } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="key" />;
 

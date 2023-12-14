@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { TextInput, Text, Button, Checkbox, Icon } from "react-native-paper";
+import { TextInput, Text, Button, Checkbox } from "react-native-paper";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import {
@@ -7,11 +7,9 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import PasswordForgotten from "../components/dialogues/PasswordForgotten";
-import Register from "../components/dialogues/Register";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
-import { useAlerts } from "../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
   // TODO: only save password when "remember me" is checked
@@ -19,8 +17,6 @@ export default function Login({ navigation }) {
     usePreferencesStore();
   // const [text, setText] = useState("foo@bar.de");
   // const [text2, setText2] = useState("foobar");
-  const [showPasswordForgotten, setShowPasswordForgotten] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
   const [loginDisabled, setLoginDisabled] = useState(false);
 
   const { error: errorAlert, alert, warning, success } = useAlerts();
@@ -28,14 +24,6 @@ export default function Login({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      <Register
-        showRegister={showRegister}
-        close={() => setShowRegister(false)}
-      />
-      <PasswordForgotten
-        showPasswordForgotten={showPasswordForgotten}
-        close={() => setShowPasswordForgotten(false)}
-      />
       <View style={styles.upperContainer}>
         <Image
           source={require("../assets/icon.png")}

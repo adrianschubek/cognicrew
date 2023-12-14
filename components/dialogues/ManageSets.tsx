@@ -16,10 +16,13 @@ import {
 } from "react-native-responsive-dimensions";
 import { useEffect, useState } from "react";
 import SearchWithList from "../common/SearchWithList";
-import { useAlerts, useSets } from "../../utils/hooks";
+import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { ManagementType } from "../../types/common";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function ManageSets(props: {
   showManageSets: boolean;
   close: () => any;

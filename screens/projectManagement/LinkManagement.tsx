@@ -13,19 +13,17 @@ import {
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCard from "../../components/learningProject/LinkCard";
 import {
-  useAlerts,
   useLinks,
-  useSoundSystem1,
   useUpsertLink,
 } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import { FAB, Text } from "react-native-paper";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();
-  useSoundSystem1();
 
   function ensureHttpURL(url: string) {
     return url.match(/^(https?:\/\/)/i)

@@ -12,15 +12,17 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
 import MainNav from "./components/MainNav";
-import AlertSyncZustand from "./components/alerts/AlertSyncZustand";
+import { AlertContainer } from "react-native-paper-fastalerts";
 import { SWRConfig } from "swr";
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 // import { Appearance, useColorScheme } from "react-native";
+import { Audio } from 'expo-av';
+import { useSoundsStore } from "./stores/SoundsStore";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -48,7 +50,37 @@ const CombinedDarkTheme = {
   },
 };
 
+
+
 export default function App() {
+
+  const sound = useRef(new Audio.Sound());
+  const { inGame } = useSoundsStore();
+
+  useEffect(() => {
+    const playSound = async () => {
+      sound.current.unloadAsync();
+      try {
+        if(!inGame){
+          await sound.current.loadAsync(require('./assets/sounds/musicmusicmusic.mp3'));
+         } else {
+          await sound.current.loadAsync(require('./assets/sounds/Tetris.mp3'));
+         }
+        await sound.current.setIsLoopingAsync(true);
+        await sound.current.playAsync();
+      } catch (error) {
+        console.error('Error playing audio', error);
+      }
+    };
+
+    playSound();
+
+    return () => {
+      sound.current.unloadAsync();
+    };
+  }, [inGame]);
+
+
   // TODO: useColorScheme to detect system theme and set it
   const { darkmode, setDarkmode } = usePreferencesStore();
   let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
@@ -79,7 +111,7 @@ export default function App() {
                 isOnline: () => true,
               }}
             >
-              <AlertSyncZustand />
+              <AlertContainer />
               <GlobalLoadingOverlay />
               <MainNav />
             </SWRConfig>

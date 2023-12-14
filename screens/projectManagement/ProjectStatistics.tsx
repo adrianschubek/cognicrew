@@ -1,50 +1,54 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { View, StyleSheet, ScrollView } from "react-native";
-import { Card, Divider, Text, useTheme } from "react-native-paper";
+import { View, ScrollView } from "react-native";
+import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
 
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
-import PieChart from "react-native-pie-chart";
-
-import TimerScreen from "../../components/learningRoom/TimeTracker";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useTimerStore } from "../../stores/TimerStore";
 
 export default function ProjectStatistics() {
-  const theme = useTheme();
+
+  
+  const lightTheme = {
+    ...LightTheme,
+    colors: {
+      ...LightTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#000000",
+      globalRank:  "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
+
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#FFFFFF",
+      globalRank: "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
+
+  const { dark } = useTheme(); 
+  const theme = dark ? darkTheme : lightTheme;
+
+
+
   const heading = "headlineSmall";
   const heading2 = "titleLarge";
   const heading3 = "titleMedium";
   const heading4 = "labelLarge";
 
-  function rainbowText(inputText) {
-    const rainbowColors = [
-      "red",
-      "orange",
-      "yellow",
-      "green",
-      "blue",
-      "indigo",
-      "violet",
-    ];
-
-    return inputText.split("").map((char, index) => (
-      <Text
-        key={index}
-        style={[{ color: rainbowColors[index % rainbowColors.length] }]}
-      >
-        {char}
-      </Text>
-    ));
-  }
-
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-
-  //const count = useStatisticsByProject();
 
   const [countExercises, setCountExercises] = useState(null);
   const [countFlashcards, setCountFlashcards] = useState(null);
@@ -58,26 +62,65 @@ export default function ProjectStatistics() {
   const [countCardsScore, setCardsScore] = useState(null);
 
   const [timeQuiz, setTimeSpentQuiz] = useState(null);
-  const [timeCards,  setTimeSpentCards] = useState(null);
-  const [timeBoard,  setTimeSpentBoard] = useState(null);
-
+  const [timeCards, setTimeSpentCards] = useState(null);
+  const [timeBoard, setTimeSpentBoard] = useState(null);
 
   const [countRankUnderFriends, setRankUnderFriends] = useState(null);
   const [countRankGlobal, setRankGlobal] = useState(null);
 
   const widthAndHeight = 100;
-  const series = [formatTimeSpent(timeQuiz), formatTimeSpent(timeCards), formatTimeSpent(timeBoard)];
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"];
-  let sumTimeGames = series.reduce(
+  const series = [
+    parseFloat(formatTimeSpent(timeQuiz)),
+    parseFloat(formatTimeSpent(timeCards)),
+    parseFloat(formatTimeSpent(timeBoard)),
+  ];
+  const filteredSeries = series.filter((value) => value !== 0);
+  const sumTimeGames = filteredSeries.reduce(
     (accumulator, currentValue) => accumulator + currentValue,
     0,
   );
-  let percentExercise = ((series[0] / sumTimeGames) * 100).toFixed(2);
-  let percentQuiz = ((series[1] / sumTimeGames) * 100).toFixed(2);
-  let percentWhiteboard = ((series[2] / sumTimeGames) * 100).toFixed(2);
+  const percentExercise =
+    series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz =
+    series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard =
+    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
-  function formatTimeSpent(seconds) {
-    return (seconds / 60 / 60).toFixed(2);
+  function formatTimeSpent(milliseconds: number) {
+    return (milliseconds / 60 / 60 / 60).toFixed(2);
+  }
+
+  function calcColors() {
+    const quizGotTime = series[0] === 0 ? false : true;
+    const cardsGotTime = series[1] === 0 ? false : true;
+    const whiteboardGotTime = series[2] === 0 ? false : true;
+
+    const state =
+      (quizGotTime ? 1 : 0) |
+      (cardsGotTime ? 2 : 0) |
+      (whiteboardGotTime ? 4 : 0);
+
+    switch (state) {
+      case 0: 
+      return [[], [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero]];
+      case 1:
+      return[[theme.colors.pieChartFirst], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero]];
+      case 2: 
+      return[[theme.colors.pieChartSecond], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero]];
+      case 3: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond], theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+      case 4:
+      return[[theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 5: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 6: 
+      return[[theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      case 7:
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      default:
+        console.log("Something went wrong");
+        return[[], theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+    }
   }
 
   async function calcCountExercises() {
@@ -153,7 +196,7 @@ export default function ProjectStatistics() {
     let { data, error } = await supabase
       .from("user_learning_projects")
       .select("stats")
-      .eq("learning_project_id", projectId); 
+      .eq("learning_project_id", projectId);
     if (error) {
       console.error("Error fetching data:", error);
     } else {
@@ -168,11 +211,28 @@ export default function ProjectStatistics() {
   }
 
   async function calcRankUnderFriends() {
-      //TODO
+    let { data, error } = await supabase.rpc("get_user_rank_and_id", {
+      user_id_param: user.id,
+      project_id_param: projectId,
+    });
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]["user_id"] == user.id) {
+        setRankUnderFriends(data[i]["user_rank"]);
+        break;
+      }
+    }
   }
 
   async function calcRankGlobal() {
-      //TODO
+    let { data, error } = await supabase.rpc("get_user_global_rank", {
+      project_id_param: projectId,
+    });
+    for (let i = 0; i < data.length; i++) {
+      if (data[i]["user_id"] == user.id) {
+        setRankGlobal(data[i]["user_rank"]);
+        break;
+      }
+    }
   }
 
   useEffect(() => {
@@ -241,7 +301,7 @@ export default function ProjectStatistics() {
             `Amount of CogniQuiz wins: ${countQuizWins}`,
             `CogniScore - CogniQuiz: ${countQuizScore}`,
           ],
-          textColor: sliceColor[0],
+          textColor: calcColors()[1][0],
         },
         {
           dataPoints: [
@@ -249,26 +309,27 @@ export default function ProjectStatistics() {
             `Amount of CogniCards wins: ${countCardsWins}`,
             `CogniScore - CogniCards: ${countCardsScore}`,
           ],
-          textColor: sliceColor[1],
+          textColor: calcColors()[1][1],
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: sliceColor[2],
+          textColor: calcColors()[1][2],
         },
       ],
-      pieChart: {
-        widthAndHeight: widthAndHeight,
-        series: series,
-        sliceColor: sliceColor,
-      },
+      ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
+        pieChart: {
+          widthAndHeight: widthAndHeight,
+          series: filteredSeries,
+          sliceColor: calcColors()[0],
+        },
+      }),
     },
   ];
   return (
     <ScrollView>
-      <TimerScreen />
       <StatusBar style="auto" />
       <Card>
         <Card.Title
@@ -309,8 +370,12 @@ export default function ProjectStatistics() {
           );
         })}
         <Divider />
-        <Text variant={heading2}>{rainbowText("Global rank:")}</Text>
-        <Text variant={heading2}>{rainbowText("Rank under friends:")}</Text>
+        <Text variant={heading2} style={[{color : theme.colors.globalRank}]}>
+          {`Global rank: ${countRankGlobal}`}
+        </Text>
+        <Text variant={heading2} style={[{color : theme.colors.friendRank}]}>
+          {`Rank under friends: ${countRankUnderFriends}`}
+        </Text>
       </View>
     </ScrollView>
   );

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
@@ -20,7 +20,7 @@ const AchievementNotification = ({
   // Choose golden color based on theme
   const goldenColor = theme.dark ? goldenColorDark : goldenColorLight;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isVisible) {
       animationRef.current?.bounceInUp().then(() => {
         animationRef.current?.tada();
