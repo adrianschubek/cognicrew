@@ -14,7 +14,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
@@ -105,7 +105,7 @@ export default function Whiteboard({ navigation }) {
   }, []);
 
 
-  const [plusMenu, setPlusMenu] = React.useState({ open: false });
+  const [plusMenu, setPlusMenu] = useState({ open: false });
 
   const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
 

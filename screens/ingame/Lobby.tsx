@@ -113,10 +113,6 @@ export default function Lobby({ navigation }) {
 
   return (
     <>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
-      />
       <SafeAreaView
         style={{
           width: "100%",
@@ -199,6 +195,7 @@ export default function Lobby({ navigation }) {
                           },
                         );
                         if (error) return handleEdgeError(error);
+                        setRoom({ ...room, is_ingame: true });
                       },
                       fields: [
                         {
@@ -274,6 +271,7 @@ export default function Lobby({ navigation }) {
                           },
                         );
                         if (error) return handleEdgeError(error);
+                        setRoom({ ...room, is_ingame: true });
                       },
                       fields: [
                         {
@@ -354,6 +352,7 @@ export default function Lobby({ navigation }) {
                                 } as RoomClientInit,
                               });
                             if (error) return handleEdgeError(error);
+                            setRoom({ ...room, is_ingame: true });
                           },
                           fields: [
                             {
