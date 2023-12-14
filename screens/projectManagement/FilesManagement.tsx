@@ -76,6 +76,20 @@ export default function FilesManagement() {
     setFiles(categorizedFiles);
   }, [fileData]);
 
+  useEffect(() => {
+    const realtimeFiles = supabase
+      .channel("files_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "storage", table: "objects" },
+        (payload) => {
+          mutateFiles();
+          mutatePhotos();
+        },
+      )
+      .subscribe();
+  }, []);
+
   const onSelectDocument = async () => {
     (await selectAndUploadFile(`${projectId}`, true)).isImage
       ? mutatePhotos()
