@@ -1,4 +1,4 @@
-import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
+import { useQuery, useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -22,7 +22,8 @@ import {
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
-import { useDistinctProjectGroups } from "../utils/hooks";
+import { useAlerts, useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
+import { ManagementType } from "../types/common";
 
 export default function Discover() {
   const theme = useTheme();
@@ -93,6 +94,105 @@ export default function Discover() {
     </View>
   );
 
+  const { success, error: errorAlert, info, confirm } = useAlerts();
+  const { isMutating, trigger: upsert } = useUpsertMutation(
+    supabase.from("learning_projects"),
+    ["id"],
+    "id,name,description,group,is_published,tags",
+    {
+      onSuccess: () => {
+        success({
+          message: "The Project has been cloned.",
+        });
+      },
+      onError: (error) => {
+        errorAlert({
+          message: "There was an error trying to clone the project.",
+        });
+      },
+    },
+  );
+  
+  const { trigger: upsertSet } = useUpsertSet();
+  const { trigger: upsertFlashcard } = useUpsertFlashcard();
+  const save = async (project) => {
+    console.log("Save");
+    console.log(project.id);
+    console.log(project.name);
+  
+    try {
+      // Upsert the project and get the project_id
+      const upsertedProject = await upsert([
+        {
+          name: project.name,
+          description: project.description,
+          group: project.group,
+          is_published: project.is_published,
+          tags: project.tags,
+        },
+      ]);
+  
+      const upsertedProjectId = upsertedProject[0]?.id;
+      console.log("Test 1: ", upsertedProject[0]?.id);
+  
+      // Fetch flashcard sets for the existing project
+      const { data: flashcardSets } = useSets(ManagementType.FLASHCARD, project.id);
+  
+      // Map over each flashcard set
+      if (flashcardSets) {
+        // Use Promise.all to wait for all upsertSet calls to complete
+        await Promise.all(
+          flashcardSets.map(async (flashcardSet) => {
+            // TODO Upsert Set
+            const upsertedSetArray = await upsertSet({
+              //@ts-expect-error
+              name: flashcardSet.title,
+              type: flashcardSet.type,
+              //TODO get upserted project id
+              project_id: upsertedProjectId,
+            });
+            console.log(flashcardSet.name);
+  
+            // Get set id
+            const upsertedSet = upsertedSetArray?.[0];
+            const upsertedSetId = upsertedSet?.id;
+            console.log("Test 2: ", upsertedSetId);
+  
+            // Fetch exercise for the existing set
+            const { data: flashcards } = useFlashcards(flashcardSet.id);
+  
+            if (flashcards) {
+              await Promise.all(
+                flashcards.map(async (flashcard) => {
+                  //TODO upsert Flashcard
+                  await upsertFlashcard({
+                    //@ts-expect-error
+                    question: flashcard.question,
+                    answer: flashcard.answer,
+                    priority: flashcard.priority,
+                    //TODO get upserted set id
+                    set_id: upsertedSetId,
+                  });
+                })
+              );
+            }
+          })
+        );
+      }
+  
+      success({
+        message: "The Project has been cloned.",
+      });
+  
+    } catch (error) {
+      errorAlert({
+        message: "There was an error trying to clone the project.",
+      });
+      console.error("Save error:", error.message);
+    }
+  };
+  
+
   if (!data) return null;
 
   return (
@@ -161,6 +261,7 @@ export default function Discover() {
                       textColor="white"
                       onPress={() => {
                         console.log("Clone pressed");
+                        save(item);
                       }}
                     >
                       Clone

@@ -612,16 +612,19 @@ export interface Database {
         Row: {
           created_at: string
           learning_project_id: number
+          stats: Json | null
           user_id: string
         }
         Insert: {
           created_at?: string
           learning_project_id: number
+          stats?: Json | null
           user_id: string
         }
         Update: {
           created_at?: string
           learning_project_id?: number
+          stats?: Json | null
           user_id?: string
         }
         Relationships: [
@@ -661,6 +664,12 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      clone_project: {
+        Args: {
+          project_id_to_clone: number
+        }
+        Returns: undefined
+      }
       create_room: {
         Args: {
           p_project_id: number
@@ -695,6 +704,12 @@ export interface Database {
           project_id_param: number
         }
         Returns: Record<string, unknown>
+      }
+      get_user_global_rank: {
+        Args: {
+          user_id_param: string
+        }
+        Returns: number
       }
       get_usernames: {
         Args: {
