@@ -2,21 +2,18 @@ import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import {
-  Portal,
   Divider,
   Avatar,
   Text,
   TextInput,
-  useTheme,
+  useTheme
 } from "react-native-paper";
-import { Snackbar, Checkbox } from "react-native-paper";
+import { Snackbar } from "react-native-paper";
 import {
   responsiveFontSize,
-  responsiveHeight,
-  responsiveWidth,
+  responsiveHeight
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import InviteFriendDialog from "../../components/dialogues/InviteFriendDialog";
 import {
   friendIdsAndNames,
   useSoundSystem1,
@@ -81,16 +78,6 @@ export default function InviteFriends({ navigation }) {
     setShowInviteDialog(true);
     setInvitedFriends((prevState) => ({ ...prevState, [friend]: true }));
     setCheckedState((prevState) => ({ ...prevState, [friend]: false }));
-  };
-
-  const sendInvite = () => {
-    setSnackbarText(`An invite has been sent to ${selectedFriend}`);
-    setSnackbarVisible(true);
-    setShowInviteDialog(false);
-    setInvitedFriends((prevState) => ({
-      ...prevState,
-      [selectedFriend]: true,
-    }));
   };
 
   const handleMultipleInvites = () => {
@@ -199,16 +186,6 @@ export default function InviteFriends({ navigation }) {
           <Divider style={styles.divider} />
         </View>
       </View>
-
-      {/* Invite dialog */}
-      <Portal>
-        <InviteFriendDialog
-          showInviteDialog={showInviteDialog}
-          friend={selectedFriend}
-          sendInvite={sendInvite}
-          close={() => setShowInviteDialog(false)}
-        />
-      </Portal>
 
       {/* Snackbar - providing feedback to the user */}
       <Snackbar
