@@ -37,8 +37,40 @@ async function verifyJWT(jwt: string): Promise<boolean> {
   }
   return true;
 }
-// TODO: Whiteboard realtime use Presence!!
-// TODO: https://supabase.com/docs/guides/realtime/presence#sending-state
+
+/**
+ * Game Loop interval helpers
+ */
+
+let gameLoopIntervalId: number | null = null;
+async function startGameLoop(handler: () => Promise<void>, interval: number) {
+  if (gameLoopIntervalId === null) {
+    await handler();
+    gameLoopIntervalId = setInterval(handler, interval);
+  } else {
+    console.warn(
+      "Interval is already running. Stop it first before starting a new one.",
+    );
+  }
+}
+
+function stopGameLoop() {
+  if (gameLoopIntervalId !== null) {
+    clearInterval(gameLoopIntervalId);
+    gameLoopIntervalId = null;
+  } else {
+    console.warn("No interval is currently running.");
+  }
+}
+
+async function updateGameLoop(
+  handler: () => Promise<void>,
+  newInterval: number,
+) {
+  stopGameLoop();
+  await startGameLoop(handler, newInterval);
+}
+
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
@@ -143,10 +175,15 @@ async function updateStats(
   }
 }
 
-setInterval(async () => {
+// TODO:
+// async function handleState for each screen state
+
+// listen for updates in public room states then update game loop interval.
+
+async function mainLoop() {
+  // main game loop here
   const start = performance.now();
   // let updatedCount = 0;
-  // main game state loop here
 
   // for each public_room_state:
   const { data: publicRoomStates } = await supabase
@@ -476,7 +513,8 @@ setInterval(async () => {
       commands?.length ?? 0
     } commands processed in ${end - start}ms`,
   );
-}, 1000);
+}
+startGameLoop(mainLoop, 1000);
 
 serve(async (req: Request) => {
   if (req.method !== "OPTIONS" && VERIFY_JWT) {
