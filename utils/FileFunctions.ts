@@ -18,7 +18,6 @@ export async function selectAndUploadImage(filePath: string) {
     //const fileName = img.fileName || `${new Date().getTime()}.${"png"}`;
     const fileName = `${new Date().getTime()}.${"png"}`;
     const filePathWithDocumentName = `${filePath}/${fileName}`;
-    console.log(img.type);
     const contentType = "image/png";
     await supabase.storage
       .from("files")

@@ -7,13 +7,9 @@ import React, { useState, useEffect, Fragment } from "react";
 import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
 import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
-import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
-import { decode } from "base64-arraybuffer";
 import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../../supabase";
 import ImageItem from "../../components/common/ImageItem";
-import * as DocumentPicker from "expo-document-picker";
 import { useProjectStore } from "../../stores/ProjectStore";
 import {
   selectAndUploadFile,
@@ -87,7 +83,6 @@ export default function FilesManagement() {
   };
 
   const [visible, setVisible] = useState(false);
-
   const [files, setFiles] = useState({
     pdf: [],
     docx: [],
