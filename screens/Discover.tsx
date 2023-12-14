@@ -22,7 +22,7 @@ import {
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
-import { useAlerts, useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
+import { handleErrors, useAlerts, useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 
 export default function Discover() {
@@ -112,85 +112,262 @@ export default function Discover() {
       },
     },
   );
+
+        const fetchSets = async (type: ManagementType, projectId: number) => {
+          const query = supabase
+            .from("sets")
+            .select("id,name,type,project_id,created_at")
+            .eq("type", type)
+            .eq("project_id", projectId);
+          return query;
+        };
+
+        const fetchFlashcards = async (setId: number) => {
+          const query = supabase
+          .from("flashcards")
+          .select("id,question,answer,priority,set_id,created_at")
+          .eq("set_id", setId)
+          .order("created_at");
+          return query;
+        };
+        
+        const fetchExercises = async (setId: number) => {
+          const query = supabase
+          .from("exercises")
+          .select("id,question,priority,set_id,created_at")
+          .eq("set_id", setId)
+          .order("created_at");
+          return query;
+        };
+
+        const fetchAnswers = async (exerciseId: number) => {
+          const query = supabase
+          .from("answers_exercises")
+          .select("exercise,order_position,answer,is_correct,created_at")
+          .eq("exercise", exerciseId)
+          .order("created_at");
+          return query;
+        };
+
+        const fetchLinks = async (projectId: number) => {
+          const query = supabase
+          .from("links")
+          .select("id,link_url,title,subtitle,description,learning_project,created_at")
+          .eq("learning_project", projectId)
+          .order("created_at");
+          return query;
+        };
+    
   
-  const { trigger: upsertSet } = useUpsertSet();
-  const { trigger: upsertFlashcard } = useUpsertFlashcard();
-  const save = async (project) => {
-    console.log("Save");
-    console.log(project.id);
-    console.log(project.name);
-  
-    try {
-      // Upsert the project and get the project_id
-      const upsertedProject = await upsert([
-        {
-          name: project.name,
-          description: project.description,
-          group: project.group,
-          is_published: project.is_published,
-          tags: project.tags,
-        },
-      ]);
-  
-      const upsertedProjectId = upsertedProject[0]?.id;
-      console.log("Test 1: ", upsertedProject[0]?.id);
-  
-      // Fetch flashcard sets for the existing project
-      const { data: flashcardSets } = useSets(ManagementType.FLASHCARD, project.id);
-  
-      // Map over each flashcard set
-      if (flashcardSets) {
-        // Use Promise.all to wait for all upsertSet calls to complete
-        await Promise.all(
-          flashcardSets.map(async (flashcardSet) => {
-            // TODO Upsert Set
-            const upsertedSetArray = await upsertSet({
-              //@ts-expect-error
-              name: flashcardSet.title,
-              type: flashcardSet.type,
-              //TODO get upserted project id
-              project_id: upsertedProjectId,
-            });
-            console.log(flashcardSet.name);
-  
-            // Get set id
-            const upsertedSet = upsertedSetArray?.[0];
-            const upsertedSetId = upsertedSet?.id;
-            console.log("Test 2: ", upsertedSetId);
-  
-            // Fetch exercise for the existing set
-            const { data: flashcards } = useFlashcards(flashcardSet.id);
-  
-            if (flashcards) {
-              await Promise.all(
-                flashcards.map(async (flashcard) => {
-                  //TODO upsert Flashcard
-                  await upsertFlashcard({
-                    //@ts-expect-error
-                    question: flashcard.question,
-                    answer: flashcard.answer,
-                    priority: flashcard.priority,
-                    //TODO get upserted set id
-                    set_id: upsertedSetId,
-                  });
+        interface SetType {
+          created_at: string;
+          id: number;
+          name: string;
+          project_id: number;
+          type: number;
+        }
+
+        const save = async (project) => {
+          console.log("Save");
+          console.log(project.id);
+          console.log(project.name);
+        
+          try {
+            // Upsert the project and get the project_id
+            const upsertedProject = await upsert([
+              {
+                name: project.name,
+                description: project.description,
+                group: project.group,
+                is_published: project.is_published,
+                tags: project.tags,
+              },
+            ]);
+        
+            const upsertedProjectId = upsertedProject[0]?.id;
+            console.log("Test 1: ", upsertedProject[0]?.id);
+        
+            // FLASHCARDS
+            const flashcardSets = await fetchSets(ManagementType.FLASHCARD, project.id);
+        
+            // Check if flashcardSets.data is not null or undefined and it's an array
+            if (flashcardSets && flashcardSets.data && Array.isArray(flashcardSets.data)) {
+        
+                flashcardSets.data.map(async (flashcardSet) => {
+                  // Upsert Set
+                  await supabase
+                    .from("sets")
+                    .upsert([
+                      {
+                        name: flashcardSet.name,
+                        type: flashcardSet.type,
+                        project_id: upsertedProjectId,
+                      },
+                    ]);
+
+                    const upsertedSetInformation = await supabase
+                    .from("sets")
+                    .select("*")
+                    .eq("name", flashcardSet.name)
+                    .eq("type", flashcardSet.type)
+                    .eq("project_id", upsertedProjectId)
+                    .single();
+        
+                    console.log("Upserted Set Information:", upsertedSetInformation);
+        
+                  // Check if data is not null before accessing it
+                  const upsertedSetData = upsertedSetInformation.data;
+        
+                    console.log("Upserted Set Data :", upsertedSetData);
+                    console.log("Upserted Set Id:", upsertedSetData.id);
+
+                    const upsertedSetId = upsertedSetData.id;
+                    console.log("Test 2: ", upsertedSetId);
+        
+                    // Fetch exercise for the existing set
+                    const flashcards = await fetchFlashcards(flashcardSet.id);
+        
+                    if (flashcards && flashcards.data && Array.isArray(flashcards.data)) {
+                        flashcards.data.map(async (flashcard) => {
+                          // Upsert Flashcard
+                          await supabase
+                            .from("flashcards")
+                            .upsert([
+                              {
+                                question: flashcard.question,
+                                answer: flashcard.answer,
+                                priority: flashcard.priority,
+                                set_id: upsertedSetId,
+                              },
+                            ]);
+                        })
+                    }
                 })
-              );
             }
-          })
-        );
-      }
+
+            // EXERCISES
+            const exerciseSets = await fetchSets(ManagementType.EXERCISE, project.id);
+
+            // Check if exerciseSets.data is not null or undefined and it's an array
+            if (exerciseSets && exerciseSets.data && Array.isArray(exerciseSets.data)) {
+        
+                exerciseSets.data.map(async (exerciseSet) => {
+                  // Upsert Set
+                  await supabase
+                    .from("sets")
+                    .upsert([
+                      {
+                        name: exerciseSet.name,
+                        type: exerciseSet.type,
+                        project_id: upsertedProjectId,
+                      },
+                    ]);
+
+                    const upsertedSetInformation = await supabase
+                    .from("sets")
+                    .select("*")
+                    .eq("name", exerciseSet.name)
+                    .eq("type", exerciseSet.type)
+                    .eq("project_id", upsertedProjectId)
+                    .single();
+        
+                    console.log("Upserted Set Information:", upsertedSetInformation);
+        
+                  const upsertedSetData = upsertedSetInformation.data;
+        
+                    console.log("Upserted Set Data :", upsertedSetData);
+                    console.log("Upserted Set Id:", upsertedSetData.id);
+
+                    const upsertedSetId = upsertedSetData.id;
+                    console.log("Test 2: ", upsertedSetId);
+        
+                    // Fetch exercise for the existing set
+                    const exercises = await fetchExercises(exerciseSet.id);
+                    console.log("Fetched Exercises");
+        
+                    if (exercises && exercises.data && Array.isArray(exercises.data)) {
+                        exercises.data.map(async (exercise) => {
+                          // Upsert Exercise
+                          await supabase
+                            .from("exercises")
+                            .upsert([
+                              {
+                                question: exercise.question,
+                                priority: exercise.priority,
+                                set_id: upsertedSetId,
+                              },
+                            ]);
+
+                            const upsertedExerciseInformation = await supabase
+                            .from("exercises")
+                            .select("*")
+                            .eq("question", exercise.question)
+                            .eq("priority", exercise.priority)
+                            .eq("set_id", upsertedSetId)
+                            .single();
+                
+                            console.log("Upserted Exercise Information:", upsertedExerciseInformation);
+                
+                          const upsertedExerciseId = upsertedExerciseInformation?.data.id;
+                          console.log("Existing Exercise Id", exercise.id);
+                          console.log("Upserted Exercise Id", upsertedExerciseId);
+
+                      //TODO get exercise answers and upsert answers
+                      // Fetch answers for the existing exercise
+                      const answers = await fetchAnswers(exercise.id);
+
+                      if (answers && answers.data && Array.isArray(answers.data)) {
+                        answers.data.map(async (answer) => {
+                          //TODO upsertAnswers
+                          await supabase
+                          .from("answers_exercises")
+                          .upsert([
+                            {
+                              order_position: answer.order_position,
+                              answer: answer.answer,
+                              is_correct: answer.is_correct,
+                              exercise: upsertedExerciseId,
+                            },
+                          ]);
+                        });
+                      }
+                        })
+                    }
+                })
+            }
+              // LINKS
+              // Fetch links for the existing project
+              const links = await fetchLinks(project.id);
   
-      success({
-        message: "The Project has been cloned.",
-      });
-  
-    } catch (error) {
-      errorAlert({
-        message: "There was an error trying to clone the project.",
-      });
-      console.error("Save error:", error.message);
-    }
-  };
+              if (links && links.data && Array.isArray(links.data)) {
+                links.data.map(async (link) => {
+                    // Upsert Link
+                    await supabase
+                      .from("links")
+                      .upsert([
+                        {
+                          link_url: link.link_url,
+                          title: link.title,
+                          subtitle: link.subtitle,
+                          description: link.description,
+                          learning_project: upsertedProjectId,
+                        },
+                      ]);
+                  })
+              }
+              // FILES
+        
+            success({
+              message: "The Project has been cloned.",
+            });
+          } catch (error) {
+            errorAlert({
+              message: "There was an error trying to clone the project.",
+            });
+            console.error("Save error:", error.message);
+          }
+        };
+        
   
 
   if (!data) return null;
@@ -253,6 +430,7 @@ export default function Discover() {
             <Card.Content>
               {cardVisibility[index] && (
                 <>
+                  <Text variant="bodyMedium">{item.id}</Text>
                   <Text variant="bodyMedium">{item.description}</Text>
                   <Text variant="bodyMedium">{item.group}</Text>
                   <View style={styles.horizontalCardButtons}>
@@ -310,3 +488,4 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
 });
+
