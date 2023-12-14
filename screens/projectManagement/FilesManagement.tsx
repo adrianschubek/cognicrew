@@ -15,10 +15,28 @@ import { supabase } from "../../supabase";
 import ImageItem from "../../components/common/ImageItem";
 import * as DocumentPicker from "expo-document-picker";
 import { useProjectStore } from "../../stores/ProjectStore";
+import {
+  selectAndUploadFile,
+  selectAndUploadImage,
+} from "../../utils/FileFunctions";
+import { useFiles } from "../../utils/hooks";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function FilesManagement() {
   const [photos, setPhotos] = useState<FileObject[]>([]);
   const projectId = useProjectStore((state) => state.projectId);
+  const {
+    data: photoData,
+    error: photoError,
+    isLoading: photosLoading,
+    mutate: mutatePhotos,
+  } = useFiles(`${projectId}/photos`);
+  const {
+    data: fileData,
+    error: fileError,
+    isLoading: filesLoading,
+    mutate: mutateFiles,
+  } = useFiles(`${projectId}/documents`);
   // obsolete for now
   const onRemoveImage = async (item: FileObject, listIndex: number) => {
     supabase.storage.from("files").remove([`${projectId}/${item.name}`]);
@@ -28,132 +46,44 @@ export default function FilesManagement() {
   };
 
   const onSelectImage = async () => {
-    const options: ImagePicker.ImagePickerOptions = {
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-    };
-
-    const result = await ImagePicker.launchImageLibraryAsync(options);
-    if (!result.canceled) {
-      const img = result.assets[0];
-      const base64 = await FileSystem.readAsStringAsync(img.uri, {
-        encoding: "base64",
-      });
-      // Update the file path to include the 'photos' folder
-      const filePath = `${projectId}/photos/${new Date().getTime()}.${
-        img.type === "image" ? "png" : "mp4"
-      }`;
-      const contentType = img.type === "image" ? "image/png" : "video/mp4";
-      await supabase.storage
-        .from("files")
-        .upload(filePath, decode(base64), { contentType });
-      await loadImages();
-    }
-  };
-
-  // Loads only image files from the 'photos' directory
-  const loadImages = async () => {
-    const { data, error } = await supabase.storage
-      .from("files")
-      .list(`${projectId}/photos`, {
-        limit: 100,
-        offset: 0,
-      });
-
-    if (error) {
-      console.error("Error loading images:", error.message);
-    } else if (data) {
-      // Assuming that all files in the 'photos' directory are images
-      setPhotos(data);
-    }
-  };
-
-  // Loads files within the "documents" directory
-  const loadFiles = async () => {
-    const { data, error } = await supabase.storage
-      .from("files")
-      .list(`${projectId}/documents`, {
-        limit: 100,
-        offset: 0,
-      });
-
-    if (error) {
-      console.error("Error loading files:", error.message);
-    } else if (data) {
-      const filesWithExtension = data.map((file) => {
-        const extension = file.name.split(".").pop().toLowerCase();
-        return { ...file, extension };
-      });
-
-      const categorizedFiles = filesWithExtension.reduce(
-        (acc, file) => {
-          if (file.extension === "pdf") {
-            acc.pdf.push(file);
-          } else if (file.extension === "docx") {
-            acc.docx.push(file);
-          } else if (file.extension === "xlsx") {
-            acc.xlsx.push(file);
-          } else {
-            acc.misc.push(file);
-          }
-          return acc;
-        },
-        { pdf: [], docx: [], xlsx: [], misc: [] },
-      );
-
-      setFiles(categorizedFiles);
-    }
+    const filePath = `${projectId}/photos`;
+    await selectAndUploadImage(filePath);
+    mutatePhotos();
   };
 
   useEffect(() => {
-    loadImages();
-    loadFiles();
-  }, []);
+    if (!photoData) return;
+    setPhotos(photoData.data);
+  }, [photoData]);
+
+  useEffect(() => {
+    if (!fileData) return;
+    const filesWithExtension = fileData.data.map((file) => {
+      const extension = file.name.split(".").pop().toLowerCase();
+      return { ...file, extension };
+    });
+    const categorizedFiles = filesWithExtension.reduce(
+      (acc, file) => {
+        if (file.extension === "pdf") {
+          acc.pdf.push(file);
+        } else if (file.extension === "docx") {
+          acc.docx.push(file);
+        } else if (file.extension === "xlsx") {
+          acc.xlsx.push(file);
+        } else {
+          acc.misc.push(file);
+        }
+        return acc;
+      },
+      { pdf: [], docx: [], xlsx: [], misc: [] },
+    );
+    setFiles(categorizedFiles);
+  }, [fileData]);
 
   const onSelectDocument = async () => {
-    let result;
-    try {
-      result = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // Allow all file types
-        copyToCacheDirectory: true,
-      });
-    } catch (error) {
-      console.error("Error picking a document:", error);
-      return;
-    }
-    if (result?.assets && result?.assets[0]) {
-      const pickedFile = result.assets[0];
-      const uri = pickedFile.uri;
-      const mimeType = pickedFile.mimeType || "application/octet-stream";
-
-      const isImage = mimeType.startsWith("image");
-      let fileExtension = mimeType.split("/").pop();
-      const folderPath = isImage ? "photos" : "documents";
-      const newFileName = `${new Date().getTime()}.${fileExtension}`;
-      const filePath = `${projectId}/${folderPath}/${newFileName}`;
-
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem?.EncodingType?.Base64,
-      });
-
-      const { error } = await supabase.storage
-        .from("files")
-        .upload(filePath, decode(base64), {
-          contentType: mimeType,
-        });
-
-      if (error) {
-        console.error("Error uploading file:", error.message);
-      } else {
-        console.log("File uploaded successfully:", filePath);
-        // Refresh the lists
-        if (isImage) {
-          await loadImages();
-        } else {
-          await loadFiles();
-        }
-      }
-    }
+    (await selectAndUploadFile(`${projectId}`, true)).isImage
+      ? mutatePhotos()
+      : mutateFiles();
   };
 
   const [visible, setVisible] = useState(false);
@@ -229,6 +159,8 @@ export default function FilesManagement() {
     { title: "Excel Documents (.xlsx)", files: files.xlsx },
     { title: "Miscellaneous", files: files.misc },
   ];
+  if (photosLoading || filesLoading)
+    return <LoadingOverlay visible={photosLoading || filesLoading} />;
   return (
     <View style={styles.container}>
       <VirtualizedList

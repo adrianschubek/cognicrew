@@ -3,9 +3,9 @@ import {
   useDeleteMutation,
   useInsertMutation,
   useQuery,
-  useUpsertMutation
+  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-
+import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../supabase";
 import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
@@ -14,11 +14,7 @@ import { BackHandler } from "react-native";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { KeyedMutator } from "swr";
-import { PostgrestSingleResponse } from "@supabase/postgrest-js";
-import { set } from "cypress/types/lodash";
-
-
+import useSWR, { KeyedMutator } from "swr";
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
@@ -433,6 +429,26 @@ export function useDeleteProject() {
   return handleErrors(
     useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"),
   );
+}
+
+export function useFiles(filePath: string, limit?: number) {
+  const fetchFiles = () =>
+    supabase.storage.from("files").list(filePath, {
+      limit: limit ? limit : 100,
+      offset: 0,
+    });
+
+  const {
+    data,
+    error,
+    mutate,
+  } = handleErrors(useSWR(["images", filePath], fetchFiles));
+  return {
+    data,
+    isLoading: !error && !data,
+    error: error,
+    mutate,
+  };
 }
 
 export function useConfirmLeaveLobby() {
