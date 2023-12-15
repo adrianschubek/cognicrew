@@ -431,14 +431,21 @@ export function useDeleteProject() {
   );
 }
 
-export function useFiles(filePath: string, limit?: number) {
+export function useFiles(
+  filePath: string,
+  limit?: number,
+  bucketName?: string,
+) {
+  const bucket = bucketName || "files";
   const fetchFiles = () =>
-    supabase.storage.from("files").list(filePath, {
+    supabase.storage.from(bucket).list(filePath, {
       limit: limit ? limit : 100,
       offset: 0,
     });
 
-  const { data, error, mutate } = handleErrors(useSWR([filePath], fetchFiles));
+  const { data, error, mutate } = handleErrors(
+    useSWR(["getFiles", filePath], fetchFiles),
+  );
   return {
     data,
     isLoading: !error && !data,
@@ -451,7 +458,7 @@ export function useFileUrl(filePath: string, bucketName?: string) {
   const fetchPublicUrl = () =>
     supabase.storage.from(bucket).getPublicUrl(filePath);
   const { data, error, mutate } = handleErrors(
-    useSWR([filePath], fetchPublicUrl),
+    useSWR(["url", filePath], fetchPublicUrl),
   );
   return {
     data,
