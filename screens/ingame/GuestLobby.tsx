@@ -34,10 +34,6 @@ export default function GuestLobby() {
           setRoom(null);
           setRoomState(null);
           console.log("room was closed by host (guest lobby)");
-          warning({
-            key: "guest-lobby-closed",
-            message: "Room was closed by host",
-          });
         }
       });
     };
