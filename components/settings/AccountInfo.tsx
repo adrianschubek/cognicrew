@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import { set } from "cypress/types/lodash";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
@@ -27,17 +26,32 @@ const Account = (props) => {
   const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
     useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>(null);
+  const [reloadImage, setReloadImage] = useState<boolean>(false);
   const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
   const { data, error, isLoading, mutate } = useFileUrl(
     filePath,
     "profile-pictures",
   );
+  const {
+    data: fileData,
+    error: fileError,
+    isLoading: fileLoading,
+    mutate: mutateFile,
+  } = useFiles(filePath, 1, "profile-pictures");
   useEffect(() => {
-    if (!data || !data?.data?.publicUrl) return;
-    console.log(data.data.publicUrl);
+    if (!data) return;
     setImageUrl(data.data.publicUrl + "/avatar");
+  }, [data, reloadImage]);
+
+  useEffect(() => {
+    if (!fileData) return;
+    if (fileData.data.length === 0) {
+      setAlreadyHasCustomAvatar(false);
+      return;
+    }
+    console.log(fileData.data[0].name);
     setAlreadyHasCustomAvatar(true);
-  }, [data]);
+  }, [fileData]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <TouchableOpacity
@@ -48,6 +62,20 @@ const Account = (props) => {
           okText: "Done",
           cancelText: "",
           fields: [
+            {
+              type: "custom",
+
+              render() {
+                return (
+                  <Avatar.Image
+                    {...props}
+                    style={{ alignSelf: "center", marginBottom: 10 }}
+                    size={200}
+                    source={{ uri: imageUrl }}
+                  />
+                );
+              },
+            },
             {
               label: "Remove avatar",
               type: "button",
@@ -68,8 +96,11 @@ const Account = (props) => {
                 await selectAndUploadImage(filePath, {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
+                }).then(() => {
+                  mutate();
+                  mutateFile();
+                  //setReloadImage(!reloadImage);
                 });
-                mutate();
               },
               errorText: "Could not upload image",
             },
@@ -78,7 +109,7 @@ const Account = (props) => {
       }}
     >
       {alreadyHasCustomAvatar ? (
-        <Avatar.Image {...props} source={{ uri: imageUrl }} />
+        <Avatar.Image {...props} source={{ uri: imageUrl }} key={reloadImage} />
       ) : (
         //<Avatar.Icon {...props} icon="account" />
         <Avatar.Text {...props} label={username.substring(0, 2)} />
