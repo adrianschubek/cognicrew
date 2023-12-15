@@ -15,8 +15,39 @@ import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
+import { selectAndUploadImage } from "../../utils/FileFunctions";
 
-const Account = (props) => <Avatar.Icon {...props} icon="account" />;
+const Account = (props) => {
+  const { confirm } = useAlerts();
+  return (
+    <Avatar.Icon
+      {...props}
+      icon="account"
+      onPress={() => {
+        const alreadyHasCustomAvatar = false; //add option later
+        const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
+        confirm({
+          icon: icon,
+          title: "Change your avatar",
+          messageStyle: { textAlign: "left" },
+          okText: "Done",
+          okAction: async (vars) => {
+            const filePath = "";
+            selectAndUploadImage(filePath);
+          },
+          fields: [
+            {
+              label: "Your friend's nickname",
+              type: "text",
+              icon: "account-plus",
+              errorText: "Could not upload image",
+            },
+          ],
+        });
+      }}
+    />
+  );
+};
 
 export const LogoutButton = () => {
   const theme = useTheme();
