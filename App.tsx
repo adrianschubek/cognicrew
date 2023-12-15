@@ -21,7 +21,7 @@ import { AlertContainer } from "react-native-paper-fastalerts";
 import { SWRConfig } from "swr";
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 // import { Appearance, useColorScheme } from "react-native";
-import { Audio } from 'expo-av';
+import { Audio } from "expo-av";
 import { useSoundsStore } from "./stores/SoundsStore";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
@@ -50,35 +50,49 @@ const CombinedDarkTheme = {
   },
 };
 
-
-
 export default function App() {
-
   const sound = useRef(new Audio.Sound());
   const { inGame } = useSoundsStore();
+  const { musicVolume } = usePreferencesStore();
+
+  async function playSound() {
+    if (sound.current._loaded) {
+      await sound.current.stopAsync();
+      await sound.current.unloadAsync();
+    }
+    try {
+      if (!inGame) {
+        await sound.current.loadAsync(
+          require("./assets/sounds/musicmusicmusic.mp3"),
+        );
+      } else {
+        await sound.current.loadAsync(require("./assets/sounds/Tetris.mp3"));
+      }
+      await sound.current.setIsLoopingAsync(true);
+      await sound.current.playAsync();
+      await sound.current.setVolumeAsync(musicVolume[0]);
+    } catch (error) {
+      console.error("Error playing audio", error);
+    }
+  }
+
+  async function changeVolume() {
+    if (sound.current._loaded) {
+      try {
+        await sound.current.setVolumeAsync(musicVolume[0]);
+      } catch (error) {
+        console.error("Error changing volume", error);
+      }
+    }
+  }
 
   useEffect(() => {
-    const playSound = async () => {
-      sound.current.unloadAsync();
-      try {
-        if(!inGame){
-          await sound.current.loadAsync(require('./assets/sounds/musicmusicmusic.mp3'));
-         } else {
-          await sound.current.loadAsync(require('./assets/sounds/Tetris.mp3'));
-         }
-        await sound.current.setIsLoopingAsync(true);
-        await sound.current.playAsync();
-      } catch (error) {
-        console.error('Error playing audio', error);
-      }
-    };
-
     playSound();
-
-    return () => {
-      sound.current.unloadAsync();
-    };
   }, [inGame]);
+
+  useEffect(() => {
+    changeVolume();
+  }, [musicVolume]);
 
 
   // TODO: useColorScheme to detect system theme and set it
