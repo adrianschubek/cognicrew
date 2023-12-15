@@ -19,6 +19,9 @@ import { ManagementType } from "../../types/common";
 import { useUpsertFlashcard } from "../../utils/hooks";
 import { checkForLineBreak } from "../../utils/common";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function AddFlashcards({ showAddingFlashcards, close }) {
   const theme = useTheme();
   const { isMutating, trigger: upsertFlashcard } = useUpsertFlashcard();

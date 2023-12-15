@@ -20,6 +20,9 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { ManagementType } from "../../types/common";
 
+/**
+ * @deprecated delete this. useAlerts hook instead
+ */
 export default function ManageSets(props: {
   showManageSets: boolean;
   close: () => any;

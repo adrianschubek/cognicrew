@@ -4,12 +4,10 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import ManageFriends from "./ManageFriends";
 import Achievements from "./Achievements";
 import React from "react";
-import { useSoundSystem1 } from "../utils/hooks";
 import { Icon, Text, useTheme } from "react-native-paper";
 
 const Top = createMaterialTopTabNavigator();
 export default function AccountManage({ navigation }) {
-  useSoundSystem1();
   const theme = useTheme();
 
   return (

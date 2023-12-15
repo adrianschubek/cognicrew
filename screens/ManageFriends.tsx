@@ -16,7 +16,6 @@ import {
 } from "react-native-responsive-dimensions";
 import {
   friendIdsAndNames,
-  
   useDeleteFriend,
   useFriends,
   useInsertFriend,
@@ -102,6 +101,7 @@ export default function ManageFriends({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
         (payload) => {
+          console.log("refetching friends");
           mutate();
         },
       )
@@ -110,17 +110,14 @@ export default function ManageFriends({ navigation }) {
 
   useEffect(() => {
     if (!data) return;
-    const fetchData = async () => {
-      const { data } = await friendIdsAndNames();
-      setFriendIdsAndNamesData(data);
-    };
-    fetchData();
-  }, [data]);
-  useEffect(() => {
-    if (!data) return;
     //setFriendPairs(data);
     setFriendRequestsSent(filterForPendingFriends(data, "sent")),
       setFriendRequestsReceived(filterForPendingFriends(data, "received"));
+    const fetchData = async () => {
+      const { data: data2 } = await friendIdsAndNames();
+      setFriendIdsAndNamesData(data2);
+    };
+    fetchData();
   }, [data]);
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;

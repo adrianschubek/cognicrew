@@ -14,9 +14,41 @@ import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
+import { selectAndUploadImage } from "../../utils/FileFunctions";
 
-const Account = (props) => <Avatar.Icon {...props} icon="account" />;
+const Account = (props) => {
+  const { confirm } = useAlerts();
+  const {user} = useAuth();
+  const alreadyHasCustomAvatar = false; //add option maybe later
+  const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
+  return (
+    <TouchableOpacity
+      onPress={() => {
+        return confirm({
+          icon: icon,
+          title: "Change your avatar",
+          okText: "Done",
+          cancelText:"",
+          fields: [
+            {
+              label: "Upload image",
+              type: "button",
+              icon: "image-plus",
+              action: async () => {
+                const filePath = `${user.id}/avatar`;
+                selectAndUploadImage(filePath);
+              },
+              errorText: "Could not upload image",
+            },
+          ],
+        });
+      }}
+    >
+      <Avatar.Icon {...props} icon="account" />
+    </TouchableOpacity>
+  );
+};
 
 export const LogoutButton = () => {
   const theme = useTheme();

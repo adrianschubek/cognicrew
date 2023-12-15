@@ -82,9 +82,6 @@ serve(async (req) => {
     switch (body.type) {
       case "flashcard_answer":
       case "exercise_answer": {
-        // |check if user answer is correct and save it to db. update public_room_state ONLY IN MAIN LOOP TO AVOID RACE CONDITION (currentCOrrect, etc.)
-        // store "true" or "false" in db
-
         // check if round is active
         if (
           publicState.roundEndsAt < dayjs().valueOf() ||
@@ -94,8 +91,6 @@ serve(async (req) => {
         // check if round is still active
         if (publicState.screen !== ScreenState.INGAME)
           return err("Round is over (#24b)", 400);
-
-        // TODO: game option: can users change their answer?
 
         // check and save if answer is correct
         const { error } = await supabase.from("player_answers").upsert({
@@ -131,6 +126,7 @@ serve(async (req) => {
       case "reset_room": {
         // => reset room back to lobby if host. ---nein otherwise leave room (clientside return true to leave room for non host)
         // check if user is host
+        // FIXME: refactor use is_host in publicState
         const { data: hostData, error: hostError } = await supabase
           .from("rooms")
           .select("host")
@@ -154,6 +150,12 @@ serve(async (req) => {
       }
       case "skip_round":
         return err("Not implemented (#27)", 501);
+        break;
+      case "end_game":
+        return err("Not implemented (#27a)", 501);
+
+        
+
         break;
       default:
         return err(`Invalid action "${(body as any).type} (#28)"`, 400);

@@ -3,26 +3,14 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import {
   responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
+  responsiveWidth
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
-import { useState } from "react";
-import CreateFlashCardGame from "../components/dialogues/CreateFlashcardGame";
-import CreateQuizGame from "../components/dialogues/CreateQuizGame";
 import { NAVIGATION } from "../types/common";
 
 export default function LearningRoom({ navigation }) {
-  const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
-  const [showCreateQuizGame, setShowCreateQuizGame] = useState(false);
-
   return (
     <>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
-      />
-
       <View style={styles.container}>
         <StatusBar style="auto" />
         <LearningProjectCategory
@@ -39,7 +27,6 @@ export default function LearningRoom({ navigation }) {
           flexDirection="row-reverse"
           mode="contained"
           function={() => {
-            setShowCreateFlashcardGame(true);
             console.log("Flashcard Game Pressed");
           }}
         />
@@ -53,14 +40,6 @@ export default function LearningRoom({ navigation }) {
           }}
         />
       </View>
-      <CreateFlashCardGame
-        showCreateFlashcardGame={showCreateFlashcardGame}
-        close={() => setShowCreateFlashcardGame(false)}
-      />
-      <CreateQuizGame
-        showCreateQuizGame={showCreateQuizGame}
-        close={() => setShowCreateQuizGame(false)}
-      />
     </>
   );
 }

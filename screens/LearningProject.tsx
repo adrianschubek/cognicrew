@@ -10,14 +10,12 @@ import LearningProjectCategory from "../components/learningProject/LearningProje
 import { ManagementType, NAVIGATION } from "../types/common";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
-import { useSoundSystem1 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStore } from "../stores/RoomStore";
 
 export default function LearningProject({ navigation, route }) {
-  useSoundSystem1();
 
   const { user } = useAuth();
   const { project } = route.params;
@@ -177,7 +175,7 @@ export default function LearningProject({ navigation, route }) {
                 type: "number",
                 helperText: "The maximum amount of players in this room.",
                 icon: "account-group",
-                defaultValue: "2",
+                defaultValue: "10",
                 validator: (value) => /^[1-9][0-9]?$|^100$/.test(value),
                 errorText: "Size must be between 1 and 100",
               },

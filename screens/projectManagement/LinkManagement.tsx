@@ -14,7 +14,6 @@ import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCard from "../../components/learningProject/LinkCard";
 import {
   useLinks,
-  useSoundSystem1,
   useUpsertLink,
 } from "../../utils/hooks";
 import { useEffect, useState } from "react";
@@ -25,7 +24,6 @@ import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();
-  useSoundSystem1();
 
   function ensureHttpURL(url: string) {
     return url.match(/^(https?:\/\/)/i)

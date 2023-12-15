@@ -38,7 +38,6 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function MainTab() {
-  const theme = useTheme();
 
   return (
     <Stack.Navigator>
@@ -197,7 +196,7 @@ function MainTabs({ navigation }) {
             case "UPDATE":
               // room state update
               // console.debug(payload.new.data);
-
+              setRoomState(payload.new.data);
               // navigate to correct screen payload.new.data.screen
               switch (payload.new.data.screen) {
                 case ScreenState.LOBBY:
@@ -224,8 +223,6 @@ function MainTabs({ navigation }) {
                   navigation.navigate(NAVIGATION.END_RESULTS);
                   break;
               }
-
-              setRoomState(payload.new.data);
               break;
             case "DELETE":
               if (payload.old.room_id !== room?.id) {

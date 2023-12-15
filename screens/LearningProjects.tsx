@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
 import { Tooltip, IconButton, Icon, useTheme, Text } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
-import { useSoundSystem1 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect } from "react";
 import Discover from "./Discover";
@@ -13,7 +12,6 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
-  useSoundSystem1();
   const theme = useTheme();
 
   const { info } = useAlerts();

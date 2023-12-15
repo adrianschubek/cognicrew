@@ -12,6 +12,7 @@ import {
   Dialog,
   useTheme,
   Card,
+  IconButton,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -21,7 +22,6 @@ import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
 import {
   useConfirmLeaveLobby,
-  useSoundSystem2,
 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
@@ -33,16 +33,17 @@ import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useFocusEffect } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
+import { useSoundsStore } from "../stores/SoundsStore";
 
 export default function FlashcardGame({ route, navigation }) {
-  useSoundSystem2();
-  useConfirmLeaveLobby();
+  const { setInGame } = useSoundsStore();
 
+  useConfirmLeaveLobby();
   const theme = useTheme();
   const { user } = useAuth();
   const roomState = useRoomStateStore((state) => state.roomState);
 
-  const { error: errrorAlert } = useAlerts();
+  const { error: errrorAlert, confirm } = useAlerts();
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [isInvoking, setIsInvoking] = useState(false);
   async function answer() {
@@ -63,6 +64,13 @@ export default function FlashcardGame({ route, navigation }) {
     setAlreadySubmitted(false);
   }, [roomState?.round]);
 
+  useEffect(() => {
+    setInGame(true);
+    return () => {
+      setInGame(false);
+    };
+  }, []);
+
   const [userInput, setUserInput] = useState("");
 
   const MemoTimer = useMemo(
@@ -81,7 +89,39 @@ export default function FlashcardGame({ route, navigation }) {
   return (
     <>
       <View style={{ paddingVertical: 20, flex: 1 }}>
+        
         <View style={{ flex: 1 }}>
+        <IconButton
+          mode="contained"
+          style={{
+            //backgroundColor: theme.colors.error,
+            position: "absolute",
+            left: 0,
+            top: 8,
+            borderRadius: 10,
+            backgroundColor: theme.colors.background,
+            transform: [{ rotateZ: "180deg" }],
+          }}
+          icon="logout"
+          //iconColor={theme.colors.onErrorContainer}
+          onPress={() => {
+            confirm({
+              key: "leaveroom",
+              title: "Leave game?",
+              message: "Do you want to leave this game and return to lobby?",
+              icon: "location-exit",
+              okText: "Leave",
+              okAction: async () => {
+                const { error } = await supabase.functions.invoke("room-update", {
+                  body: {
+                    type: "reset_room",
+                  } as RoomClientUpdate,
+                });
+                if (error) return await handleEdgeError(error);
+              },
+            });
+          }}
+        />
           <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
             Question {roomState.round} of {roomState.totalRounds}
           </Dialog.Title>

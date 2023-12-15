@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
-import { Divider, Text } from "react-native-paper";
+import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { supabase } from "../supabase";
@@ -9,21 +9,95 @@ import StatisticCategory from "../components/profile/StatisticCategory";
 
 export default function GlobalStatistics() {
 
-  const widthAndHeight = 100;
-  const series = [10, 10, 10];
+  const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
+  const [totalTimeCards, setTotalTimeSpentCards] = useState(null);
+  const [totalTimeBoard, setTotalTimeSpentBoard] = useState(null);
 
-  // Filter out values that are 0
-  const filteredSeries = series.filter((value) => value !== 0);
 
-  const sliceColor = ["#fbd203", "#ffb300", "#ff9100"].slice(0, filteredSeries.length);
+  const lightTheme = {
+    ...LightTheme,
+    colors: {
+      ...LightTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#000000",
+      globalRank:  "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
 
-  const sumTimeGames = filteredSeries.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
-
-  const percentExercise = sumTimeGames === 0 ? 0 : ((filteredSeries[0] / sumTimeGames) * 100).toFixed(2);
-  const percentQuiz = sumTimeGames === 0 ? 0 : ((filteredSeries[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard = sumTimeGames === 0 ? 0 : ((filteredSeries[2] / sumTimeGames) * 100).toFixed(2);
+  const darkTheme = {
+    ...DarkTheme,
+    colors: {
+      ...DarkTheme.colors,
+      pieChartFirst: "#4893B0",
+      pieChartSecond: "#663399",
+      pieChartThird: "#93CCA1",
+      isZero: "#FFFFFF",
+      globalRank: "#d4af37",
+      friendRank: "#843da3"
+    },
+  };
 
   
+  const { dark } = useTheme(); 
+  const theme = dark ? darkTheme : lightTheme;
+
+  const widthAndHeight = 100;
+  const series = [
+    parseFloat(formatTimeSpent(totalTimeQuiz)),
+    parseFloat(formatTimeSpent(totalTimeCards)),
+    parseFloat(formatTimeSpent(totalTimeBoard)),
+  ];
+  const filteredSeries = series.filter((value) => value !== 0);
+  const sumTimeGames = filteredSeries.reduce(
+    (accumulator, currentValue) => accumulator + currentValue,
+    0,
+  );
+  const percentExercise =
+    series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
+  const percentQuiz =
+    series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
+  const percentWhiteboard =
+    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
+
+  function formatTimeSpent(milliseconds: number) {
+    return (milliseconds / 60 / 60 / 60).toFixed(2);
+  }
+
+  function calcColors() {
+    const quizGotTime = series[0] === 0 ? false : true;
+    const cardsGotTime = series[1] === 0 ? false : true;
+    const whiteboardGotTime = series[2] === 0 ? false : true;
+
+    const state =
+      (quizGotTime ? 1 : 0) |
+      (cardsGotTime ? 2 : 0) |
+      (whiteboardGotTime ? 4 : 0);
+
+    switch (state) {
+      case 0: 
+      return [[], [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero]];
+      case 1:
+      return[[theme.colors.pieChartFirst], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero]];
+      case 2: 
+      return[[theme.colors.pieChartSecond], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero]];
+      case 3: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond], theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+      case 4:
+      return[[theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 5: 
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird]];
+      case 6: 
+      return[[theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      case 7:
+      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+      default:
+        console.log("Something went wrong");
+        return[[], theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+    }
+  }
 
   const [countExercises, setCountExercises] = useState(null);
   const [countFlashcards, setCountFlashcards] = useState(null);
@@ -34,6 +108,28 @@ export default function GlobalStatistics() {
   const [countLearningProjects, setCountLearningProjects] = useState(null);
 
   const { user } = useAuth();
+
+  async function calcGameStats() {
+    let { data, error } = await supabase
+      .from("user_learning_projects")
+      .select("stats")
+      .eq("user_id", user.id); 
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      let helperTotalTimeQuiz = 0;
+      let helperTotalTimeCards = 0;
+      let helperTotalTimeBoard = 0;
+      for (let i = 0; i < data.length; i++) {
+        helperTotalTimeQuiz += data[i]["stats"]["timeSpentQuiz"];
+        helperTotalTimeCards += data[i]["stats"]["timeSpentFlashcards"];
+        helperTotalTimeBoard += data[i]["stats"]["timeSpentWhiteboard"];
+      }
+      setTotalTimeSpentQuiz(helperTotalTimeQuiz);
+      setTotalTimeSpentCards(helperTotalTimeCards);
+      setTotalTimeSpentBoard(helperTotalTimeBoard);
+    }
+  }
 
   async function calcCountExercises() {
     const { count, error } = await supabase
@@ -113,6 +209,7 @@ export default function GlobalStatistics() {
         setCountDocuments(documentsCount);
         setCountPhotos(photosCount);
         calcCountLearningProjects();
+        calcGameStats();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }
@@ -126,7 +223,7 @@ export default function GlobalStatistics() {
         {
           dataPoints: [
             `Total amount of learning projects: ${countLearningProjects}`,
-            `Total time spent on this app:`,
+            `Total time spent playing CogniGames: ${series[0] + series[1] + series[2]} hours`,
           ],
         },
       ],
@@ -150,25 +247,27 @@ export default function GlobalStatistics() {
       dataPointCategories: [
         {
           dataPoints: [`Exercises: ${series[0]} hours, ${percentExercise} %`],
-          textColor: sliceColor[0],
+          textColor: calcColors()[1][0],
         },
         {
           dataPoints: [`Flashcards: ${series[1]} hours, ${percentQuiz} %`],
-          textColor: sliceColor[1],
+          textColor: calcColors()[1][1],
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: sliceColor[2],
+          textColor: calcColors()[1][2],
         },
       ],
-      pieChart: {
-        widthAndHeight: widthAndHeight,
-        series: series,
-        sliceColor: sliceColor,
-      },
+      ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
+        pieChart: {
+          widthAndHeight: widthAndHeight,
+          series: filteredSeries,
+          sliceColor: calcColors()[0],
+        },
+      }),
     },
   ];
   return (
@@ -179,8 +278,8 @@ export default function GlobalStatistics() {
           return (
             <StatisticCategory
               key={index}
-              titleVariant="headlineSmall"
-              textVariant="bodyLarge"
+              //titleVariant="headlineSmall"
+              //textVariant="bodyLarge"
               data={{
                 title: item.title,
                 dataPointCategories: item.dataPointCategories,
