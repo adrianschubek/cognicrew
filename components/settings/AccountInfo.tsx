@@ -37,20 +37,19 @@ const Account = (props) => {
     error: fileError,
     isLoading: fileLoading,
     mutate: mutateFile,
-  } = useFiles(filePath, 100, "profile-pictures");
+  } = useFiles(filePath, 1, "profile-pictures");
   useEffect(() => {
     if (!data) return;
-    console.log(data.data.publicUrl + "/avatar");
     setImageUrl(data.data.publicUrl + "/avatar");
   }, [data, reloadImage]);
 
   useEffect(() => {
     if (!fileData) return;
-    console.log("???", fileData.data);
     if (fileData.data.length === 0) {
       setAlreadyHasCustomAvatar(false);
       return;
     }
+    console.log(fileData.data[0].name);
     setAlreadyHasCustomAvatar(true);
   }, [fileData]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
@@ -99,6 +98,7 @@ const Account = (props) => {
                   fileName: "avatar",
                 }).then(() => {
                   mutate();
+                  mutateFile();
                   //setReloadImage(!reloadImage);
                 });
               },
