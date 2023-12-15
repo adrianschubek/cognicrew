@@ -436,7 +436,7 @@ export default function ProjectStatistics() {
       <Card>
         <Card.Title
           titleVariant={heading}
-          title="Ranking"
+          title="Leaderboard"
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>
@@ -456,7 +456,7 @@ export default function ProjectStatistics() {
       <Card>
         <Card.Title
           titleVariant={heading}
-          title="Leaderboard"
+          title="Game statistics"
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>
