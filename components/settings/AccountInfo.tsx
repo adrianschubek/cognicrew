@@ -83,8 +83,9 @@ const Account = (props) => {
               action: async () => {
                 await supabase.storage
                   .from("profile-pictures")
-                  .remove([filePath]);
+                  .remove([filePath + "/avatar"]);
                 mutate();
+                mutateFile();
               },
               errorText: "Could not remove image",
             },
