@@ -3,7 +3,6 @@ import * as jose from "https://deno.land/x/jose@v4.14.4/index.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 import dayjs from "https://esm.sh/dayjs@1.11.10";
 import {
-  GameState,
   PrivateRoomState,
   PublicRoomState,
   UserProjectStats,
@@ -175,9 +174,6 @@ async function updateStats(
   }
 }
 
-// TODO:
-// async function handleState for each screen state
-
 // listen for updates in public room states then update game loop interval.
 
 async function mainLoop() {
@@ -231,7 +227,9 @@ async function mainLoop() {
       player.currentTimeNeeded = playerAnswer.answer_time;
     }
 
-    // Process commands for this room
+    /**
+     * Process commands for this room
+     */
     const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
     if (roomCmds) {
       for (const cmd of roomCmds) {
@@ -340,6 +338,7 @@ async function mainLoop() {
               (pa) =>
                 pa.room_id === state.room_id && pa.round === newState.round,
             ) ?? [];
+          // @ts-expect-error may contain fewer elements
           let answersWithCountWithIsCorrect: [string, number, boolean][] =
             roundAnswers.answers
               .map((answer, i) => [
@@ -561,6 +560,7 @@ serve(async (req: Request) => {
   const envVars = Object.keys(envVarsObj).map((k) => [k, envVarsObj[k]]);
 
   try {
+    // @ts-expect-error Cannot find name 'EdgeRuntime'.deno-ts(2304)
     const worker = await EdgeRuntime.userWorkers.create({
       servicePath,
       memoryLimitMb,
