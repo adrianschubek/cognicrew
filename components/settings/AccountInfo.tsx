@@ -17,18 +17,25 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import { set } from "cypress/types/lodash";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
   const { user } = useAuth();
   const username = user.user_metadata.username;
-  const filePath = `${user.id}/avatar`;
+  const filePath = `${user.id}`;
   const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
     useState<boolean>(false);
+  const [imageUrl, setImageUrl] = useState<string>(null);
   const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
-  const { data, error, isLoading, mutate } = useFileUrl(filePath);
+  const { data, error, isLoading, mutate } = useFileUrl(
+    filePath,
+    "profile-pictures",
+  );
   useEffect(() => {
     if (!data || !data?.data?.publicUrl) return;
+    console.log(data.data.publicUrl);
+    setImageUrl(data.data.publicUrl + "/avatar");
     setAlreadyHasCustomAvatar(true);
   }, [data]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
@@ -42,11 +49,26 @@ const Account = (props) => {
           cancelText: "",
           fields: [
             {
+              label: "Remove avatar",
+              type: "button",
+              icon: "image-remove",
+              action: async () => {
+                await supabase.storage
+                  .from("profile-pictures")
+                  .remove([filePath]);
+                mutate();
+              },
+              errorText: "Could not remove image",
+            },
+            {
               label: "Upload image",
               type: "button",
               icon: "image-plus",
               action: async () => {
-                await selectAndUploadImage(filePath, "avatar");
+                await selectAndUploadImage(filePath, {
+                  bucketName: "profile-pictures",
+                  fileName: "avatar",
+                });
                 mutate();
               },
               errorText: "Could not upload image",
@@ -56,7 +78,7 @@ const Account = (props) => {
       }}
     >
       {alreadyHasCustomAvatar ? (
-        <Avatar.Image {...props} source={{ uri: data.data.publicUrl }} />
+        <Avatar.Image {...props} source={{ uri: imageUrl }} />
       ) : (
         //<Avatar.Icon {...props} icon="account" />
         <Avatar.Text {...props} label={username.substring(0, 2)} />

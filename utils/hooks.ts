@@ -446,9 +446,10 @@ export function useFiles(filePath: string, limit?: number) {
     mutate,
   };
 }
-export function useFileUrl(filePath: string) {
+export function useFileUrl(filePath: string, bucketName?: string) {
+  const bucket = bucketName || "files";
   const fetchPublicUrl = () =>
-    supabase.storage.from("files").getPublicUrl(filePath);
+    supabase.storage.from(bucket).getPublicUrl(filePath);
   const { data, error, mutate } = handleErrors(
     useSWR([filePath], fetchPublicUrl),
   );
