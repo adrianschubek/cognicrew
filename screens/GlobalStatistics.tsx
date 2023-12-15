@@ -18,25 +18,25 @@ export default function GlobalStatistics() {
     ...LightTheme,
     colors: {
       ...LightTheme.colors,
-      pieChartFirst: "#4893B0",
-      pieChartSecond: "#663399",
-      pieChartThird: "#93CCA1",
-      isZero: "#000000",
-      globalRank:  "#d4af37",
-      friendRank: "#843da3"
+      pieChartFirst: "rgb(72, 147, 176)",
+      pieChartSecond: "rgb(102, 51, 153)",
+      pieChartThird: "rgb(147, 204, 161)",
+      isZero: "rgb(0, 0, 0)",
+      globalRank: "rgb(212, 175, 55)",
+      friendRank: "rgb(132, 61, 163)",
     },
   };
-
+  
   const darkTheme = {
     ...DarkTheme,
     colors: {
       ...DarkTheme.colors,
-      pieChartFirst: "#4893B0",
-      pieChartSecond: "#663399",
-      pieChartThird: "#93CCA1",
-      isZero: "#FFFFFF",
-      globalRank: "#d4af37",
-      friendRank: "#843da3"
+      pieChartFirst: "rgb(72, 147, 176)",
+      pieChartSecond: "rgb(102, 51, 153)",
+      pieChartThird: "rgb(147, 204, 161)",
+      isZero: "rgb(255, 255, 255)",
+      globalRank: "rgb(212, 175, 55)",
+      friendRank: "rgb(132, 61, 163)",
     },
   };
 
@@ -63,7 +63,7 @@ export default function GlobalStatistics() {
     series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
   function formatTimeSpent(milliseconds: number) {
-    return (milliseconds / 60 / 60 / 60).toFixed(2);
+    return (milliseconds / 1000 / 60 / 60).toFixed(2);
   }
 
   function calcColors() {
