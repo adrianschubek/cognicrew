@@ -56,29 +56,40 @@ export default function App() {
 
   const sound = useRef(new Audio.Sound());
   const { inGame } = useSoundsStore();
+  const { musicVolume } = usePreferencesStore();
+
+ async function playSound() {
+    sound.current.unloadAsync();
+    try {
+      if(!inGame){
+        await sound.current.loadAsync(require('./assets/sounds/musicmusicmusic.mp3'));
+       } else {
+        await sound.current.loadAsync(require('./assets/sounds/Tetris.mp3'));
+       }
+       await sound.current.setIsLoopingAsync(true);
+       await sound.current.playAsync(); 
+       await sound.current.setVolumeAsync(musicVolume[0]);
+    } catch (error) {
+      console.error('Error playing audio', error);
+    }
+  };
+
+  async function stopSound() {
+    try{
+      await sound.current.stopAsync();
+      await sound.current.unloadAsync();
+    } catch (error) {
+      console.error('Error stopping audio', error);
+    }
+  };
 
   useEffect(() => {
-    const playSound = async () => {
-      sound.current.unloadAsync();
-      try {
-        if(!inGame){
-          await sound.current.loadAsync(require('./assets/sounds/musicmusicmusic.mp3'));
-         } else {
-          await sound.current.loadAsync(require('./assets/sounds/Tetris.mp3'));
-         }
-        await sound.current.setIsLoopingAsync(true);
-        await sound.current.playAsync();
-      } catch (error) {
-        console.error('Error playing audio', error);
-      }
-    };
-
     playSound();
-
     return () => {
-      sound.current.unloadAsync();
+      stopSound();
     };
-  }, [inGame]);
+  }, [inGame, musicVolume]);
+
 
 
   // TODO: useColorScheme to detect system theme and set it
