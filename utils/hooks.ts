@@ -438,11 +438,20 @@ export function useFiles(filePath: string, limit?: number) {
       offset: 0,
     });
 
-  const {
+  const { data, error, mutate } = handleErrors(useSWR([filePath], fetchFiles));
+  return {
     data,
-    error,
+    isLoading: !error && !data,
+    error: error,
     mutate,
-  } = handleErrors(useSWR(["images", filePath], fetchFiles));
+  };
+}
+export function useFileUrl(filePath: string) {
+  const fetchPublicUrl = () =>
+    supabase.storage.from("files").getPublicUrl(filePath);
+  const { data, error, mutate } = handleErrors(
+    useSWR([filePath], fetchPublicUrl),
+  );
   return {
     data,
     isLoading: !error && !data,

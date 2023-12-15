@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   Button,
@@ -10,18 +10,28 @@ import {
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useUsername } from "../../utils/hooks";
+import { useFileUrl, useFiles, useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
+import LoadingOverlay from "../alerts/LoadingOverlay";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
-  const {user} = useAuth();
-  const alreadyHasCustomAvatar = false; //add option maybe later
+  const { user } = useAuth();
+  const username = user.user_metadata.username;
+  const filePath = `${user.id}/avatar`;
+  const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
+    useState<boolean>(false);
   const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
+  const { data, error, isLoading, mutate } = useFileUrl(filePath);
+  useEffect(() => {
+    if (!data || !data?.data?.publicUrl) return;
+    setAlreadyHasCustomAvatar(true);
+  }, [data]);
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <TouchableOpacity
       onPress={() => {
@@ -29,15 +39,15 @@ const Account = (props) => {
           icon: icon,
           title: "Change your avatar",
           okText: "Done",
-          cancelText:"",
+          cancelText: "",
           fields: [
             {
               label: "Upload image",
               type: "button",
               icon: "image-plus",
               action: async () => {
-                const filePath = `${user.id}/avatar`;
-                selectAndUploadImage(filePath);
+                await selectAndUploadImage(filePath, "avatar");
+                mutate();
               },
               errorText: "Could not upload image",
             },
@@ -45,7 +55,12 @@ const Account = (props) => {
         });
       }}
     >
-      <Avatar.Icon {...props} icon="account" />
+      {alreadyHasCustomAvatar ? (
+        <Avatar.Image {...props} source={{ uri: data.data.publicUrl }} />
+      ) : (
+        //<Avatar.Icon {...props} icon="account" />
+        <Avatar.Text {...props} label={username.substring(0, 2)} />
+      )}
     </TouchableOpacity>
   );
 };

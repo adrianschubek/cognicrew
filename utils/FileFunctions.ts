@@ -3,7 +3,10 @@ import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "../supabase";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
-export async function selectAndUploadImage(filePath: string) {
+export async function selectAndUploadImage(
+  filePath: string,
+  fileName?: string,
+) {
   const options: ImagePicker.ImagePickerOptions = {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
@@ -16,12 +19,20 @@ export async function selectAndUploadImage(filePath: string) {
       encoding: "base64",
     });
     //const fileName = img.fileName || `${new Date().getTime()}.${"png"}`;
-    const fileName = `${new Date().getTime()}.${"png"}`;
-    const filePathWithDocumentName = `${filePath}/${fileName}`;
+    const newFileName = fileName
+      ? fileName
+      : `${new Date().getTime()}.${"png"}`;
+    const filePathWithDocumentName = `${filePath}/${newFileName}`;
     const contentType = "image/png";
-    await supabase.storage
+    const { data, error } = await supabase.storage
       .from("files")
-      .upload(filePathWithDocumentName, decode(base64), { contentType });
+      .upload(filePathWithDocumentName, decode(base64), {
+        contentType,
+        upsert: true,
+      });
+      if (error) {
+        console.error("Error uploading image:", error.message);
+      }
   }
 }
 export async function selectAndUploadFile(
@@ -49,7 +60,7 @@ export async function selectAndUploadFile(
     const folderPath = onlyProjectIdGivenAsRootFolder
       ? filePath + (isImage ? "/photos" : "/documents")
       : filePath;
-    const newFileName = /*pickedFile.name || */ `${new Date().getTime()}.${fileExtension}`;
+    const newFileName = `${new Date().getTime()}.${fileExtension}`;
     const filePathWithDocumentName = `${folderPath}/${newFileName}`;
     const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem?.EncodingType?.Base64,
@@ -59,6 +70,7 @@ export async function selectAndUploadFile(
       .from("files")
       .upload(filePathWithDocumentName, decode(base64), {
         contentType: mimeType,
+        upsert: true,
       });
     if (error) {
       console.error("Error uploading file:", error.message);
