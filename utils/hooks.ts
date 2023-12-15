@@ -1,5 +1,4 @@
 import { useAuth } from "../providers/AuthProvider";
-//import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
   useDeleteMutation,
   useInsertMutation,
@@ -12,50 +11,10 @@ import { useCallback, useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
-import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { KeyedMutator } from "swr";
-import { PostgrestSingleResponse } from "@supabase/postgrest-js";
-import { set } from "cypress/types/lodash";
-
-export function useSoundSystem1() {
-  const { playSound, stopSound, loadSound1 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded } = useSoundsStore.getState();
-      if (!isLoaded) {
-        const audioSource = require("../assets/sounds/musicmusicmusic.mp3");
-        loadSound1(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
-
-export function useSoundSystem2() {
-  const { playSound, stopSound, loadSound2 } = useSoundsStore();
-  useFocusEffect(
-    useCallback(() => {
-      const { isLoaded2 } = useSoundsStore.getState();
-      if (!isLoaded2) {
-        const audioSource = require("../assets/sounds/Tetris.mp3");
-        loadSound2(audioSource);
-      } else {
-        playSound();
-      }
-      return () => {
-        stopSound();
-      };
-    }, []),
-  );
-}
-
+import useSWR, { KeyedMutator } from "swr";
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
@@ -407,16 +366,16 @@ export function useAnswersExercises(exerciseId: number) {
   }, []);
   return { data, isLoading, error, mutate };
 }
-
 export function useExercisesAndAnswers(setId: number) {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("exercises")
-        .select("id,question,priority,set_id,answers_exercises(exercise)")
-        .eq("set_id", setId),
-    ),
-  );
+  const query = supabase
+    .from("exercises")
+    .select("id,question,priority,set_id,answers_exercises(exercise)")
+    .eq("set_id", setId);
+  useEffect(() => {
+    mutate();
+  }, []);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  return { data, error, isLoading, mutate };
 }
 
 export function useUpsertAnswersExercise() {
@@ -441,8 +400,11 @@ export function useDeleteAnswersExercise() {
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
-    .select("id,link_url,learning_project,title,subtitle,description")
-    .eq("learning_project", projectId);
+    .select(
+      "created_at,id,link_url,learning_project,title,subtitle,description",
+    )
+    .eq("learning_project", projectId)
+    .order("created_at");
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();
