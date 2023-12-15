@@ -22,8 +22,10 @@ import {
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
-import { handleErrors, useAlerts, useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
+import { // handleErrors, 
+  useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
 import { ManagementType } from "../types/common";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 //TODO realtime updating
 export default function Discover() {
