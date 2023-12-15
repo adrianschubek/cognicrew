@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { View, ScrollView } from "react-native";
-import { Card, Divider, Text, useTheme, MD3LightTheme as LightTheme, MD3DarkTheme as DarkTheme } from "react-native-paper";
+import {
+  Card,
+  Divider,
+  Text,
+  useTheme,
+  MD3LightTheme as LightTheme,
+  MD3DarkTheme as DarkTheme,
+} from "react-native-paper";
 
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -9,8 +16,6 @@ import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
 
 export default function ProjectStatistics() {
-
-  
   const lightTheme = {
     ...LightTheme,
     colors: {
@@ -19,8 +24,8 @@ export default function ProjectStatistics() {
       pieChartSecond: "#663399",
       pieChartThird: "#93CCA1",
       isZero: "#000000",
-      globalRank:  "#d4af37",
-      friendRank: "#843da3"
+      globalRank: "#d4af37",
+      friendRank: "#843da3",
     },
   };
 
@@ -33,14 +38,12 @@ export default function ProjectStatistics() {
       pieChartThird: "#93CCA1",
       isZero: "#FFFFFF",
       globalRank: "#d4af37",
-      friendRank: "#843da3"
+      friendRank: "#843da3",
     },
   };
 
-  const { dark } = useTheme(); 
+  const { dark } = useTheme();
   const theme = dark ? darkTheme : lightTheme;
-
-
 
   const heading = "headlineSmall";
   const heading2 = "titleLarge";
@@ -101,25 +104,84 @@ export default function ProjectStatistics() {
       (whiteboardGotTime ? 4 : 0);
 
     switch (state) {
-      case 0: 
-      return [[], [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero]];
+      case 0:
+        return [
+          [],
+          [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero],
+        ];
       case 1:
-      return[[theme.colors.pieChartFirst], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.isZero]];
-      case 2: 
-      return[[theme.colors.pieChartSecond], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.isZero]];
-      case 3: 
-      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond], theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.isZero];
+        return [
+          [theme.colors.pieChartFirst],
+          [
+            theme.colors.pieChartFirst,
+            theme.colors.isZero,
+            theme.colors.isZero,
+          ],
+        ];
+      case 2:
+        return [
+          [theme.colors.pieChartSecond],
+          [
+            theme.colors.isZero,
+            theme.colors.pieChartSecond,
+            theme.colors.isZero,
+          ],
+        ];
+      case 3:
+        return [
+          [theme.colors.pieChartFirst, theme.colors.pieChartSecond],
+          theme.colors.pieChartFirst,
+          theme.colors.pieChartSecond,
+          theme.colors.isZero,
+        ];
       case 4:
-      return[[theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.isZero, theme.colors.pieChartThird]];
-      case 5: 
-      return[[theme.colors.pieChartFirst, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.isZero, theme.colors.pieChartThird]];
-      case 6: 
-      return[[theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.isZero, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+        return [
+          [theme.colors.pieChartThird],
+          [
+            theme.colors.isZero,
+            theme.colors.isZero,
+            theme.colors.pieChartThird,
+          ],
+        ];
+      case 5:
+        return [
+          [theme.colors.pieChartFirst, theme.colors.pieChartThird],
+          [
+            theme.colors.pieChartFirst,
+            theme.colors.isZero,
+            theme.colors.pieChartThird,
+          ],
+        ];
+      case 6:
+        return [
+          [theme.colors.pieChartSecond, theme.colors.pieChartThird],
+          [
+            theme.colors.isZero,
+            theme.colors.pieChartSecond,
+            theme.colors.pieChartThird,
+          ],
+        ];
       case 7:
-      return[[theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird], [theme.colors.pieChartFirst, theme.colors.pieChartSecond, theme.colors.pieChartThird]];
+        return [
+          [
+            theme.colors.pieChartFirst,
+            theme.colors.pieChartSecond,
+            theme.colors.pieChartThird,
+          ],
+          [
+            theme.colors.pieChartFirst,
+            theme.colors.pieChartSecond,
+            theme.colors.pieChartThird,
+          ],
+        ];
       default:
         console.log("Something went wrong");
-        return[[], theme.colors.isZero, theme.colors.isZero, theme.colors.isZero];
+        return [
+          [],
+          theme.colors.isZero,
+          theme.colors.isZero,
+          theme.colors.isZero,
+        ];
     }
   }
 
@@ -216,11 +278,9 @@ export default function ProjectStatistics() {
       project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
-      console.log(data[i]);
       if (data[i]["user_id"] == user.id) {
-        console.log(data[i]);
         setRankUnderFriends(data[i]["user_rank"]);
-        //break;
+        break;
       }
     }
   }
@@ -230,10 +290,9 @@ export default function ProjectStatistics() {
       project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
-      //console.log(data[i]);
       if (data[i]["user_id"] == user.id) {
         setRankGlobal(data[i]["user_rank"]);
-        //break;
+        break;
       }
     }
   }
@@ -250,7 +309,7 @@ export default function ProjectStatistics() {
         setCountPhotos(photosCount);
         calcGameStats();
         calcRankUnderFriends();
-        console.log("X")
+        console.log("X");
         calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
@@ -332,6 +391,26 @@ export default function ProjectStatistics() {
       }),
     },
   ];
+  const ranks = [
+    {
+      title: "Global rank:",
+      dataPointCategories: [
+        {
+          dataPoints: [`# ${countRankGlobal}`],
+          textColor: theme.colors.globalRank,
+        },
+      ],
+    },
+    {
+      title: "Rank under friends:",
+      dataPointCategories: [
+        {
+          dataPoints: [`# ${countRankUnderFriends}`],
+          textColor: theme.colors.friendRank,
+        },
+      ],
+    },
+  ];
   return (
     <ScrollView>
       <StatusBar style="auto" />
@@ -353,10 +432,31 @@ export default function ProjectStatistics() {
           ></StatisticCategory>
         );
       })}
+
       <Card>
         <Card.Title
           titleVariant={heading}
           title="Leaderboard"
+          style={{ backgroundColor: theme.colors.background }}
+        ></Card.Title>
+      </Card>
+      {ranks.map((item, index) => {
+        return (
+          <StatisticCategory
+            key={index}
+            data={{
+              title: item.title,
+              dataPointCategories: item.dataPointCategories,
+            }}
+            textVariant={heading}
+          ></StatisticCategory>
+        );
+      })}
+
+      <Card>
+        <Card.Title
+          titleVariant={heading}
+          title="Game statistics"
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>
@@ -373,13 +473,7 @@ export default function ProjectStatistics() {
             ></StatisticCategory>
           );
         })}
-        <Divider />
-        <Text variant={heading2} style={[{color : theme.colors.globalRank}]}>
-          {`Global rank: ${countRankGlobal}`}
-        </Text>
-        <Text variant={heading2} style={[{color : theme.colors.friendRank}]}>
-          {`Rank under friends: ${countRankUnderFriends}`}
-        </Text>
+
       </View>
     </ScrollView>
   );
