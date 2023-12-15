@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
@@ -26,7 +27,7 @@ const Account = (props) => {
   const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
     useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>(null);
-  const [reloadImage, setReloadImage] = useState<boolean>(false);
+  const [imageVersion, setImageVersion] = useState(0);
   const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
   const { data, error, isLoading, mutate } = useFileUrl(
     filePath,
@@ -41,8 +42,25 @@ const Account = (props) => {
   useEffect(() => {
     if (!data) return;
     setImageUrl(data.data.publicUrl + "/avatar");
-  }, [data, reloadImage]);
+  }, [data]);
 
+  useEffect(() => {
+    const loadImageVersion = async () => {
+      const savedImageVersion = await AsyncStorage.getItem("imageVersion");
+      if (savedImageVersion !== null) {
+        setImageVersion(Number(savedImageVersion));
+      }
+    };
+
+    loadImageVersion();
+  }, []);
+  useEffect(() => {
+    const saveImageVersion = async () => {
+      await AsyncStorage.setItem("imageVersion", String(imageVersion));
+    };
+
+    saveImageVersion();
+  }, [imageVersion]);
   useEffect(() => {
     if (!fileData) return;
     if (fileData.data.length === 0) {
@@ -64,14 +82,20 @@ const Account = (props) => {
           fields: [
             {
               type: "custom",
-
               render() {
-                return (
+                return alreadyHasCustomAvatar ? (
                   <Avatar.Image
                     {...props}
                     style={{ alignSelf: "center", marginBottom: 10 }}
                     size={200}
-                    source={{ uri: imageUrl }}
+                    source={{ uri: `${imageUrl}?v=${imageVersion}` }}
+                  />
+                ) : (
+                  <Avatar.Text
+                    {...props}
+                    style={{ alignSelf: "center", marginBottom: 10 }}
+                    size={200}
+                    label={username.substring(0, 2)}
                   />
                 );
               },
@@ -84,7 +108,6 @@ const Account = (props) => {
                 await supabase.storage
                   .from("profile-pictures")
                   .remove([filePath + "/avatar"]);
-                mutate();
                 mutateFile();
               },
               errorText: "Could not remove image",
@@ -98,9 +121,8 @@ const Account = (props) => {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
                 }).then(() => {
-                  mutate();
                   mutateFile();
-                  //setReloadImage(!reloadImage);
+                  setImageVersion(imageVersion + 1);
                 });
               },
               errorText: "Could not upload image",
@@ -110,9 +132,11 @@ const Account = (props) => {
       }}
     >
       {alreadyHasCustomAvatar ? (
-        <Avatar.Image {...props} source={{ uri: imageUrl }} key={reloadImage} />
+        <Avatar.Image
+          {...props}
+          source={{ uri: `${imageUrl}?v=${imageVersion}` }}
+        />
       ) : (
-        //<Avatar.Icon {...props} icon="account" />
         <Avatar.Text {...props} label={username.substring(0, 2)} />
       )}
     </TouchableOpacity>
