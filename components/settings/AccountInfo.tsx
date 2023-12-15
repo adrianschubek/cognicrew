@@ -14,38 +14,39 @@ import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
+  const {user} = useAuth();
+  const alreadyHasCustomAvatar = false; //add option maybe later
+  const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
   return (
-    <Avatar.Icon
-      {...props}
-      icon="account"
+    <TouchableOpacity
       onPress={() => {
-        const alreadyHasCustomAvatar = false; //add option later
-        const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
-        confirm({
+        return confirm({
           icon: icon,
           title: "Change your avatar",
-          messageStyle: { textAlign: "left" },
           okText: "Done",
-          okAction: async (vars) => {
-            const filePath = "";
-            selectAndUploadImage(filePath);
-          },
+          cancelText:"",
           fields: [
             {
-              label: "Your friend's nickname",
-              type: "text",
-              icon: "account-plus",
+              label: "Upload image",
+              type: "button",
+              icon: "image-plus",
+              action: async () => {
+                const filePath = `${user.id}/avatar`;
+                selectAndUploadImage(filePath);
+              },
               errorText: "Could not upload image",
             },
           ],
         });
       }}
-    />
+    >
+      <Avatar.Icon {...props} icon="account" />
+    </TouchableOpacity>
   );
 };
 
