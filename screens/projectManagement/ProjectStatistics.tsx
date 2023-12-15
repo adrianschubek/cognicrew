@@ -216,9 +216,11 @@ export default function ProjectStatistics() {
       project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
+      console.log(data[i]);
       if (data[i]["user_id"] == user.id) {
+        console.log(data[i]);
         setRankUnderFriends(data[i]["user_rank"]);
-        break;
+        //break;
       }
     }
   }
@@ -228,9 +230,10 @@ export default function ProjectStatistics() {
       project_id_param: projectId,
     });
     for (let i = 0; i < data.length; i++) {
+      //console.log(data[i]);
       if (data[i]["user_id"] == user.id) {
         setRankGlobal(data[i]["user_rank"]);
-        break;
+        //break;
       }
     }
   }
@@ -247,6 +250,7 @@ export default function ProjectStatistics() {
         setCountPhotos(photosCount);
         calcGameStats();
         calcRankUnderFriends();
+        console.log("X")
         calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
