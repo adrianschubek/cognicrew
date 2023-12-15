@@ -1,9 +1,10 @@
 import { useAuth } from "../providers/AuthProvider";
+//import { Alert, useAlertsStore } from "../stores/AlertsStore";
 import {
   useDeleteMutation,
   useInsertMutation,
   useQuery,
-  useUpsertMutation
+  useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 
 import { supabase } from "../supabase";
@@ -12,12 +13,9 @@ import { ManagementType } from "../types/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
+import { Json } from "../types/supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
-import { useAlerts } from "react-native-paper-fastalerts";
-import { KeyedMutator } from "swr";
-import { PostgrestSingleResponse } from "@supabase/postgrest-js";
-import { set } from "cypress/types/lodash";
 
 export function useSoundSystem1() {
   const { playSound, stopSound, loadSound1 } = useSoundsStore();
@@ -406,16 +404,16 @@ export function useAnswersExercises(exerciseId: number) {
   }, []);
   return { data, isLoading, error, mutate };
 }
+
 export function useExercisesAndAnswers(setId: number) {
-  const query = supabase
-    .from("exercises")
-    .select("id,question,priority,set_id,answers_exercises(exercise)")
-    .eq("set_id", setId);
-  useEffect(() => {
-    mutate();
-  }, []);
-  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-  return { data, error, isLoading, mutate };
+  return handleErrors(
+    useQuery(
+      supabase
+        .from("exercises")
+        .select("id,question,priority,set_id,answers_exercises(exercise)")
+        .eq("set_id", setId),
+    ),
+  );
 }
 
 export function useUpsertAnswersExercise() {
@@ -440,11 +438,8 @@ export function useDeleteAnswersExercise() {
 export function useLinks(projectId: number) {
   const query = supabase
     .from("links")
-    .select(
-      "created_at,id,link_url,learning_project,title,subtitle,description",
-    )
-    .eq("learning_project", projectId)
-    .order("created_at");
+    .select("id,link_url,learning_project,title,subtitle,description")
+    .eq("learning_project", projectId);
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
     mutate();
@@ -469,6 +464,63 @@ export function useDeleteProject() {
   return handleErrors(
     useDeleteMutation(supabase.from("learning_projects"), ["id"], "id"),
   );
+}
+
+/**
+ * Display alerts.
+ * @returns functions to display alerts.
+ */
+export function useAlerts() {
+  const dispatch = useAlertsStore((state) => state.dispatch);
+
+  return {
+    alert: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "",
+        ...config,
+      });
+    },
+    /**
+     * Creates a success alert using the given config.
+     */
+    success: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "check",
+        title: "Success",
+        ...config,
+      });
+    },
+    error: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert-decagram",
+        title: "Error",
+        ...config,
+      });
+    },
+    warning: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "alert",
+        title: "Warning",
+        ...config,
+      });
+    },
+    info: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "information-outline",
+        title: "Info",
+        ...config,
+      });
+    },
+    confirm: (config: Partial<Alert>) => {
+      dispatch({
+        icon: "help-box",
+        title: "Confirm",
+        cancelText: "Cancel",
+        okText: "OK",
+        ...config,
+      });
+    },
+  };
 }
 
 export function useConfirmLeaveLobby() {
