@@ -309,7 +309,6 @@ export default function ProjectStatistics() {
         setCountPhotos(photosCount);
         calcGameStats();
         calcRankUnderFriends();
-        console.log("X");
         calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
