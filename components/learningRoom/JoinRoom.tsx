@@ -49,6 +49,16 @@ export default function JoinRoom({ navigation }) {
         <Button
           labelStyle={{ textAlignVertical: "center" }}
           mode="contained"
+          onPress={() => {
+            navigation.navigate(NAVIGATION.ROOMS_LIST);
+          }}
+          style={{ marginRight: "auto", flex: 1 }}
+        >
+          Rooms
+        </Button>
+        <Button
+          labelStyle={{ textAlignVertical: "center" }}
+          mode="contained"
           onPress={async () => {
             const { data, error } = await supabase.rpc("quick_join_room", {
               p_share_code: +joinCode.substring(1),
@@ -60,16 +70,6 @@ export default function JoinRoom({ navigation }) {
           style={{ marginRight: "auto", flex: 1 }}
         >
           Join
-        </Button>
-        <Button
-          labelStyle={{ textAlignVertical: "center" }}
-          mode="contained"
-          onPress={() => {
-            navigation.navigate(NAVIGATION.ROOMS_LIST);
-          }}
-          style={{ marginRight: "auto", flex: 1 }}
-        >
-          Rooms
         </Button>
       </View>
     </React.Fragment>
