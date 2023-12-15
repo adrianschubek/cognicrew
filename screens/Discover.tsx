@@ -376,30 +376,35 @@ export default function Discover() {
                       ]);
                   })
               }
-              // TODO FILES
-              // Fetch files for the existing project
-              // documents
-/*              const documents = await fetchFiles(`${project.id}/documents`);
-              console.log("Documents: ", documents);
+
+              // Fetch files (documents and photos) for the existing project
+              const documents = await fetchFiles(`${project.id}/documents`);
+              const photos = await fetchFiles(`${project.id}/photos`);
               try {
                 // Use the copy method to clone files to the destination folder
-                await Promise.all(
-                  documents.map(async (file) => {
-                    const sourcePath = `${project.id}/documents/${file.name}`;
-                    const destinationPath = `${upsertedProjectId}/documents/${file.name}`;
-            
-                    await supabase.storage.from('files').copy(sourcePath, destinationPath);
-                  })
-                );
+                documents.map(async (file) => {
+                  await supabase
+                  .storage
+                  .from('files')
+                  .copy(`${project.id}/documents/${file.name}`, `${upsertedProjectId}/documents/${file.name}`)
+                })
+
+                photos.map(async (file) => {
+                  await supabase
+                  .storage
+                  .from('files')
+                  .copy(`${project.id}/photos/${file.name}`, `${upsertedProjectId}/photos/${file.name}`)
+                })
+
               } catch (error) {
-                console.error(`Error copying files`, error.message);
+                console.error("Error copying files: ", error.message);
                 throw error;
               }
 
-        
             success({
               message: "The Project has been cloned.",
-            }); */
+            }); 
+
           } catch (error) {
             errorAlert({
               message: "There was an error trying to clone the project.",
