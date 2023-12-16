@@ -33,7 +33,7 @@ export default function LearningProjects({ navigation }) {
               }}
             ></IconButton>
           </Tooltip>
-          <Tooltip title="Invite users">
+          {/* <Tooltip title="Invite users">
             <IconButton
               icon="filter"
               onPress={() => {
@@ -43,7 +43,7 @@ export default function LearningProjects({ navigation }) {
                 });
               }}
             ></IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </>
       ),
     });
