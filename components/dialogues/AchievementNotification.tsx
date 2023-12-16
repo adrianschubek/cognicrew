@@ -38,7 +38,7 @@ const AchievementNotification = ({
       duration={1500}
       useNativeDriver={true}
     >
-      <ConfettiCannon count={40} origin={{ x: -10, y: 0 }} />
+      <ConfettiCannon count={35} origin={{ x: 5, y: 0 }} />
       <View style={styles.contentContainer}>
         {achievementIconName && (
           <Image
@@ -66,7 +66,7 @@ const AchievementNotification = ({
 const styles = StyleSheet.create({
   notification: {
     position: "absolute",
-    right: -10,
+    //right: 5,
     padding: 10,
     borderRadius: 10,
     elevation: 5,
