@@ -362,16 +362,19 @@ export interface Database {
         Row: {
           id: string
           room_id: string | null
+          user_tags: string
           username: string
         }
         Insert: {
           id: string
           room_id?: string | null
+          user_tags?: string
           username: string
         }
         Update: {
           id?: string
           room_id?: string | null
+          user_tags?: string
           username?: string
         }
         Relationships: [
@@ -697,6 +700,13 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: {
           group: string
+        }[]
+      }
+      get_learning_project_tags_and_ids: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: number
+          tags: string
         }[]
       }
       get_particular_amount_ratings: {

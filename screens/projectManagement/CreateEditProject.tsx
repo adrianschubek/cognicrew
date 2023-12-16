@@ -8,8 +8,6 @@ import {
   Divider,
   FAB,
   HelperText,
-  IconButton,
-  SegmentedButtons,
   Switch,
   Text,
   TextInput,
@@ -97,6 +95,9 @@ export default function CreateEditProject({
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
+  /**
+   * @deprecated
+   */
   const currentSemesters = useMemo(() => {
     // Create an array to hold the term labels
     const labels = [];
@@ -248,20 +249,54 @@ export default function CreateEditProject({
               label="Semester"
               value={group}
               onChangeText={(text) => setGroup(text)}
+              editable={false}
               left={<TextInput.Icon icon="calendar-range" />}
-            />
-            <SegmentedButtons
-              style={{ marginTop: 10 }}
-              value={group}
-              onValueChange={setGroup}
-              buttons={[...currentSemesters, "All"].map((semester: string) => ({
-                /* This will break in year 21XX but i don't care tbh. */
-                label: semester
-                  .replace("Summer", "S")
-                  .replace("Winter", "W")
-                  .replace("20", ""),
-                value: semester,
-              }))}
+              right={
+                <TextInput.Icon
+                  onPress={() =>
+                    confirm({
+                      title: "Select semester",
+                      icon: "calendar-range",
+                      okAction(values) {
+                        const year = values[0];
+                        const term = values[1];
+                        setGroup(
+                          `${term} ${
+                            term === "Winter"
+                              ? `${year}/${(+year + 1).toString().substring(2)}`
+                              : year
+                          }`,
+                        );
+                      },
+                      fields: [
+                        {
+                          label: "Year",
+                          type: "number",
+                          defaultValue: `${new Date().getFullYear()}`,
+                          required: true,
+                        },
+                        {
+                          label: "Semester",
+                          type: "radio",
+                          data: [
+                            { key: "Winter term", value: "Winter" },
+                            { key: "Summer term", value: "Summer" },
+                          ],
+                          required: true,
+                        },
+                        {
+                          type: "button",
+                          label: "Multi-term",
+                          action() {
+                            setGroup("All");
+                          },
+                        },
+                      ],
+                    })
+                  }
+                  icon="pencil"
+                />
+              }
             />
             <HelperText type="info">
               Choose the semester this project is for. Use "All" if it is not

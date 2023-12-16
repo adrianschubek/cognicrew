@@ -252,13 +252,13 @@ export async function useDistinctProjectGroups() {
   let { data, error } = await supabase.rpc("get_distinct_project_groups");
   const stringArray = data.map((item) => item.group);
 
-  console.log("Distinct groups Array:", stringArray);
+  //console.log("Distinct groups Array:", stringArray);
 
   if (error) {
     console.error("Error fetching distinct groups:", error.message);
     return []; // or handle the error in some way
   } else {
-    console.log("Distinct groups:", data);
+    //console.log("Distinct groups:", data);
     return stringArray;
   }
 }

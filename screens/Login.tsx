@@ -12,7 +12,6 @@ import { supabase } from "../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
-  // TODO: only save password when "remember me" is checked
   const { email, password, setEmail, setPassword, rememberMe, setRememberMe } =
     usePreferencesStore();
   // const [text, setText] = useState("foo@bar.de");
