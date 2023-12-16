@@ -8,6 +8,7 @@ import AccountInfo from "../components/settings/AccountInfo";
 import DangerZone from "../components/settings/DangerZone";
 import Visual from "../components/settings/Visual";
 import NameChange from "../components/settings/NameChange";
+import TagsSettings from "../components/settings/Tags";
 
 export default function AccountSettings() {
   const theme = useTheme();
@@ -28,6 +29,10 @@ export default function AccountSettings() {
       />
       <Divider />
       <MusicSettings
+        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+      />
+      <Divider />
+      <TagsSettings
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
       <Divider />
