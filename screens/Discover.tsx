@@ -2,7 +2,13 @@ import {
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-import React, { useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   SafeAreaView,
   StatusBar,
@@ -17,6 +23,7 @@ import {
   Card,
   Chip,
   Dialog,
+  Divider,
   PaperProvider,
   Portal,
   Text,
@@ -26,7 +33,6 @@ import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
 import {
-  // handleErrors,
   useDistinctProjectGroups,
   useExercises,
   useFlashcards,
@@ -41,13 +47,11 @@ import { useAuth } from "../providers/AuthProvider";
 //TODO realtime updating
 export default function Discover() {
   const theme = useTheme();
-  const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
+  const [selectedSemester, setSelectedSemester] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const { data, mutate } = useQuery(supabase.rpc("public_projects"), {
-    onSuccess(data, key, config) {
-      //console.log("Data fetched successfully:", data.data);
-    },
+    onSuccess(data, key, config) {},
     onError(err, key, config) {
       errorAlert({
         message: err.message,
@@ -55,21 +59,25 @@ export default function Discover() {
     },
   });
 
+  
+
   //Recommender system functionality START
 
   const { user } = useAuth();
+
+  const [recommendations, setRecommendations] = useState([]);
+  const [globalTags, setGlobalTags] = useState([]);
 
   async function getUserGlobalTags() {
     let { data: profiles, error } = await supabase
       .from("profiles")
       .select("user_tags");
-
     let resultArray = profiles[0]["user_tags"].split(",");
     return resultArray;
   }
 
   async function getProjectTags() {
-    let resultArray: (number | string)[][] = []; // Change type to array of arrays
+    let resultArray: (number | string)[][] = [];
 
     let { data: publicProjects, error } = await supabase.rpc("public_projects");
 
@@ -92,7 +100,6 @@ export default function Discover() {
       // Extract only the ids from the recommendedProjects array
       const recommendedIds = recommendedProjects.map((project) => project[1]);
 
-
       let recommendedIdsAndRatings = [];
 
       for (let i = 0; i < recommendedIds.length; i++) {
@@ -107,7 +114,9 @@ export default function Discover() {
           recommendedIdsAndRatings.push([recommendedIds[i], avgrating]);
         }
       }
-      const recommendations = recommendedIdsAndRatings.sort((a, b) => b[1] - a[1]);
+      const recommendations = recommendedIdsAndRatings.sort(
+        (a, b) => b[1] - a[1],
+      );
 
       return recommendations;
     } catch (error) {
@@ -119,15 +128,11 @@ export default function Discover() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Await the promises returned by the functions
         const userTags = await getUserGlobalTags();
-        console.log(userTags);
-
+        setGlobalTags(userTags);
         const projectTags = await getProjectTags();
-        console.log(projectTags);
-
         const recommendations = await recommendProjects(userTags, projectTags);
-        console.log(recommendations);
+        setRecommendations(recommendations);
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }
@@ -140,30 +145,24 @@ export default function Discover() {
 
   const customSort = (a, b) => {
     const extractNumber = (str) => {
-      const match = str.match(/\d+/); // Extracts the number part
+      const match = str.match(/\d+/);
       return match ? parseInt(match[0], 10) : NaN;
     };
     const numA = extractNumber(a);
     const numB = extractNumber(b);
-
-    // If both are numbers, compare them in descending order
     if (!isNaN(numA) && !isNaN(numB)) {
       return numB - numA;
     }
-    // If only one is a number prioritize non-number strings
     if (!isNaN(numA) || !isNaN(numB)) {
       return isNaN(numA) ? -1 : 1;
     }
-    // If neither is a number, compare them as strings
     return a.localeCompare(b);
   };
 
-  //TODO Handle "All" group properly (currently only showing projects with group "All")
-  // State for distinct project groups
   const [allDistinctGroups, setAllDistinctGroups] = useState([]);
 
-  // Fetch distinct project groups and update the state
   useEffect(() => {
+    console.log("Still active");
     const fetchDistinctGroups = async () => {
       try {
         const distinctGroups = await useDistinctProjectGroups();
@@ -175,7 +174,6 @@ export default function Discover() {
     fetchDistinctGroups();
   }, []);
 
-  // Add state to manage visibility for each card
   const [cardVisibility, setCardVisibility] = useState(
     Array(data?.length).fill(false),
   );
@@ -268,13 +266,13 @@ export default function Discover() {
 
       if (error) {
         console.error("Error fetching files:", error.message);
-        return null; // Return null or handle the error as needed
+        return null;
       }
 
-      return data; // Return the list of files
+      return data;
     } catch (error) {
       console.error("Error in fetchFiles:", error.message);
-      return null; // Return null or handle the error as needed
+      return null;
     }
   };
 
@@ -287,12 +285,7 @@ export default function Discover() {
   }
 
   const save = async (project) => {
-    //console.log("Save");
-    //console.log(project.id);
-    //console.log(project.name);
-
     try {
-      // Upsert the project and get the project_id
       const upsertedProject = await upsert([
         {
           name: project.name,
@@ -304,7 +297,6 @@ export default function Discover() {
       ]);
 
       const upsertedProjectId = upsertedProject[0]?.id;
-      //console.log("Test 1: ", upsertedProject[0]?.id);
 
       // FLASHCARDS
       const flashcardSets = await fetchSets(
@@ -312,14 +304,12 @@ export default function Discover() {
         project.id,
       );
 
-      // Check if flashcardSets.data is not null or undefined and it's an array
       if (
         flashcardSets &&
         flashcardSets.data &&
         Array.isArray(flashcardSets.data)
       ) {
         flashcardSets.data.map(async (flashcardSet) => {
-          // Upsert Set
           await supabase.from("sets").upsert([
             {
               name: flashcardSet.name,
@@ -336,23 +326,13 @@ export default function Discover() {
             .eq("project_id", upsertedProjectId)
             .single();
 
-          //console.log("Upserted Set Information:", upsertedSetInformation);
-
-          // Check if data is not null before accessing it
           const upsertedSetData = upsertedSetInformation.data;
-
-          //console.log("Upserted Set Data :", upsertedSetData);
-          //console.log("Upserted Set Id:", upsertedSetData.id);
-
           const upsertedSetId = upsertedSetData.id;
-          //console.log("Test 2: ", upsertedSetId);
 
-          // Fetch exercise for the existing set
           const flashcards = await fetchFlashcards(flashcardSet.id);
 
           if (flashcards && flashcards.data && Array.isArray(flashcards.data)) {
             flashcards.data.map(async (flashcard) => {
-              // Upsert Flashcard
               await supabase.from("flashcards").upsert([
                 {
                   question: flashcard.question,
@@ -369,14 +349,12 @@ export default function Discover() {
       // EXERCISES
       const exerciseSets = await fetchSets(ManagementType.EXERCISE, project.id);
 
-      // Check if exerciseSets.data is not null or undefined and it's an array
       if (
         exerciseSets &&
         exerciseSets.data &&
         Array.isArray(exerciseSets.data)
       ) {
         exerciseSets.data.map(async (exerciseSet) => {
-          // Upsert Set
           await supabase.from("sets").upsert([
             {
               name: exerciseSet.name,
@@ -393,23 +371,12 @@ export default function Discover() {
             .eq("project_id", upsertedProjectId)
             .single();
 
-          //console.log("Upserted Set Information:", upsertedSetInformation);
-
           const upsertedSetData = upsertedSetInformation.data;
-
-          //console.log("Upserted Set Data :", upsertedSetData);
-          //console.log("Upserted Set Id:", upsertedSetData.id);
-
           const upsertedSetId = upsertedSetData.id;
-          //console.log("Test 2: ", upsertedSetId);
-
-          // Fetch exercise for the existing set
           const exercises = await fetchExercises(exerciseSet.id);
-          //console.log("Fetched Exercises");
 
           if (exercises && exercises.data && Array.isArray(exercises.data)) {
             exercises.data.map(async (exercise) => {
-              // Upsert Exercise
               await supabase.from("exercises").upsert([
                 {
                   question: exercise.question,
@@ -426,16 +393,7 @@ export default function Discover() {
                 .eq("set_id", upsertedSetId)
                 .single();
 
-              //console.log(
-              // "Upserted Exercise Information:",
-              //upsertedExerciseInformation,
-              //);
-
               const upsertedExerciseId = upsertedExerciseInformation?.data.id;
-              //console.log("Existing Exercise Id", exercise.id);
-              //console.log("Upserted Exercise Id", upsertedExerciseId);
-
-              // Fetch answers for the existing exercise
               const answers = await fetchAnswers(exercise.id);
 
               if (answers && answers.data && Array.isArray(answers.data)) {
@@ -454,13 +412,11 @@ export default function Discover() {
           }
         });
       }
-      // LINKS
-      // Fetch links for the existing project
+
       const links = await fetchLinks(project.id);
 
       if (links && links.data && Array.isArray(links.data)) {
         links.data.map(async (link) => {
-          // Upsert Link
           await supabase.from("links").upsert([
             {
               link_url: link.link_url,
@@ -514,48 +470,31 @@ export default function Discover() {
   if (!data) return null;
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <ScrollView
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled={true}
-        >
-          {allDistinctGroups &&
-            allDistinctGroups.map((semester, index) => (
-              <Button
-                key={index.toString()}
-                style={styles.semesterFilter}
-                mode="outlined"
-                onPress={() => {
-                  setSelectedSemester(semester);
-                  mutate();
-                  //console.log(`${semester}-Button-Pressed`);
-                }}
-              >
-                {semester}
-              </Button>
-            ))}
-        </ScrollView>
-      </View>
-      <Searchbar
-        style={styles.searchbar}
-        placeholder="Search"
-        onChangeText={onChangeSearch}
-        value={searchQuery}
-      />
-
+    <SafeAreaView>
+      <Text
+        style={{
+          fontSize: 25,
+          fontWeight: "bold",
+          margin: 10,
+          color: theme.colors.primary,
+        }}
+      >
+        Recommendations for you
+      </Text>
+      
       <FlatList
-        /*TODO : ADDING DIALOG */
-        style={styles.flatList}
-        data={data.filter(
-          (project) =>
-            project.group === selectedSemester &&
-            (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-              project.description
-                .toLowerCase()
-                .includes(searchQuery.toLowerCase())),
-        )}
+        data={data
+          .filter(
+            (project) =>
+              recommendations.some(
+                (recommendation) => recommendation[0] === project.id,
+              ) &&
+              (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                project.description
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase())),
+          )
+          .slice(0, 5)}
         renderItem={({ item, index }) => (
           <Card
             style={styles.card}
@@ -571,15 +510,16 @@ export default function Discover() {
             <Card.Content>
               {cardVisibility[index] && (
                 <>
-                  <Text variant="bodyMedium">{item.id}</Text>
-                  <Text variant="bodyMedium">{item.description}</Text>
-                  <Text variant="bodyMedium">{item.group}</Text>
+                  <Text variant="bodyMedium">
+                    Description: {item.description}
+                  </Text>
+                  <Text variant="bodyMedium">Semester: {item.group}</Text>
+                  <Text variant="bodyMedium">Tags: {item.tags}</Text>
                   <View style={styles.horizontalCardButtons}>
                     <Button
                       buttonColor={theme.colors.primary}
                       textColor="white"
                       onPress={() => {
-                        //console.log("Clone pressed");
                         save(item);
                       }}
                     >
@@ -591,38 +531,46 @@ export default function Discover() {
             </Card.Content>
           </Card>
         )}
-        //keyExtractor={(item) => item.id}
       />
+      <Divider />
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: "bold",
+          margin: 10,
+          color: theme.colors.tertiary,
+        }}
+      >
+        You are looking for: {globalTags.join(", ")}
+      </Text>
+      
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 15,
+    // Add any additional styles for the container if needed
   },
   item: {
-    padding: 10,
-    marginVertical: 4,
-    marginHorizontal: 10,
+    // Add any additional styles for the item if needed
   },
   title: {
-    fontSize: 30,
+    // Add any additional styles for the title if needed
   },
   card: {
     margin: 3,
+    marginBottom: 10, // Add margin-bottom to create space between cards
   },
   horizontalCardButtons: {
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  flatList: {},
-  searchbar: {
-    marginBottom: 5,
+  flatList: {
+    // Add any additional styles for the FlatList if needed
   },
   semesterFilter: {
-    marginBottom: 5,
-    marginRight: 5,
+    // Add any additional styles for the semester filter if needed
+    // For example, you can add margin properties here as well
   },
 });
