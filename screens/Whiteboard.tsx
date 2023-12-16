@@ -89,7 +89,7 @@ export default function Whiteboard({ navigation }) {
         setAchievementName(achievement.name);
         setAchievementIcon(achievement.icon_name);
         setAchievementVisible(true);
-        setTimeout(() => setAchievementVisible(false), 4000); // Hide notification after 4 seconds
+        setTimeout(() => setAchievementVisible(false), 5500); // Hide notification after 4 seconds
       }
     } else {
       console.error("Failed to unlock achievement");
