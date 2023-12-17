@@ -327,7 +327,7 @@ export default function Lobby({ navigation }) {
                     // TODO: load cogniboard. same dialog as below
                   },
                   fields: [
-                    {
+                    { /* TODO: implement or remove */
                       type: "search-radio",
                       placeholder: "Search cogniboards",
                       data: [],
