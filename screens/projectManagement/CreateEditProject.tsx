@@ -355,9 +355,36 @@ export default function CreateEditProject({
                 <TextInput.Icon
                   /* TODO */
                   onPress={() =>
-                    info({
-                      title: "Transfer project",
-                      message: "This feature will be added soon.",
+                    confirm({
+                      title: "Change owner",
+                      message:
+                        "Transfer this project to another user. You may loose access to this project.\nThis action cannot be undone.",
+                      icon: "account-convert",
+                      okText: "Transfer project",
+                      async okAction(values) {
+                        const newOwner = values[0];
+                        let { error } = await supabase.rpc("transfer_project", {
+                          p_owner_name: newOwner,
+                          p_project_id: project?.id,
+                        });
+                        if (error) return error.message;
+                        else {
+                          setOwner(newOwner);
+                          success({
+                            title: "Project transferred",
+                            message: `Project was successfully transferred to ${newOwner}.`,
+                          });
+                        }
+                      },
+                      fields: [
+                        {
+                          label: "Username",
+                          placeholder: owner,
+                          type: "text",
+                          required: true,
+                          helperText: "Enter the username of the new owner.",
+                        },
+                      ],
                     })
                   }
                   icon="pencil"
