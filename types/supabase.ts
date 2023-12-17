@@ -702,6 +702,20 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      get_published_learning_projects_with_avg_rating: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          project_id: number
+          name: string
+          description: string
+          created_at: string
+          tags: string
+          owner_id: string
+          is_published: boolean
+          username: string
+          avg_rating: number
+        }[]
+      }
       get_user_global_rank: {
         Args: {
           project_id_param: number
