@@ -667,12 +667,6 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      clone_project: {
-        Args: {
-          project_id_to_clone: number
-        }
-        Returns: undefined
-      }
       create_room: {
         Args: {
           p_project_id: number
@@ -702,18 +696,25 @@ export interface Database {
           group: string
         }[]
       }
-      get_learning_project_tags_and_ids: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: number
-          tags: string
-        }[]
-      }
       get_particular_amount_ratings: {
         Args: {
           project_id_param: number
         }
         Returns: Record<string, unknown>
+      }
+      get_published_learning_projects_with_avg_rating: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          project_id: number
+          name: string
+          description: string
+          created_at: string
+          tags: string
+          owner_id: string
+          is_published: boolean
+          username: string
+          avg_rating: number
+        }[]
       }
       get_user_global_rank: {
         Args: {
@@ -868,6 +869,13 @@ export interface Database {
       track: {
         Args: {
           p_key: string
+        }
+        Returns: undefined
+      }
+      transfer_project: {
+        Args: {
+          p_owner_name: string
+          p_project_id: number
         }
         Returns: undefined
       }

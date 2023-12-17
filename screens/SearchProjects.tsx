@@ -14,6 +14,7 @@ import {
   Card,
   Chip,
   Dialog,
+  Divider,
   PaperProvider,
   Portal,
   Text,
@@ -23,13 +24,14 @@ import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { mutate } from "swr";
 import { // handleErrors, 
-  useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet } from "../utils/hooks";
+  useDistinctProjectGroups, useExercises, useFlashcards, useSets, useUpsertFlashcard, useUpsertSet, useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 
 //TODO realtime updating
 export default function SearchProjects() {
   const theme = useTheme();
+
   const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -417,6 +419,22 @@ export default function SearchProjects() {
 
   if (!data) return null;
 
+  const renderFooter = () => (
+    <View>
+      <Divider />
+      <Text
+        style={{
+          fontSize: 18,
+          fontWeight: "bold",
+          margin: 10,
+          color: theme.colors.tertiary,
+        }}
+      >
+        You are looking for: 
+      </Text>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -496,6 +514,7 @@ export default function SearchProjects() {
           </Card>
         )}
         //keyExtractor={(item) => item.id}
+        ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   );
