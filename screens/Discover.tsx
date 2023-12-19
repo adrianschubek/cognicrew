@@ -4,7 +4,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
-import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
+import { Card, Dialog, Divider, Icon, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { useUsername } from "../utils/hooks";
@@ -254,14 +254,6 @@ export default function Discover() {
     }
   };
 
-  interface SetType {
-    created_at: string;
-    id: number;
-    name: string;
-    project_id: number;
-    type: number;
-  }
-
   const save = async (project, newProjectName) => {
     try {
       const projectName = newProjectName? newProjectName : project.name;
@@ -479,6 +471,50 @@ export default function Discover() {
     );
   }
 
+
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const showDialog = (item) => {
+    setSelectedItem(item);
+    setDialogVisible(true);
+  };
+
+  const hideDialog = () => {
+    setDialogVisible(false);
+    setInputValue("");
+  };
+
+  const handleChangeText = (text) => {
+    setInputValue(text);
+  };
+
+  const renderDialog = () => (
+    <Portal>
+      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+        <Dialog.Title>Clone Project</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="New Project Name"
+            value={inputValue}
+            onChangeText={handleChangeText}
+          />
+        </Dialog.Content>
+        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button
+            onPress={hideDialog}
+            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
+          <Button
+            buttonColor={theme.colors.primary}
+            textColor="white"
+            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
+            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
+  );
+
   //Render footer and header of the projects FlatList
 
   const renderHeader = () => {
@@ -531,6 +567,7 @@ export default function Discover() {
 
   return (
     <SafeAreaView>
+       {renderDialog()}
       <FlatList
         data={
           getData ??
