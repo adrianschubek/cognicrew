@@ -33,6 +33,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [initialAnswersLength, setInitialAnswersLength] = useState<number>();
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [updateCache, setUpdateCache] = useState<boolean>(false);
   //Exercise hooks
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
@@ -63,7 +64,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     });
     console.log("error: ", error);
     return data;
-   /* for (const e of deletionArray) {
+    /* for (const e of deletionArray) {
       await deleteAnswersExercise({
         exercise: e.exercise,
         order_position: e.order_position,
@@ -78,9 +79,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     answerOrAnswers: any,
     priority: number,
     initialLength: number,
+    updateCache: boolean,
   ) => {
     type === ManagementType.EXERCISE
       ? (setInitialAnswersLength(answerOrAnswers.length),
+        setUpdateCache(!updateCache),
         upsertExercise({
           //@ts-expect-error
           id: listItem.id,
@@ -116,7 +119,13 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       ? deleteExercise({ id: listItem.id })
       : deleteFlashcard({ id: listItem.id });
   };
-  const update = (question, answerOrAnswers, priority, initalLength) => {
+  const update = (
+    question,
+    answerOrAnswers,
+    priority,
+    initalLength,
+    updateCache,
+  ) => {
     checkForError(
       () => {
         updateFlashcardOrExercise(
@@ -124,6 +133,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           answerOrAnswers,
           priority,
           initalLength,
+          updateCache,
         );
         resetCard();
       },
@@ -173,8 +183,8 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setShowErrorUpload(false);
   }
   const updateDebounceApplied = debounce(
-    (question, answerOrAnswers, priority, initialLength) => {
-      update(question, answerOrAnswers, priority, initialLength);
+    (question, answerOrAnswers, priority, initialLength, updateCache) => {
+      update(question, answerOrAnswers, priority, initialLength, updateCache);
     },
     500,
   );
@@ -187,6 +197,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         answerOrAnswers,
         priority,
         initialAnswersLength,
+        updateCache,
       );
     }
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
@@ -243,6 +254,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             listItem={listItem}
             sendAnswers={(val) => setAnswerOrAnswers(val)}
             sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
+            updateCacheTrigger={updateCache}
           />
         ) : (
           <EditFlashcard
