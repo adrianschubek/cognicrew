@@ -12,7 +12,12 @@ export default function EditExercise(props: {
   sendInitialAnswersLength: (InitialAnswersLength: number) => any;
   updateCacheTrigger: boolean;
 }) {
-  const { listItem, sendAnswers, sendInitialAnswersLength } = props;
+  const {
+    listItem,
+    sendAnswers,
+    sendInitialAnswersLength,
+    updateCacheTrigger,
+  } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -60,7 +65,7 @@ export default function EditExercise(props: {
   useEffect(() => {
     if (!isInitialized) return;
     updateCache(filterAnswers(answers));
-  }, [props.updateCacheTrigger]);
+  }, [updateCacheTrigger]);
 
   async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
