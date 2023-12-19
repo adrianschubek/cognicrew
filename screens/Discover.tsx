@@ -525,22 +525,11 @@ export default function Discover() {
             fontSize: 25,
             fontWeight: "bold",
             marginLeft: 10,
+            margin:10,
             color: theme.colors.primary,
           }}
         >
-          Recommendations for
-        </Text>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: "bold",
-            fontStyle: "italic",
-            marginLeft: 10,
-            marginBottom: 10,
-            color: "rgb(132, 61, 163)",
-          }}
-        >
-          "{ownName}"
+          Recommendations for you
         </Text>
 
         <Divider style={{ marginBottom: 10 }} />
