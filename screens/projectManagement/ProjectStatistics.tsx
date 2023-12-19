@@ -92,98 +92,16 @@ export default function ProjectStatistics() {
   function formatTimeSpent(milliseconds: number) {
     return (milliseconds / 1000 / 60 / 60).toFixed(2);
   }
-
-  function calcColors() {
-    const quizGotTime = series[0] === 0 ? false : true;
-    const cardsGotTime = series[1] === 0 ? false : true;
-    const whiteboardGotTime = series[2] === 0 ? false : true;
-
-    const state =
-      (quizGotTime ? 1 : 0) |
-      (cardsGotTime ? 2 : 0) |
-      (whiteboardGotTime ? 4 : 0);
-
-    switch (state) {
-      case 0:
-        return [
-          [],
-          [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero],
-        ];
-      case 1:
-        return [
-          [theme.colors.pieChartFirst],
-          [
-            theme.colors.pieChartFirst,
-            theme.colors.isZero,
-            theme.colors.isZero,
-          ],
-        ];
-      case 2:
-        return [
-          [theme.colors.pieChartSecond],
-          [
-            theme.colors.isZero,
-            theme.colors.pieChartSecond,
-            theme.colors.isZero,
-          ],
-        ];
-      case 3:
-        return [
-          [theme.colors.pieChartFirst, theme.colors.pieChartSecond],
-          [
-            theme.colors.pieChartFirst,
-            theme.colors.pieChartSecond,
-            theme.colors.isZero,
-          ],
-        ];
-      case 4:
-        return [
-          [theme.colors.pieChartThird],
-          [
-            theme.colors.isZero,
-            theme.colors.isZero,
-            theme.colors.pieChartThird,
-          ],
-        ];
-      case 5:
-        return [
-          [theme.colors.pieChartFirst, theme.colors.pieChartThird],
-          [
-            theme.colors.pieChartFirst,
-            theme.colors.isZero,
-            theme.colors.pieChartThird,
-          ],
-        ];
-      case 6:
-        return [
-          [theme.colors.pieChartSecond, theme.colors.pieChartThird],
-          [
-            theme.colors.isZero,
-            theme.colors.pieChartSecond,
-            theme.colors.pieChartThird,
-          ],
-        ];
-      case 7:
-        return [
-          [
-            theme.colors.pieChartFirst,
-            theme.colors.pieChartSecond,
-            theme.colors.pieChartThird,
-          ],
-          [
-            theme.colors.pieChartFirst,
-            theme.colors.pieChartSecond,
-            theme.colors.pieChartThird,
-          ],
-        ];
-      default:
-        console.log("Something went wrong");
-        return [
-          [],
-          [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero],
-        ];
-    }
-  }
+  const quizGotTime = series[0] === 0 ? false : true;
+  const cardsGotTime = series[1] === 0 ? false : true;
+  const whiteboardGotTime = series[2] === 0 ? false : true;
+  const gameColors = {
+    quizColor: quizGotTime ? theme.colors.pieChartFirst : theme.colors.isZero,
+    cardColor: cardsGotTime ? theme.colors.pieChartSecond : theme.colors.isZero,
+    witheboardColor: whiteboardGotTime
+      ? theme.colors.pieChartThird
+      : theme.colors.isZero,
+  };
 
   async function calcCountExercises() {
     let { data, error } = await supabase
@@ -363,7 +281,7 @@ export default function ProjectStatistics() {
             `Amount of CogniQuiz wins: ${countQuizWins}`,
             `CogniScore - CogniQuiz: ${countQuizScore}`,
           ],
-          textColor: calcColors()[1][0],
+          textColor: gameColors.quizColor,
         },
         {
           dataPoints: [
@@ -371,21 +289,23 @@ export default function ProjectStatistics() {
             `Amount of CogniCards wins: ${countCardsWins}`,
             `CogniScore - CogniCards: ${countCardsScore}`,
           ],
-          textColor: calcColors()[1][1],
+          textColor: gameColors.cardColor,
         },
 
         {
           dataPoints: [
             `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
           ],
-          textColor: calcColors()[1][2],
+          textColor: gameColors.witheboardColor,
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {
         pieChart: {
           widthAndHeight: widthAndHeight,
           series: filteredSeries,
-          sliceColor: calcColors()[0],
+          sliceColor: Object.values(gameColors).filter(
+            (e) => e !== theme.colors.isZero,
+          ),
         },
       }),
     },
