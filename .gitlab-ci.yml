@@ -17,4 +17,4 @@ test:
     # start the server in the background
     - npm run web &
     # run Cypress tests
-    - npx cypress run --browser firefox
+    - npx cypress run
