@@ -6,8 +6,19 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- test
+  - test
 sast:
   stage: test
 include:
-- template: Security/SAST.gitlab-ci.yml
+  - template: Security/SAST.gitlab-ci.yml
+
+test:
+  image: node:latest
+  stage: test
+  script:
+    # install dependencies
+    - npm ci
+    # start the server in the background
+    - npm run web &
+    # run Cypress tests
+    - npm run e2e
