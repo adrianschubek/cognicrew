@@ -77,8 +77,7 @@ export default function CreateEditProject({
         key: "discard",
         title: "Discard changes?",
         message:
-          "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        okText: "Discard",
+          "You may have unsaved changes. Are you sure to discard them?",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
