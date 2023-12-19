@@ -330,14 +330,6 @@ export default function Discover() {
     }
   };
 
-  interface SetType {
-    created_at: string;
-    id: number;
-    name: string;
-    project_id: number;
-    type: number;
-  }
-
   const save = async (project, newProjectName) => {
     try {
       const projectName = newProjectName? newProjectName : project.name;
@@ -346,7 +338,7 @@ export default function Discover() {
           name: projectName,
           description: project.description,
           group: "All",
-          is_published: project.is_published,
+          is_published: false,
           tags: project.tags,
         },
       ]);
