@@ -63,7 +63,13 @@ export default function HomeScreen({ navigation }) {
       });
   }, [profilePictureUrl]);
 
-  if(isLoading) return <LoadingOverlay visible={isLoading}/>
+  if (isLoading)
+    return (
+      <>
+        <StatusBar style="auto" />
+        <LoadingOverlay visible={isLoading} />
+      </>
+    );
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
