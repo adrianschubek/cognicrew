@@ -734,11 +734,9 @@ export interface Database {
       get_user_global_rank: {
         Args: {
           project_id_param: number
+          user_id_param: string
         }
-        Returns: {
-          user_id: string
-          user_rank: number
-        }[]
+        Returns: number
       }
       get_user_rank_and_id: {
         Args: {

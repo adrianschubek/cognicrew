@@ -107,17 +107,6 @@ export default function ProjectStatistics() {
       : theme.colors.isZero,
   };
 
-  async function calcRankGlobal() {
-    let { data, error } = await supabase.rpc("get_user_global_rank", {
-      project_id_param: projectId,
-    });
-    for (let i = 0; i < data.length; i++) {
-      if (data[i]["user_id"] == user.id) {
-        setRankGlobal(data[i]["user_rank"]);
-        break;
-      }
-    }
-  }
 
   useEffect(() => {
     if (!data || isLoading) return;
@@ -126,6 +115,7 @@ export default function ProjectStatistics() {
     setCountExercises(data.exerciseCount);
     setCountDocuments(data.documentCount);
     setCountPhotos(data.imageCount);
+    setRankGlobal(data.globalRank)
     setRankUnderFriends(data.rankUnderFriends);
     setCardsScore(data.gameStats["scoreFlashcards"]);
     setCardsWins(data.gameStats["winsFlashcards"]);
@@ -139,7 +129,6 @@ export default function ProjectStatistics() {
     const fetchData = async () => {
       try {
         mutate();
-        calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
       }

@@ -195,6 +195,15 @@ function useGameStats(projectId: number) {
   const stats = data && data[0] ? data[0].stats : null;
   return { stats, error, isLoading, mutate };
 }
+function useRankingGlobal(projectId: number, userId: string) {
+  const query = supabase.rpc("get_user_global_rank", {
+    project_id_param: projectId,
+    user_id_param: userId,
+  });
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const rank = data ? data : null;
+  return { rank, error, isLoading, mutate };
+}
 function useRankingUnderFriends(projectId: number, userId: string) {
   const query = supabase.rpc("get_user_rank_and_id", {
     user_id_param: userId,
@@ -212,6 +221,7 @@ export function useAllStatistics(projectId: number, userId: string) {
   const documentCount = useFileCount(projectId, "documents");
   const imageCount = useFileCount(projectId, "photos");
   const gameStats = useGameStats(projectId);
+  const globalRank = useRankingGlobal(projectId, userId);
   const rankUnderFriends = useRankingUnderFriends(projectId, userId);
   const mutate = () => {
     linkCount.mutate();
@@ -219,6 +229,7 @@ export function useAllStatistics(projectId: number, userId: string) {
     exerciseCount.mutate();
     documentCount.mutate();
     imageCount.mutate();
+    globalRank.mutate();
     rankUnderFriends.mutate();
     gameStats.mutate();
   };
@@ -233,6 +244,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       documentCount: documentCount.count,
       imageCount: imageCount.count,
       gameStats: gameStats.stats,
+      globalRank: globalRank.rank,
       rankUnderFriends: rankUnderFriends.rank,
     },
     error:
@@ -241,6 +253,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       exerciseCount.error ||
       documentCount.error ||
       imageCount.error ||
+      globalRank.error ||
       rankUnderFriends.error ||
       gameStats.error,
     isLoading:
@@ -249,6 +262,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       exerciseCount.isLoading ||
       documentCount.isLoading ||
       imageCount.isLoading ||
+      globalRank.isLoading ||
       rankUnderFriends.isLoading ||
       gameStats.isLoading,
     mutate: mutate,
