@@ -55,20 +55,23 @@ export default function statisticCategory(props: {
               {data.dataPointCategories.map((category, categoryIndex) => {
                 return (
                   <Fragment key={categoryIndex}>
-                    {category.dataPoints.map((item, index) => {
+                    {category.dataPoints.map((dataPoint, index) => {
+                      const text = getDataText(dataPoint);
                       return (
                         <Fragment key={index}>
-                          <Text
-                            variant={textVariant}
-                            style={{
-                              color: category.textColor
-                                ? category.textColor
-                                : theme.colors.onBackground,
-                            }}
-                          >
-                            {getDataText(item)}
-                          </Text>
-                          {getCustomNode(item)}
+                          {text && (
+                            <Text
+                              variant={textVariant}
+                              style={{
+                                color: category.textColor
+                                  ? category.textColor
+                                  : theme.colors.onBackground,
+                              }}
+                            >
+                              {text}
+                            </Text>
+                          )}
+                          {getCustomNode(dataPoint)}
                         </Fragment>
                       );
                     })}
