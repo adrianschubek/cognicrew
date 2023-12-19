@@ -1,11 +1,7 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
+import { Divider, Text, useTheme } from "react-native-paper";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
@@ -15,11 +11,11 @@ import {
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
-import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { debounce } from "../../utils/common";
 import { useAlerts } from "react-native-paper-fastalerts";
+import StatisticCategory from "../../components/profile/StatisticCategory";
 
 export default function RateProject({
   navigation,
@@ -32,7 +28,6 @@ export default function RateProject({
     };
   };
 }) {
-
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
@@ -48,8 +43,8 @@ export default function RateProject({
   const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
   const renderStars = (numStars) => {
     return (
-      <View style={{ marginLeft: 20 }}>
-        <View style={{ flexDirection: "row" }}>
+      <View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
           {starsArray.map((index) => (
             <MaterialIcons
               key={index}
@@ -62,10 +57,7 @@ export default function RateProject({
               }
             />
           ))}
-          <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {arrRatings[numStars - 1]}{" "}
-            {arrRatings[numStars - 1] === 1 ? "time" : "times"}
-          </Text>
+          <Text style={{ marginLeft: 10 }}>{arrRatings[numStars - 1]}</Text>
         </View>
       </View>
     );
@@ -87,9 +79,9 @@ export default function RateProject({
     };
 
     return (
-      <View style={{ marginLeft: 20 }}>
-        <View style={styles.stars}>
-          {[1, 2, 3, 4, 5].map((index) => (
+      <View>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          {starsArray.map((index) => (
             <MaterialIcons
               key={index}
               name={getStarType(index)}
@@ -97,13 +89,6 @@ export default function RateProject({
               style={styles.starSelected}
             />
           ))}
-          <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {avg == null
-              ? "Not yet rated"
-              : avg === 1
-              ? "1 star"
-              : `${avg} stars`}
-          </Text>
         </View>
       </View>
     );
@@ -131,7 +116,7 @@ export default function RateProject({
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
     });
-      setSum(data);
+    setSum(data);
   }
 
   async function calculateAvg() {
@@ -215,76 +200,88 @@ export default function RateProject({
   useEffect(() => {
     if (rating === null) return;
     // Call the debounced function
-      debouncedBackendCall(projectId, user.id, rating);
+    debouncedBackendCall(projectId, user.id, rating);
   }, [rating, debouncedBackendCall]);
 
+  const rateProjectComponent = (
+    <View style={{ flexDirection: "row", alignItems: "center" }}>
+      {starsArray.map((number) => {
+        return (
+          <TouchableOpacity
+            key={number}
+            onPress={() => {
+              handleStarPress(number);
+            }}
+          >
+            <MaterialIcons
+              name={rating >= number ? "star" : "star-border"}
+              size={32}
+              style={
+                rating >= number ? styles.starSelected : styles.starUnselected
+              }
+            />
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+
+  const ratingStatistics = [
+    {
+      title: "Tap to rate:",
+      dataPointCategories: [
+        {
+          dataPoints: [{ customNode: rateProjectComponent }],
+        },
+      ],
+    },
+    {
+      title: "Statistics:",
+      dataPointCategories: [
+        {
+          dataPoints: [
+            {
+              customNode: (
+                <View style={{ flexDirection: "row" }}>
+                  <Text>{"Total number of ratings:"}</Text>
+                  <Text style={{ color: "red", marginLeft: 10 }}>
+                    {sum == null ? "0" : sum}
+                  </Text>
+                </View>
+              ),
+            },
+            {
+              text: `Average rating:`,
+              customNode: <StarRating avg={avg} />,
+            },
+            {
+              text: `Ratings:`,
+              customNode: (
+                <>
+                  {starsArray.map((e, index) => (
+                    <Fragment key={index}>{renderStars(e)}</Fragment>
+                  ))}
+                </>
+              ),
+            },
+          ],
+        },
+      ],
+    },
+  ];
   return (
     <ScrollView>
-      <SafeAreaView style={styles.personalRating}>
-        <View style={styles.container}>
-          <Text style={styles.heading}>{"Tap to rate:"}</Text>
-          <View style={styles.stars}>
-            {starsArray.map((number) => {
-              return (
-                <TouchableOpacity
-                  key={number}
-                  onPress={() => {
-                    handleStarPress(number);
-                  }}
-                >
-                  <MaterialIcons
-                    name={rating >= number ? "star" : "star-border"}
-                    size={32}
-                    style={
-                      rating >= number
-                        ? styles.starSelected
-                        : styles.starUnselected
-                    }
-                  />
-                </TouchableOpacity>
-              );
-            })}
-            <Text style={[styles.heading, { marginLeft: 10 }]}>
-              {rating
-                ? `${rating} ${rating > 1 ? "stars" : "star"}`
-                : "Unrated"}
-            </Text>
-          </View>
-        </View>
-      </SafeAreaView>
-
-      <Divider />
-
-      <View style={styles.container}>
-        <Text style={styles.heading}>{"Statistics:"}</Text>
-
-        <View style={styles.box}>
-          <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {"Total number of ratings:"}
-          </Text>
-          <Text style={[styles.heading2, { marginLeft: 20, color: "red" }]}>
-            {sum == null ? "0" : sum}
-          </Text>
-          <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {"Project's average rating:"}
-          </Text>
-
-          <StarRating avg={avg} />
-        </View>
-
-        <View style={styles.box}>
-          <Text style={[styles.heading2, { marginLeft: 20 }]}>
-            {"Amount of particular ratings:"}
-          </Text>
-          {renderStars(1)}
-          {renderStars(2)}
-          {renderStars(3)}
-          {renderStars(4)}
-          {renderStars(5)}
-        </View>
-      </View>
-
-      <Divider />
+      {ratingStatistics.map((item, index) => {
+        return (
+          <StatisticCategory
+            key={index}
+            data={{
+              title: item.title,
+              dataPointCategories: item.dataPointCategories,
+            }}
+          />
+        );
+      })}
     </ScrollView>
   );
 }
@@ -298,37 +295,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
-  box: {
-    borderWidth: 1, // Border width
-    borderColor: "#000", // Border color (you can use any color value)
-    borderRadius: 8, // Border radius to round the corners (optional)
-    padding: 10, // Padding inside the box (optional)
-    marginBottom: 15,
-  },
-
-  personalRating: {
-    flex: 0.5,
-    flexDirection: "row",
-  },
-  heading2: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-
-  container: {
-    padding: 20,
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  stars: {
-    display: "flex",
-    flexDirection: "row",
-  },
+  
   starUnselected: {
     color: "#aaa",
   },

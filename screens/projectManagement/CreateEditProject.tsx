@@ -76,9 +76,7 @@ export default function CreateEditProject({
       confirm({
         key: "discard",
         title: "Discard changes?",
-        message:
-          "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        okText: "Discard",
+        message: "You may have unsaved changes. Are you sure to discard them?",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
@@ -95,65 +93,12 @@ export default function CreateEditProject({
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
-  /**
-   * @deprecated
-   */
-  const currentSemesters = useMemo(() => {
-    // Create an array to hold the term labels
-    const labels = [];
-
-    // Get the current date
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // Months are 0-based, so add 1.
-
-    // Determine the current semester
-    let currentSemester = "";
-    if (currentMonth >= 1 && currentMonth <= 4) {
-      currentSemester = "Winter";
-    } else if (currentMonth >= 5 && currentMonth <= 8) {
-      currentSemester = "Summer";
-    } else if (currentMonth >= 9 && currentMonth <= 12) {
-      currentSemester = "Winter";
-    }
-
-    // Calculate labels for previous, current, and next semesters
-    const prevYear =
-      currentSemester === "Winter" ? currentYear - 1 : currentYear;
-    const nextYear =
-      currentSemester === "Summer" ? currentYear + 1 : currentYear;
-
-    const prevSemester =
-      currentSemester === "Winter"
-        ? `Summer ${prevYear}`
-        : `Winter ${prevYear - 1}/${prevYear % 100}`;
-    labels.push(prevSemester);
-
-    const currentLabel =
-      currentSemester === "Winter"
-        ? `Winter ${currentYear}/${(currentYear + 1) % 100}`
-        : `Summer ${currentYear}`;
-    labels.push(currentLabel);
-
-    const nextSemester =
-      currentSemester === "Winter"
-        ? `Summer ${currentYear}`
-        : `Winter ${currentYear % 100}/${nextYear % 100}`;
-    labels.push(nextSemester);
-
-    return labels;
-  }, []);
-
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "id,name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        // success(
-        //   `Project ${project === null ? "created" : "saved"}.`,
-        //   "Success",
-        // );
         success({
           title: `Project ${project === null ? "created" : "saved"}.`,
           message: "You can now invite other users to join your project.",

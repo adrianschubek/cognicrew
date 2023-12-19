@@ -38,7 +38,6 @@ const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function MainTab() {
-
   return (
     <Stack.Navigator>
       <Stack.Screen name={NAVIGATION.HOME} component={HomeScreen} />
@@ -118,10 +117,12 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.LINK_MANAGEMENT}
         component={LinkManagement}
+        options={{ title: "Links" }}
       />
       <Stack.Screen
         name={NAVIGATION.FILES_MANAGEMENT}
         component={FilesManagement}
+        options={{ title: "Files" }}
       />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 

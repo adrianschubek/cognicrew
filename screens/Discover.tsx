@@ -24,9 +24,11 @@ import {
   Chip,
   Dialog,
   Divider,
+  Icon,
   PaperProvider,
   Portal,
   Text,
+  TextInput,
   useTheme,
 } from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
@@ -39,6 +41,7 @@ import {
   useSets,
   useUpsertFlashcard,
   useUpsertSet,
+  useUsername,
 } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -47,19 +50,24 @@ import { useAuth } from "../providers/AuthProvider";
 //TODO realtime updating
 export default function Discover() {
   const theme = useTheme();
+  const { data: ownName, isLoading } = useUsername();
   const [selectedSemester, setSelectedSemester] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [projectsData, setProjectsData] = useState(null);
 
-  const { data, mutate } = useQuery(supabase.rpc("public_projects"), {
-    onSuccess(data, key, config) {},
-    onError(err, key, config) {
-      errorAlert({
-        message: err.message,
-      });
+  const { data, mutate } = useQuery(
+    supabase.rpc("get_published_learning_projects_with_avg_rating"),
+    {
+      onSuccess(data, key, config) {
+        console.log("Data feeetched successfully:", data.data);
+      },
+      onError(err, key, config) {
+        errorAlert({
+          message: err.message,
+        });
+      },
     },
-  });
-
-  
+  );
 
   //Recommender system functionality START
 
@@ -125,9 +133,23 @@ export default function Discover() {
     }
   }
 
+  async function getPublished() {
+    let { data: test, error } = await supabase.rpc(
+      "get_published_learning_projects_with_avg_rating",
+    );
+    if (error) {
+      console.error("Error fetching data:", error);
+    } else {
+      console.log("WIESO0OO NULL");
+      console.log(test);
+    }
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const publishedProjects = await getPublished();
+        setProjectsData(publishedProjects);
         const userTags = await getUserGlobalTags();
         setGlobalTags(userTags);
         const projectTags = await getProjectTags();
@@ -162,7 +184,7 @@ export default function Discover() {
   const [allDistinctGroups, setAllDistinctGroups] = useState([]);
 
   useEffect(() => {
-    console.log("Still active");
+    console.log("Stiiiill active");
     const fetchDistinctGroups = async () => {
       try {
         const distinctGroups = await useDistinctProjectGroups();
@@ -178,15 +200,47 @@ export default function Discover() {
     Array(data?.length).fill(false),
   );
 
-  const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = useState(false);
-  const hideDialog = () => setVisible(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  type ItemProps = { title: string };
-  const Item = ({ title }: ItemProps) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
+  const showDialog = (item) => {
+    setSelectedItem(item);
+    setDialogVisible(true);
+  };
+
+  const hideDialog = () => {
+    setDialogVisible(false);
+    setInputValue("");
+  };
+
+  const handleChangeText = (text) => {
+    setInputValue(text);
+  };
+
+  const renderDialog = () => (
+    <Portal>
+      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+        <Dialog.Title>Clone Project</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="New Project Name"
+            value={inputValue}
+            onChangeText={handleChangeText}
+          />
+        </Dialog.Content>
+        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button
+            onPress={hideDialog}
+            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
+          <Button
+            buttonColor={theme.colors.primary}
+            textColor="white"
+            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
+            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 
   const { success, error: errorAlert, info, confirm } = useAlerts();
@@ -284,13 +338,14 @@ export default function Discover() {
     type: number;
   }
 
-  const save = async (project) => {
+  const save = async (project, newProjectName) => {
     try {
+      const projectName = newProjectName? newProjectName : project.name;
       const upsertedProject = await upsert([
         {
-          name: project.name,
+          name: projectName,
           description: project.description,
-          group: project.group,
+          group: "All",
           is_published: project.is_published,
           tags: project.tags,
         },
@@ -469,25 +524,47 @@ export default function Discover() {
 
   if (!data) return null;
 
+  const renderFooter = () => (
+    <View style={{ flexDirection: "row" }}>
+      <Divider />
+      <Button mode="contained-tonal" icon="autorenew" labelStyle={{ fontSize: 18 }} onPress={() => {}}>
+        Re-scramble{" "}
+      </Button>
+    </View>
+  );
+
   return (
     <SafeAreaView>
       <Text
         style={{
           fontSize: 25,
           fontWeight: "bold",
-          margin: 10,
+          marginLeft: 10,
           color: theme.colors.primary,
         }}
       >
-        Recommendations for you
+        Recommendations for 
       </Text>
-      
+      <Text
+       style={{
+        fontSize: 25,
+        fontWeight: "bold",
+        fontStyle: "italic",
+        marginLeft: 10,
+        marginBottom: 10,
+        color: "rgb(132, 61, 163)",
+      }}>
+      "{ownName}"
+      </Text>
+
+      <Divider style={{marginBottom:10}}/>
+      {renderDialog()}
       <FlatList
         data={data
           .filter(
             (project) =>
               recommendations.some(
-                (recommendation) => recommendation[0] === project.id,
+                (recommendation) => recommendation[0] === project.project_id,
               ) &&
               (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 project.description
@@ -507,20 +584,49 @@ export default function Discover() {
             }}
           >
             <Card.Title title={item.name} titleVariant="titleLarge" />
+
             <Card.Content>
               {cardVisibility[index] && (
                 <>
-                  <Text variant="bodyMedium">
-                    Description: {item.description}
+                  <View style={{ flexDirection: "row" }}>
+                    <Text variant="bodyMedium">Description: </Text>
+                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+                      {item.description}
+                    </Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row" }}>
+                    <Text variant="bodyMedium">Owner: </Text>
+                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+                      {item.username}
+                    </Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row" }}>
+                    <Text variant="bodyMedium">Created in: </Text>
+                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+                      {item.created_at.substring(0, 4)}
+                    </Text>
+                  </View>
+
+                  <View style={{ flexDirection: "row" }}>
+                    <Text variant="bodyMedium">Rating: </Text>
+                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
+                      {item.avg_rating.toFixed(2)}
+                    </Text>
+                    <Icon source="star" size={20} color="#ffb300" />
+                  </View>
+
+                  <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
+                    Tags: {item.tags}
                   </Text>
-                  <Text variant="bodyMedium">Semester: {item.group}</Text>
-                  <Text variant="bodyMedium">Tags: {item.tags}</Text>
+
                   <View style={styles.horizontalCardButtons}>
                     <Button
                       buttonColor={theme.colors.primary}
                       textColor="white"
                       onPress={() => {
-                        save(item);
+                        showDialog(item);
                       }}
                     >
                       Clone
@@ -531,46 +637,24 @@ export default function Discover() {
             </Card.Content>
           </Card>
         )}
+        ListFooterComponent={renderFooter}
       />
-      <Divider />
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: "bold",
-          margin: 10,
-          color: theme.colors.tertiary,
-        }}
-      >
-        You are looking for: {globalTags.join(", ")}
-      </Text>
-      
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // Add any additional styles for the container if needed
-  },
-  item: {
-    // Add any additional styles for the item if needed
-  },
-  title: {
-    // Add any additional styles for the title if needed
-  },
+  container: {},
+  item: {},
+  title: {},
   card: {
     margin: 3,
-    marginBottom: 10, // Add margin-bottom to create space between cards
+    marginBottom: 10,
   },
   horizontalCardButtons: {
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  flatList: {
-    // Add any additional styles for the FlatList if needed
-  },
-  semesterFilter: {
-    // Add any additional styles for the semester filter if needed
-    // For example, you can add margin properties here as well
-  },
+  flatList: {},
+  semesterFilter: {},
 });
