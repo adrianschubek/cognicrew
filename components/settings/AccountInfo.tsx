@@ -17,7 +17,6 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
@@ -27,7 +26,6 @@ const Account = (props) => {
   const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
     useState<boolean>(false);
   const [imageUrl, setImageUrl] = useState<string>(null);
-  const [imageVersion, setImageVersion] = useState(0);
   const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
   const { data, error, isLoading, mutate } = useFileUrl(
     filePath,
@@ -44,23 +42,6 @@ const Account = (props) => {
     setImageUrl(data.data.publicUrl + "/avatar");
   }, [data]);
 
-  useEffect(() => {
-    const loadImageVersion = async () => {
-      const savedImageVersion = await AsyncStorage.getItem("imageVersion");
-      if (savedImageVersion !== null) {
-        setImageVersion(Number(savedImageVersion));
-      }
-    };
-
-    loadImageVersion();
-  }, []);
-  useEffect(() => {
-    const saveImageVersion = async () => {
-      await AsyncStorage.setItem("imageVersion", String(imageVersion));
-    };
-
-    saveImageVersion();
-  }, [imageVersion]);
   useEffect(() => {
     if (!fileData) return;
     if (fileData.data.length === 0) {
@@ -88,7 +69,7 @@ const Account = (props) => {
                     {...props}
                     style={{ alignSelf: "center", marginBottom: 10 }}
                     size={200}
-                    source={{ uri: `${imageUrl}?v=${imageVersion}` }}
+                    source={{ uri: imageUrl }}
                   />
                 ) : (
                   <Avatar.Text
@@ -122,7 +103,6 @@ const Account = (props) => {
                   fileName: "avatar",
                 }).then(() => {
                   mutateFile();
-                  setImageVersion(imageVersion + 1);
                 });
               },
               errorText: "Could not upload image",
@@ -134,7 +114,7 @@ const Account = (props) => {
       {alreadyHasCustomAvatar ? (
         <Avatar.Image
           {...props}
-          source={{ uri: `${imageUrl}?v=${imageVersion}` }}
+          source={{ uri: imageUrl }}
         />
       ) : (
         <Avatar.Text {...props} label={username.substring(0, 2)} />
