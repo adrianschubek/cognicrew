@@ -192,7 +192,9 @@ function useRankingUnderFriends(projectId: number, userId: string) {
     project_id_param: projectId,
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-  return { rank: data[0].user_rank, error, isLoading, mutate };
+  const rank = data && data[0] ? data[0].user_rank : null;
+  //console.log("Error: ", error);
+  return { rank, error, isLoading, mutate };
 }
 
 export function useAllStatistics(projectId: number, userId: string) {
