@@ -348,7 +348,7 @@ export default function ProjectStatistics() {
               title: item.title,
               dataPointCategories: item.dataPointCategories,
             }}
-          ></StatisticCategory>
+          />
         );
       })}
 
@@ -368,7 +368,7 @@ export default function ProjectStatistics() {
               dataPointCategories: item.dataPointCategories,
             }}
             textVariant={heading}
-          ></StatisticCategory>
+          />
         );
       })}
 
@@ -389,7 +389,7 @@ export default function ProjectStatistics() {
                 dataPointCategories: item.dataPointCategories,
               }}
               pieChart={item.pieChart}
-            ></StatisticCategory>
+            />
           );
         })}
       </View>
