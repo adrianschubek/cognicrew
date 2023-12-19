@@ -133,7 +133,6 @@ export function useInsertFriend() {
 }
 
 //Project ratings
-
 export function useUpsertProjectRating() {
   return handleErrors(
     useUpsertMutation(
@@ -153,7 +152,32 @@ export function useDeleteProjectRating() {
     ),
   );
 }
+//project statistics
+export function useCount(
+  projectId: number,
+  queryProps: { from: string; select: string },
+) {
+  const { from, select } = queryProps;
+  const query = supabase
+    .from(from)
+    .select(select, { count: "exact" })
+    .eq("learning_project", projectId);
 
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const count = Number(data);
+  console.log("Count: ", count);
+  return { count, error, isLoading, mutate };
+}
+/*export function useLinkCount(projectId: number) {
+  return useCount(projectId, { from: "links", select: "learning_project" });
+}
+
+export function useFlashcardCount(projectId: number) {
+  return useCount(projectId, {
+    from: "flashcards",
+    select: "set_id, sets(project_id, learning_projects(id))",
+  });
+}*/
 export function useAchievements() {
   return handleErrors(
     useQuery(

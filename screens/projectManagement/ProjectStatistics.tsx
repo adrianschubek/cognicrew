@@ -53,12 +53,17 @@ export default function ProjectStatistics() {
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
 
-  const [countExercises, setCountExercises] = useState(null);
-  const [countFlashcards, setCountFlashcards] = useState(null);
-  const [countLinks, setCountLinks] = useState(null);
-  const [countDocuments, setCountDocuments] = useState(null);
-  const [countPhotos, setCountPhotos] = useState(null);
-
+  const [countExercises, setCountExercises] = useState(0);
+  const [countFlashcards, setCountFlashcards] = useState(0);
+  const [countLinks, setCountLinks] = useState(0);
+  const [countDocuments, setCountDocuments] = useState(0);
+  const [countPhotos, setCountPhotos] = useState(0);
+  /* const {
+    count: linkCount,
+    error: linkError,
+    isLoading: linkIsLoading,
+    mutate: linkMutate,
+  } = useLinkCount(projectId);*/
   const [countQuizWins, setQuizWins] = useState(null);
   const [countQuizScore, setQuizScore] = useState(null);
   const [countCardsWins, setCardsWins] = useState(null);
@@ -214,7 +219,11 @@ export default function ProjectStatistics() {
       }
     }
   }
-
+  /*
+  useEffect(() => {
+    if (!linkCount) return;
+    setCountLinks(linkCount);
+  }, [linkCount]);*/
   useEffect(() => {
     const fetchData = async () => {
       try {
