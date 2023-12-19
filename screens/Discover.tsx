@@ -28,6 +28,7 @@ import {
   PaperProvider,
   Portal,
   Text,
+  TextInput,
   useTheme,
 } from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
@@ -199,15 +200,47 @@ export default function Discover() {
     Array(data?.length).fill(false),
   );
 
-  const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = useState(false);
-  const hideDialog = () => setVisible(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  type ItemProps = { title: string };
-  const Item = ({ title }: ItemProps) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
+  const showDialog = (item) => {
+    setSelectedItem(item);
+    setDialogVisible(true);
+  };
+
+  const hideDialog = () => {
+    setDialogVisible(false);
+    setInputValue("");
+  };
+
+  const handleChangeText = (text) => {
+    setInputValue(text);
+  };
+
+  const renderDialog = () => (
+    <Portal>
+      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+        <Dialog.Title>Clone Project</Dialog.Title>
+        <Dialog.Content>
+          <TextInput
+            label="New Project Name"
+            value={inputValue}
+            onChangeText={handleChangeText}
+          />
+        </Dialog.Content>
+        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Button
+            onPress={hideDialog}
+            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
+          <Button
+            buttonColor={theme.colors.primary}
+            textColor="white"
+            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
+            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
+        </Dialog.Actions>
+      </Dialog>
+    </Portal>
   );
 
   const { success, error: errorAlert, info, confirm } = useAlerts();
@@ -305,13 +338,14 @@ export default function Discover() {
     type: number;
   }
 
-  const save = async (project) => {
+  const save = async (project, newProjectName) => {
     try {
+      const projectName = newProjectName? newProjectName : project.name;
       const upsertedProject = await upsert([
         {
-          name: project.name,
+          name: projectName,
           description: project.description,
-          group: project.group,
+          group: "All",
           is_published: project.is_published,
           tags: project.tags,
         },
@@ -524,7 +558,7 @@ export default function Discover() {
       </Text>
 
       <Divider style={{marginBottom:10}}/>
-
+      {renderDialog()}
       <FlatList
         data={data
           .filter(
@@ -592,7 +626,7 @@ export default function Discover() {
                       buttonColor={theme.colors.primary}
                       textColor="white"
                       onPress={() => {
-                        save(item);
+                        showDialog(item);
                       }}
                     >
                       Clone
