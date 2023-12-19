@@ -153,31 +153,89 @@ export function useDeleteProjectRating() {
   );
 }
 //project statistics
-export function useCount(
-  projectId: number,
-  queryProps: { from: string; select: string },
-) {
-  const { from, select } = queryProps;
-  const query = supabase
-    .from(from)
-    .select(select, { count: "exact" })
-    .eq("learning_project", projectId);
-
+function useCount(query) {
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-  const count = Number(data);
-  console.log("Count: ", count);
+  const count = data as number;
   return { count, error, isLoading, mutate };
 }
-/*export function useLinkCount(projectId: number) {
-  return useCount(projectId, { from: "links", select: "learning_project" });
+function useLinkCount(projectId: number) {
+  return useCount(
+    supabase.rpc("link_count", {
+      p_project_id: projectId,
+    }),
+  );
 }
 
-export function useFlashcardCount(projectId: number) {
-  return useCount(projectId, {
-    from: "flashcards",
-    select: "set_id, sets(project_id, learning_projects(id))",
+function useFlashcardCount(projectId: number) {
+  return useCount(
+    supabase.rpc("flashcard_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useExerciseCount(projectId: number) {
+  return useCount(
+    supabase.rpc("exercise_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useFileCount(projectId: number, fileType: string) {
+  const { data, error, isLoading, mutate } = useFiles(
+    `${projectId}/${fileType}`,
+  );
+  return { count: data?.data?.length, error, isLoading, mutate };
+}
+function useRankingUnderFriends(projectId: number, userId: string) {
+  const query = supabase.rpc("get_user_rank_and_id", {
+    user_id_param: userId,
+    project_id_param: projectId,
   });
-}*/
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  return { rank: data[0].user_rank, error, isLoading, mutate };
+}
+
+export function useAllStatistics(projectId: number, userId: string) {
+  const linkCount = useLinkCount(projectId);
+  const flashcardCount = useFlashcardCount(projectId);
+  const exerciseCount = useExerciseCount(projectId);
+  const documentCount = useFileCount(projectId, "documents");
+  const imageCount = useFileCount(projectId, "photos");
+  const rankUnderFriends = useRankingUnderFriends(projectId, userId);
+
+  return {
+    data: {
+      linkCount: linkCount.count,
+      flashcardCount: flashcardCount.count,
+      exerciseCount: exerciseCount.count,
+      documentCount: documentCount.count,
+      imageCount: imageCount.count,
+      rankUnderFriends: rankUnderFriends.rank,
+    },
+    error:
+      linkCount.error ||
+      flashcardCount.error ||
+      exerciseCount.error ||
+      documentCount.error ||
+      imageCount.error ||
+      rankUnderFriends.error,
+    isLoading:
+      linkCount.isLoading ||
+      flashcardCount.isLoading ||
+      exerciseCount.isLoading ||
+      documentCount.isLoading ||
+      imageCount.isLoading ||
+      rankUnderFriends.isLoading,
+    mutate: () => {
+      linkCount.mutate();
+      flashcardCount.mutate();
+      exerciseCount.mutate();
+      documentCount.mutate();
+      imageCount.mutate();
+      rankUnderFriends.mutate();
+    },
+  };
+}
 export function useAchievements() {
   return handleErrors(
     useQuery(
