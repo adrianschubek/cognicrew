@@ -107,24 +107,6 @@ export default function ProjectStatistics() {
       : theme.colors.isZero,
   };
 
-  async function calcGameStats() {
-    let { data, error } = await supabase
-      .from("user_learning_projects")
-      .select("stats")
-      .eq("learning_project_id", projectId);
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      setCardsScore(data[0]["stats"]["scoreFlashcards"]);
-      setCardsWins(data[0]["stats"]["winsFlashcards"]);
-      setQuizScore(data[0]["stats"]["scoreQuiz"]);
-      setQuizWins(data[0]["stats"]["winsQuiz"]);
-      setTimeSpentQuiz(data[0]["stats"]["timeSpentQuiz"]);
-      setTimeSpentCards(data[0]["stats"]["timeSpentFlashcards"]);
-      setTimeSpentBoard(data[0]["stats"]["timeSpentWhiteboard"]);
-    }
-  }
-
   async function calcRankGlobal() {
     let { data, error } = await supabase.rpc("get_user_global_rank", {
       project_id_param: projectId,
@@ -138,19 +120,25 @@ export default function ProjectStatistics() {
   }
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || isLoading) return;
     setCountLinks(data.linkCount);
     setCountFlashcards(data.flashcardCount);
     setCountExercises(data.exerciseCount);
     setCountDocuments(data.documentCount);
     setCountPhotos(data.imageCount);
     setRankUnderFriends(data.rankUnderFriends);
+    setCardsScore(data.gameStats["scoreFlashcards"]);
+    setCardsWins(data.gameStats["winsFlashcards"]);
+    setQuizScore(data.gameStats["scoreQuiz"]);
+    setQuizWins(data.gameStats["winsQuiz"]);
+    setTimeSpentQuiz(data.gameStats["timeSpentQuiz"]);
+    setTimeSpentCards(data.gameStats["timeSpentFlashcards"]);
+    setTimeSpentBoard(data.gameStats["timeSpentWhiteboard"]);
   }, [data]);
   useEffect(() => {
     const fetchData = async () => {
       try {
         mutate();
-        calcGameStats();
         calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);

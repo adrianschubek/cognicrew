@@ -186,6 +186,15 @@ function useFileCount(projectId: number, fileType: string) {
   );
   return { count: data?.data?.length, error, isLoading, mutate };
 }
+function useGameStats(projectId: number) {
+  const query = supabase
+    .from("user_learning_projects")
+    .select("stats")
+    .eq("learning_project_id", projectId);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const stats = data && data[0] ? data[0].stats : null;
+  return { stats, error, isLoading, mutate };
+}
 function useRankingUnderFriends(projectId: number, userId: string) {
   const query = supabase.rpc("get_user_rank_and_id", {
     user_id_param: userId,
@@ -193,7 +202,6 @@ function useRankingUnderFriends(projectId: number, userId: string) {
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
   const rank = data && data[0] ? data[0].user_rank : null;
-  //console.log("Error: ", error);
   return { rank, error, isLoading, mutate };
 }
 
@@ -203,6 +211,7 @@ export function useAllStatistics(projectId: number, userId: string) {
   const exerciseCount = useExerciseCount(projectId);
   const documentCount = useFileCount(projectId, "documents");
   const imageCount = useFileCount(projectId, "photos");
+  const gameStats = useGameStats(projectId);
   const rankUnderFriends = useRankingUnderFriends(projectId, userId);
 
   return {
@@ -212,6 +221,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       exerciseCount: exerciseCount.count,
       documentCount: documentCount.count,
       imageCount: imageCount.count,
+      gameStats: gameStats.stats,
       rankUnderFriends: rankUnderFriends.rank,
     },
     error:
@@ -220,14 +230,16 @@ export function useAllStatistics(projectId: number, userId: string) {
       exerciseCount.error ||
       documentCount.error ||
       imageCount.error ||
-      rankUnderFriends.error,
+      rankUnderFriends.error ||
+      gameStats.error,
     isLoading:
       linkCount.isLoading ||
       flashcardCount.isLoading ||
       exerciseCount.isLoading ||
       documentCount.isLoading ||
       imageCount.isLoading ||
-      rankUnderFriends.isLoading,
+      rankUnderFriends.isLoading ||
+      gameStats.isLoading,
     mutate: () => {
       linkCount.mutate();
       flashcardCount.mutate();
@@ -235,6 +247,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       documentCount.mutate();
       imageCount.mutate();
       rankUnderFriends.mutate();
+      gameStats.mutate();
     },
   };
 }
