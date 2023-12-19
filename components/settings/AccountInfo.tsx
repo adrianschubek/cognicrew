@@ -17,59 +17,21 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAvatarStore } from "../../stores/AvatarStore";
+import ProfilePictureAvatar from "../common/ProfilePictureAvatar";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
   const { user } = useAuth();
-  const username = user.user_metadata.username;
+  const username = user.user_metadata.username as string;
   const filePath = `${user.id}`;
-  const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
-    useState<boolean>(false);
-  const [imageUrl, setImageUrl] = useState<string>(null);
-  const [imageVersion, setImageVersion] = useState(0);
-  const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
+  const { avatarUrl, setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
+  const icon = avatarUrl ? "image-edit" : "image-plus";
   const { data, error, isLoading, mutate } = useFileUrl(
     filePath,
     "profile-pictures",
   );
-  const {
-    data: fileData,
-    error: fileError,
-    isLoading: fileLoading,
-    mutate: mutateFile,
-  } = useFiles(filePath, 1, "profile-pictures");
-  useEffect(() => {
-    if (!data) return;
-    setImageUrl(data.data.publicUrl + "/avatar");
-  }, [data]);
 
-  useEffect(() => {
-    const loadImageVersion = async () => {
-      const savedImageVersion = await AsyncStorage.getItem("imageVersion");
-      if (savedImageVersion !== null) {
-        setImageVersion(Number(savedImageVersion));
-      }
-    };
-
-    loadImageVersion();
-  }, []);
-  useEffect(() => {
-    const saveImageVersion = async () => {
-      await AsyncStorage.setItem("imageVersion", String(imageVersion));
-    };
-
-    saveImageVersion();
-  }, [imageVersion]);
-  useEffect(() => {
-    if (!fileData) return;
-    if (fileData.data.length === 0) {
-      setAlreadyHasCustomAvatar(false);
-      return;
-    }
-    console.log(fileData.data[0].name);
-    setAlreadyHasCustomAvatar(true);
-  }, [fileData]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <TouchableOpacity
@@ -83,19 +45,12 @@ const Account = (props) => {
             {
               type: "custom",
               render() {
-                return alreadyHasCustomAvatar ? (
-                  <Avatar.Image
+                return (
+                  <ProfilePictureAvatar
                     {...props}
                     style={{ alignSelf: "center", marginBottom: 10 }}
+                    username={username}
                     size={200}
-                    source={{ uri: `${imageUrl}?v=${imageVersion}` }}
-                  />
-                ) : (
-                  <Avatar.Text
-                    {...props}
-                    style={{ alignSelf: "center", marginBottom: 10 }}
-                    size={200}
-                    label={username.substring(0, 2)}
                   />
                 );
               },
@@ -108,7 +63,8 @@ const Account = (props) => {
                 await supabase.storage
                   .from("profile-pictures")
                   .remove([filePath + "/avatar"]);
-                mutateFile();
+                setAvatarUrl(null);
+                setUrlHasMatchingImage(false);
               },
               errorText: "Could not remove image",
             },
@@ -121,8 +77,9 @@ const Account = (props) => {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
                 }).then(() => {
-                  mutateFile();
-                  setImageVersion(imageVersion + 1);
+                  const timestamp = Date.now();
+                  setAvatarUrl(`${data.data.publicUrl}/avatar?${timestamp}`);
+                  setUrlHasMatchingImage(true);
                 });
               },
               errorText: "Could not upload image",
@@ -131,14 +88,7 @@ const Account = (props) => {
         });
       }}
     >
-      {alreadyHasCustomAvatar ? (
-        <Avatar.Image
-          {...props}
-          source={{ uri: `${imageUrl}?v=${imageVersion}` }}
-        />
-      ) : (
-        <Avatar.Text {...props} label={username.substring(0, 2)} />
-      )}
+      <ProfilePictureAvatar {...props} username={username} />
     </TouchableOpacity>
   );
 };
