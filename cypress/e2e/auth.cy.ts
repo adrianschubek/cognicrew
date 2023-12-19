@@ -2,6 +2,7 @@ beforeEach(() => {
   cy.openApp();
 });
 
+// TODO: move to environment variables
 const DEMO_USER = {
   username: "test_5r0yjo",
   email: "5r0yjo@test.de",
