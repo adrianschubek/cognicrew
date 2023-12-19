@@ -10,6 +10,7 @@ const AchievementNotification = ({
   achievementName,
   achievementIconName,
 }) => {
+  return null; /* FIXME: REMOVE THIS */
   const theme = useTheme();
   const animationRef = useRef(null);
   const glowAnim = useRef(new Animated.Value(0)).current; // for the glow animation

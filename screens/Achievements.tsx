@@ -11,6 +11,7 @@ import {
 import { Snackbar } from "react-native-paper";
 
 export default function Achievements({ navigation }) {
+  return null /* FIXME: REMOVE THIS */
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
