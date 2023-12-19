@@ -38,7 +38,7 @@ export default function FlashcardExerciseManagement({
     (plural ? "s" : "");
   useEffect(() => {
     navigation.setOptions({
-      title: capitalizeFirstLetter(typeName(false)) + " Management",
+      title: capitalizeFirstLetter(typeName(true)),
     });
   }, []);
   return (

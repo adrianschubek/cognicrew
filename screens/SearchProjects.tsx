@@ -147,18 +147,19 @@ export default function SearchProjects() {
     }
   };
 
-  const save = async (project) => {
+  const save = async (project, newProjectName) => {
     console.log("Save");
     console.log(project.id);
     console.log(project.name);
 
     try {
+      const projectName = newProjectName? newProjectName : project.name;
       // Upsert the project and get the project_id
       const upsertedProject = await upsert([
         {
-          name: project.name,
+          name: projectName,
           description: project.description,
-          group: project.group,
+          group: "All",
           is_published: project.is_published,
           tags: project.tags,
         },
@@ -398,6 +399,7 @@ export default function SearchProjects() {
         </HelperText>
       </View>
       <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+      {renderDialog()}
       <FlatList
         /*TODO : ADDING DIALOG */
         style={styles.flatList}
@@ -463,7 +465,7 @@ export default function SearchProjects() {
                       buttonColor={theme.colors.primary}
                       textColor="white"
                       onPress={() => {
-                        save(item);
+                        showDialog(item);
                       }}
                     >
                       Clone

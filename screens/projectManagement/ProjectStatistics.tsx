@@ -3,8 +3,6 @@ import { StatusBar } from "expo-status-bar";
 import { View, ScrollView } from "react-native";
 import {
   Card,
-  Divider,
-  Text,
   useTheme,
   MD3LightTheme as LightTheme,
   MD3DarkTheme as DarkTheme,
@@ -14,6 +12,8 @@ import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
+import { useAllStatistics } from "../../utils/hooks";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function ProjectStatistics() {
   const lightTheme = {
@@ -53,11 +53,15 @@ export default function ProjectStatistics() {
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
 
-  const [countExercises, setCountExercises] = useState(null);
-  const [countFlashcards, setCountFlashcards] = useState(null);
-  const [countLinks, setCountLinks] = useState(null);
-  const [countDocuments, setCountDocuments] = useState(null);
-  const [countPhotos, setCountPhotos] = useState(null);
+  const [countExercises, setCountExercises] = useState(0);
+  const [countFlashcards, setCountFlashcards] = useState(0);
+  const [countLinks, setCountLinks] = useState(0);
+  const [countDocuments, setCountDocuments] = useState(0);
+  const [countPhotos, setCountPhotos] = useState(0);
+  const { data, error, isLoading, mutate } = useAllStatistics(
+    projectId,
+    user.id,
+  );
 
   const [countQuizWins, setQuizWins] = useState(null);
   const [countQuizScore, setQuizScore] = useState(null);
@@ -103,75 +107,6 @@ export default function ProjectStatistics() {
       : theme.colors.isZero,
   };
 
-  async function calcCountExercises() {
-    let { data, error } = await supabase
-      .from("exercises")
-      .select("*, sets(*, learning_projects(*))");
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      const filteredArray = data.filter(
-        (item) => item.sets.project_id === projectId,
-      );
-      const count = filteredArray ? filteredArray.length : 0;
-      setCountExercises(count);
-    }
-  }
-
-  async function calcCountFlashcards() {
-    let { data, error } = await supabase
-      .from("flashcards")
-      .select("*, sets(*, learning_projects(*))");
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      const filteredArray = data.filter(
-        (item) => item.sets.project_id === projectId,
-      );
-      const count = filteredArray ? filteredArray.length : 0;
-      setCountFlashcards(count);
-    }
-  }
-
-  async function calcCountLinks() {
-    let { data, error } = await supabase.from("links").select("*");
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      const filteredArray = data.filter(
-        (item) => item.learning_project === projectId,
-      );
-      const count = filteredArray ? filteredArray.length : 0;
-      setCountLinks(count);
-    }
-  }
-
-  async function calcCountFiles(folderName) {
-    try {
-      if (folderName == "documents") {
-        let { data, error } = await supabase.storage
-          .from("files")
-          .list(`${projectId}/documents`);
-        if (error) {
-          throw error;
-        }
-        const fileCount = data.length;
-        return fileCount;
-      } else {
-        let { data, error } = await supabase.storage
-          .from("files")
-          .list(`${projectId}/photos`);
-        if (error) {
-          throw error;
-        }
-        const fileCount = data.length;
-        return fileCount;
-      }
-    } catch (error) {
-      console.error("Error counting files", error.message);
-    }
-  }
-
   async function calcGameStats() {
     let { data, error } = await supabase
       .from("user_learning_projects")
@@ -190,19 +125,6 @@ export default function ProjectStatistics() {
     }
   }
 
-  async function calcRankUnderFriends() {
-    let { data, error } = await supabase.rpc("get_user_rank_and_id", {
-      user_id_param: user.id,
-      project_id_param: projectId,
-    });
-    for (let i = 0; i < data.length; i++) {
-      if (data[i]["user_id"] == user.id) {
-        setRankUnderFriends(data[i]["user_rank"]);
-        break;
-      }
-    }
-  }
-
   async function calcRankGlobal() {
     let { data, error } = await supabase.rpc("get_user_global_rank", {
       project_id_param: projectId,
@@ -216,17 +138,19 @@ export default function ProjectStatistics() {
   }
 
   useEffect(() => {
+    if (!data) return;
+    setCountLinks(data.linkCount);
+    setCountFlashcards(data.flashcardCount);
+    setCountExercises(data.exerciseCount);
+    setCountDocuments(data.documentCount);
+    setCountPhotos(data.imageCount);
+    setRankUnderFriends(data.rankUnderFriends);
+  }, [data]);
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        calcCountExercises();
-        calcCountFlashcards();
-        calcCountLinks();
-        const documentsCount = await calcCountFiles("documents");
-        const photosCount = await calcCountFiles("photos");
-        setCountDocuments(documentsCount);
-        setCountPhotos(photosCount);
+        mutate();
         calcGameStats();
-        calcRankUnderFriends();
         calcRankGlobal();
       } catch (error) {
         console.error("Error in fetching data:", error.message);
@@ -330,6 +254,7 @@ export default function ProjectStatistics() {
       ],
     },
   ];
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <ScrollView>
       <StatusBar style="auto" />
@@ -348,7 +273,7 @@ export default function ProjectStatistics() {
               title: item.title,
               dataPointCategories: item.dataPointCategories,
             }}
-          ></StatisticCategory>
+          />
         );
       })}
 
@@ -368,7 +293,7 @@ export default function ProjectStatistics() {
               dataPointCategories: item.dataPointCategories,
             }}
             textVariant={heading}
-          ></StatisticCategory>
+          />
         );
       })}
 
@@ -389,7 +314,7 @@ export default function ProjectStatistics() {
                 dataPointCategories: item.dataPointCategories,
               }}
               pieChart={item.pieChart}
-            ></StatisticCategory>
+            />
           );
         })}
       </View>

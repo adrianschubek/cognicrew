@@ -254,13 +254,22 @@ export default function Discover() {
     }
   };
 
-  const save = async (project) => {
+  interface SetType {
+    created_at: string;
+    id: number;
+    name: string;
+    project_id: number;
+    type: number;
+  }
+
+  const save = async (project, newProjectName) => {
     try {
+      const projectName = newProjectName? newProjectName : project.name;
       const upsertedProject = await upsert([
         {
-          name: project.name,
+          name: projectName,
           description: project.description,
-          group: project.group,
+          group: "All",
           is_published: project.is_published,
           tags: project.tags,
         },
@@ -588,7 +597,7 @@ export default function Discover() {
                       buttonColor={theme.colors.primary}
                       textColor="white"
                       onPress={() => {
-                        save(item);
+                        showDialog(item);
                       }}
                     >
                       Clone

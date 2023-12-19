@@ -362,18 +362,21 @@ export interface Database {
         Row: {
           id: string
           room_id: string | null
+          user_settings: Json | null
           user_tags: string
           username: string
         }
         Insert: {
           id: string
           room_id?: string | null
+          user_settings?: Json | null
           user_tags?: string
           username: string
         }
         Update: {
           id?: string
           room_id?: string | null
+          user_settings?: Json | null
           user_tags?: string
           username?: string
         }
@@ -690,6 +693,18 @@ export interface Database {
         }
         Returns: boolean
       }
+      exercise_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
+      }
+      flashcard_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
+      }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -771,6 +786,12 @@ export interface Database {
       leave_room: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      link_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
       }
       list_friends: {
         Args: Record<PropertyKey, never>
