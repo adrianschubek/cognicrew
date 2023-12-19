@@ -5,58 +5,41 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
-  StatusBar,
   View,
   StyleSheet,
   FlatList,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
 } from "react-native";
 import {
   Card,
-  Chip,
-  Dialog,
   Divider,
   HelperText,
   Icon,
-  PaperProvider,
-  Portal,
   Text,
-  TextInput,
   useTheme,
 } from "react-native-paper";
 import { Searchbar, Button } from "react-native-paper";
 import { supabase } from "../supabase";
-import { mutate } from "swr";
 import {
   // handleErrors,
   useDistinctProjectGroups,
-  useExercises,
-  useFlashcards,
-  useSets,
-  useUpsertFlashcard,
-  useUpsertSet,
-  useUsername,
 } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import TagsSettings from "../components/settings/Tags";
 
 //TODO realtime updating
 export default function SearchProjects() {
   const theme = useTheme();
 
-  const [selectedSemester, setSelectedSemester] = useState("All"); //Default semester
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState([""]);
+  const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
 
-  const { data, mutate } = useQuery(
+  const { data } = useQuery(
     supabase.rpc("get_published_learning_projects_with_avg_rating"),
     {
-      onSuccess(data, key, config) {
-        console.log("Data feeetched successfully:", data.data);
+      onSuccess(data) {
+        //console.log("Data fetched successfully:", data.data);
       },
-      onError(err, key, config) {
+      onError(err) {
         errorAlert({
           message: err.message,
         });
@@ -64,61 +47,21 @@ export default function SearchProjects() {
     },
   );
 
-  const customSort = (a, b) => {
-    const extractNumber = (str) => {
-      const match = str.match(/\d+/); // Extracts the number part
-      return match ? parseInt(match[0], 10) : NaN;
-    };
-    const numA = extractNumber(a);
-    const numB = extractNumber(b);
-
-    // If both are numbers, compare them in descending order
-    if (!isNaN(numA) && !isNaN(numB)) {
-      return numB - numA;
-    }
-    // If only one is a number prioritize non-number strings
-    if (!isNaN(numA) || !isNaN(numB)) {
-      return isNaN(numA) ? -1 : 1;
-    }
-    // If neither is a number, compare them as strings
-    return a.localeCompare(b);
-  };
-
-  //TODO Handle "All" group properly (currently only showing projects with group "All")
-  // State for distinct project groups
-  const [allDistinctGroups, setAllDistinctGroups] = useState([]);
-
-  // Fetch distinct project groups and update the state
-  useEffect(() => {
-    const fetchDistinctGroups = async () => {
-      try {
-        const distinctGroups = await useDistinctProjectGroups();
-        setAllDistinctGroups(distinctGroups.sort(customSort));
-      } catch (error) {
-        console.error("Error fetching distinct project groups:", error.message);
-      }
-    };
-    fetchDistinctGroups();
-  }, []);
 
   // Add state to manage visibility for each card
   const [cardVisibility, setCardVisibility] = useState(
     Array(data?.length).fill(false),
   );
 
-  const onChangeSearch = (query) => setSearchQuery(query);
-  const [visible, setVisible] = useState(false);
-  const hideDialog = () => setVisible(false);
+  const onChangeSearch = (query) => {
+    const tokens = query.split(",");
+    setSearchQueryDisplay(query);
+    setSearchQuery(tokens);
+  };
+  
 
-  type ItemProps = { title: string };
-  const Item = ({ title }: ItemProps) => (
-    <View style={styles.item}>
-      <Text style={styles.title}>{title}</Text>
-    </View>
-  );
-
-  const { success, error: errorAlert, info, confirm } = useAlerts();
-  const { isMutating, trigger: upsert } = useUpsertMutation(
+  const { success, error: errorAlert} = useAlerts();
+  const { trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "id,name,description,group,is_published,tags",
@@ -203,14 +146,6 @@ export default function SearchProjects() {
       return null; // Return null or handle the error as needed
     }
   };
-
-  interface SetType {
-    created_at: string;
-    id: number;
-    name: string;
-    project_id: number;
-    type: number;
-  }
 
   const save = async (project) => {
     console.log("Save");
@@ -439,45 +374,10 @@ export default function SearchProjects() {
 
   if (!data) return null;
 
-  const renderHeader = () => {
-    return <View></View>;
-  };
-
-  const renderFooter = () => (
-    <View>
-      <Divider />
-      <Text
-        style={{
-          fontSize: 18,
-          fontWeight: "bold",
-          margin: 10,
-          color: theme.colors.tertiary,
-        }} //TODO ADD TAGS
-      >
-        You are looking for:
-      </Text>
-    </View>
-  );
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <TextInput
-          style={{
-            marginHorizontal: 10,
-            marginBottom: 5,
-            elevation: 0,
-            borderRadius: 10,
-          }}
-          label="Tags"
-          left={<TextInput.Icon icon="tag" />}
-          //value={tags} TODO
-          //onChangeText={(text) => setTags(text)} TODO
-        />
-        <HelperText type="info" style={{ marginHorizontal: 10 }}>
-          Add tags separated by commas that match your interests to get a
-          personalized discovery page
-        </HelperText>
         <Searchbar
           style={{
             marginHorizontal: 10,
@@ -487,11 +387,14 @@ export default function SearchProjects() {
             borderRadius: 10,
           }}
           placeholder="Search"
-          onChangeText={onChangeSearch}
-          value={searchQuery}
+          onChangeText={(text) => {
+            onChangeSearch(text);
+          }}
+          value={searchQueryDisplay}
         />
+
         <HelperText type="info" style={{ marginHorizontal: 10 }}>
-          Search database for any published learning project
+          Search for title and tags separated by commas in all learning projects
         </HelperText>
       </View>
       <Divider style={{ marginBottom: 10, marginTop: 10 }} />
@@ -500,11 +403,13 @@ export default function SearchProjects() {
         style={styles.flatList}
         data={data.filter(
           (project) =>
-            project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            project.description
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase()),
+            searchQuery.some(query =>
+              project.name.toLowerCase().includes(query.toLowerCase()) ||
+              project.tags.split(',').map(tag => tag.trim()).some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
+              project.description.toLowerCase().includes(query.toLowerCase())
+            )
         )}
+        
         renderItem={({ item, index }) => (
           <Card
             style={styles.card}
@@ -569,9 +474,6 @@ export default function SearchProjects() {
             </Card.Content>
           </Card>
         )}
-        //keyExtractor={(item) => item.id}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   );
