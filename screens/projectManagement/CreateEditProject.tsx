@@ -225,6 +225,7 @@ export default function CreateEditProject({
         {((project && project?.owner_id === myid) || !project) && (
           <>
             <TextInput
+              testID="input-project-title"
               label="Title"
               value={title}
               onChangeText={(text) => setTitle(text)}
@@ -235,6 +236,7 @@ export default function CreateEditProject({
             </HelperText>
             <Divider />
             <TextInput
+              testID="input-project-description"
               style={{ marginTop: 10 }}
               label="Description"
               value={description}
@@ -253,6 +255,7 @@ export default function CreateEditProject({
               left={<TextInput.Icon icon="calendar-range" />}
               right={
                 <TextInput.Icon
+                  testID="input-project-semester"
                   onPress={() =>
                     confirm({
                       title: "Select semester",
@@ -304,6 +307,7 @@ export default function CreateEditProject({
             </HelperText>
             <Divider />
             <TextInput
+              testID="input-project-tags"
               style={{ marginTop: 10 }}
               label="Tags"
               value={tags}
@@ -331,6 +335,7 @@ export default function CreateEditProject({
                 <TextInput.Icon
                   icon={() => (
                     <Switch
+                      testID="input-project-visibility"
                       value={isPublished}
                       onValueChange={() => setIsPublished((old) => !old)}
                     />
@@ -403,6 +408,7 @@ export default function CreateEditProject({
         )}
         {project && project?.owner_id === myid && (
           <Button
+            testID="delete-project-button"
             style={{
               alignSelf: "flex-start",
               marginBottom: 24,
@@ -459,6 +465,7 @@ export default function CreateEditProject({
       )}
       {(!project || project?.owner_id === myid) && (
         <FAB
+          testID='create-project-button'
           icon={project === null ? "plus" : "check"}
           color={theme.colors.onPrimary}
           style={{
@@ -475,6 +482,7 @@ export default function CreateEditProject({
           disabled={isMutating}
         />
       )}
+      
     </Fragment>
   );
 }
