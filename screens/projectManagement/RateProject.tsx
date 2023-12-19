@@ -1,8 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Divider, Text, useTheme } from "react-native-paper";
@@ -31,7 +27,6 @@ export default function RateProject({
     };
   };
 }) {
-
   const { edit: project } = route.params;
 
   const username = useUsername(project?.owner_id ?? null);
@@ -130,7 +125,7 @@ export default function RateProject({
     let { data, error } = await supabase.rpc("sum_project_ratings", {
       project_id_param: projectId,
     });
-      setSum(data);
+    setSum(data);
   }
 
   async function calculateAvg() {
@@ -214,7 +209,7 @@ export default function RateProject({
   useEffect(() => {
     if (rating === null) return;
     // Call the debounced function
-      debouncedBackendCall(projectId, user.id, rating);
+    debouncedBackendCall(projectId, user.id, rating);
   }, [rating, debouncedBackendCall]);
 
   return (
@@ -275,11 +270,9 @@ export default function RateProject({
           <Text style={[styles.heading2, { marginLeft: 20 }]}>
             {"Amount of particular ratings:"}
           </Text>
-          {renderStars(1)}
-          {renderStars(2)}
-          {renderStars(3)}
-          {renderStars(4)}
-          {renderStars(5)}
+          {starsArray.map((e, index) => (
+            <Fragment key={index}>{renderStars(e)}</Fragment>
+          ))}
         </View>
       </View>
 
