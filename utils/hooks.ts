@@ -213,7 +213,18 @@ export function useAllStatistics(projectId: number, userId: string) {
   const imageCount = useFileCount(projectId, "photos");
   const gameStats = useGameStats(projectId);
   const rankUnderFriends = useRankingUnderFriends(projectId, userId);
-
+  const mutate = () => {
+    linkCount.mutate();
+    flashcardCount.mutate();
+    exerciseCount.mutate();
+    documentCount.mutate();
+    imageCount.mutate();
+    rankUnderFriends.mutate();
+    gameStats.mutate();
+  };
+  useEffect(() => {
+    mutate();
+  }, []);
   return {
     data: {
       linkCount: linkCount.count,
@@ -240,15 +251,7 @@ export function useAllStatistics(projectId: number, userId: string) {
       imageCount.isLoading ||
       rankUnderFriends.isLoading ||
       gameStats.isLoading,
-    mutate: () => {
-      linkCount.mutate();
-      flashcardCount.mutate();
-      exerciseCount.mutate();
-      documentCount.mutate();
-      imageCount.mutate();
-      rankUnderFriends.mutate();
-      gameStats.mutate();
-    },
+    mutate: mutate,
   };
 }
 export function useAchievements() {
