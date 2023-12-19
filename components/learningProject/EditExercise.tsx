@@ -10,8 +10,14 @@ export default function EditExercise(props: {
   listItem: any;
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswersLength: (InitialAnswersLength: number) => any;
+  updateCacheTrigger: boolean;
 }) {
-  const { listItem, sendAnswers, sendInitialAnswersLength } = props;
+  const {
+    listItem,
+    sendAnswers,
+    sendInitialAnswersLength,
+    updateCacheTrigger,
+  } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -21,11 +27,6 @@ export default function EditExercise(props: {
   const [showAnswerDeletionOptions, setShowAnswerDeletionOptions] =
     useState<boolean>(false);
   const theme = useTheme();
-
-  useEffect(() => {
-    if (!isInitialized) return;
-    //console.log("answers: ", answers);
-  }, [answers]);
 
   useEffect(() => {
     if (!data) return;
@@ -60,6 +61,12 @@ export default function EditExercise(props: {
       )
       .subscribe();
   }, []);
+
+  useEffect(() => {
+    if (!isInitialized) return;
+    updateCache(filterAnswers(answers));
+  }, [updateCacheTrigger]);
+
   async function updateCache(newAnswers: [string, boolean, number][]) {
     const updatedData = {
       ...oldData,
@@ -91,20 +98,17 @@ export default function EditExercise(props: {
     };
   }
   function sendfilteredAnswers(answers: [string, boolean, number][]) {
-    //console.log("answers: ", answers);
-    const filteredAnswers = answers
+    const filteredAnswers = filterAnswers(answers);
+    sendAnswers(filteredAnswers);
+  }
+  function filterAnswers(answers: [string, boolean, number][]) {
+    return answers
       .filter((e) => e[0] !== "")
-      .map((e, index) => {
+      .map((e) => {
         return [e[0], e[1], e[2]];
       }) as [string, boolean, number][];
-    if (
-      filteredAnswers.length >= 2 &&
-      filteredAnswers.filter((e) => e[1] === true).length > 0
-    ) {
-      sendAnswers(filteredAnswers);
-      updateCache(filteredAnswers);
-    }
   }
+
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <>
