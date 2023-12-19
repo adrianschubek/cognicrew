@@ -5,7 +5,7 @@ import React, {
 } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Button, Divider, FAB, Text, useTheme } from "react-native-paper";
+import { Divider, Text, useTheme } from "react-native-paper";
 import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
@@ -15,7 +15,6 @@ import {
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
-import { HeaderBackButton } from "@react-navigation/elements";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { debounce } from "../../utils/common";

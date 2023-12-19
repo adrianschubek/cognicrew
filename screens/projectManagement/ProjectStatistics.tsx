@@ -28,7 +28,7 @@ export default function ProjectStatistics() {
       friendRank: "rgb(132, 61, 163)",
     },
   };
-  
+
   const darkTheme = {
     ...DarkTheme,
     colors: {
@@ -130,9 +130,11 @@ export default function ProjectStatistics() {
       case 3:
         return [
           [theme.colors.pieChartFirst, theme.colors.pieChartSecond],
-          theme.colors.pieChartFirst,
-          theme.colors.pieChartSecond,
-          theme.colors.isZero,
+          [
+            theme.colors.pieChartFirst,
+            theme.colors.pieChartSecond,
+            theme.colors.isZero,
+          ],
         ];
       case 4:
         return [
@@ -178,9 +180,7 @@ export default function ProjectStatistics() {
         console.log("Something went wrong");
         return [
           [],
-          theme.colors.isZero,
-          theme.colors.isZero,
-          theme.colors.isZero,
+          [theme.colors.isZero, theme.colors.isZero, theme.colors.isZero],
         ];
     }
   }
@@ -472,7 +472,6 @@ export default function ProjectStatistics() {
             ></StatisticCategory>
           );
         })}
-
       </View>
     </ScrollView>
   );
