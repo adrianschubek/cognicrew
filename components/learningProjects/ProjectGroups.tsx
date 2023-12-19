@@ -117,6 +117,7 @@ export default function ProjectGroups() {
               .map((project) => (
                 <View style={styles.projectElement} key={project.id}>
                   <TouchableOpacity
+                    testID='select-project-button'
                     onPress={() => {
                       // @ts-expect-error idk why
                       navigation.navigate(NAVIGATION.LEARNING_PROJECT, {

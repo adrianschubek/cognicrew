@@ -133,7 +133,6 @@ export function useInsertFriend() {
 }
 
 //Project ratings
-
 export function useUpsertProjectRating() {
   return handleErrors(
     useUpsertMutation(
@@ -153,7 +152,108 @@ export function useDeleteProjectRating() {
     ),
   );
 }
+//project statistics
+function useCount(query) {
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const count = data as number;
+  return { count, error, isLoading, mutate };
+}
+function useLinkCount(projectId: number) {
+  return useCount(
+    supabase.rpc("link_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
 
+function useFlashcardCount(projectId: number) {
+  return useCount(
+    supabase.rpc("flashcard_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useExerciseCount(projectId: number) {
+  return useCount(
+    supabase.rpc("exercise_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useFileCount(projectId: number, fileType: string) {
+  const { data, error, isLoading, mutate } = useFiles(
+    `${projectId}/${fileType}`,
+  );
+  return { count: data?.data?.length, error, isLoading, mutate };
+}
+function useGameStats(projectId: number) {
+  const query = supabase
+    .from("user_learning_projects")
+    .select("stats")
+    .eq("learning_project_id", projectId);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const stats = data && data[0] ? data[0].stats : null;
+  return { stats, error, isLoading, mutate };
+}
+function useRankingUnderFriends(projectId: number, userId: string) {
+  const query = supabase.rpc("get_user_rank_and_id", {
+    user_id_param: userId,
+    project_id_param: projectId,
+  });
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const rank = data && data[0] ? data[0].user_rank : null;
+  return { rank, error, isLoading, mutate };
+}
+
+export function useAllStatistics(projectId: number, userId: string) {
+  const linkCount = useLinkCount(projectId);
+  const flashcardCount = useFlashcardCount(projectId);
+  const exerciseCount = useExerciseCount(projectId);
+  const documentCount = useFileCount(projectId, "documents");
+  const imageCount = useFileCount(projectId, "photos");
+  const gameStats = useGameStats(projectId);
+  const rankUnderFriends = useRankingUnderFriends(projectId, userId);
+  const mutate = () => {
+    linkCount.mutate();
+    flashcardCount.mutate();
+    exerciseCount.mutate();
+    documentCount.mutate();
+    imageCount.mutate();
+    rankUnderFriends.mutate();
+    gameStats.mutate();
+  };
+  useEffect(() => {
+    mutate();
+  }, []);
+  return {
+    data: {
+      linkCount: linkCount.count,
+      flashcardCount: flashcardCount.count,
+      exerciseCount: exerciseCount.count,
+      documentCount: documentCount.count,
+      imageCount: imageCount.count,
+      gameStats: gameStats.stats,
+      rankUnderFriends: rankUnderFriends.rank,
+    },
+    error:
+      linkCount.error ||
+      flashcardCount.error ||
+      exerciseCount.error ||
+      documentCount.error ||
+      imageCount.error ||
+      rankUnderFriends.error ||
+      gameStats.error,
+    isLoading:
+      linkCount.isLoading ||
+      flashcardCount.isLoading ||
+      exerciseCount.isLoading ||
+      documentCount.isLoading ||
+      imageCount.isLoading ||
+      rankUnderFriends.isLoading ||
+      gameStats.isLoading,
+    mutate: mutate,
+  };
+}
 export function useAchievements() {
   return handleErrors(
     useQuery(
