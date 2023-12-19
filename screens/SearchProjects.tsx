@@ -156,7 +156,7 @@ export default function SearchProjects() {
           name: projectName,
           description: project.description,
           group: "All",
-          is_published: project.is_published,
+          is_published: false,
           tags: project.tags,
         },
       ]);
