@@ -10,7 +10,7 @@ describe('Manage Friends Functionality', () => {
     nickname: "alexlanz"
   };
 
-  it('searchFriend', function() {
+  it('can search friends', function() {
     // Search has no match thus results empty list
     cy.get('input[placeholder="Search friends"]').type('b');
     cy.contains(FRIEND.nickname).should('not.exist');
@@ -25,7 +25,7 @@ describe('Manage Friends Functionality', () => {
     cy.contains(FRIEND.nickname).should('be.visible');
   });
 
-  it('addFriendNonExistent', function() {
+  it('cannot add non-existent friend', function() {
     // Open the add friend dialog
     cy.get('[data-testid="plus-add-friend-button"]').click();
     // Type in a nickname that doesn't exist
