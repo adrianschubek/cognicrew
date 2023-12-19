@@ -4,10 +4,25 @@ import { Card, Divider, Text, useTheme } from "react-native-paper";
 import { VariantProp } from "react-native-paper/lib/typescript/components/Typography/types";
 import PieChart from "react-native-pie-chart";
 
+type dataPointType =
+  | string
+  | { text: string; customNode?: JSX.Element }
+  | { text?: string; customNode: JSX.Element };
+function getDataText(dataPoint: dataPointType) {
+  return typeof dataPoint === "string" ? dataPoint : dataPoint.text;
+}
+function getCustomNode(dataPoint: dataPointType) {
+  return typeof dataPoint === "object" && dataPoint.customNode
+    ? dataPoint.customNode
+    : null;
+}
 export default function statisticCategory(props: {
   data: {
     title: string;
-    dataPointCategories: { dataPoints: string[]; textColor?: any }[];
+    dataPointCategories: {
+      dataPoints: dataPointType[];
+      textColor?: any;
+    }[];
   };
   textVariant?: string;
   titleVariant?: string;
@@ -42,17 +57,19 @@ export default function statisticCategory(props: {
                   <Fragment key={categoryIndex}>
                     {category.dataPoints.map((item, index) => {
                       return (
-                        <Text
-                          key={index}
-                          variant={textVariant}
-                          style={{
-                            color: category.textColor
-                              ? category.textColor
-                              : theme.colors.onBackground,
-                          }}
-                        >
-                          {item}
-                        </Text>
+                        <Fragment key={index}>
+                          <Text
+                            variant={textVariant}
+                            style={{
+                              color: category.textColor
+                                ? category.textColor
+                                : theme.colors.onBackground,
+                            }}
+                          >
+                            {getDataText(item)}
+                          </Text>
+                          {getCustomNode(item)}
+                        </Fragment>
                       );
                     })}
                     {categoryIndex !== data.dataPointCategories.length - 1 && (
