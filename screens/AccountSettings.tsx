@@ -32,6 +32,10 @@ export default function AccountSettings() {
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />
       <Divider />
+      <TagsSettings
+        style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+      />
+      <Divider />
       <NameChange
         style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
       />

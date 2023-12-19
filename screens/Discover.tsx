@@ -2,66 +2,33 @@ import {
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import {
-  SafeAreaView,
-  StatusBar,
-  View,
-  StyleSheet,
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-import {
-  Card,
-  Chip,
-  Dialog,
-  Divider,
-  Icon,
-  PaperProvider,
-  Portal,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
-import { Searchbar, Button } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
+import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
+import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
-import { mutate } from "swr";
-import {
-  useDistinctProjectGroups,
-  useExercises,
-  useFlashcards,
-  useSets,
-  useUpsertFlashcard,
-  useUpsertSet,
-  useUsername,
-} from "../utils/hooks";
+import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useAuth } from "../providers/AuthProvider";
 
-//TODO realtime updating
+
+
 export default function Discover() {
-  const theme = useTheme();
-  const { data: ownName, isLoading } = useUsername();
-  const [selectedSemester, setSelectedSemester] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [projectsData, setProjectsData] = useState(null);
 
-  const { data, mutate } = useQuery(
+
+  const theme = useTheme();
+  const { data: ownName } = useUsername();
+
+
+  //Get all published learning projects and relevant data
+  const [getData, setData] = useState(null);
+  const { data } = useQuery(
     supabase.rpc("get_published_learning_projects_with_avg_rating"),
     {
-      onSuccess(data, key, config) {
-        console.log("Data feeetched successfully:", data.data);
+      onSuccess(data) {
+        console.log("Data fetched successfully:", data.data);
       },
-      onError(err, key, config) {
+      onError(err) {
         errorAlert({
           message: err.message,
         });
@@ -70,11 +37,9 @@ export default function Discover() {
   );
 
   //Recommender system functionality START
-
-  const { user } = useAuth();
-
+  
+  const [projectsUserIsIn, setUsersProjects] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
-  const [globalTags, setGlobalTags] = useState([]);
 
   async function getUserGlobalTags() {
     let { data: profiles, error } = await supabase
@@ -84,7 +49,7 @@ export default function Discover() {
     return resultArray;
   }
 
-  async function getProjectTags() {
+  async function getPublishedProjectTags() {
     let resultArray: (number | string)[][] = [];
 
     let { data: publicProjects, error } = await supabase.rpc("public_projects");
@@ -98,12 +63,49 @@ export default function Discover() {
     return resultArray;
   }
 
-  async function recommendProjects(userTags, projectTags) {
+  async function getUserProjectTags() {
+    let resultArray = [];
+
+    let { data: usersProjects, error } = await supabase
+      .from("learning_projects")
+      .select("*");
+
+    for (let i = 0; i < usersProjects.length; i++) {
+      let tags = usersProjects[i]["tags"].split(",");
+      if (tags.some((tag) => tag.trim() !== "")) {
+        resultArray.push(tags);
+      }
+    }
+    resultArray = resultArray.flat();
+
+    return resultArray;
+  }
+
+  async function recommendProjects(
+    ownGlobalTags,
+    usersProjectTags,
+    publishedProjectTags,
+  ) {
+    console.log(ownGlobalTags);
+    console.log(usersProjectTags);
+    console.log(publishedProjectTags);
+
     try {
-      const recommendedProjects = projectTags.filter((project) => {
+      let recommendedProjects = publishedProjectTags.filter((project) => {
         const projectTagArray = project[0];
-        return userTags.some((tag) => projectTagArray.includes(tag));
+        return ownGlobalTags.some((tag) => projectTagArray.includes(tag));
       });
+
+      recommendedProjects = recommendedProjects.concat(
+        publishedProjectTags.filter((project) => {
+          const userProjectTagArray = project[0];
+          return usersProjectTags.some((tag) =>
+            userProjectTagArray.includes(tag),
+          );
+        }),
+      );
+
+      console.log(recommendedProjects);
 
       // Extract only the ids from the recommendedProjects array
       const recommendedIds = recommendedProjects.map((project) => project[1]);
@@ -122,38 +124,36 @@ export default function Discover() {
           recommendedIdsAndRatings.push([recommendedIds[i], avgrating]);
         }
       }
-      const recommendations = recommendedIdsAndRatings.sort(
-        (a, b) => b[1] - a[1],
-      );
-
-      return recommendations;
+      return recommendedIdsAndRatings;
     } catch (error) {
       console.error("Error in recommending projects:", error.message);
       throw error;
     }
   }
 
-  async function getPublished() {
-    let { data: test, error } = await supabase.rpc(
-      "get_published_learning_projects_with_avg_rating",
-    );
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      console.log("WIESO0OO NULL");
-      console.log(test);
-    }
+  async function getUsersProjects() {
+    let { data: user_learning_projects, error } = await supabase
+      .from("user_learning_projects")
+      .select("learning_project_id");
+
+    return user_learning_projects;
   }
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const publishedProjects = await getPublished();
-        setProjectsData(publishedProjects);
-        const userTags = await getUserGlobalTags();
-        setGlobalTags(userTags);
-        const projectTags = await getProjectTags();
-        const recommendations = await recommendProjects(userTags, projectTags);
+        const usersProjects = await getUsersProjects(); //get projects user is member of so they get excluded from being displayed
+        setUsersProjects(usersProjects);
+
+        const userTags = await getUserGlobalTags(); //get global, personal preference tags to match published projects tags
+        const usersProjectTags = await getUserProjectTags(); //get project tags of projects the user is a member of to match published projects tags
+        const publishedProjectTags = await getPublishedProjectTags(); //get published projects tags and ids of projects
+        const recommendations = await recommendProjects( 
+          userTags,
+          usersProjectTags,
+          publishedProjectTags,
+        ); //return the recommended projects
         setRecommendations(recommendations);
       } catch (error) {
         console.error("Error in fetching data:", error.message);
@@ -165,85 +165,9 @@ export default function Discover() {
 
   //Recommender system functionality END
 
-  const customSort = (a, b) => {
-    const extractNumber = (str) => {
-      const match = str.match(/\d+/);
-      return match ? parseInt(match[0], 10) : NaN;
-    };
-    const numA = extractNumber(a);
-    const numB = extractNumber(b);
-    if (!isNaN(numA) && !isNaN(numB)) {
-      return numB - numA;
-    }
-    if (!isNaN(numA) || !isNaN(numB)) {
-      return isNaN(numA) ? -1 : 1;
-    }
-    return a.localeCompare(b);
-  };
+  //CLONING START
 
-  const [allDistinctGroups, setAllDistinctGroups] = useState([]);
-
-  useEffect(() => {
-    console.log("Stiiiill active");
-    const fetchDistinctGroups = async () => {
-      try {
-        const distinctGroups = await useDistinctProjectGroups();
-        setAllDistinctGroups(distinctGroups.sort(customSort));
-      } catch (error) {
-        console.error("Error fetching distinct project groups:", error.message);
-      }
-    };
-    fetchDistinctGroups();
-  }, []);
-
-  const [cardVisibility, setCardVisibility] = useState(
-    Array(data?.length).fill(false),
-  );
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const showDialog = (item) => {
-    setSelectedItem(item);
-    setDialogVisible(true);
-  };
-
-  const hideDialog = () => {
-    setDialogVisible(false);
-    setInputValue("");
-  };
-
-  const handleChangeText = (text) => {
-    setInputValue(text);
-  };
-
-  const renderDialog = () => (
-    <Portal>
-      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-        <Dialog.Title>Clone Project</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="New Project Name"
-            value={inputValue}
-            onChangeText={handleChangeText}
-          />
-        </Dialog.Content>
-        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button
-            onPress={hideDialog}
-            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
-          <Button
-            buttonColor={theme.colors.primary}
-            textColor="white"
-            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
-            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  );
-
-  const { success, error: errorAlert, info, confirm } = useAlerts();
+  const { success, error: errorAlert} = useAlerts();
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
@@ -522,66 +446,113 @@ export default function Discover() {
     }
   };
 
-  if (!data) return null;
+  //CLONING END
+
+  //Visibility and scramble functionss for display of the list
+
+  const [cardVisibility, setCardVisibility] = useState(
+    Array(data?.length).fill(false),
+  );
+
+  const toggleCardVisibility = (index) => {
+    const updatedVisibility = [...cardVisibility];
+    updatedVisibility[index] = !updatedVisibility[index];
+    setCardVisibility(updatedVisibility);
+  };
+
+  function reScramble() {
+    setData(
+      data
+        .filter(
+          (project) =>
+            recommendations.some(
+              (recommendation) => recommendation[0] === project.project_id,
+            ) &&
+            !projectsUserIsIn.some(
+              (projectObj) =>
+                projectObj.learning_project_id === project.project_id,
+            ),
+        )
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5)
+        .sort((a, b) => b["avg_rating"] - a["avg_rating"]),
+    );
+  }
+
+  //Render footer and header of the projects FlatList
+
+  const renderHeader = () => {
+    return (
+      <View>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            marginLeft: 10,
+            color: theme.colors.primary,
+          }}
+        >
+          Recommendations for
+        </Text>
+        <Text
+          style={{
+            fontSize: 25,
+            fontWeight: "bold",
+            fontStyle: "italic",
+            marginLeft: 10,
+            marginBottom: 10,
+            color: "rgb(132, 61, 163)",
+          }}
+        >
+          "{ownName}"
+        </Text>
+
+        <Divider style={{ marginBottom: 10 }} />
+      </View>
+    );
+  };
 
   const renderFooter = () => (
     <View style={{ flexDirection: "row" }}>
       <Divider />
-      <Button mode="contained-tonal" icon="autorenew" labelStyle={{ fontSize: 18 }} onPress={() => {}}>
-        Re-scramble{" "}
+      <Button
+        mode="contained-tonal"
+        icon="autorenew"
+        labelStyle={{ fontSize: 18 }}
+        onPress={reScramble}
+      >
+        Re-scramble
       </Button>
     </View>
   );
 
+
+  if (!data) return null;
+
   return (
     <SafeAreaView>
-      <Text
-        style={{
-          fontSize: 25,
-          fontWeight: "bold",
-          marginLeft: 10,
-          color: theme.colors.primary,
-        }}
-      >
-        Recommendations for 
-      </Text>
-      <Text
-       style={{
-        fontSize: 25,
-        fontWeight: "bold",
-        fontStyle: "italic",
-        marginLeft: 10,
-        marginBottom: 10,
-        color: "rgb(132, 61, 163)",
-      }}>
-      "{ownName}"
-      </Text>
-
-      <Divider style={{marginBottom:10}}/>
-      {renderDialog()}
       <FlatList
-        data={data
-          .filter(
-            (project) =>
-              recommendations.some(
-                (recommendation) => recommendation[0] === project.project_id,
-              ) &&
-              (project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                project.description
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase())),
-          )
-          .slice(0, 5)}
+        data={
+          getData ??
+          data
+            .filter(
+              (project) =>
+                recommendations.some(
+                  (recommendation) => recommendation[0] === project.project_id,
+                ) &&
+                !projectsUserIsIn.some(
+                  (projectObj) =>
+                    projectObj.learning_project_id === project.project_id,
+                ),
+            )
+            .slice(0, 5)
+            .sort((a, b) => b["avg_rating"] - a["avg_rating"])
+        }
         renderItem={({ item, index }) => (
           <Card
             style={styles.card}
             key={index.toString()}
-            onPress={() => {
-              // Toggle visibility for the pressed card
-              const updatedVisibility = [...cardVisibility];
-              updatedVisibility[index] = !updatedVisibility[index];
-              setCardVisibility(updatedVisibility);
-            }}
+            onPress={() => toggleCardVisibility(index)}
           >
             <Card.Title title={item.name} titleVariant="titleLarge" />
 
@@ -589,14 +560,14 @@ export default function Discover() {
               {cardVisibility[index] && (
                 <>
                   <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Description: </Text>
+                    <Text variant="bodyMedium">Dsciption: </Text>
                     <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
                       {item.description}
                     </Text>
                   </View>
 
                   <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Owner: </Text>
+                    <Text variant="bodyMedium">Oner: </Text>
                     <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
                       {item.username}
                     </Text>
@@ -637,6 +608,7 @@ export default function Discover() {
             </Card.Content>
           </Card>
         )}
+        ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
@@ -644,9 +616,6 @@ export default function Discover() {
 }
 
 const styles = StyleSheet.create({
-  container: {},
-  item: {},
-  title: {},
   card: {
     margin: 3,
     marginBottom: 10,
@@ -655,6 +624,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  flatList: {},
-  semesterFilter: {},
 });
