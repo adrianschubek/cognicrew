@@ -23,6 +23,7 @@ import { useAlerts } from "react-native-paper-fastalerts";
 export default function Discover() {
   const theme = useTheme();
   const { data: ownName } = useUsername();
+  const { confirm } = useAlerts();
 
   //Get all published learning projects and relevant data
   const [getData, setData] = useState(null);
@@ -473,65 +474,6 @@ export default function Discover() {
         .sort((a, b) => b["avg_rating"] - a["avg_rating"]),
     );
   }
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const showDialog = (item) => {
-    setSelectedItem(item);
-    setDialogVisible(true);
-  };
-
-  const hideDialog = () => {
-    setDialogVisible(false);
-    setInputValue("");
-  };
-
-  const handleChangeText = (text) => {
-    setInputValue(text);
-  };
-
-  const renderDialog = () => (
-    <Portal>
-      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-        <Dialog.Title>Clone Project</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="New Project Name"
-            value={inputValue}
-            onChangeText={handleChangeText}
-          />
-        </Dialog.Content>
-        <Dialog.Actions
-          style={{ flexDirection: "row", justifyContent: "space-between" }}
-        >
-          <Button
-            onPress={hideDialog}
-            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}
-          >
-            Cancel
-          </Button>
-          <Button
-            buttonColor={theme.colors.primary}
-            textColor="white"
-            onPress={() => {
-              save(selectedItem, inputValue);
-              hideDialog();
-            }}
-            style={{
-              marginRight: 0,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-            }}
-          >
-            Save
-          </Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  );
-
   //Render footer and header of the projects FlatList
 
   const renderHeader = () => {
@@ -572,7 +514,6 @@ export default function Discover() {
 
   return (
     <SafeAreaView>
-      {renderDialog()}
       <FlatList
         data={
           getData ??
@@ -603,7 +544,7 @@ export default function Discover() {
           ];
           return (
             <Card
-              style={styles.card}
+              style={{ margin: 3, marginBottom: 10 }}
               key={index.toString()}
               onPress={() => toggleCardVisibility(index)}
             >
@@ -630,12 +571,33 @@ export default function Discover() {
                       Tags: {item.tags}
                     </Text>
 
-                    <View style={styles.horizontalCardButtons}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
                       <Button
                         buttonColor={theme.colors.primary}
                         textColor="white"
                         onPress={() => {
-                          showDialog(item);
+                          confirm({
+                            title: "Clone project",
+                            icon: "content-copy",
+                            okText: "Clone",
+                            okAction: (vars) => {
+                              save(item, vars[0]);
+                            },
+                            fields: [
+                              {
+                                label: "New project name",
+                                type: "text",
+                                required: true,
+                                errorText:
+                                  "Cannot clone this project without a new name",
+                              },
+                            ],
+                          });
                         }}
                       >
                         Clone
@@ -653,14 +615,3 @@ export default function Discover() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    margin: 3,
-    marginBottom: 10,
-  },
-  horizontalCardButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-});
