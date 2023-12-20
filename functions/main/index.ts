@@ -44,7 +44,11 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 let gameLoopIntervalId: number | null = null;
 async function startGameLoop(handler: () => Promise<void>, interval: number) {
   if (gameLoopIntervalId === null) {
-    await handler();
+    try {
+      await handler();
+    } catch (error) {
+      console.error("[CRITICAL] Gameloop crashed! ", error);
+    }
     gameLoopIntervalId = setInterval(handler, interval);
   } else {
     console.warn(
@@ -246,7 +250,7 @@ async function mainLoop() {
             await supabase
               .from("private_room_states")
               .delete()
-              .eq("room_id", state.room_id);
+              .eq("room_id", state.room_id); // FIXME crash: this causes privateState and gameData to be undefined later on
             // delete player answers
             await supabase
               .from("player_answers")

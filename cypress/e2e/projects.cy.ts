@@ -14,7 +14,7 @@ describe("Projects Functionality", () => {
   };
 
    
-   it("createProject", function () {
+   it("can create project", function () {
     
     // Create project
     cy.get('[data-testid="icon-button"]').click();
@@ -31,7 +31,7 @@ describe("Projects Functionality", () => {
     // cy.get('[data-testid="input-project-visibility"]').click();
   }); 
  
-   it("deleteProject", function () {
+   it("can delete project", function () {
     cy.get('[data-testid="select-project-button"]').first().click();
     cy.get('[data-testid="project-settings-button"]').click();
     cy.get('[data-testid="delete-project-button"]').click();

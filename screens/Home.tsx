@@ -1,18 +1,30 @@
 import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Avatar, Text, Card, IconButton, Button, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Text,
+  Card,
+  IconButton,
+  Button,
+  useTheme,
+} from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
-import { useUsername } from "../utils/hooks";
+import { useFileUrl, useUsername } from "../utils/hooks";
 import { useEffect } from "react";
 
 //for testing purposes
 import { NAVIGATION } from "../types/common";
+import { useAvatarStore } from "../stores/AvatarStore";
+import { useAuth } from "../providers/AuthProvider";
+import ProfilePictureAvatar from "../components/common/ProfilePictureAvatar";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
+  const { user } = useAuth();
   const theme = useTheme();
-
+  const { avatarUrl } = useAvatarStore();
   useEffect(() => {
     navigation.setOptions({
       title: "CogniCrew",
@@ -25,6 +37,39 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
+  const {
+    data: profilePictureUrl,
+    error,
+    isLoading: profilePictureIsLoading,
+    mutate,
+  } = useFileUrl(`${user.id}`, "profile-pictures");
+  const { setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
+  useEffect(() => {
+    if (!profilePictureUrl || profilePictureIsLoading) return;
+    const timestamp = Date.now();
+    const url = `${profilePictureUrl.data.publicUrl}/avatar?${timestamp}`;
+    setAvatarUrl(url);
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setUrlHasMatchingImage(true);
+        console.log("matching image");
+      })
+      .catch(() => {
+        setUrlHasMatchingImage(false);
+        console.log("no matching image");
+      });
+  }, [profilePictureUrl]);
+
+  if (isLoading)
+    return (
+      <>
+        <StatusBar style="auto" />
+        <LoadingOverlay visible={isLoading} />
+      </>
+    );
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -32,16 +77,20 @@ export default function HomeScreen({ navigation }) {
         <Text style={styles.headerText}>
           Hello, {isLoading ? "...." : data}
         </Text>
-        <Avatar.Text
-          size={48}
-          label={(isLoading ? "" : data).substring(0, 2)}
+        <ProfilePictureAvatar
           style={styles.avatar}
+          username={isLoading ? "...." : data}
+          size={48}
         />
       </View>
       <View style={styles.body}>
-        <Card style={styles.card} mode="contained" theme={{
-          colors: { surfaceVariant: theme.colors.secondaryContainer },
-        }}>
+        <Card
+          style={styles.card}
+          mode="contained"
+          theme={{
+            colors: { surfaceVariant: theme.colors.secondaryContainer },
+          }}
+        >
           <JoinRoom navigation={navigation} />
         </Card>
       </View>
