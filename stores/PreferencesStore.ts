@@ -26,7 +26,7 @@ export const usePreferencesStore = create<PreferencesStore>()(
       darkmode: false,
       setDarkmode: (darkmode: boolean) => set({ darkmode: darkmode }),
       masterVolume: 1,
-      musicVolume: 0.5,
+      musicVolume: 0,
       effectsVolume: 1,
       setMasterVolume: (volume: number) => {set({ masterVolume: volume }); console.log(volume);},
       setMusicVolume: (volume: number) => set({ musicVolume: volume }),
