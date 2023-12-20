@@ -24,7 +24,7 @@ describe("Cognilinks Functionality", () => {
   
      
     context("Add and Edit Links", () => {
-      it("addLinkSuccess", function () {
+      it("can add links", function () {
         cy.clearLinks(); 
         cy.get('[data-testid="link-fab-button"]').click();
         cy.contains('button', 'Add new link').click();
@@ -43,7 +43,7 @@ describe("Cognilinks Functionality", () => {
         cy.get('[data-testid="link-card"]').should('contain', LINK1.description);
       });  
   
-      it("addLink with missing mandatory fields", function () {
+      it("can add link with missing mandatory fields", function () {
         cy.get('[data-testid="link-fab-button"]').click();
         cy.contains('button', 'Add new link').click();
       
@@ -54,7 +54,7 @@ describe("Cognilinks Functionality", () => {
         cy.contains('button', 'Save').should('be.disabled');
       });
   
-      it("editLink with empty mandatory fields", function () {
+      it("can edit link with empty mandatory fields", function () {
         cy.get('[data-testid="vertical-dots-button"]').first().click();
         cy.get('[data-testid="edit-link-button"]').click();     
       
@@ -66,7 +66,7 @@ describe("Cognilinks Functionality", () => {
         cy.contains('button', 'Save').should('be.disabled');
       });
   
-      it("editLinkSuccess", function () {
+      it("can edit link", function () {
         cy.get('[data-testid="vertical-dots-button"]').last().click();
         cy.get('[data-testid="edit-link-button"]').click();     
         const linkValues = [LINK2.title, LINK2.subtitle, LINK2.description, LINK2.url];
@@ -102,7 +102,7 @@ describe("Cognilinks Functionality", () => {
         cy.wait(1500) // allows the added link cards to be fully rendered before proceeding to the tests, so that they they work as intended at all times
       });
       
-     it("deleteLinksSuccess", function () {
+     it("can delete links", function () {
       cy.get('[data-testid="chevron-button"]').last().click();  
       cy.get('[data-testid="link-card"]').should('contain', LINK2.description);
       cy.get('[data-testid="vertical-dots-button"]').last().click();
