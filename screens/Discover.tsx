@@ -579,7 +579,7 @@ export default function Discover() {
                     >
                       <Button
                         buttonColor={theme.colors.primary}
-                        textColor="white"
+                        textColor={theme.colors.onPrimary}
                         onPress={() => {
                           confirm({
                             title: "Clone project",
