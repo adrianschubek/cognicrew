@@ -1,17 +1,39 @@
+import { useState } from "react";
 import { View } from "react-native";
-import { Button, Card, Text } from "react-native-paper";
+import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
+import { useAlerts } from "react-native-paper-fastalerts";
 
-export default function ProjectCard() {
+export default function ProjectCardList(props: {
+  item: any;
+  save: (item, vars) => void;
+}) {
+  const theme = useTheme();
+  const { confirm } = useAlerts();
+  const { item, save } = props;
+  const [cardVisibility, setCardVisibility] = useState<boolean>(false);
+
+  const toggleCardVisibility = () => {
+    setCardVisibility(!cardVisibility);
+  };
+  const stats = [
+    { title: "Description", data: item.description },
+    { title: "Owner", data: item.username },
+    { title: "Created in", data: item.created_at.substring(0, 4) },
+    {
+      title: "Rating",
+      data: item.avg_rating.toFixed(2) + " ",
+      icon: <Icon source="star" size={20} color="#ffb300" />,
+    },
+  ];
   return (
-    /*<Card
+    <Card
       style={{ margin: 3, marginBottom: 10 }}
-      key={index.toString()}
-      onPress={() => toggleCardVisibility(index)}
+      onPress={() => toggleCardVisibility()}
     >
       <Card.Title title={item.name} titleVariant="titleLarge" />
 
       <Card.Content style={{ gap: 5 }}>
-        {cardVisibility[index] && (
+        {cardVisibility && (
           <>
             {stats.map((stat, index) => {
               return (
@@ -36,9 +58,25 @@ export default function ProjectCard() {
             >
               <Button
                 buttonColor={theme.colors.primary}
-                textColor="white"
+                textColor={theme.colors.onPrimary}
                 onPress={() => {
-                  showDialog(item);
+                  confirm({
+                    title: "Clone project",
+                    icon: "content-copy",
+                    okText: "Clone",
+                    okAction: (vars) => {
+                      save(item, vars[0]);
+                    },
+                    fields: [
+                      {
+                        label: "New project name",
+                        type: "text",
+                        required: true,
+                        errorText:
+                          "Cannot clone this project without a new name",
+                      },
+                    ],
+                  });
                 }}
               >
                 Clone
@@ -47,7 +85,6 @@ export default function ProjectCard() {
           </>
         )}
       </Card.Content>
-    </Card>*/
-    null
+    </Card>
   );
 }
