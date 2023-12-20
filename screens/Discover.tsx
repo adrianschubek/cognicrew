@@ -3,15 +3,12 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView, View, FlatList } from "react-native";
 import {
   Card,
-  Dialog,
   Divider,
   Icon,
-  Portal,
   Text,
-  TextInput,
   useTheme,
 } from "react-native-paper";
 import { Button } from "react-native-paper";
