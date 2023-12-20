@@ -39,7 +39,7 @@ Cypress.Commands.add("logout", () => {
 });
 
 Cypress.Commands.add("clearLinks", () => {
-  cy.get('body').then((body) => {
+  cy.get("body").then((body) => {
     if (body.find('[data-testid="link-card"]').length > 0) {
       cy.get('[data-testid="link-card"]').each(() => {
         cy.get('[data-testid="vertical-dots-button"]').first().click();
@@ -48,6 +48,35 @@ Cypress.Commands.add("clearLinks", () => {
       });
     }
   });
+});
+
+Cypress.Commands.add("createProject", (id: string) => {
+  cy.get('[href="/_main_/LearningProjectsTab"]').click();
+  cy.get('[data-testid="icon-button"]').click();
+  cy.get('[data-testid="input-project-title"]').click().type(`title_${id}`);
+  cy.get('[data-testid="input-project-description"]')
+    .click()
+    .type(`desc_${id}`);
+  cy.get('[data-testid="input-project-semester"]').click();
+  cy.contains("button", "Multi-term").click();
+  cy.get('[data-testid="input-project-tags"]').click().type(`tags_${id}`);
+  cy.get('[data-testid="create-project-button"]').click();
+  cy.contains("Project created").should("be.visible");
+  cy.contains("OK").click();
+  cy.contains("Discard changes").should("be.visible");
+  cy.contains("OK").click(); // FIXME click again for Discard Changes dialog
+});
+
+Cypress.Commands.add("deleteProject", (id: string) => {
+  cy.get('[href="/_main_/LearningProjectsTab"]').click();
+  cy.get('[data-testid="select-project-button"]')
+    .contains(`title_${id}`)
+    .click();
+  cy.get('[data-testid="project-settings-button"]').click();
+  cy.get('[data-testid="delete-project-button"]').click();
+  cy.contains("OK").click();
+  cy.contains("Discard changes").should("be.visible");
+  cy.contains("OK").click(); // FIXME click again for Discard Changes dialog
 });
 
 //
@@ -67,14 +96,15 @@ Cypress.Commands.add("clearLinks", () => {
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
 
-
 // Is this code below here redundant to the code at the top?
 
 declare namespace Cypress {
   interface Chainable<Subject> {
-    openApp(): Chainable<Subject>;
-    login(): Chainable<Subject>;
-    logout(): Chainable<Subject>;
+    openApp(): Chainable<void>;
+    login(): Chainable<void>;
+    logout(): Chainable<void>;
+    createProject(id: string): Chainable<void>;
+    deleteProject(id: string): Chainable<void>;
     // login(email: string, password: string): Chainable<void>
     // drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
     // dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
