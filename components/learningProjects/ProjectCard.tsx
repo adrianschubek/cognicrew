@@ -31,7 +31,6 @@ export default function ProjectCard(props: {
       onPress={() => toggleCardVisibility()}
     >
       <Card.Title title={item.name} titleVariant="titleLarge" />
-
       <Card.Content style={{ gap: 5 }}>
         {cardVisibility && (
           <>
@@ -49,7 +48,6 @@ export default function ProjectCard(props: {
             <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
               Tags: {item.tags}
             </Text>
-
             <View
               style={{
                 flexDirection: "row",
