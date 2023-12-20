@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
 
-export default function ProjectCardList(props: {
+export default function ProjectCard(props: {
   item: any;
   save: (item, vars) => void;
 }) {

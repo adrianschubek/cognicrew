@@ -3,14 +3,14 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import ProjectCardList from "../components/learningProjects/ProjectCardList";
+import ProjectCard from "../components/learningProjects/ProjectCard";
 
 export default function Discover() {
   const theme = useTheme();
@@ -492,26 +492,30 @@ export default function Discover() {
   if (!data) return null;
 
   return (
-    <ProjectCardList
-      data={
-        getData ??
-        data
-          .filter(
-            (project) =>
-              recommendations.some(
-                (recommendation) => recommendation[0] === project.project_id,
-              ) &&
-              !projectsUserIsIn.some(
-                (projectObj) =>
-                  projectObj.learning_project_id === project.project_id,
-              ),
-          )
-          .slice(0, 5)
-          .sort((a, b) => b["avg_rating"] - a["avg_rating"])
-      }
-      save={save}
-      header={renderHeader}
-      footer={renderFooter}
-    />
+    <SafeAreaView>
+      <FlatList
+        data={
+          getData ??
+          data
+            .filter(
+              (project) =>
+                recommendations.some(
+                  (recommendation) => recommendation[0] === project.project_id,
+                ) &&
+                !projectsUserIsIn.some(
+                  (projectObj) =>
+                    projectObj.learning_project_id === project.project_id,
+                ),
+            )
+            .slice(0, 5)
+            .sort((a, b) => b["avg_rating"] - a["avg_rating"])
+        }
+        renderItem={({ item }) => {
+          return <ProjectCard item={item} save={save} />;
+        }}
+        ListHeaderComponent={renderHeader}
+        ListFooterComponent={renderFooter}
+      />
+    </SafeAreaView>
   );
 }
