@@ -11,6 +11,7 @@
 declare namespace Cypress {
   interface Chainable<Subject> {
     openApp(): Chainable<Subject>;
+    clearLinks(): Chainable<Subject>;
   }
 }
 
@@ -37,6 +38,18 @@ Cypress.Commands.add("logout", () => {
   cy.get('[data-testid="logout-confirm-button-text"]').click();
 });
 
+Cypress.Commands.add("clearLinks", () => {
+  cy.get('body').then((body) => {
+    if (body.find('[data-testid="link-card"]').length > 0) {
+      cy.get('[data-testid="link-card"]').each(() => {
+        cy.get('[data-testid="vertical-dots-button"]').first().click();
+        cy.get('[data-testid="delete-link-button"]').click();
+        cy.wait(500);
+      });
+    }
+  });
+});
+
 //
 // -- This is a parent command --
 // Cypress.Commands.add('login', (email, password) => { ... })
@@ -53,6 +66,10 @@ Cypress.Commands.add("logout", () => {
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 //
+
+
+// Is this code below here redundant to the code at the top?
+
 declare namespace Cypress {
   interface Chainable<Subject> {
     openApp(): Chainable<Subject>;

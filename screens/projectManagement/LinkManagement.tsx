@@ -146,6 +146,7 @@ export default function LinkManagement() {
       </View>
 
       <FAB.Group
+        testID="link-fab-button"
         open={open}
         visible
         icon={open ? "card-text" : "plus"}

@@ -3,22 +3,24 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
-import { Card, Dialog, Divider, Icon, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import { SafeAreaView, View, FlatList } from "react-native";
+import {
+  Card,
+  Divider,
+  Icon,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 
-
-
 export default function Discover() {
-
-
   const theme = useTheme();
   const { data: ownName } = useUsername();
-
+  const { confirm } = useAlerts();
 
   //Get all published learning projects and relevant data
   const [getData, setData] = useState(null);
@@ -37,7 +39,7 @@ export default function Discover() {
   );
 
   //Recommender system functionality START
-  
+
   const [projectsUserIsIn, setUsersProjects] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
 
@@ -139,7 +141,6 @@ export default function Discover() {
     return user_learning_projects;
   }
 
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -149,7 +150,7 @@ export default function Discover() {
         const userTags = await getUserGlobalTags(); //get global, personal preference tags to match published projects tags
         const usersProjectTags = await getUserProjectTags(); //get project tags of projects the user is a member of to match published projects tags
         const publishedProjectTags = await getPublishedProjectTags(); //get published projects tags and ids of projects
-        const recommendations = await recommendProjects( 
+        const recommendations = await recommendProjects(
           userTags,
           usersProjectTags,
           publishedProjectTags,
@@ -167,7 +168,7 @@ export default function Discover() {
 
   //CLONING START
 
-  const { success, error: errorAlert} = useAlerts();
+  const { success, error: errorAlert } = useAlerts();
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
@@ -256,7 +257,7 @@ export default function Discover() {
 
   const save = async (project, newProjectName) => {
     try {
-      const projectName = newProjectName? newProjectName : project.name;
+      const projectName = newProjectName ? newProjectName : project.name;
       const upsertedProject = await upsert([
         {
           name: projectName,
@@ -470,51 +471,6 @@ export default function Discover() {
         .sort((a, b) => b["avg_rating"] - a["avg_rating"]),
     );
   }
-
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const showDialog = (item) => {
-    setSelectedItem(item);
-    setDialogVisible(true);
-  };
-
-  const hideDialog = () => {
-    setDialogVisible(false);
-    setInputValue("");
-  };
-
-  const handleChangeText = (text) => {
-    setInputValue(text);
-  };
-
-  const renderDialog = () => (
-    <Portal>
-      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-        <Dialog.Title>Clone Project</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="New Project Name"
-            value={inputValue}
-            onChangeText={handleChangeText}
-          />
-        </Dialog.Content>
-        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button
-            onPress={hideDialog}
-            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
-          <Button
-            buttonColor={theme.colors.primary}
-            textColor="white"
-            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
-            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  );
-
   //Render footer and header of the projects FlatList
 
   const renderHeader = () => {
@@ -525,7 +481,7 @@ export default function Discover() {
             fontSize: 25,
             fontWeight: "bold",
             marginLeft: 10,
-            margin:10,
+            margin: 10,
             color: theme.colors.primary,
           }}
         >
@@ -551,12 +507,10 @@ export default function Discover() {
     </View>
   );
 
-
   if (!data) return null;
 
   return (
     <SafeAreaView>
-       {renderDialog()}
       <FlatList
         data={
           getData ??
@@ -574,80 +528,87 @@ export default function Discover() {
             .slice(0, 5)
             .sort((a, b) => b["avg_rating"] - a["avg_rating"])
         }
-        renderItem={({ item, index }) => (
-          <Card
-            style={styles.card}
-            key={index.toString()}
-            onPress={() => toggleCardVisibility(index)}
-          >
-            <Card.Title title={item.name} titleVariant="titleLarge" />
+        renderItem={({ item, index }) => {
+          const stats = [
+            { title: "Description", data: item.description },
+            { title: "Owner", data: item.username },
+            { title: "Created in", data: item.created_at.substring(0, 4) },
+            {
+              title: "Rating",
+              data: item.avg_rating.toFixed(2) + " ",
+              icon: <Icon source="star" size={20} color="#ffb300" />,
+            },
+          ];
+          return (
+            <Card
+              style={{ margin: 3, marginBottom: 10 }}
+              key={index.toString()}
+              onPress={() => toggleCardVisibility(index)}
+            >
+              <Card.Title title={item.name} titleVariant="titleLarge" />
 
-            <Card.Content>
-              {cardVisibility[index] && (
-                <>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Dsciption: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.description}
+              <Card.Content style={{ gap: 5 }}>
+                {cardVisibility[index] && (
+                  <>
+                    {stats.map((stat, index) => {
+                      return (
+                        <View style={{ flexDirection: "row" }} key={index}>
+                          <Text variant="bodyMedium">{stat.title}: </Text>
+                          <Text
+                            variant="bodyMedium"
+                            style={{ fontWeight: "bold" }}
+                          >
+                            {stat.data}
+                          </Text>
+                          {stat.icon && stat.icon}
+                        </View>
+                      );
+                    })}
+                    <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
+                      Tags: {item.tags}
                     </Text>
-                  </View>
 
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Oner: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.username}
-                    </Text>
-                  </View>
-
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Created in: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.created_at.substring(0, 4)}
-                    </Text>
-                  </View>
-
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Rating: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.avg_rating.toFixed(2)}
-                    </Text>
-                    <Icon source="star" size={20} color="#ffb300" />
-                  </View>
-
-                  <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
-                    Tags: {item.tags}
-                  </Text>
-
-                  <View style={styles.horizontalCardButtons}>
-                    <Button
-                      buttonColor={theme.colors.primary}
-                      textColor="white"
-                      onPress={() => {
-                        showDialog(item);
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
                       }}
                     >
-                      Clone
-                    </Button>
-                  </View>
-                </>
-              )}
-            </Card.Content>
-          </Card>
-        )}
+                      <Button
+                        buttonColor={theme.colors.primary}
+                        textColor={theme.colors.onPrimary}
+                        onPress={() => {
+                          confirm({
+                            title: "Clone project",
+                            icon: "content-copy",
+                            okText: "Clone",
+                            okAction: (vars) => {
+                              save(item, vars[0]);
+                            },
+                            fields: [
+                              {
+                                label: "New project name",
+                                type: "text",
+                                required: true,
+                                errorText:
+                                  "Cannot clone this project without a new name",
+                              },
+                            ],
+                          });
+                        }}
+                      >
+                        Clone
+                      </Button>
+                    </View>
+                  </>
+                )}
+              </Card.Content>
+            </Card>
+          );
+        }}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    margin: 3,
-    marginBottom: 10,
-  },
-  horizontalCardButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-});

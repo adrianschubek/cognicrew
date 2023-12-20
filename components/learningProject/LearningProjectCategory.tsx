@@ -30,6 +30,7 @@ export default function LearningProjectCategory(props: {
   return (
     <React.Fragment>
       <TouchableOpacity
+        testID="project-category-buttons"
         style={props.style}
         onPress={props.function || doNothing()}
       >
