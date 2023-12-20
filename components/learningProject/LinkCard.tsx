@@ -63,6 +63,7 @@ export default function LinkCard({ link, onEdit }) {
 
   return (
     <Card
+      testID="link-card"
       elevation={1}
       style={styles.cardStyle}
       key={link.id}
@@ -94,6 +95,7 @@ export default function LinkCard({ link, onEdit }) {
               />
             </TouchableOpacity>
             <IconButton
+              testID='chevron-button'
               style={{ margin: 0, padding: 0, marginTop: 8 }}
               icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
               onPress={() =>
@@ -111,6 +113,7 @@ export default function LinkCard({ link, onEdit }) {
             }}
           >
             <IconButton
+              testID="share-link-button"
               style={{ margin: 0, padding: 0 }}
               icon="share"
               onPress={() => onShare(link)}
@@ -121,12 +124,14 @@ export default function LinkCard({ link, onEdit }) {
               onDismiss={() => setMenuVisible(false)}
               anchor={
                 <IconButton
+                  testID="vertical-dots-button"
                   icon="dots-vertical"
                   onPress={() => setMenuVisible(link.id)}
                 />
               }
             >
               <Menu.Item
+                testID="delete-link-button"
                 onPress={() => {
                   deleteLink({ id: link.id });
                   setMenuVisible(false);
@@ -135,6 +140,7 @@ export default function LinkCard({ link, onEdit }) {
               />
               <Divider />
               <Menu.Item
+                testID="edit-link-button"
                 onPress={() => {
                   onEdit(link);
                   setMenuVisible(false);
