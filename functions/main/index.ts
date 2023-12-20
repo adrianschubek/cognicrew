@@ -44,7 +44,11 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 let gameLoopIntervalId: number | null = null;
 async function startGameLoop(handler: () => Promise<void>, interval: number) {
   if (gameLoopIntervalId === null) {
-    await handler();
+    try {
+      await handler();
+    } catch (error) {
+      console.error("[CRITICAL] Gameloop crashed! ", error);
+    }
     gameLoopIntervalId = setInterval(handler, interval);
   } else {
     console.warn(
