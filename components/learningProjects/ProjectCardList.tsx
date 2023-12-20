@@ -10,44 +10,12 @@ import ProjectCard from "./ProjectCard";
 export default function ProjectCardList(props: {
   data: ArrayLike<any>;
   save: (item, vars) => void;
-  reScramble: () => void;
+  header?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+  footer?: React.ComponentType<any> | React.ReactElement<any, string | React.JSXElementConstructor<any>>
 }) {
   const theme = useTheme();
-  const { data, save, reScramble } = props;
+  const { data, save, header, footer} = props;
 
-  const renderHeader = () => {
-    return (
-      <View>
-        <Text
-          style={{
-            fontSize: 25,
-            fontWeight: "bold",
-            marginLeft: 10,
-            margin: 10,
-            color: theme.colors.primary,
-          }}
-        >
-          Recommendations for you
-        </Text>
-
-        <Divider style={{ marginBottom: 10 }} />
-      </View>
-    );
-  };
-
-  const renderFooter = () => (
-    <View style={{ flexDirection: "row" }}>
-      <Divider />
-      <Button
-        mode="contained-tonal"
-        icon="autorenew"
-        labelStyle={{ fontSize: 18 }}
-        onPress={reScramble}
-      >
-        Re-scramble
-      </Button>
-    </View>
-  );
   return (
     <SafeAreaView>
       <FlatList
@@ -55,8 +23,8 @@ export default function ProjectCardList(props: {
         renderItem={({ item }) => {
           return <ProjectCard item={item} save={save} />;
         }}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderFooter}
+        ListHeaderComponent={header}
+        ListFooterComponent={footer}
       />
     </SafeAreaView>
   );

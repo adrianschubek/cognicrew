@@ -3,7 +3,7 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import {  View} from "react-native";
+import { View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
@@ -510,7 +510,8 @@ export default function Discover() {
           .sort((a, b) => b["avg_rating"] - a["avg_rating"])
       }
       save={save}
-      reScramble={reScramble}
+      header={renderHeader}
+      footer={renderFooter}
     />
   );
 }
