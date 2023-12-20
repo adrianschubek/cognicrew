@@ -711,6 +711,13 @@ export interface Database {
           group: string
         }[]
       }
+      get_friends_rank: {
+        Args: {
+          user_id_param: string
+          project_id_param: number
+        }
+        Returns: number
+      }
       get_particular_amount_ratings: {
         Args: {
           project_id_param: number
@@ -731,12 +738,29 @@ export interface Database {
           avg_rating: number
         }[]
       }
+      get_user_friends_rank: {
+        Args: {
+          user_id_param: string
+          project_id_param: number
+        }
+        Returns: number
+      }
       get_user_global_rank: {
+        Args: {
+          user_id_param: string
+          project_id_param: number
+        }
+        Returns: number
+      }
+      get_user_global_rank_data: {
         Args: {
           project_id_param: number
           user_id_param: string
         }
-        Returns: number
+        Returns: {
+          user_id: string
+          user_rank: number
+        }[]
       }
       get_user_rank_and_id: {
         Args: {

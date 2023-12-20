@@ -197,20 +197,22 @@ function useGameStats(projectId: number) {
 }
 function useRankingGlobal(projectId: number, userId: string) {
   const query = supabase.rpc("get_user_global_rank", {
-    project_id_param: projectId,
     user_id_param: userId,
+    project_id_param: projectId,
+
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  console.log(userId)
   const rank = data ? data : null;
   return { rank, error, isLoading, mutate };
 }
 function useRankingUnderFriends(projectId: number, userId: string) {
-  const query = supabase.rpc("get_user_rank_and_id", {
+  const query = supabase.rpc("get_user_friends_rank", {
     user_id_param: userId,
     project_id_param: projectId,
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-  const rank = data && data[0] ? data[0].user_rank : null;
+  const rank = data ? data : null;
   return { rank, error, isLoading, mutate };
 }
 
