@@ -13,7 +13,6 @@ import ProjectCard from "../components/learningProjects/ProjectCard";
 
 //TODO realtime updating
 export default function SearchProjects() {
-
   const [searchQuery, setSearchQuery] = useState([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
 
@@ -30,17 +29,6 @@ export default function SearchProjects() {
       },
     },
   );
-
-  // Add state to manage visibility for each card
-  const [cardVisibility, setCardVisibility] = useState(
-    Array(data?.length).fill(false),
-  );
-
-  const onChangeSearch = (query) => {
-    const tokens = query.split(",");
-    setSearchQueryDisplay(query);
-    setSearchQuery(tokens);
-  };
 
   const { success, error: errorAlert } = useAlerts();
   const { trigger: upsert } = useUpsertMutation(
@@ -350,9 +338,13 @@ export default function SearchProjects() {
       console.error("Save error:", error.message);
     }
   };
-
   if (!data) return null;
   const renderHeader = () => {
+    const onChangeSearch = (query) => {
+      const tokens = query.split(",");
+      setSearchQueryDisplay(query);
+      setSearchQuery(tokens);
+    };
     return (
       <>
         <View>
@@ -370,7 +362,6 @@ export default function SearchProjects() {
             }}
             value={searchQueryDisplay}
           />
-
           <HelperText type="info" style={{ marginHorizontal: 10 }}>
             Search for title and tags separated by commas in all learning
             projects
