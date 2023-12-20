@@ -126,14 +126,7 @@ export default function ProjectStatistics() {
     setTimeSpentBoard(data.gameStats["timeSpentWhiteboard"]);
   }, [data]);
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        mutate();
-      } catch (error) {
-        console.error("Error in fetching data:", error.message);
-      }
-    };
-    fetchData();
+    mutate();
   }, []);
   const fileStatistics = [
     {
