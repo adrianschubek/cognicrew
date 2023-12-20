@@ -202,7 +202,6 @@ function useRankingGlobal(projectId: number, userId: string) {
 
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-  console.log(userId)
   const rank = data ? data : null;
   return { rank, error, isLoading, mutate };
 }
