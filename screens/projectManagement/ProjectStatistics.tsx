@@ -6,6 +6,8 @@ import {
   useTheme,
   MD3LightTheme as LightTheme,
   MD3DarkTheme as DarkTheme,
+  HelperText,
+  Divider,
 } from "react-native-paper";
 
 import { useAuth } from "../../providers/AuthProvider";
@@ -107,7 +109,6 @@ export default function ProjectStatistics() {
       : theme.colors.isZero,
   };
 
-
   useEffect(() => {
     if (!data || isLoading) return;
     setCountLinks(data.linkCount);
@@ -115,7 +116,7 @@ export default function ProjectStatistics() {
     setCountExercises(data.exerciseCount);
     setCountDocuments(data.documentCount);
     setCountPhotos(data.imageCount);
-    setRankGlobal(data.globalRank)
+    setRankGlobal(data.globalRank);
     setRankUnderFriends(data.rankUnderFriends);
     setCardsScore(data.gameStats["scoreFlashcards"]);
     setCardsWins(data.gameStats["winsFlashcards"]);
@@ -287,6 +288,11 @@ export default function ProjectStatistics() {
             />
           );
         })}
+        <Divider/>
+        <HelperText type="info">
+          Project statistics will only be tracked if the user is a member of the
+          project.
+        </HelperText>
       </View>
     </ScrollView>
   );
