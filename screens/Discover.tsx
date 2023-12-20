@@ -3,8 +3,8 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, FlatList } from "react-native";
-import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
+import {  View} from "react-native";
+import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { useUsername } from "../utils/hooks";
@@ -14,7 +14,6 @@ import ProjectCardList from "../components/learningProjects/ProjectCardList";
 
 export default function Discover() {
   const theme = useTheme();
-  const { confirm } = useAlerts();
   const { data: ownName } = useUsername();
 
   //Get all published learning projects and relevant data
@@ -435,18 +434,6 @@ export default function Discover() {
   };
 
   //CLONING END
-
-  //Visibility and scramble functionss for display of the list
-
-  const [cardVisibility, setCardVisibility] = useState(
-    Array(data?.length).fill(false),
-  );
-
-  const toggleCardVisibility = (index) => {
-    const updatedVisibility = [...cardVisibility];
-    updatedVisibility[index] = !updatedVisibility[index];
-    setCardVisibility(updatedVisibility);
-  };
 
   function reScramble() {
     setData(
