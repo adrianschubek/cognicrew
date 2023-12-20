@@ -86,7 +86,7 @@ export default function LearningProject({ navigation, route }) {
       />
       <LearningProjectCategory
         path={require("../assets/completed_task_symbol.png")}
-        name={"Cognicises"}
+        name={"Cogniquiz"}
         function={() => {
           navigation.navigate(NAVIGATION.FLASHCARD_EXERCISE_MANAGEMENT, {
             type: ManagementType.EXERCISE,

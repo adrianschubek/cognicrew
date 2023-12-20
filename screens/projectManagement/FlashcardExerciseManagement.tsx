@@ -34,11 +34,11 @@ export default function FlashcardExerciseManagement({
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
   const typeName = (plural: boolean) =>
-    (type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
+    (type === ManagementType.FLASHCARD ? "flashcard" : "quiz") +
     (plural ? "s" : "");
   useEffect(() => {
     navigation.setOptions({
-      title: capitalizeFirstLetter(typeName(true)),
+      title: type === ManagementType.FLASHCARD ? "Flashcards" : "Quizzes",
     });
   }, []);
   return (
