@@ -89,7 +89,7 @@ export default function Whiteboard({ navigation }) {
         setAchievementName(achievement.name);
         setAchievementIcon(achievement.icon_name);
         setAchievementVisible(true);
-        setTimeout(() => setAchievementVisible(false), 5000); // Hide notification after 5 seconds
+        setTimeout(() => setAchievementVisible(false), 5500);
       }
     } else {
       console.error("Failed to unlock achievement");
@@ -209,21 +209,6 @@ export default function Whiteboard({ navigation }) {
 
         <View style={styles.bottomLeft}>
           <View style={styles.iconRow}>
-           <IconButton
-              icon="cat"
-              iconColor={theme.colors.primary}
-              size={40}
-              onPress={async () => {
-                const { error } = await supabase.functions.invoke("room-update",
-                {
-                  body: {
-                    type: "reset_room",
-                  } as RoomClientUpdate
-                });
-                console.log(await handleEdgeError(error));
-              }
-              }
-            />
             <IconButton
               icon="delete"
               iconColor={theme.colors.primary}
@@ -231,12 +216,10 @@ export default function Whiteboard({ navigation }) {
               onPress={resetActions}
             />
             <IconButton
-              icon="pencil"
+              icon="cog"
               iconColor={theme.colors.primary}
               size={40}
               onPress={() => {
-                setSelectedShape("none");
-                setTextToolSelected(false);
                 setDrawing(true);
               }}
             />
@@ -246,6 +229,14 @@ export default function Whiteboard({ navigation }) {
                 visible
                 icon={open ? "minus" : "drawing"}
                 actions={[
+                  {
+                    icon: "pen",
+                    label: "Pen",
+                    onPress: () => {
+                      setSelectedShape("none");
+                      setTextToolSelected(false);
+                    },
+                  },
                   {
                     icon: "keyboard",
                     label: "Keyboard",

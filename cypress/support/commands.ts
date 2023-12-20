@@ -21,10 +21,11 @@ declare namespace Cypress {
 
 Cypress.Commands.add("openApp", () => {
   cy.viewport("samsung-s10");
-  cy.visit("http://localhost:19006");
+  cy.visit("http://localhost:19006", { timeout: 300000 });
 });
 
 Cypress.Commands.add("login", () => {
+  // TODO: use environment variables for auth
   cy.get('[data-testid="text-input-flat"]').first().type("5r0yjo@test.de");
   cy.get('[data-testid="text-input-flat"]').last().type("password");
   cy.get('[data-testid="login-button"]').click();

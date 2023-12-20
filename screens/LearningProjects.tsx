@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import Discover from "./Discover";
 
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import SearchProjects from "./SearchProjects";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -33,7 +34,7 @@ export default function LearningProjects({ navigation }) {
               }}
             ></IconButton>
           </Tooltip>
-          <Tooltip title="Invite users">
+          {/* <Tooltip title="Invite users">
             <IconButton
               icon="filter"
               onPress={() => {
@@ -43,7 +44,7 @@ export default function LearningProjects({ navigation }) {
                 });
               }}
             ></IconButton>
-          </Tooltip>
+          </Tooltip> */}
         </>
       ),
     });
@@ -80,6 +81,30 @@ export default function LearningProjects({ navigation }) {
         }}
         name={NAVIGATION.DISCOVER}
         component={Discover}
+      />
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              color={focused ? theme.colors.primary : theme.colors.secondary}
+              source={"search-web"}
+              size={24}
+            />
+          ),
+          tabBarLabel: ({ focused }) => (
+            <Text
+              variant="labelMedium"
+              style={{
+                color: focused ? theme.colors.primary : theme.colors.secondary,
+              }}
+            >
+              {" "}
+              Search projects
+            </Text>
+          ),
+        }}
+        name={NAVIGATION.SEARCH_GLOBAL_PROJECTS}
+        component={SearchProjects}
       />
       <Tab.Screen
         name={"default_my_projects"}

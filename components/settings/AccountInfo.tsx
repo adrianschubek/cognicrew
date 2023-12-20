@@ -17,20 +17,21 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import { useAvatarStore } from "../../stores/AvatarStore";
+import ProfilePictureAvatar from "../common/ProfilePictureAvatar";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
   const { user } = useAuth();
-  const username = user.user_metadata.username;
-  const filePath = `${user.id}/avatar`;
-  const [alreadyHasCustomAvatar, setAlreadyHasCustomAvatar] =
-    useState<boolean>(false);
-  const icon = alreadyHasCustomAvatar ? "image-edit" : "image-plus";
-  const { data, error, isLoading, mutate } = useFileUrl(filePath);
-  useEffect(() => {
-    if (!data || !data?.data?.publicUrl) return;
-    setAlreadyHasCustomAvatar(true);
-  }, [data]);
+  const username = user.user_metadata.username as string;
+  const filePath = `${user.id}`;
+  const { avatarUrl, setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
+  const icon = avatarUrl ? "image-edit" : "image-plus";
+  const { data, error, isLoading, mutate } = useFileUrl(
+    filePath,
+    "profile-pictures",
+  );
+
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <TouchableOpacity
@@ -42,12 +43,44 @@ const Account = (props) => {
           cancelText: "",
           fields: [
             {
+              type: "custom",
+              render() {
+                return (
+                  <ProfilePictureAvatar
+                    {...props}
+                    style={{ alignSelf: "center", marginBottom: 10 }}
+                    username={username}
+                    size={200}
+                  />
+                );
+              },
+            },
+            {
+              label: "Remove avatar",
+              type: "button",
+              icon: "image-remove",
+              action: async () => {
+                await supabase.storage
+                  .from("profile-pictures")
+                  .remove([filePath + "/avatar"]);
+                setAvatarUrl(null);
+                setUrlHasMatchingImage(false);
+              },
+              errorText: "Could not remove image",
+            },
+            {
               label: "Upload image",
               type: "button",
               icon: "image-plus",
               action: async () => {
-                await selectAndUploadImage(filePath, "avatar");
-                mutate();
+                await selectAndUploadImage(filePath, {
+                  bucketName: "profile-pictures",
+                  fileName: "avatar",
+                }).then(() => {
+                  const timestamp = Date.now();
+                  setAvatarUrl(`${data.data.publicUrl}/avatar?${timestamp}`);
+                  setUrlHasMatchingImage(true);
+                });
               },
               errorText: "Could not upload image",
             },
@@ -55,12 +88,7 @@ const Account = (props) => {
         });
       }}
     >
-      {alreadyHasCustomAvatar ? (
-        <Avatar.Image {...props} source={{ uri: data.data.publicUrl }} />
-      ) : (
-        //<Avatar.Icon {...props} icon="account" />
-        <Avatar.Text {...props} label={username.substring(0, 2)} />
-      )}
+      <ProfilePictureAvatar {...props} username={username} />
     </TouchableOpacity>
   );
 };

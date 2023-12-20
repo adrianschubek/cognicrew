@@ -46,6 +46,7 @@ export default function LearningProject({ navigation, route }) {
           </Tooltip>
           <Tooltip title="Project settings">
             <IconButton
+              testID="project-settings-button"
               icon="cog"
               onPress={() => {
                 navigation.navigate(NAVIGATION.CREATEEDIT_PROJECT, {

@@ -362,16 +362,22 @@ export interface Database {
         Row: {
           id: string
           room_id: string | null
+          user_settings: Json | null
+          user_tags: string
           username: string
         }
         Insert: {
           id: string
           room_id?: string | null
+          user_settings?: Json | null
+          user_tags?: string
           username: string
         }
         Update: {
           id?: string
           room_id?: string | null
+          user_settings?: Json | null
+          user_tags?: string
           username?: string
         }
         Relationships: [
@@ -664,12 +670,6 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      clone_project: {
-        Args: {
-          project_id_to_clone: number
-        }
-        Returns: undefined
-      }
       create_room: {
         Args: {
           p_project_id: number
@@ -693,6 +693,18 @@ export interface Database {
         }
         Returns: boolean
       }
+      exercise_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
+      }
+      flashcard_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
+      }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -705,14 +717,26 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      get_published_learning_projects_with_avg_rating: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          project_id: number
+          name: string
+          description: string
+          created_at: string
+          tags: string
+          owner_id: string
+          is_published: boolean
+          username: string
+          avg_rating: number
+        }[]
+      }
       get_user_global_rank: {
         Args: {
           project_id_param: number
+          user_id_param: string
         }
-        Returns: {
-          user_id: string
-          user_rank: number
-        }[]
+        Returns: number
       }
       get_user_rank_and_id: {
         Args: {
@@ -760,6 +784,12 @@ export interface Database {
       leave_room: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      link_count: {
+        Args: {
+          p_project_id: number
+        }
+        Returns: number
       }
       list_friends: {
         Args: Record<PropertyKey, never>
@@ -858,6 +888,13 @@ export interface Database {
       track: {
         Args: {
           p_key: string
+        }
+        Returns: undefined
+      }
+      transfer_project: {
+        Args: {
+          p_owner_name: string
+          p_project_id: number
         }
         Returns: undefined
       }

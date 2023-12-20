@@ -133,7 +133,6 @@ export function useInsertFriend() {
 }
 
 //Project ratings
-
 export function useUpsertProjectRating() {
   return handleErrors(
     useUpsertMutation(
@@ -153,7 +152,122 @@ export function useDeleteProjectRating() {
     ),
   );
 }
+//project statistics
+function useCount(query) {
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const count = data as number;
+  return { count, error, isLoading, mutate };
+}
+function useLinkCount(projectId: number) {
+  return useCount(
+    supabase.rpc("link_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
 
+function useFlashcardCount(projectId: number) {
+  return useCount(
+    supabase.rpc("flashcard_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useExerciseCount(projectId: number) {
+  return useCount(
+    supabase.rpc("exercise_count", {
+      p_project_id: projectId,
+    }),
+  );
+}
+function useFileCount(projectId: number, fileType: string) {
+  const { data, error, isLoading, mutate } = useFiles(
+    `${projectId}/${fileType}`,
+  );
+  return { count: data?.data?.length, error, isLoading, mutate };
+}
+function useGameStats(projectId: number) {
+  const query = supabase
+    .from("user_learning_projects")
+    .select("stats")
+    .eq("learning_project_id", projectId);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const stats = data && data[0] ? data[0].stats : null;
+  return { stats, error, isLoading, mutate };
+}
+function useRankingGlobal(projectId: number, userId: string) {
+  const query = supabase.rpc("get_user_global_rank", {
+    project_id_param: projectId,
+    user_id_param: userId,
+  });
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const rank = data ? data : null;
+  return { rank, error, isLoading, mutate };
+}
+function useRankingUnderFriends(projectId: number, userId: string) {
+  const query = supabase.rpc("get_user_rank_and_id", {
+    user_id_param: userId,
+    project_id_param: projectId,
+  });
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  const rank = data && data[0] ? data[0].user_rank : null;
+  return { rank, error, isLoading, mutate };
+}
+
+export function useAllStatistics(projectId: number, userId: string) {
+  const linkCount = useLinkCount(projectId);
+  const flashcardCount = useFlashcardCount(projectId);
+  const exerciseCount = useExerciseCount(projectId);
+  const documentCount = useFileCount(projectId, "documents");
+  const imageCount = useFileCount(projectId, "photos");
+  const gameStats = useGameStats(projectId);
+  const globalRank = useRankingGlobal(projectId, userId);
+  const rankUnderFriends = useRankingUnderFriends(projectId, userId);
+  const mutate = () => {
+    linkCount.mutate();
+    flashcardCount.mutate();
+    exerciseCount.mutate();
+    documentCount.mutate();
+    imageCount.mutate();
+    globalRank.mutate();
+    rankUnderFriends.mutate();
+    gameStats.mutate();
+  };
+  useEffect(() => {
+    mutate();
+  }, []);
+  return {
+    data: {
+      linkCount: linkCount.count,
+      flashcardCount: flashcardCount.count,
+      exerciseCount: exerciseCount.count,
+      documentCount: documentCount.count,
+      imageCount: imageCount.count,
+      gameStats: gameStats.stats,
+      globalRank: globalRank.rank,
+      rankUnderFriends: rankUnderFriends.rank,
+    },
+    error:
+      linkCount.error ||
+      flashcardCount.error ||
+      exerciseCount.error ||
+      documentCount.error ||
+      imageCount.error ||
+      globalRank.error ||
+      rankUnderFriends.error ||
+      gameStats.error,
+    isLoading:
+      linkCount.isLoading ||
+      flashcardCount.isLoading ||
+      exerciseCount.isLoading ||
+      documentCount.isLoading ||
+      imageCount.isLoading ||
+      globalRank.isLoading ||
+      rankUnderFriends.isLoading ||
+      gameStats.isLoading,
+    mutate: mutate,
+  };
+}
 export function useAchievements() {
   return handleErrors(
     useQuery(
@@ -252,13 +366,13 @@ export async function useDistinctProjectGroups() {
   let { data, error } = await supabase.rpc("get_distinct_project_groups");
   const stringArray = data.map((item) => item.group);
 
-  console.log("Distinct groups Array:", stringArray);
+  //console.log("Distinct groups Array:", stringArray);
 
   if (error) {
     console.error("Error fetching distinct groups:", error.message);
     return []; // or handle the error in some way
   } else {
-    console.log("Distinct groups:", data);
+    //console.log("Distinct groups:", data);
     return stringArray;
   }
 }
@@ -431,14 +545,21 @@ export function useDeleteProject() {
   );
 }
 
-export function useFiles(filePath: string, limit?: number) {
+export function useFiles(
+  filePath: string,
+  limit?: number,
+  bucketName?: string,
+) {
+  const bucket = bucketName || "files";
   const fetchFiles = () =>
-    supabase.storage.from("files").list(filePath, {
+    supabase.storage.from(bucket).list(filePath, {
       limit: limit ? limit : 100,
       offset: 0,
     });
 
-  const { data, error, mutate } = handleErrors(useSWR([filePath], fetchFiles));
+  const { data, error, mutate } = handleErrors(
+    useSWR(["getFiles", filePath], fetchFiles),
+  );
   return {
     data,
     isLoading: !error && !data,
@@ -446,11 +567,12 @@ export function useFiles(filePath: string, limit?: number) {
     mutate,
   };
 }
-export function useFileUrl(filePath: string) {
+export function useFileUrl(filePath: string, bucketName?: string) {
+  const bucket = bucketName || "files";
   const fetchPublicUrl = () =>
-    supabase.storage.from("files").getPublicUrl(filePath);
+    supabase.storage.from(bucket).getPublicUrl(filePath);
   const { data, error, mutate } = handleErrors(
-    useSWR([filePath], fetchPublicUrl),
+    useSWR(["url", filePath], fetchPublicUrl),
   );
   return {
     data,

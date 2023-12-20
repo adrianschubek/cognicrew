@@ -30,7 +30,7 @@ export default function Visual(props) {
       setAchievementName(achievement?.name || "");
       setAchievementIcon(achievement?.icon_name || "");
       setAchievementVisible(true);
-      setTimeout(() => setAchievementVisible(false), 5000);
+      setTimeout(() => setAchievementVisible(false), 5500);
     }
   };
 

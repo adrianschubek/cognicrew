@@ -5,13 +5,12 @@ import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
 export async function selectAndUploadImage(
   filePath: string,
-  fileName?: string,
+  props?: { fileName?: string; bucketName?: string },
 ) {
   const options: ImagePicker.ImagePickerOptions = {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,
     allowsEditing: true,
   };
-
   const result = await ImagePicker.launchImageLibraryAsync(options);
   if (!result.canceled) {
     const img = result.assets[0];
@@ -19,20 +18,21 @@ export async function selectAndUploadImage(
       encoding: "base64",
     });
     //const fileName = img.fileName || `${new Date().getTime()}.${"png"}`;
-    const newFileName = fileName
-      ? fileName
+    const newFileName = props?.fileName
+      ? props?.fileName
       : `${new Date().getTime()}.${"png"}`;
     const filePathWithDocumentName = `${filePath}/${newFileName}`;
     const contentType = "image/png";
+    const bucket = props?.bucketName || "files";
     const { data, error } = await supabase.storage
-      .from("files")
+      .from(bucket)
       .upload(filePathWithDocumentName, decode(base64), {
         contentType,
         upsert: true,
       });
-      if (error) {
-        console.error("Error uploading image:", error.message);
-      }
+    if (error) {
+      console.error("Error uploading image:", error.message);
+    }
   }
 }
 export async function selectAndUploadFile(

@@ -20,9 +20,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView } from "react-native";
-import {
-  useConfirmLeaveLobby,
-} from "../utils/hooks";
+import { useConfirmLeaveLobby } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
@@ -89,39 +87,41 @@ export default function FlashcardGame({ route, navigation }) {
   return (
     <>
       <View style={{ paddingVertical: 20, flex: 1 }}>
-        
         <View style={{ flex: 1 }}>
-        <IconButton
-          mode="contained"
-          style={{
-            //backgroundColor: theme.colors.error,
-            position: "absolute",
-            left: 0,
-            top: 8,
-            borderRadius: 10,
-            backgroundColor: theme.colors.background,
-            transform: [{ rotateZ: "180deg" }],
-          }}
-          icon="logout"
-          //iconColor={theme.colors.onErrorContainer}
-          onPress={() => {
-            confirm({
-              key: "leaveroom",
-              title: "Leave game?",
-              message: "Do you want to leave this game and return to lobby?",
-              icon: "location-exit",
-              okText: "Leave",
-              okAction: async () => {
-                const { error } = await supabase.functions.invoke("room-update", {
-                  body: {
-                    type: "reset_room",
-                  } as RoomClientUpdate,
-                });
-                if (error) return await handleEdgeError(error);
-              },
-            });
-          }}
-        />
+          <IconButton
+            mode="contained"
+            style={{
+              //backgroundColor: theme.colors.error,
+              position: "absolute",
+              left: 0,
+              top: 8,
+              borderRadius: 10,
+              backgroundColor: theme.colors.background,
+              transform: [{ rotateZ: "180deg" }],
+            }}
+            icon="logout"
+            //iconColor={theme.colors.onErrorContainer}
+            onPress={() => {
+              confirm({
+                key: "leaveroom",
+                title: "Leave game?",
+                message: "Do you want to leave this game and return to lobby?",
+                icon: "location-exit",
+                okText: "Leave",
+                okAction: async () => {
+                  const { error } = await supabase.functions.invoke(
+                    "room-update",
+                    {
+                      body: {
+                        type: "reset_room",
+                      } as RoomClientUpdate,
+                    },
+                  );
+                  if (error) return await handleEdgeError(error);
+                },
+              });
+            }}
+          />
           <Dialog.Title style={{ textAlign: "center", alignSelf: "center" }}>
             Question {roomState.round} of {roomState.totalRounds}
           </Dialog.Title>
@@ -188,6 +188,7 @@ export default function FlashcardGame({ route, navigation }) {
             }}
           >
             {roomState.screen === ScreenState.ROUND_SOLUTION &&
+              roomState.userAnswers &&
               roomState.userAnswers.map((answer, index) => (
                 <Animated.View
                   key={index}

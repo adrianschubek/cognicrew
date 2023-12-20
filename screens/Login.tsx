@@ -12,7 +12,6 @@ import { supabase } from "../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 export default function Login({ navigation }) {
-  // TODO: only save password when "remember me" is checked
   const { email, password, setEmail, setPassword, rememberMe, setRememberMe } =
     usePreferencesStore();
   // const [text, setText] = useState("foo@bar.de");
@@ -312,11 +311,13 @@ export default function Login({ navigation }) {
                     return (
                       value.length < 32 &&
                       value.length > 4 &&
+                      /* disallow uppercase letters */
+                      !/\p{Lu}/u.test(value) &&
                       /^[a-zA-Z0-9_]+$/.test(value)
                     );
                   },
                   errorText:
-                    "Username must be between 4 and 32 characters long and may only contain letters, numbers and underscores.",
+                    "Username must be between 4 and 32 characters long and may only contain lowercase letters, numbers and underscores.",
                 },
                 {
                   label: "E-Mail",

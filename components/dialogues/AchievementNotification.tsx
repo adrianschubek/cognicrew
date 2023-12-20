@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, Animated } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
@@ -10,38 +10,68 @@ const AchievementNotification = ({
   achievementName,
   achievementIconName,
 }) => {
+  return null; /* FIXME: REMOVE THIS */
   const theme = useTheme();
   const animationRef = useRef(null);
+  const glowAnim = useRef(new Animated.Value(0)).current; // for the glow animation
 
   // Golden colors for light and dark themes
-  const goldenColorLight = "#FFD700"; // Lighter shade of gold for light mode
-  const goldenColorDark = "#C5A00C"; // Darker shade of gold for dark mode
+  const goldenColorLight = "#FFD700";
+  const goldenColorDark = "#C5A00C";
 
   // Choose golden color based on theme
   const goldenColor = theme.dark ? goldenColorDark : goldenColorLight;
+
+  const startGlowAnimation = () => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  };
 
   useEffect(() => {
     if (isVisible) {
       animationRef.current?.bounceInUp().then(() => {
         animationRef.current?.tada();
+        startGlowAnimation();
       });
     }
   }, [isVisible]);
 
   if (!isVisible) return null;
 
+  const glowStyle = {
+    opacity: glowAnim,
+    shadowColor: goldenColor,
+    shadowRadius: 10,
+    shadowOpacity: 0.9,
+  };
+
   return (
     <Animatable.View
       ref={animationRef}
-      style={[styles.notification, { backgroundColor: goldenColor }]}
+      style={[styles.notification, { backgroundColor: goldenColor }, glowStyle]}
       animation="bounceIn"
       duration={1500}
       useNativeDriver={true}
     >
-      <ConfettiCannon count={40} origin={{ x: -10, y: 0 }} />
+      <ConfettiCannon count={50} origin={{ x: -10, y: 0 }} fadeOut={true} />
       <View style={styles.contentContainer}>
         {achievementIconName && (
-          <Image
+          <Animatable.Image
+            animation="pulse"
+            easing="ease-out"
+            iterationCount="infinite"
             source={{
               uri: supabase.storage
                 .from("achievements")
@@ -54,9 +84,13 @@ const AchievementNotification = ({
           <Text style={styles.notificationText}>
             Achievement: {achievementName}
           </Text>
-          <View style={styles.badge}>
+          <Animatable.View
+            animation="bounce"
+            iterationCount="infinite"
+            style={styles.badge}
+          >
             <Text style={styles.badgeText}>🏆</Text>
-          </View>
+          </Animatable.View>
         </View>
       </View>
     </Animatable.View>
@@ -66,7 +100,6 @@ const AchievementNotification = ({
 const styles = StyleSheet.create({
   notification: {
     position: "absolute",
-    right: -10,
     padding: 10,
     borderRadius: 10,
     elevation: 5,
@@ -99,9 +132,10 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 6,
     marginLeft: 5,
+    // backgroundColor: "white"
   },
   badgeText: {
-    color: "white",
+    color: "black", // Adjust as needed
     fontSize: 12,
   },
 });

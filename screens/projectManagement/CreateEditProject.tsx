@@ -8,8 +8,6 @@ import {
   Divider,
   FAB,
   HelperText,
-  IconButton,
-  SegmentedButtons,
   Switch,
   Text,
   TextInput,
@@ -78,9 +76,7 @@ export default function CreateEditProject({
       confirm({
         key: "discard",
         title: "Discard changes?",
-        message:
-          "You have unsaved changes. Are you sure to discard them and leave the screen?",
-        okText: "Discard",
+        message: "You may have unsaved changes. Are you sure to discard them?",
         okAction: () => navigation.dispatch(e.data.action),
       });
     });
@@ -97,62 +93,12 @@ export default function CreateEditProject({
   const [owner, setOwner] = useState(username.data);
   const [tags, setTags] = useState(project?.tags ?? "");
 
-  const currentSemesters = useMemo(() => {
-    // Create an array to hold the term labels
-    const labels = [];
-
-    // Get the current date
-    const currentDate = new Date();
-    const currentYear = currentDate.getFullYear();
-    const currentMonth = currentDate.getMonth() + 1; // Months are 0-based, so add 1.
-
-    // Determine the current semester
-    let currentSemester = "";
-    if (currentMonth >= 1 && currentMonth <= 4) {
-      currentSemester = "Winter";
-    } else if (currentMonth >= 5 && currentMonth <= 8) {
-      currentSemester = "Summer";
-    } else if (currentMonth >= 9 && currentMonth <= 12) {
-      currentSemester = "Winter";
-    }
-
-    // Calculate labels for previous, current, and next semesters
-    const prevYear =
-      currentSemester === "Winter" ? currentYear - 1 : currentYear;
-    const nextYear =
-      currentSemester === "Summer" ? currentYear + 1 : currentYear;
-
-    const prevSemester =
-      currentSemester === "Winter"
-        ? `Summer ${prevYear}`
-        : `Winter ${prevYear - 1}/${prevYear % 100}`;
-    labels.push(prevSemester);
-
-    const currentLabel =
-      currentSemester === "Winter"
-        ? `Winter ${currentYear}/${(currentYear + 1) % 100}`
-        : `Summer ${currentYear}`;
-    labels.push(currentLabel);
-
-    const nextSemester =
-      currentSemester === "Winter"
-        ? `Summer ${currentYear}`
-        : `Winter ${currentYear % 100}/${nextYear % 100}`;
-    labels.push(nextSemester);
-
-    return labels;
-  }, []);
-
   const { isMutating, trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
     "id,name,description,group,is_published,tags",
     {
       onSuccess: () => {
-        // success(
-        //   `Project ${project === null ? "created" : "saved"}.`,
-        //   "Success",
-        // );
         success({
           title: `Project ${project === null ? "created" : "saved"}.`,
           message: "You can now invite other users to join your project.",
@@ -224,6 +170,7 @@ export default function CreateEditProject({
         {((project && project?.owner_id === myid) || !project) && (
           <>
             <TextInput
+              testID="input-project-title"
               label="Title"
               value={title}
               onChangeText={(text) => setTitle(text)}
@@ -234,6 +181,7 @@ export default function CreateEditProject({
             </HelperText>
             <Divider />
             <TextInput
+              testID="input-project-description"
               style={{ marginTop: 10 }}
               label="Description"
               value={description}
@@ -248,20 +196,55 @@ export default function CreateEditProject({
               label="Semester"
               value={group}
               onChangeText={(text) => setGroup(text)}
+              editable={false}
               left={<TextInput.Icon icon="calendar-range" />}
-            />
-            <SegmentedButtons
-              style={{ marginTop: 10 }}
-              value={group}
-              onValueChange={setGroup}
-              buttons={[...currentSemesters, "All"].map((semester: string) => ({
-                /* This will break in year 21XX but i don't care tbh. */
-                label: semester
-                  .replace("Summer", "S")
-                  .replace("Winter", "W")
-                  .replace("20", ""),
-                value: semester,
-              }))}
+              right={
+                <TextInput.Icon
+                  testID="input-project-semester"
+                  onPress={() =>
+                    confirm({
+                      title: "Select semester",
+                      icon: "calendar-range",
+                      okAction(values) {
+                        const year = values[0];
+                        const term = values[1];
+                        setGroup(
+                          `${term} ${
+                            term === "Winter"
+                              ? `${year}/${(+year + 1).toString().substring(2)}`
+                              : year
+                          }`,
+                        );
+                      },
+                      fields: [
+                        {
+                          label: "Year",
+                          type: "number",
+                          defaultValue: `${new Date().getFullYear()}`,
+                          required: true,
+                        },
+                        {
+                          label: "Semester",
+                          type: "radio",
+                          data: [
+                            { key: "Winter term", value: "Winter" },
+                            { key: "Summer term", value: "Summer" },
+                          ],
+                          required: true,
+                        },
+                        {
+                          type: "button",
+                          label: "Multi-term",
+                          action() {
+                            setGroup("All");
+                          },
+                        },
+                      ],
+                    })
+                  }
+                  icon="pencil"
+                />
+              }
             />
             <HelperText type="info">
               Choose the semester this project is for. Use "All" if it is not
@@ -269,6 +252,7 @@ export default function CreateEditProject({
             </HelperText>
             <Divider />
             <TextInput
+              testID="input-project-tags"
               style={{ marginTop: 10 }}
               label="Tags"
               value={tags}
@@ -296,6 +280,7 @@ export default function CreateEditProject({
                 <TextInput.Icon
                   icon={() => (
                     <Switch
+                      testID="input-project-visibility"
                       value={isPublished}
                       onValueChange={() => setIsPublished((old) => !old)}
                     />
@@ -320,9 +305,36 @@ export default function CreateEditProject({
                 <TextInput.Icon
                   /* TODO */
                   onPress={() =>
-                    info({
-                      title: "Transfer project",
-                      message: "This feature will be added soon.",
+                    confirm({
+                      title: "Change owner",
+                      message:
+                        "Transfer this project to another user. You may loose access to this project.\nThis action cannot be undone.",
+                      icon: "account-convert",
+                      okText: "Transfer project",
+                      async okAction(values) {
+                        const newOwner = values[0];
+                        let { error } = await supabase.rpc("transfer_project", {
+                          p_owner_name: newOwner,
+                          p_project_id: project?.id,
+                        });
+                        if (error) return error.message;
+                        else {
+                          setOwner(newOwner);
+                          success({
+                            title: "Project transferred",
+                            message: `Project was successfully transferred to ${newOwner}.`,
+                          });
+                        }
+                      },
+                      fields: [
+                        {
+                          label: "Username",
+                          placeholder: owner,
+                          type: "text",
+                          required: true,
+                          helperText: "Enter the username of the new owner.",
+                        },
+                      ],
                     })
                   }
                   icon="pencil"
@@ -341,6 +353,7 @@ export default function CreateEditProject({
         )}
         {project && project?.owner_id === myid && (
           <Button
+            testID="delete-project-button"
             style={{
               alignSelf: "flex-start",
               marginBottom: 24,
@@ -397,6 +410,7 @@ export default function CreateEditProject({
       )}
       {(!project || project?.owner_id === myid) && (
         <FAB
+          testID='create-project-button'
           icon={project === null ? "plus" : "check"}
           color={theme.colors.onPrimary}
           style={{
@@ -413,6 +427,7 @@ export default function CreateEditProject({
           disabled={isMutating}
         />
       )}
+      
     </Fragment>
   );
 }

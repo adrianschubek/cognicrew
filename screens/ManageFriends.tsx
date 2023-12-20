@@ -129,6 +129,7 @@ export default function ManageFriends({ navigation }) {
 
           <View style={styles.iconsContainer}>
             <IconButton
+              testID="plus-add-friend-button"
               size={28}
               icon="plus"
               iconColor={theme.colors.primary}
