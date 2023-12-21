@@ -210,7 +210,7 @@ async function mainLoop() {
     .order("created_at", { ascending: true });
   if (error) console.error("queue: ", error);
 
-  for (const state of publicRoomStates) {
+  roomsLoop: for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
@@ -250,13 +250,13 @@ async function mainLoop() {
             await supabase
               .from("private_room_states")
               .delete()
-              .eq("room_id", state.room_id); // FIXME crash: this causes privateState and gameData to be undefined later on
+              .eq("room_id", state.room_id); 
             // delete player answers
             await supabase
               .from("player_answers")
               .delete()
               .eq("room_id", state.room_id);
-            break;
+            continue roomsLoop; // fixed crash: this causes privateState and gameData to be undefined later on
           default:
             console.error(`Unhandled command type '${cmd.type}'`);
         }
