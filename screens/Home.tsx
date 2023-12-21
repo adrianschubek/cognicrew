@@ -2,11 +2,8 @@ import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
-  Avatar,
   Text,
   Card,
-  IconButton,
-  Button,
   useTheme,
 } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";

@@ -1,8 +1,8 @@
 import { Avatar } from "react-native-paper";
-import { useAvatarStore } from "../../stores/AvatarStore";
 import { StyleProp, ViewStyle } from "react-native";
 import { useFileUrl } from "../../utils/hooks";
 import { useEffect, useState } from "react";
+
 export default function ProfilePictureAvatar(props: {
   username: string;
   userId: string;

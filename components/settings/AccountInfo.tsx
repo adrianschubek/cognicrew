@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
 import {
-  Avatar,
   Button,
   Card,
   IconButton,
@@ -10,14 +8,12 @@ import {
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useFileUrl, useFiles, useUsername } from "../../utils/hooks";
+import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { useAvatarStore } from "../../stores/AvatarStore";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 
 const Account = (props) => {
