@@ -37,32 +37,6 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  const {
-    data: profilePictureUrl,
-    error,
-    isLoading: profilePictureIsLoading,
-    mutate,
-  } = useFileUrl(`${user.id}`, "profile-pictures");
-  const { setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
-  useEffect(() => {
-    if (!profilePictureUrl || profilePictureIsLoading) return;
-    const timestamp = Date.now();
-    const url = `${profilePictureUrl.data.publicUrl}/avatar?${timestamp}`;
-    setAvatarUrl(url);
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        setUrlHasMatchingImage(true);
-        console.log("matching image");
-      })
-      .catch(() => {
-        setUrlHasMatchingImage(false);
-        console.log("no matching image");
-      });
-  }, [profilePictureUrl]);
-
   if (isLoading)
     return (
       <>
@@ -80,6 +54,7 @@ export default function HomeScreen({ navigation }) {
         <ProfilePictureAvatar
           style={styles.avatar}
           username={isLoading ? "...." : data}
+          userId={user.id}
           size={48}
         />
       </View>
