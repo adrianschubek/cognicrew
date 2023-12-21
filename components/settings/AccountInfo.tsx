@@ -18,7 +18,7 @@ import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useAvatarStore } from "../../stores/AvatarStore";
-import ProfilePictureAvatar from "../common/ProfilePictureAvatar";
+import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 
 const Account = (props) => {
   const { confirm } = useAlerts();

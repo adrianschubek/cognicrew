@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import { NAVIGATION } from "../types/common";
 import { useAvatarStore } from "../stores/AvatarStore";
 import { useAuth } from "../providers/AuthProvider";
-import ProfilePictureAvatar from "../components/common/ProfilePictureAvatar";
+import ProfilePictureAvatar from "../components/profile/ProfilePictureAvatar";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 
 export default function HomeScreen({ navigation }) {
