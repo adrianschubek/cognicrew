@@ -8,6 +8,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useUsername } from "../../utils/hooks";
 import { useState } from "react";
+import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 /**
  * `getFriendIconUrl` - Returns a URL for a friend's icon.
  * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
@@ -21,7 +22,7 @@ const getFriendIconUrl = (friendName) =>
 export default function FriendItem(props: {
   icon: string;
   secondIcon?: string;
-  friendId?: string;
+  friendId: string;
   friendName?: string;
   onIconPress;
   onSecondIconPress?;
@@ -51,10 +52,16 @@ export default function FriendItem(props: {
           color={theme.colors.primary}
         />
       )}
-      <Image
+      <ProfilePictureAvatar
+        {...props}
+        username={friendName}
+        userId={props.friendId}
+      />
+      {/* <Image
         source={{ uri: getFriendIconUrl(props.friendId) }}
         style={styles.profileIcon}
-      />
+      /> */}
+
       <Text style={styles.itemText}>{friendName}</Text>
       <IconButton
         icon={props.icon}
