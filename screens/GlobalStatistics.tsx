@@ -269,7 +269,7 @@ export default function GlobalStatistics() {
                 dataPointCategories: item.dataPointCategories,
               }}
               pieChart={item.pieChart}
-            ></StatisticCategory>
+            />
           );
         })}
         <Divider />
