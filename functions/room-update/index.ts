@@ -126,7 +126,7 @@ serve(async (req) => {
       case "reset_room": {
         // FIXME: Disclaimer
         return err(
-          "The 'leave_room' command is currently unavailable due to a potential critical error that may cause the game loop to crash (#26X)",
+          "The 'reset_room' command is currently unavailable due to a potential critical error that may cause the game loop to crash (#26X)",
           500,
         );
 
