@@ -44,12 +44,17 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 let gameLoopIntervalId: number | null = null;
 async function startGameLoop(handler: () => Promise<void>, interval: number) {
   if (gameLoopIntervalId === null) {
-    try {
-      await handler();
-    } catch (error) {
-      console.error("[CRITICAL] Gameloop crashed! ", error);
-    }
-    gameLoopIntervalId = setInterval(handler, interval);
+    const wrapper = async () => {
+      try {
+        await handler();
+      } catch (error) {
+        console.error("[CRITICAL] Gameloop crashed! Restarting...", error);
+        stopGameLoop();
+        await startGameLoop(handler, interval);
+      }
+    };
+    await wrapper();
+    gameLoopIntervalId = setInterval(wrapper, interval);
   } else {
     console.warn(
       "Interval is already running. Stop it first before starting a new one.",
@@ -250,7 +255,7 @@ async function mainLoop() {
             await supabase
               .from("private_room_states")
               .delete()
-              .eq("room_id", state.room_id); 
+              .eq("room_id", state.room_id);
             // delete player answers
             await supabase
               .from("player_answers")
