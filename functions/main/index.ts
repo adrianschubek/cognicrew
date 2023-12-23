@@ -44,17 +44,36 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 let gameLoopIntervalId: number | null = null;
 async function startGameLoop(handler: () => Promise<void>, interval: number) {
   if (gameLoopIntervalId === null) {
-    const wrapper = async () => {
-      try {
-        await handler();
-      } catch (error) {
-        console.error("[CRITICAL] Gameloop crashed! Restarting...", error);
-        stopGameLoop();
-        await startGameLoop(handler, interval);
-      }
-    };
-    await wrapper();
-    gameLoopIntervalId = setInterval(wrapper, interval);
+    /**
+     * //FIXME: Crash after reset_room called (auto restart try/catch)
+     * 
+     * supabase-edge-functions  | 2023-12-23T01:08:10.430593386+01:00 [CRITICAL] Gameloop crashed! Restarting... TypeError: Cannot read properties of undefined (reading 'gameData')
+supabase-edge-functions  | 2023-12-23T01:08:10.430606643+01:00     at mainLoop (file:///home/deno/functions/main/index.ts:194:47)
+supabase-edge-functions  | 2023-12-23T01:08:10.430616182+01:00     at eventLoopTick (ext:core/01_core.js:183:11)
+supabase-edge-functions  | 2023-12-23T01:08:10.430619469+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:37:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430629729+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430632996+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430636152+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430639338+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430667044+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430672906+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430675381+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.431012249+01:00 No interval is currently running.
+     */
+    // const wrapper = async () => {
+    //   try {
+    //     await handler();
+    //   } catch (error) {
+    //     console.error("[CRITICAL] Gameloop crashed! Restarting...", error);
+    //     stopGameLoop();
+    //     await startGameLoop(handler, interval);
+    //   }
+    // };
+    // await wrapper();
+    // gameLoopIntervalId = setInterval(wrapper, interval);
+
+    await handler();
+    gameLoopIntervalId = setInterval(handler, interval);
   } else {
     console.warn(
       "Interval is already running. Stop it first before starting a new one.",
