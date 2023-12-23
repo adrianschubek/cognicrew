@@ -72,6 +72,29 @@ supabase-edge-functions  | 2023-12-23T01:08:10.431012249+01:00 No interval is cu
     // await wrapper();
     // gameLoopIntervalId = setInterval(wrapper, interval);
 
+    // ----------- original below -------------
+
+    /**
+     * supabase-edge-functions  | 2023-12-23T01:42:29.859301603+01:00 main_loop: 1 states and 0 commands processed in 58ms
+supabase-edge-functions  | 2023-12-23T01:42:29.891170326+01:00 [Info] Listening on http://localhost:9999/
+supabase-edge-functions  | 2023-12-23T01:42:29.891190297+01:00
+supabase-edge-functions  | 2023-12-23T01:42:29.932414775+01:00 [Info] room-update: took 40ms
+supabase-edge-functions  | 2023-12-23T01:42:29.932434405+01:00
+supabase-edge-functions  | 2023-12-23T01:42:30.808839480+01:00 reset_room
+supabase-edge-functions  | 2023-12-23T01:42:30.821475235+01:00 main_loop: 1 states and 1 commands processed in 24ms
+supabase-edge-functions  | 2023-12-23T01:42:31.813555393+01:00 {
+supabase-edge-functions  | 2023-12-23T01:42:31.813575633+01:00   players: [
+supabase-edge-functions  | 2023-12-23T01:42:31.813579231+01:00     {
+
+  -> after some delay ..... ?!?!?
+
+     * supabase-edge-functions  | 2023-12-23T01:42:55.934204570+01:00 main_loop: 1 states and 0 commands processed in 14ms
+supabase-edge-functions  | 2023-12-23T01:42:56.245265403+01:00 wall clock duration warning. isolate: 5fe279ad-2092-485e-a076-b8b570331a0d
+supabase-edge-functions  | 2023-12-23T01:42:56.943701362+01:00 event loop error: TypeError: Cannot read properties of undefined (reading 'gameData')
+supabase-edge-functions  | 2023-12-23T01:42:56.943717565+01:00     at mainLoop (file:///home/deno/functions/main/index.ts:211:47)
+supabase-edge-functions  | 2023-12-23T01:42:56.943720501+01:00     at eventLoopTick (ext:core/01_core.js:183:11)
+     */
+
     await handler();
     gameLoopIntervalId = setInterval(handler, interval);
   } else {
@@ -280,7 +303,7 @@ async function mainLoop() {
               .from("player_answers")
               .delete()
               .eq("room_id", state.room_id);
-            continue roomsLoop; // fixed crash: this causes privateState and gameData to be undefined later on
+            continue roomsLoop; // FIXME NOT FIXED! : this causes privateState and gameData to be undefined later on
           default:
             console.error(`Unhandled command type '${cmd.type}'`);
         }
