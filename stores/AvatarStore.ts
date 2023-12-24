@@ -13,3 +13,13 @@ export const useAvatarStore = create<AvatarState>((set) => ({
   urlHasMatchingImage: false,
   setUrlHasMatchingImage: (hasMatchingImage) =>set({ urlHasMatchingImage: hasMatchingImage }),
 }));
+/*
+type AvatarState = {
+  avatarUrls: { [userId: string]: string };
+  addAvatarIconUrl: (userId: string, url: string) => void;
+};
+
+export const useAvatarStore = create<AvatarState>((set) => ({
+  avatarUrls: {},
+  addAvatarIconUrl: (userId, url) => set((state) => ({ avatarUrls: { ...state.avatarUrls, [userId]: url } })),
+}));*/
