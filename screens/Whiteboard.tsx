@@ -15,7 +15,6 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { useCallback, useEffect, useState } from "react";
-import CreateDrawing from "../components/dialogues/CreateDrawing";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useFocusEffect } from "@react-navigation/native";
@@ -33,6 +32,7 @@ import { useRoomStateStore } from "../stores/RoomStore";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { handleEdgeError } from "../utils/common";
+import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
 
 export default function Whiteboard({ navigation }) {
   const { error: errrorAlert, confirm } = useAlerts();
@@ -104,21 +104,15 @@ export default function Whiteboard({ navigation }) {
     };
   }, []);
 
-
   const [plusMenu, setPlusMenu] = useState({ open: false });
 
   const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
 
   const { open } = plusMenu;
 
-  const [showDrawing, setDrawing] = useState(false);
   const theme = useTheme();
   return (
     <React.Fragment>
-      <CreateDrawing
-        showDrawing={showDrawing}
-        close={() => setDrawing(false)}
-      />
       <SafeAreaView
         style={{
           flexDirection: "column",
@@ -128,34 +122,38 @@ export default function Whiteboard({ navigation }) {
       >
         <View style={styles.top}>
           <View style={styles.topleft}>
-          <IconButton
-          mode="contained"
-          style={{
-            //backgroundColor: theme.colors.error,
-            borderRadius: 10,
-            backgroundColor: theme.colors.background,
-            transform: [{ rotateZ: "180deg" }],
-          }}
-          icon="logout"
-          //iconColor={theme.colors.onErrorContainer}
-          onPress={() => {
-            confirm({
-              key: "leaveroom",
-              title: "Leave game?",
-              message: "Do you want to leave this game and return to lobby?",
-              icon: "location-exit",
-              okText: "Leave",
-              okAction: async () => {
-                const { error } = await supabase.functions.invoke("room-update", {
-                  body: {
-                    type: "reset_room",
-                  } as RoomClientUpdate,
+            <IconButton
+              mode="contained"
+              style={{
+                //backgroundColor: theme.colors.error,
+                borderRadius: 10,
+                backgroundColor: theme.colors.background,
+                transform: [{ rotateZ: "180deg" }],
+              }}
+              icon="logout"
+              //iconColor={theme.colors.onErrorContainer}
+              onPress={() => {
+                confirm({
+                  key: "leaveroom",
+                  title: "Leave game?",
+                  message:
+                    "Do you want to leave this game and return to lobby?",
+                  icon: "location-exit",
+                  okText: "Leave",
+                  okAction: async () => {
+                    const { error } = await supabase.functions.invoke(
+                      "room-update",
+                      {
+                        body: {
+                          type: "reset_room",
+                        } as RoomClientUpdate,
+                      },
+                    );
+                    if (error) return await handleEdgeError(error);
+                  },
                 });
-                if (error) return await handleEdgeError(error);
-              },
-            });
-          }}
-        />
+              }}
+            />
             <IconButton
               icon="undo"
               iconColor={theme.colors.primary}
@@ -220,7 +218,20 @@ export default function Whiteboard({ navigation }) {
               iconColor={theme.colors.primary}
               size={40}
               onPress={() => {
-                setDrawing(true);
+                confirm({
+                  title: "Drawing",
+                  icon: "pencil",
+                  okText: "Done",
+                  cancelText: "",
+                  fields: [
+                    {
+                      type: "custom",
+                      render() {
+                        return <StrokeSettings />;
+                      },
+                    },
+                  ],
+                });
               }}
             />
             <Portal>
