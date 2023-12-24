@@ -56,7 +56,7 @@ export default function MultifunctionalList(props: {
   };
   return (
     <Fragment>
-      <View style={styles.container}>
+      <View style={{ width: responsiveWidth(70) }}>
         <ScrollView
           style={{
             maxHeight:
@@ -136,9 +136,3 @@ export default function MultifunctionalList(props: {
     </Fragment>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: responsiveWidth(70),
-  },
-});
