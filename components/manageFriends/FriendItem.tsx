@@ -9,22 +9,13 @@ import {
 import { useUsername } from "../../utils/hooks";
 import { useState } from "react";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
-/**
- * `getFriendIconUrl` - Returns a URL for a friend's icon.
- * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
- * @param {string} friendName - The name of the friend whose icon URL is requested.
- * @returns {string} The URL of the friend's profile icon.
- */
-// use once database is ready: const getFriendIconUrl = (friendName) => `path_to_user's profile icons/${friendName}.png`;
-const getFriendIconUrl = (friendName) =>
-  `https://support.discord.com/hc/user_images/yVOeDzOpxgO8ODSf9bDQ-g.png`;
 
 export default function FriendItem(props: {
   icon: string;
-  secondIcon?: string;
   friendId: string;
-  friendName?: string;
   onIconPress;
+  secondIcon?: string;
+  friendName?: string;
   onSecondIconPress?;
   showCheckbox?: boolean;
   onCheck?: () => void;
@@ -60,11 +51,6 @@ export default function FriendItem(props: {
         username={friendName ?? ""}
         userId={props.friendId}
       />
-      {/* <Image
-        source={{ uri: getFriendIconUrl(props.friendId) }}
-        style={styles.profileIcon}
-      /> */}
-
       <Text variant="titleMedium" style={{ flex: 1 }}>
         {friendName}
       </Text>

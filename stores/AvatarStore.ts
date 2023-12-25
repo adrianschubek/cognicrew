@@ -1,3 +1,7 @@
+/**
+ * @deprecated This file is deprecated. Not used anymore. Will be deleted when
+ * feature is fully implemented.
+ */
 import { create } from "zustand";
 
 type AvatarState = {
@@ -11,7 +15,8 @@ export const useAvatarStore = create<AvatarState>((set) => ({
   avatarUrl: null,
   setAvatarUrl: (url) => set({ avatarUrl: url }),
   urlHasMatchingImage: false,
-  setUrlHasMatchingImage: (hasMatchingImage) =>set({ urlHasMatchingImage: hasMatchingImage }),
+  setUrlHasMatchingImage: (hasMatchingImage) =>
+    set({ urlHasMatchingImage: hasMatchingImage }),
 }));
 /*
 type AvatarState = {
