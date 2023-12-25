@@ -21,7 +21,6 @@ export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
   const { user } = useAuth();
   const theme = useTheme();
-  const { avatarUrl } = useAvatarStore();
   useEffect(() => {
     navigation.setOptions({
       title: "CogniCrew",

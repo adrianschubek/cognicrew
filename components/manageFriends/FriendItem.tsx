@@ -35,6 +35,7 @@ export default function FriendItem(props: {
   const friendName = props.friendName
     ? props.friendName
     : useUsername(props.friendId).data;
+  console.log(friendName);
   return (
     <View
       style={[
@@ -54,7 +55,9 @@ export default function FriendItem(props: {
       )}
       <ProfilePictureAvatar
         {...props}
-        username={friendName}
+        size={40}
+        style={{ marginRight: 10 }}
+        username={friendName ?? ""}
         userId={props.friendId}
       />
       {/* <Image
@@ -62,7 +65,9 @@ export default function FriendItem(props: {
         style={styles.profileIcon}
       /> */}
 
-      <Text style={styles.itemText}>{friendName}</Text>
+      <Text variant="titleMedium" style={{ flex: 1 }}>
+        {friendName}
+      </Text>
       <IconButton
         icon={props.icon}
         size={responsiveFontSize(3)}
@@ -90,15 +95,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     elevation: 3,
-  },
-  profileIcon: {
-    width: responsiveFontSize(5),
-    height: responsiveFontSize(5),
-    borderRadius: responsiveFontSize(3),
-    marginRight: responsiveWidth(1),
-  },
-  itemText: {
-    flex: 1,
-    fontSize: responsiveFontSize(2),
   },
 });

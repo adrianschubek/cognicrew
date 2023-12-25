@@ -1,10 +1,4 @@
-import {
-  Button,
-  Card,
-  IconButton,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, IconButton, Text, useTheme } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -73,7 +67,7 @@ const Account = (props) => {
         });
       }}
     >
-      <ProfilePictureAvatar {...props} username={username} />
+      <ProfilePictureAvatar {...props} username={username} userId={user.id} />
     </TouchableOpacity>
   );
 };
