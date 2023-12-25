@@ -1,6 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View, Image } from "react-native";
-import { Checkbox, IconButton, Text, useTheme } from "react-native-paper";
+import { Card, Checkbox, IconButton, Text, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
   responsiveHeight,
@@ -28,58 +28,53 @@ export default function FriendItem(props: {
     : useUsername(props.friendId).data;
   console.log(friendName);
   return (
-    <View
-      style={[
-        styles.item,
-        {
-          backgroundColor: theme.colors.background,
-          shadowColor: theme.colors.shadow,
-        },
-      ]}
-    >
-      {props.showCheckbox && (
-        <Checkbox
-          status={checked ? "checked" : "unchecked"}
-          onPress={props.onCheck ? props.onCheck : () => {}}
-          color={theme.colors.primary}
+    <Card style={{ marginBottom: 8 }}>
+      <Card.Content style={styles.item}>
+        {props.showCheckbox && (
+          <Checkbox
+            status={checked ? "checked" : "unchecked"}
+            onPress={props.onCheck ? props.onCheck : () => {}}
+            color={theme.colors.primary}
+          />
+        )}
+        <ProfilePictureAvatar
+          {...props}
+          size={40}
+          style={{ marginRight: 10 }}
+          username={friendName ?? ""}
+          userId={props.friendId}
         />
-      )}
-      <ProfilePictureAvatar
-        {...props}
-        size={40}
-        style={{ marginRight: 10 }}
-        username={friendName ?? ""}
-        userId={props.friendId}
-      />
-      <Text variant="titleMedium" style={{ flex: 1 }}>
-        {friendName}
-      </Text>
-      <IconButton
-        icon={props.icon}
-        size={responsiveFontSize(3)}
-        onPress={props.onIconPress}
-      />
-      {props.secondIcon && (
+        <Text variant="titleMedium" style={{ flex: 1 }}>
+          {friendName}
+        </Text>
         <IconButton
-          icon={props.secondIcon}
+          icon={props.icon}
           size={responsiveFontSize(3)}
-          onPress={props.onSecondIconPress}
+          onPress={props.onIconPress}
         />
-      )}
-    </View>
+        {props.secondIcon && (
+          <IconButton
+            icon={props.secondIcon}
+            size={responsiveFontSize(3)}
+            onPress={props.onSecondIconPress}
+          />
+        )}
+      </Card.Content>
+    </Card>
   );
 }
 const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: responsiveHeight(0.8),
     paddingHorizontal: responsiveWidth(2),
     paddingVertical: responsiveHeight(0.8),
-    borderRadius: 5,
+    elevation: 0,
+    /*borderRadius: 5,
+    marginBottom: responsiveHeight(0.8),
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
-    elevation: 3,
+    elevation: 3,*/
   },
 });
