@@ -18,7 +18,10 @@ export const StrokeSettings = ({}) => {
     setColor,
     setStroke,
     stroke,
+    setShapeSize,
+    shapeSize,
   } = useWhiteboardStore();
+
   // Width of each container, a derived state from open/close state
   const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 150 : 35;
   const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 150 : 35;
@@ -55,7 +58,6 @@ export const StrokeSettings = ({}) => {
     setOpenColor(false);
   };
 
-  const { setShapeSize, shapeSize } = useWhiteboardStore();
   function renderSelection(
     open: boolean,
     selectionItems: number[] | string[],
@@ -103,7 +105,7 @@ export const StrokeSettings = ({}) => {
               <TouchableOpacity
                 key={s}
                 onPress={() => handleSelection(s)}
-                style={[styles.colorButton, , { justifyContent: "center" }]}
+                style={[styles.colorButton, { justifyContent: "center" }]}
               >
                 <StrokeView color={color} size={s} />
               </TouchableOpacity>

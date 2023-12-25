@@ -1,8 +1,7 @@
 import { Slider } from "@miblanchard/react-native-slider";
-import { useState } from "react";
+import { Fragment } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
 import { usePreferencesStore } from "../../stores/PreferencesStore";
-import { useSoundsStore } from "../../stores/SoundsStore";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
@@ -16,38 +15,43 @@ export default function MusicSettings(props) {
     setMasterVolume,
   } = usePreferencesStore();
 
-
+  const soundCategories = [
+    {
+      title: "Master",
+      volume: masterVolume,
+      setVolume: setMasterVolume,
+    },
+    {
+      title: "Music",
+      volume: musicVolume,
+      setVolume: setMusicVolume,
+    },
+    {
+      title: "Effects",
+      volume: effectsVolume,
+      setVolume: setEffectsVolume,
+    },
+  ];
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
       <Card.Content>
-        <Text variant="bodyMedium">
-          Master ({(masterVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={masterVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setMasterVolume(v)}
-        ></Slider>
-        <Text variant="bodyMedium">
-          Music ({(musicVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={musicVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setMusicVolume(v)}
-        ></Slider>
-        <Text variant="bodyMedium">
-          Effects ({(effectsVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={effectsVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setEffectsVolume(v)}
-        ></Slider>
+        {soundCategories.map((category, index) => {
+          return (
+            <Fragment key={index}>
+              <Text variant="bodyMedium">
+                {category.title} ({(category.volume * 100).toFixed(0) + "%"})
+              </Text>
+              <Slider
+                step={0.05}
+                value={category.volume}
+                // you are aware that all the volumes (i.e. musicVolume) are actually number[]?
+                // @ts-ignore
+                onSlidingComplete={(v) => category.setVolume(v)}
+              ></Slider>
+            </Fragment>
+          );
+        })}
       </Card.Content>
     </Card>
   );
