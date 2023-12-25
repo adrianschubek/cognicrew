@@ -5,19 +5,16 @@ import {
   IconButton,
   useTheme,
   Divider,
-  PaperProvider,
   Portal,
   FAB,
-  Button,
 } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
-import { useFocusEffect } from "@react-navigation/native";
 import { useSoundsStore } from "../stores/SoundsStore";
 import {
   useAchievements,
@@ -25,10 +22,8 @@ import {
   useUnlockAchievement,
 } from "../utils/hooks";
 import AchievementNotification from "../components/dialogues/AchievementNotification";
-import TextInputDialog from "../components/dialogues/TextInputDialog";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
-import { useRoomStateStore } from "../stores/RoomStore";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { handleEdgeError } from "../utils/common";
@@ -56,26 +51,28 @@ export default function Whiteboard({ navigation }) {
 
   const [isTextToolSelected, setTextToolSelected] = useState(false);
   const [textInputVisible, setTextInputVisible] = useState(false);
-  const [tempTextPosition, setTempTextPosition] = useState({ x: 0, y: 0 });
 
   // Function to handle canvas click when text tool is selected
-  const handleCanvasClick = (x, y) => {
+  const handleCanvasClick = (x: number, y: number) => {
     if (isTextToolSelected) {
-      setTempTextPosition({ x, y });
-      setTextInputVisible(true);
+      confirm({
+        title: "Enter yout Text",
+        icon: "keyboard",
+        okText: "OK",
+        okAction: (values) => {
+          let text = values[0] as string;
+          if (text.trim().length === 0) return;
+          addAction({ x, y, text, color, type: "text" });
+        },
+        fields: [
+          {
+            placeholder: "Enter your text here",
+            type: "text",
+            required: true,
+          },
+        ],
+      });
     }
-  };
-
-  // Function to add text to the canvas
-  const addTextToCanvas = (text) => {
-    if (text.trim().length === 0) {
-      // If the text is empty or only contains whitespace, do nothing
-      setTextInputVisible(false);
-      return;
-    }
-    const { x, y } = tempTextPosition;
-    addAction({ x, y, text, color, type: "text" });
-    setTextInputVisible(false);
   };
 
   const unlockFirstTimeAchievement = async () => {
@@ -195,11 +192,6 @@ export default function Whiteboard({ navigation }) {
           <Canvas
             onClick={handleCanvasClick}
             isTextToolSelected={isTextToolSelected}
-          />
-          <TextInputDialog
-            isVisible={textInputVisible}
-            onClose={() => setTextInputVisible(false)}
-            onSubmit={(inputText) => addTextToCanvas(inputText)}
           />
         </View>
 
