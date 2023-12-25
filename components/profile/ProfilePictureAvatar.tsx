@@ -10,6 +10,7 @@ export default function ProfilePictureAvatar(props: {
   style?: StyleProp<ViewStyle>;
   [name: string]: any;
 }) {
+  /*maybe use global state for own avatar, so the fast-alert doesnt always refetch when opened */
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const { username, userId, size, style } = props;
   const {
