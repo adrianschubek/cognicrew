@@ -31,7 +31,7 @@ export default function MusicSettings(props) {
       volume: effectsVolume,
       setVolume: setEffectsVolume,
     },
-  ];
+  ] as { title: string; volume: number; setVolume: (v: number) => void }[];
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
