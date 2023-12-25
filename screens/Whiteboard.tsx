@@ -47,10 +47,8 @@ export default function Whiteboard({ navigation }) {
   const [achievementVisible, setAchievementVisible] = useState(false);
   const [achievementName, setAchievementName] = useState("");
   const [achievementIcon, setAchievementIcon] = useState("");
-  const { data: achievementsData } = useAchievements();
-
   const [isTextToolSelected, setTextToolSelected] = useState(false);
-  const [textInputVisible, setTextInputVisible] = useState(false);
+  const { data: achievementsData } = useAchievements();
 
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {
