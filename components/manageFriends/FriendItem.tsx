@@ -8,6 +8,7 @@ import {
 } from "react-native-responsive-dimensions";
 import { useUsername } from "../../utils/hooks";
 import { useState } from "react";
+import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 /**
  * `getFriendIconUrl` - Returns a URL for a friend's icon.
  * NOTE: This should be replaced with actual logic to retrieve the friend's profile image.
@@ -21,7 +22,7 @@ const getFriendIconUrl = (friendName) =>
 export default function FriendItem(props: {
   icon: string;
   secondIcon?: string;
-  friendId?: string;
+  friendId: string;
   friendName?: string;
   onIconPress;
   onSecondIconPress?;
@@ -34,6 +35,7 @@ export default function FriendItem(props: {
   const friendName = props.friendName
     ? props.friendName
     : useUsername(props.friendId).data;
+  console.log(friendName);
   return (
     <View
       style={[
@@ -51,11 +53,21 @@ export default function FriendItem(props: {
           color={theme.colors.primary}
         />
       )}
-      <Image
+      <ProfilePictureAvatar
+        {...props}
+        size={40}
+        style={{ marginRight: 10 }}
+        username={friendName ?? ""}
+        userId={props.friendId}
+      />
+      {/* <Image
         source={{ uri: getFriendIconUrl(props.friendId) }}
         style={styles.profileIcon}
-      />
-      <Text style={styles.itemText}>{friendName}</Text>
+      /> */}
+
+      <Text variant="titleMedium" style={{ flex: 1 }}>
+        {friendName}
+      </Text>
       <IconButton
         icon={props.icon}
         size={responsiveFontSize(3)}
@@ -83,15 +95,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.22,
     shadowRadius: 2.22,
     elevation: 3,
-  },
-  profileIcon: {
-    width: responsiveFontSize(5),
-    height: responsiveFontSize(5),
-    borderRadius: responsiveFontSize(3),
-    marginRight: responsiveWidth(1),
-  },
-  itemText: {
-    flex: 1,
-    fontSize: responsiveFontSize(2),
   },
 });
