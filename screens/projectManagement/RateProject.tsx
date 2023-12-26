@@ -236,14 +236,14 @@ export default function RateProject({
       ],
     },
     {
-      title: "Statistics:",
+      title: "General rating:",
       dataPointCategories: [
         {
           dataPoints: [
             {
               customNode: (
                 <View style={{ flexDirection: "row" }}>
-                  <Text>{"Total number of ratings:"}</Text>
+                  <Text>{"Total amount:"}</Text>
                   <Text style={{ color: "red", marginLeft: 10 }}>
                     {sum == null ? "0" : sum}
                   </Text>
@@ -251,23 +251,27 @@ export default function RateProject({
               ),
             },
             {
-              text: `Average rating:`,
+              text: `Total average:`,
               customNode: <StarRating avg={avg} />,
-            },
-            {
-              text: `Ratings:`,
-              customNode: (
-                <>
-                  {starsArray.map((e, index) => (
-                    <Fragment key={index}>{renderStars(e)}</Fragment>
-                  ))}
-                </>
-              ),
             },
           ],
         },
       ],
     },
+    {
+      title: `Individual ratings:`,
+      dataPointCategories: [
+        {
+          dataPoints: [{ customNode: (
+            <>
+              {starsArray.map((e, index) => (
+                <Fragment key={index}>{renderStars(e)}</Fragment>
+              ))}
+            </>
+          ), }],
+        },
+      ]
+    }
   ];
   return (
     <ScrollView>
