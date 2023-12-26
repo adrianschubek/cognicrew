@@ -5,19 +5,10 @@
 
 import React, { useState, useEffect, Fragment } from "react";
 import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
-import {
-  Button,
-  Dialog,
-  Divider,
-  FAB,
-  List,
-  Portal,
-  Text,
-} from "react-native-paper";
+import { Divider, FAB, List } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
 import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../../supabase";
-import ImageItem from "../../components/common/ImageItem";
 import { useProjectStore } from "../../stores/ProjectStore";
 import {
   selectAndUploadFile,
