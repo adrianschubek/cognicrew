@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
+import { useSoundsStore } from "../../stores/SoundsStore";
+
 
 const Account = (props) => {
   const { confirm } = useAlerts();
@@ -109,6 +111,8 @@ export default function AccountInfo(props) {
   const { data, isLoading } = useUsername();
 
   const navigation = useNavigation<any>();
+  
+  const {setPlayButtonSoundEffect} = useSoundsStore();
 
   return (
     <Card {...props} mode="contained">
@@ -124,6 +128,7 @@ export default function AccountInfo(props) {
         </Text>
         <Button
           onPress={() => {
+            setPlayButtonSoundEffect(true); //Will later be added to new Button component
             navigation.navigate(NAVIGATION.GLOBAL_STATISTICS);
           }}
           icon={"chart-bar"}

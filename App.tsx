@@ -12,7 +12,7 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
@@ -51,36 +51,37 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
-  const sound = useRef(new Audio.Sound());
-  const { inGame, musicVolume } = useSoundsStore();
+  const music = useRef(new Audio.Sound());
 
-  async function playSound() {
-    if (sound.current._loaded) {
-      await sound.current.stopAsync();
-      await sound.current.unloadAsync();
+  const { inGame, musicVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
+
+  //MUSIC
+
+  async function playMusic() {
+    if (music.current._loaded) {
+      await music.current.stopAsync();
+      await music.current.unloadAsync();
     }
     try {
       if (!inGame) {
-        await sound.current.loadAsync(
-          require("./assets/sounds/musicmusicmusic.mp3"),
+        await music.current.loadAsync(
+          require("./assets/sounds/lobby_song.m4a"),
         );
       } else {
-        await sound.current.loadAsync(require("./assets/sounds/Tetris.mp3"));
+        await music.current.loadAsync(require("./assets/sounds/game_song.m4a"));
       }
-      await sound.current.setIsLoopingAsync(true);
-      await sound.current.playAsync();
-      console.log(musicVolume)
-      await sound.current.setVolumeAsync(musicVolume);
-      console.log(musicVolume)
+      await music.current.setIsLoopingAsync(true);
+      await music.current.playAsync();
+      await music.current.setVolumeAsync(musicVolume);
     } catch (error) {
       console.error("Error playing audio", error);
     }
   }
 
-  async function changeVolume() {
-    if (sound.current._loaded) {
+  async function changeMusicVolume() {
+    if (music.current._loaded) {
       try {
-        await sound.current.setVolumeAsync(musicVolume);
+        await music.current.setVolumeAsync(musicVolume);
       } catch (error) {
         console.error("Error changing volume", error);
       }
@@ -88,13 +89,40 @@ export default function App() {
   }
 
   useEffect(() => {
-    playSound();
+    playMusic();
   }, [inGame]);
 
   useEffect(() => {
-    changeVolume();
+    changeMusicVolume();
   }, [musicVolume]);
 
+  //SOUNDEFFECTS
+
+  const [getSoundEffect, setSoundEffect] = useState(null);
+
+  async function playSoundButton() {
+    const { sound } = await Audio.Sound.createAsync(
+      require("./assets/sounds/button_click_effect.m4a"),
+    );
+    setSoundEffect(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return getSoundEffect
+      ? () => {
+          console.log("Unloading Sound");
+          getSoundEffect.unloadAsync();
+        }
+      : undefined;
+  }, [getSoundEffect]);
+
+  useEffect(() => {
+    if (playButtonSoundEffect) {
+      playSoundButton();
+      setPlayButtonSoundEffect(false);
+    }
+  }, [playButtonSoundEffect]);
 
   // TODO: useColorScheme to detect system theme and set it
   const { darkmode, setDarkmode } = usePreferencesStore();
