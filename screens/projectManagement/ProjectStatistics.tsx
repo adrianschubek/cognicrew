@@ -12,9 +12,8 @@ import {
 
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
-import { supabase } from "../../supabase";
 import StatisticCategory from "../../components/profile/StatisticCategory";
-import { useAllStatistics } from "../../utils/hooks";
+import { useProjectStatistics } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function ProjectStatistics() {
@@ -60,7 +59,7 @@ export default function ProjectStatistics() {
   const [countLinks, setCountLinks] = useState(0);
   const [countDocuments, setCountDocuments] = useState(0);
   const [countPhotos, setCountPhotos] = useState(0);
-  const { data, error, isLoading, mutate } = useAllStatistics(
+  const { data, error, isLoading, mutate } = useProjectStatistics(
     projectId,
     user.id,
   );
@@ -108,23 +107,26 @@ export default function ProjectStatistics() {
       ? theme.colors.pieChartThird
       : theme.colors.isZero,
   };
+  
 
   useEffect(() => {
     if (!data || isLoading) return;
-    setCountLinks(data.linkCount);
-    setCountFlashcards(data.flashcardCount);
-    setCountExercises(data.exerciseCount);
-    setCountDocuments(data.documentCount);
-    setCountPhotos(data.imageCount);
-    setRankGlobal(data.globalRank);
-    setRankUnderFriends(data.rankUnderFriends);
-    setCardsScore(data.gameStats["scoreFlashcards"]);
-    setCardsWins(data.gameStats["winsFlashcards"]);
-    setQuizScore(data.gameStats["scoreQuiz"]);
-    setQuizWins(data.gameStats["winsQuiz"]);
-    setTimeSpentQuiz(data.gameStats["timeSpentQuiz"]);
-    setTimeSpentCards(data.gameStats["timeSpentFlashcards"]);
-    setTimeSpentBoard(data.gameStats["timeSpentWhiteboard"]);
+    setCountDocuments(data[0]["count_documents"]);
+    setCountPhotos(data[0]["count_photos"]);
+    setCountLinks(data[0]["count_links"]);
+    setCountFlashcards(data[0]["count_flashcards"]);
+    setCountExercises(data[0]["count_exercises"]);
+
+    setRankGlobal(data[0]["global_rank"]);
+    setRankUnderFriends(data[0]["friends_rank"]);
+
+    setCardsScore(data[0]["project_stats"]["scoreFlashcards"]);
+    setQuizScore(data[0]["project_stats"]["scoreQuiz"]);
+    setCardsWins(data[0]["project_stats"]["winsFlashcards"]);
+    setQuizWins(data[0]["project_stats"]["winsQuiz"]);
+    setTimeSpentQuiz(data[0]["project_stats"]["timeSpentQuiz"]);
+    setTimeSpentCards(data[0]["project_stats"]["timeSpentFlashcards"]);
+    setTimeSpentBoard(data[0]["project_stats"]["timeSpentWhiteboard"]);
   }, [data]);
   useEffect(() => {
     mutate();

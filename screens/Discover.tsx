@@ -476,7 +476,7 @@ export default function Discover() {
   };
 
   const renderFooter = () => (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", marginBottom: 10 }}>
       <Divider />
       <Button
         mode="contained-tonal"
