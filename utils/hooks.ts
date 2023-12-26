@@ -14,7 +14,7 @@ import { BackHandler } from "react-native";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import useSWR, { KeyedMutator } from "swr";
+import useSWR, { KeyedMutator, mutate } from "swr";
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
@@ -155,7 +155,6 @@ export function useDeleteProjectRating() {
 
 //Project statistics
 
-
 export function useProjectStatistics(projectId: number, userId: string) {
   const query = supabase.rpc("get_project_statistics", {
     p_user_id: userId,
@@ -170,8 +169,8 @@ export function useProjectStatistics(projectId: number, userId: string) {
   return {
     data,
     error,
-    isLoading, 
-    mutate
+    isLoading,
+    mutate,
   };
 }
 
@@ -495,10 +494,41 @@ export function useFiles(
     });
   return customUseFunction(fetchFiles, "getFiles", filePath);
 }
+
+//not necessarily needed
 export function useDeleteFile(filePath: string, bucketName?: string) {
   const bucket = bucketName || "files";
   const deleteFile = () => supabase.storage.from(bucket).remove([filePath]);
-  return customUseFunction(deleteFile, "deleteFile", filePath);
+  const key = `/${bucket}/${filePath}`;
+  const fetcherFunction = async () => {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .download(filePath);
+    if (error) {
+      throw error;
+    }
+
+    return { fileData: data, isDeleted: false };
+  };
+  const { data, error } = useSWR(key, fetcherFunction);
+
+  const remove = async () => {
+    try {
+      await deleteFile();
+      // Update the cache with the new state
+      mutate(key, { fileData: null, isDeleted: true });
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    data: data?.fileData,
+    error,
+    isLoading: !error && !data,
+    isDeleted: data?.isDeleted,
+    remove,
+  };
 }
 export function useFileUrl(filePath: string, bucketName?: string) {
   const bucket = bucketName || "files";
