@@ -5,12 +5,6 @@ import { createJSONStorage, persist } from "zustand/middleware";
 type PreferencesStore = {
   darkmode: boolean;
   setDarkmode: (darkmode: boolean) => void;
-  masterVolume: number;
-  musicVolume: number;
-  effectsVolume: number;
-  setMasterVolume: (volume: number) => void;
-  setMusicVolume: (volume: number) => void;
-  setEffectsVolume: (volume: number) => void;
   // TODO: use secure store for auth "remember me" data
   rememberMe: boolean;
   email: string;
@@ -25,12 +19,6 @@ export const usePreferencesStore = create<PreferencesStore>()(
     (set, get) => ({
       darkmode: false,
       setDarkmode: (darkmode: boolean) => set({ darkmode: darkmode }),
-      masterVolume: 1,
-      musicVolume: 0,
-      effectsVolume: 1,
-      setMasterVolume: (volume: number) => {set({ masterVolume: volume }); console.log(volume);},
-      setMusicVolume: (volume: number) => set({ musicVolume: volume }),
-      setEffectsVolume: (volume: number) => set({ effectsVolume: volume }),
       rememberMe: false,
       email: "",
       password: "",

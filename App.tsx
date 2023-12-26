@@ -53,7 +53,7 @@ const CombinedDarkTheme = {
 export default function App() {
   const music = useRef(new Audio.Sound());
 
-  const { inGame, musicVolume, soundEffectVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
+  const { inGame, musicVolume, soundEffectVolume, masterVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
 
   //MUSIC
 
@@ -72,7 +72,7 @@ export default function App() {
       }
       await music.current.setIsLoopingAsync(true);
       await music.current.playAsync();
-      await music.current.setVolumeAsync(musicVolume);
+      await music.current.setVolumeAsync(musicVolume * masterVolume);
     } catch (error) {
       console.error("Error playing audio", error);
     }
@@ -81,7 +81,7 @@ export default function App() {
   async function changeMusicVolume() {
     if (music.current._loaded) {
       try {
-        await music.current.setVolumeAsync(musicVolume);
+        await music.current.setVolumeAsync(musicVolume * masterVolume);
       } catch (error) {
         console.error("Error changing volume", error);
       }
@@ -94,7 +94,7 @@ export default function App() {
 
   useEffect(() => {
     changeMusicVolume();
-  }, [musicVolume]);
+  }, [musicVolume, masterVolume]);
 
   //SOUNDEFFECTS
 
@@ -106,7 +106,7 @@ export default function App() {
     );
     setSoundEffect(sound);
     await sound.playAsync();
-    await sound.setVolumeAsync(soundEffectVolume);
+    await sound.setVolumeAsync(soundEffectVolume * masterVolume);
   }
 
   useEffect(() => {
