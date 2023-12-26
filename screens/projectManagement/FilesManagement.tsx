@@ -84,6 +84,7 @@ export default function FilesManagement() {
         "postgres_changes",
         { event: "*", schema: "storage", table: "objects" },
         (payload) => {
+          //this subscription does not work!
           console.log("hallo");
           mutateFiles();
           mutatePhotos();
