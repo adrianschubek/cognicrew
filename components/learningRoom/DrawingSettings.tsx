@@ -160,7 +160,7 @@ export const StrokeSettings = ({}) => {
       {settings.map((s, index) => {
         return (
           <View key={index}>
-            <Text variant="labelLarge">{s.title}</Text>
+            <Text variant="titleMedium">{s.title}</Text>
             {s.customNode}
           </View>
         );

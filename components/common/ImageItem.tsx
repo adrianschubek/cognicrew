@@ -1,11 +1,9 @@
 import { FileObject } from "@supabase/storage-js";
 import { Image, View, Text, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
-import { supabase } from "../../supabase";
 import { IconButton, useTheme } from "react-native-paper";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import * as MediaLibrary from "expo-media-library";
-import * as Permissions from "expo-permissions";
 import * as FileSystem from "expo-file-system";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useFileUrl } from "../../utils/hooks";
@@ -29,7 +27,7 @@ const ImageItem = ({
   useEffect(() => {
     if (!data) return;
     setImageUrl(data.data.publicUrl);
-    console.log(data.data.publicUrl);
+    //console.log(data.data.publicUrl);
   }, [data]);
 
   useEffect(() => {

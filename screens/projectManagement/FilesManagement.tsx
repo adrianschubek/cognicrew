@@ -41,13 +41,6 @@ export default function FilesManagement() {
     isLoading: filesLoading,
     mutate: mutateFiles,
   } = useFiles(`${projectId}/documents`);
-  // obsolete for now
-  const onRemoveImage = async (item: FileObject, listIndex: number) => {
-    supabase.storage.from("files").remove([`${projectId}/${item.name}`]);
-    const newFiles = [...photos];
-    newFiles.splice(listIndex, 1);
-    setPhotos(newFiles);
-  };
 
   const onSelectImage = async () => {
     const filePath = `${projectId}/photos`;
@@ -175,6 +168,7 @@ export default function FilesManagement() {
     { title: "Word Documents (.docx)", files: files.docx },
     { title: "Excel Documents (.xlsx)", files: files.xlsx },
     { title: "Miscellaneous", files: files.misc },
+    { title: "Photos", files: photos, folder: "photos" },
   ];
   if (photosLoading || filesLoading)
     return <LoadingOverlay visible={photosLoading || filesLoading} />;
@@ -187,47 +181,31 @@ export default function FilesManagement() {
           return (
             <View>
               <List.Section>
-                {categories.map((category, index) => (
-                  <Fragment key={index}>
-                    <FileCategory
-                      title={category.title}
-                      files={category.files.map((file) => ({
-                        ...file,
-                        fullPath: `${projectId}/documents/${file.name}`,
-                      }))}
-                      onDelete={confirmDelete}
-                    />
-                    <Divider style={{ marginHorizontal: 8 }} />
-                  </Fragment>
-                ))}
+                {categories.map((category, index) => {
+                  let folder = category.folder ? category.folder : "documents";
+                  return (
+                    <Fragment key={index}>
+                      <FileCategory
+                        title={category.title}
+                        files={category.files.map(
+                          (file) => ({
+                            ...file,
+                            fullPath: `${projectId}/${folder}/${file.name}`,
+                          }),
+                        )}
+                        onDelete={confirmDelete}
+                      />
+                      <Divider style={{ marginHorizontal: 8 }} />
+                    </Fragment>
+                  );
+                })}
               </List.Section>
-              <FileCategory
-                title="Photos"
-                files={() => {}}
-                onDelete={confirmDelete}
-              />
-              <ScrollView>
-                {photos.map((item, index) => (
-                  <ImageItem
-                    key={item.id}
-                    item={item}
-                    projectId={projectId}
-                    onRemoveImage={() =>
-                      confirmDelete({
-                        ...item,
-                        fullPath: `${projectId}/photos/${item.name}`,
-                      })
-                    }
-                  />
-                ))}
-              </ScrollView>
               {/*View margin for FAB.Group when scrolling down */}
               <View style={{ marginBottom: 86 }}></View>
             </View>
           );
         }}
       ></VirtualizedList>
-
       <FAB
         style={styles.fab}
         small
