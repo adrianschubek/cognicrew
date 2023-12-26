@@ -53,7 +53,7 @@ const CombinedDarkTheme = {
 export default function App() {
   const music = useRef(new Audio.Sound());
 
-  const { inGame, musicVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
+  const { inGame, musicVolume, soundEffectVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
 
   //MUSIC
 
@@ -106,6 +106,7 @@ export default function App() {
     );
     setSoundEffect(sound);
     await sound.playAsync();
+    await sound.setVolumeAsync(soundEffectVolume);
   }
 
   useEffect(() => {

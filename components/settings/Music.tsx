@@ -8,13 +8,11 @@ const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
 export default function MusicSettings(props) {
   const {
-    effectsVolume,
-    setEffectsVolume,
     masterVolume,
     setMasterVolume,
   } = usePreferencesStore();
 
-  const {musicVolume, setMusicVolume} = useSoundsStore();
+  const {musicVolume, setMusicVolume, soundEffectVolume, setSoundEffectVolume} = useSoundsStore();
 
   const soundCategories = [
     {
@@ -29,8 +27,8 @@ export default function MusicSettings(props) {
     },
     {
       title: "Effects",
-      volume: effectsVolume,
-      setVolume: setEffectsVolume,
+      volume: soundEffectVolume,
+      setVolume: setSoundEffectVolume,
     },
   ] as { title: string; volume: number; setVolume: (v: number) => void }[];
   return (

@@ -10,6 +10,9 @@ type SoundsStoreType = {
 
   musicVolume: number;
   setMusicVolume: (volume: number) => void;
+
+  soundEffectVolume: number;
+  setSoundEffectVolume: (volume: number) => void;
 };
 
 export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
@@ -22,4 +25,8 @@ export const useSoundsStore = create<SoundsStoreType>((set, get) => ({
 
   musicVolume: 0,
   setMusicVolume: (volume: number) => set({ musicVolume: volume }),
+
+  soundEffectVolume: 0.5,
+  setSoundEffectVolume: (volume: number) => set({ soundEffectVolume: volume }),
+  
 }));
