@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 import {
-  Card,
   Divider,
-  Text,
   useTheme,
   MD3LightTheme as LightTheme,
   MD3DarkTheme as DarkTheme,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
-import { supabase } from "../supabase";
 import { useAuth } from "../providers/AuthProvider";
 import StatisticCategory from "../components/profile/StatisticCategory";
+import { useGlobalStatistics } from "../utils/hooks";
 
 export default function GlobalStatistics() {
   const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
@@ -90,112 +88,30 @@ export default function GlobalStatistics() {
 
   const { user } = useAuth();
 
-  async function calcGameStats() {
-    let { data, error } = await supabase
-      .from("user_learning_projects")
-      .select("stats")
-      .eq("user_id", user.id);
-    if (error) {
-      console.error("Error fetching data:", error);
-    } else {
-      let helperTotalTimeQuiz = 0;
-      let helperTotalTimeCards = 0;
-      let helperTotalTimeBoard = 0;
-      for (let i = 0; i < data.length; i++) {
-        helperTotalTimeQuiz += data[i]["stats"]["timeSpentQuiz"];
-        helperTotalTimeCards += data[i]["stats"]["timeSpentFlashcards"];
-        helperTotalTimeBoard += data[i]["stats"]["timeSpentWhiteboard"];
-      }
-      setTotalTimeSpentQuiz(helperTotalTimeQuiz);
-      setTotalTimeSpentCards(helperTotalTimeCards);
-      setTotalTimeSpentBoard(helperTotalTimeBoard);
-    }
-  }
+  const { data, error, isLoading, mutate } = useGlobalStatistics(
+    user.id,
+  );
 
-  async function calcCountExercises() {
-    const { count, error } = await supabase
-      .from("exercises")
-      .select("*", { count: "exact", head: true });
-    setCountExercises(count);
-  }
-
-  async function calcCountFlashcards() {
-    const { count, error } = await supabase
-      .from("flashcards")
-      .select("*", { count: "exact", head: true });
-    setCountFlashcards(count);
-  }
-
-  async function calcCountLinks() {
-    const { count, error } = await supabase
-      .from("links")
-      .select("*", { count: "exact", head: true });
-    setCountLinks(count);
-  }
-
-  async function calcCountFiles(folderName) {
-    let { data, error } = await supabase
-      .from("user_learning_projects")
-      .select()
-      .eq("user_id", user.id);
-
-    let projectIdArr = [];
-    let fileCount = 0;
-
-    for (let i = 0; i < data.length; i++) {
-      projectIdArr.push(data[i].learning_project_id);
-      try {
-        if (folderName == "documents") {
-          let { data, error } = await supabase.storage
-            .from("files")
-            .list(`${projectIdArr[i]}/documents`);
-
-          if (error) {
-            throw error;
-          }
-          fileCount += data.length;
-        } else {
-          let { data, error } = await supabase.storage
-            .from("files")
-            .list(`${projectIdArr[i]}/photos`);
-          if (error) {
-            throw error;
-          }
-          fileCount += data.length;
-        }
-      } catch (error) {
-        console.error("Error counting files", error.message);
-      }
-    }
-    return fileCount;
-  }
-
-  async function calcCountLearningProjects() {
-    const { count, error } = await supabase
-      .from("user_learning_projects")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id);
-    setCountLearningProjects(count);
-  }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        calcCountExercises();
-        calcCountFlashcards();
-        calcCountLinks();
-        const documentsCount = await calcCountFiles("documents");
-        const photosCount = await calcCountFiles("photos");
-        setCountDocuments(documentsCount);
-        setCountPhotos(photosCount);
-        calcCountLearningProjects();
-        calcGameStats();
-      } catch (error) {
-        console.error("Error in fetching data:", error.message);
-      }
-    };
-    fetchData();
+    if (!data || isLoading) return;
+    setCountDocuments(data[0]["count_documents"]);
+    setCountPhotos(data[0]["count_photos"]);
+    setCountLinks(data[0]["count_links"]);
+    setCountFlashcards(data[0]["count_flashcards"]);
+    setCountExercises(data[0]["count_exercises"]);
+
+    setCountLearningProjects(data[0]["count_projects"]);
+
+    setTotalTimeSpentQuiz(data[0]["total_time_spent_quiz"]);
+    setTotalTimeSpentCards(data[0]["total_time_spent_flashcards"]);
+    setTotalTimeSpentBoard(data[0]["total_time_spent_whiteboard"]);
+  }, [data]);
+  useEffect(() => {
+    mutate();
   }, []);
+
+  
   const statistics = [
     {
       title: "Global statistics",

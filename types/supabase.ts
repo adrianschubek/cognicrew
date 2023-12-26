@@ -705,6 +705,20 @@ export interface Database {
         }
         Returns: number
       }
+      get_all_statistics: {
+        Args: {
+          p_user_id: string
+          p_project_id: number
+        }
+        Returns: {
+          count_links: number
+          count_flashcards: number
+          count_exercises: number
+          project_stats: Json
+          global_rank: number
+          friends_rank: number
+        }[]
+      }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -718,11 +732,43 @@ export interface Database {
         }
         Returns: number
       }
+      get_global_statistics: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          count_projects: number
+          count_exercises: number
+          count_flashcards: number
+          count_links: number
+          count_documents: number
+          count_photos: number
+          total_time_spent_quiz: number
+          total_time_spent_flashcards: number
+          total_time_spent_whiteboard: number
+        }[]
+      }
       get_particular_amount_ratings: {
         Args: {
           project_id_param: number
         }
         Returns: Record<string, unknown>
+      }
+      get_project_statistics: {
+        Args: {
+          p_user_id: string
+          p_project_id: number
+        }
+        Returns: {
+          count_links: number
+          count_flashcards: number
+          count_exercises: number
+          count_documents: number
+          count_photos: number
+          project_stats: Json
+          global_rank: number
+          friends_rank: number
+        }[]
       }
       get_published_learning_projects_with_avg_rating: {
         Args: Record<PropertyKey, never>
@@ -751,26 +797,6 @@ export interface Database {
           project_id_param: number
         }
         Returns: number
-      }
-      get_user_global_rank_data: {
-        Args: {
-          project_id_param: number
-          user_id_param: string
-        }
-        Returns: {
-          user_id: string
-          user_rank: number
-        }[]
-      }
-      get_user_rank_and_id: {
-        Args: {
-          user_id_param: string
-          project_id_param: number
-        }
-        Returns: {
-          user_id: string
-          user_rank: number
-        }[]
       }
       get_usernames: {
         Args: {
