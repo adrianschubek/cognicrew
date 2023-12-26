@@ -5,7 +5,15 @@
 
 import React, { useState, useEffect, Fragment } from "react";
 import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
-import { Button, Dialog, Divider, FAB, Portal, Text } from "react-native-paper";
+import {
+  Button,
+  Dialog,
+  Divider,
+  FAB,
+  List,
+  Portal,
+  Text,
+} from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
 import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../../supabase";
@@ -33,13 +41,6 @@ export default function FilesManagement() {
     isLoading: filesLoading,
     mutate: mutateFiles,
   } = useFiles(`${projectId}/documents`);
-  // obsolete for now
-  const onRemoveImage = async (item: FileObject, listIndex: number) => {
-    supabase.storage.from("files").remove([`${projectId}/${item.name}`]);
-    const newFiles = [...photos];
-    newFiles.splice(listIndex, 1);
-    setPhotos(newFiles);
-  };
 
   const onSelectImage = async () => {
     const filePath = `${projectId}/photos`;
@@ -167,6 +168,7 @@ export default function FilesManagement() {
     { title: "Word Documents (.docx)", files: files.docx },
     { title: "Excel Documents (.xlsx)", files: files.xlsx },
     { title: "Miscellaneous", files: files.misc },
+    { title: "Photos", files: photos, folder: "photos" },
   ];
   if (photosLoading || filesLoading)
     return <LoadingOverlay visible={photosLoading || filesLoading} />;
@@ -177,47 +179,33 @@ export default function FilesManagement() {
         getItemCount={() => 0}
         ListHeaderComponent={() => {
           return (
-            <View style={styles.scrollView}>
-              {categories.map((category, index) => (
-                <Fragment key={index}>
-                  <FileCategory
-                    title={category.title}
-                    files={category.files.map((file) => ({
-                      ...file,
-                      fullPath: `${projectId}/documents/${file.name}`,
-                    }))}
-                    onDelete={confirmDelete}
-                  />
-                  <Divider style={{ marginHorizontal: 8 }} />
-                </Fragment>
-              ))}
-              <FileCategory
-                title="Photos"
-                files={() => {}}
-                onDelete={confirmDelete}
-              />
-              <ScrollView>
-                {photos.map((item, index) => (
-                  <ImageItem
-                    key={item.id}
-                    item={item}
-                    projectId={projectId}
-                    onRemoveImage={() =>
-                      confirmDelete({
-                        ...item,
-                        fullPath: `${projectId}/photos/${item.name}`,
-                      })
-                    }
-                  />
-                ))}
-              </ScrollView>
+            <View>
+              <List.Section>
+                {categories.map((category, index) => {
+                  let folder = category.folder ? category.folder : "documents";
+                  return (
+                    <Fragment key={index}>
+                      <FileCategory
+                        title={category.title}
+                        files={category.files.map(
+                          (file) => ({
+                            ...file,
+                            fullPath: `${projectId}/${folder}/${file.name}`,
+                          }),
+                        )}
+                        onDelete={confirmDelete}
+                      />
+                      <Divider style={{ marginHorizontal: 8 }} />
+                    </Fragment>
+                  );
+                })}
+              </List.Section>
               {/*View margin for FAB.Group when scrolling down */}
               <View style={{ marginBottom: 86 }}></View>
             </View>
           );
         }}
       ></VirtualizedList>
-
       <FAB
         style={styles.fab}
         small
@@ -245,10 +233,6 @@ const styles = StyleSheet.create({
   container: {
     marginTop: -8,
     flex: 1,
-    paddingTop: 8,
-  },
-  scrollView: {
-    paddingHorizontal: 8,
   },
   fab: {
     position: "absolute",

@@ -1,23 +1,13 @@
-import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Button,
-  Card,
-  IconButton,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, IconButton, Text, useTheme } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useFileUrl, useFiles, useUsername } from "../../utils/hooks";
+import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, View } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { useAvatarStore } from "../../stores/AvatarStore";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 
 const Account = (props) => {
@@ -25,14 +15,8 @@ const Account = (props) => {
   const { user } = useAuth();
   const username = user.user_metadata.username as string;
   const filePath = `${user.id}`;
-  const { avatarUrl, setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
-  const icon = avatarUrl ? "image-edit" : "image-plus";
-  const { data, error, isLoading, mutate } = useFileUrl(
-    filePath,
-    "profile-pictures",
-  );
+  const icon = "image-edit"; //avatarUrl ? "image-edit" : "image-plus";
 
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <TouchableOpacity
       onPress={() => {
@@ -50,6 +34,7 @@ const Account = (props) => {
                     {...props}
                     style={{ alignSelf: "center", marginBottom: 10 }}
                     username={username}
+                    userId={user.id}
                     size={200}
                   />
                 );
@@ -63,8 +48,6 @@ const Account = (props) => {
                 await supabase.storage
                   .from("profile-pictures")
                   .remove([filePath + "/avatar"]);
-                setAvatarUrl(null);
-                setUrlHasMatchingImage(false);
               },
               errorText: "Could not remove image",
             },
@@ -76,10 +59,6 @@ const Account = (props) => {
                 await selectAndUploadImage(filePath, {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
-                }).then(() => {
-                  const timestamp = Date.now();
-                  setAvatarUrl(`${data.data.publicUrl}/avatar?${timestamp}`);
-                  setUrlHasMatchingImage(true);
                 });
               },
               errorText: "Could not upload image",
@@ -88,7 +67,7 @@ const Account = (props) => {
         });
       }}
     >
-      <ProfilePictureAvatar {...props} username={username} />
+      <ProfilePictureAvatar {...props} username={username} userId={user.id} />
     </TouchableOpacity>
   );
 };

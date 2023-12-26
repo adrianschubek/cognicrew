@@ -8,17 +8,23 @@ import { StrokeView } from "./StrokeView";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 import Slider from "@react-native-community/slider";
 
-export const StrokeSettings = ({
-  onChangeColor,
-  onChangeStroke,
-  currentColor,
-  strokeWidth,
-}) => {
-  const { openColor, openStroke, setOpenStroke, setOpenColor } =
-    useWhiteboardStore();
+export const StrokeSettings = ({}) => {
+  const {
+    openColor,
+    openStroke,
+    setOpenStroke,
+    setOpenColor,
+    color,
+    setColor,
+    setStroke,
+    stroke,
+    setShapeSize,
+    shapeSize,
+  } = useWhiteboardStore();
+
   // Width of each container, a derived state from open/close state
-  const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 150 : 20;
-  const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 150 : 20;
+  const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 150 : 35;
+  const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 150 : 35;
   // Animated styles to give life to the action of opening and closing each container
 
   const colorAnimatedStyles = useAnimatedStyle(() => {
@@ -35,11 +41,11 @@ export const StrokeSettings = ({
   });
   // handling the selection of each container
   const handleColorSelector = (c: string) => {
-    onChangeColor(c);
+    setColor(c);
     setOpenColor(false);
   };
   const handleStrokeSelector = (s: number) => {
-    onChangeStroke(s);
+    setStroke(s);
     setOpenStroke(false);
   };
   // handling open and close, where if you open A, B should be closed
@@ -52,97 +58,118 @@ export const StrokeSettings = ({
     setOpenColor(false);
   };
 
-  const { setShapeSize, shapeSize } = useWhiteboardStore();
-
-  return (
-    <View style={styles.columnStyle}>
-        <Text style={styles.heading}>Select drawing color</Text>
-        <Animated.View style={[styles.container, colorAnimatedStyles, {marginLeft: 5, marginTop: 10}]}>
-          <>
-            {!openColor && (
-              <TouchableOpacity
-                onPress={handleToggleColor}
-                style={[
-                  {
-                    backgroundColor: currentColor,
-                  },
-                  styles.colorButton,
-                ]}
-              />
-            )}
-            {openColor &&
-              COLORS.map((c) => {
-                return (
-                  <TouchableOpacity
-                    key={c}
-                    onPress={() => handleColorSelector(c)}
-                    style={[{ backgroundColor: c }, styles.colorButton]}
-                  />
-                );
-              })}
-          </>
-        </Animated.View>
-
-      <Text style={[styles.heading, {marginTop: 30}]}>Select pen size</Text>
-      <Animated.View style={[styles.container, strokeAnimatedStyles, {marginLeft: 10, marginTop: 20}]}>
-        <>
-          {!openStroke && (
+  function renderSelection(
+    open: boolean,
+    selectionItems: number[] | string[],
+    handleToggle: () => void,
+    handleSelection: (selection) => void,
+    settingsType: string,
+  ) {
+    return (
+      <Animated.View
+        style={[
+          {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            //backgroundColor: "yellow",
+            paddingVertical: 10,
+          },
+          settingsType === "stroke" && { marginLeft: 10 },
+          settingsType === "stroke"
+            ? strokeAnimatedStyles
+            : colorAnimatedStyles,
+        ]}
+      >
+        {!open &&
+          (settingsType === "stroke" ? (
             <TouchableOpacity
-              onPress={handleToggleStrokeSize}
-              style={[styles.colorButton]}
+              onPress={handleToggle}
+              style={[styles.colorButton, { justifyContent: "center" }]}
             >
-              <StrokeView color={currentColor} size={strokeWidth} />
+              <StrokeView color={color} size={stroke} />
             </TouchableOpacity>
-          )}
-          {openStroke &&
-            STROKE_SIZE.map((s) => {
-              return (
-                <TouchableOpacity
-                  key={s}
-                  onPress={() => handleStrokeSelector(s)}
-                  style={[styles.colorButton]}
-                >
-                  <StrokeView color={currentColor} size={s} />
-                </TouchableOpacity>
-              );
-            })}
-        </>
+          ) : (
+            <TouchableOpacity
+              onPress={handleToggle}
+              style={[
+                {
+                  backgroundColor: color,
+                },
+                styles.colorButton,
+              ]}
+            />
+          ))}
+        {open &&
+          selectionItems.map((s) => {
+            return settingsType === "stroke" ? (
+              <TouchableOpacity
+                key={s}
+                onPress={() => handleSelection(s)}
+                style={[styles.colorButton, { justifyContent: "center" }]}
+              >
+                <StrokeView color={color} size={s} />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                key={s}
+                onPress={() => handleSelection(s)}
+                style={[{ backgroundColor: s }, styles.colorButton]}
+              />
+            );
+          })}
       </Animated.View>
-
-        <Text style={styles.heading}>Select form extent</Text>
+    );
+  }
+  const settings = [
+    {
+      title: "Select drawing color",
+      customNode: renderSelection(
+        openColor,
+        COLORS,
+        handleToggleColor,
+        handleColorSelector,
+        "color",
+      ),
+    },
+    {
+      title: "Select pen size",
+      customNode: renderSelection(
+        openStroke,
+        STROKE_SIZE,
+        handleToggleStrokeSize,
+        handleStrokeSelector,
+        "stroke",
+      ),
+    },
+    {
+      title: "Select form extent",
+      customNode: (
         <Slider
-          style={styles.slider}
+          style={{ width: 200, height: 40 }}
           minimumValue={10}
           maximumValue={100}
           step={1}
           value={shapeSize}
           onValueChange={(value) => setShapeSize(value)}
         />
+      ),
+    },
+  ];
+  return (
+    <View>
+      {settings.map((s, index) => {
+        return (
+          <View key={index}>
+            <Text variant="titleMedium">{s.title}</Text>
+            {s.customNode}
+          </View>
+        );
+      })}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  slider: {
-    width: 200,
-    height: 40,
-  },
-  sliderLabel: {
-    marginRight: 10,
-  },
-  columnStyle: {
-    paddingTop: 10,
-    flexDirection: "column",
-  },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
   colorButton: {
     width: 35,
     height: 35,

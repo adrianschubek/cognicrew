@@ -44,11 +44,58 @@ async function verifyJWT(jwt: string): Promise<boolean> {
 let gameLoopIntervalId: number | null = null;
 async function startGameLoop(handler: () => Promise<void>, interval: number) {
   if (gameLoopIntervalId === null) {
-    try {
-      await handler();
-    } catch (error) {
-      console.error("[CRITICAL] Gameloop crashed! ", error);
-    }
+    /**
+     * //FIXME: Crash after reset_room called (auto restart try/catch)
+     * 
+     * supabase-edge-functions  | 2023-12-23T01:08:10.430593386+01:00 [CRITICAL] Gameloop crashed! Restarting... TypeError: Cannot read properties of undefined (reading 'gameData')
+supabase-edge-functions  | 2023-12-23T01:08:10.430606643+01:00     at mainLoop (file:///home/deno/functions/main/index.ts:194:47)
+supabase-edge-functions  | 2023-12-23T01:08:10.430616182+01:00     at eventLoopTick (ext:core/01_core.js:183:11)
+supabase-edge-functions  | 2023-12-23T01:08:10.430619469+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:37:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430629729+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430632996+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430636152+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430639338+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430667044+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.430672906+01:00     at async wrapper (file:///home/deno/functions/main/index.ts:41:9)
+supabase-edge-functions  | 2023-12-23T01:08:10.430675381+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
+supabase-edge-functions  | 2023-12-23T01:08:10.431012249+01:00 No interval is currently running.
+     */
+    // const wrapper = async () => {
+    //   try {
+    //     await handler();
+    //   } catch (error) {
+    //     console.error("[CRITICAL] Gameloop crashed! Restarting...", error);
+    //     stopGameLoop();
+    //     await startGameLoop(handler, interval);
+    //   }
+    // };
+    // await wrapper();
+    // gameLoopIntervalId = setInterval(wrapper, interval);
+
+    // ----------- original below -------------
+
+    /**
+     * supabase-edge-functions  | 2023-12-23T01:42:29.859301603+01:00 main_loop: 1 states and 0 commands processed in 58ms
+supabase-edge-functions  | 2023-12-23T01:42:29.891170326+01:00 [Info] Listening on http://localhost:9999/
+supabase-edge-functions  | 2023-12-23T01:42:29.891190297+01:00
+supabase-edge-functions  | 2023-12-23T01:42:29.932414775+01:00 [Info] room-update: took 40ms
+supabase-edge-functions  | 2023-12-23T01:42:29.932434405+01:00
+supabase-edge-functions  | 2023-12-23T01:42:30.808839480+01:00 reset_room
+supabase-edge-functions  | 2023-12-23T01:42:30.821475235+01:00 main_loop: 1 states and 1 commands processed in 24ms
+supabase-edge-functions  | 2023-12-23T01:42:31.813555393+01:00 {
+supabase-edge-functions  | 2023-12-23T01:42:31.813575633+01:00   players: [
+supabase-edge-functions  | 2023-12-23T01:42:31.813579231+01:00     {
+
+  -> after some delay ..... ?!?!?
+
+     * supabase-edge-functions  | 2023-12-23T01:42:55.934204570+01:00 main_loop: 1 states and 0 commands processed in 14ms
+supabase-edge-functions  | 2023-12-23T01:42:56.245265403+01:00 wall clock duration warning. isolate: 5fe279ad-2092-485e-a076-b8b570331a0d
+supabase-edge-functions  | 2023-12-23T01:42:56.943701362+01:00 event loop error: TypeError: Cannot read properties of undefined (reading 'gameData')
+supabase-edge-functions  | 2023-12-23T01:42:56.943717565+01:00     at mainLoop (file:///home/deno/functions/main/index.ts:211:47)
+supabase-edge-functions  | 2023-12-23T01:42:56.943720501+01:00     at eventLoopTick (ext:core/01_core.js:183:11)
+     */
+
+    await handler();
     gameLoopIntervalId = setInterval(handler, interval);
   } else {
     console.warn(
@@ -210,7 +257,7 @@ async function mainLoop() {
     .order("created_at", { ascending: true });
   if (error) console.error("queue: ", error);
 
-  for (const state of publicRoomStates) {
+  roomsLoop: for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
@@ -250,13 +297,13 @@ async function mainLoop() {
             await supabase
               .from("private_room_states")
               .delete()
-              .eq("room_id", state.room_id); // FIXME crash: this causes privateState and gameData to be undefined later on
+              .eq("room_id", state.room_id);
             // delete player answers
             await supabase
               .from("player_answers")
               .delete()
               .eq("room_id", state.room_id);
-            break;
+            continue roomsLoop; // FIXME NOT FIXED! : this causes privateState and gameData to be undefined later on
           default:
             console.error(`Unhandled command type '${cmd.type}'`);
         }

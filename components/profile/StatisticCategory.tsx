@@ -16,7 +16,7 @@ function getCustomNode(dataPoint: dataPointType) {
     ? dataPoint.customNode
     : null;
 }
-export default function statisticCategory(props: {
+export default function StatisticCategory(props: {
   data: {
     title: string;
     dataPointCategories: {

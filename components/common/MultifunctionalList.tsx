@@ -31,6 +31,7 @@ export default function MultifunctionalList(props: {
 }) {
   const theme = useTheme();
   const [creationQuery, setCreationQuery] = useState("");
+  const [creationError, setCreationError] = useState<string>("");
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
   const projectId = useProjectStore((state) => state.projectId);
@@ -38,6 +39,10 @@ export default function MultifunctionalList(props: {
     (state) => state.incrementRefetchIndex,
   );
   const createSet = () => {
+    if (creationQuery === "") {
+      setCreationError("Please enter a name for the set.");
+      return;
+    }
     upsertSet({
       //@ts-expect-error
       name: creationQuery,
@@ -47,10 +52,11 @@ export default function MultifunctionalList(props: {
       incrementRefetchIndex();
     });
     setCreationQuery("");
+    setCreationError("");
   };
   return (
     <Fragment>
-      <View style={styles.container}>
+      <View style={{ width: responsiveWidth(70) }}>
         <ScrollView
           style={{
             maxHeight:
@@ -96,6 +102,9 @@ export default function MultifunctionalList(props: {
               }
             />
           )}
+          {creationError && (
+            <HelperText type="error">{creationError}</HelperText>
+          )}
           {props.noSetAvailable && (
             <HelperText type="error">
               You have currently no sets. Feel free to create your first one!
@@ -127,9 +136,3 @@ export default function MultifunctionalList(props: {
     </Fragment>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: responsiveWidth(70),
-  },
-});
