@@ -8,7 +8,7 @@ import { View, FlatList } from "react-native";
 import FileItem from "./FileItem";
 import { List, Divider } from "react-native-paper";
 
-export default function FileCategory({ title, files, onDelete }) {
+export default function FileCategory({ title, files }) {
   const [expanded, setExpanded] = useState<boolean>(false);
   return (
     <List.Accordion
@@ -22,7 +22,7 @@ export default function FileCategory({ title, files, onDelete }) {
           data={files}
           renderItem={({ item }) => (
             <>
-              <FileItem file={item} onDeletePress={() => onDelete(item)} />
+              <FileItem file={item} />
               <Divider />
             </>
           )}
