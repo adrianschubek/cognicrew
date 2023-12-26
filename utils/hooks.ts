@@ -199,7 +199,6 @@ function useRankingGlobal(projectId: number, userId: string) {
   const query = supabase.rpc("get_user_global_rank", {
     user_id_param: userId,
     project_id_param: projectId,
-
   });
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
   const rank = data ? data : null;
@@ -546,6 +545,15 @@ export function useDeleteProject() {
   );
 }
 
+function customUseFunction(query, key, filePath) {
+  const { data, error, mutate } = handleErrors(useSWR([key, filePath], query));
+  return {
+    data,
+    isLoading: !error && !data,
+    error: error,
+    mutate,
+  };
+}
 export function useFiles(
   filePath: string,
   limit?: number,
@@ -557,16 +565,12 @@ export function useFiles(
       limit: limit ? limit : 100,
       offset: 0,
     });
-
-  const { data, error, mutate } = handleErrors(
-    useSWR(["getFiles", filePath], fetchFiles),
-  );
-  return {
-    data,
-    isLoading: !error && !data,
-    error: error,
-    mutate,
-  };
+  return customUseFunction(fetchFiles, "getFiles", filePath);
+}
+export function useDeleteFile(filePath: string, bucketName?: string) {
+  const bucket = bucketName || "files";
+  const deleteFile = () => supabase.storage.from(bucket).remove([filePath]);
+  return customUseFunction(deleteFile, "deleteFile", filePath);
 }
 export function useFileUrl(filePath: string, bucketName?: string) {
   const bucket = bucketName || "files";

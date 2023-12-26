@@ -5,21 +5,26 @@
 
 import React, { useState } from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
-import { Card, IconButton, List, Text, useTheme } from "react-native-paper";
+import { IconButton, List, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
-  responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { supabase } from "../../supabase";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { useAlerts } from "react-native-paper-fastalerts";
-export default function FileItem({ file, onDeletePress }) {
+import { useDeleteFile } from "../../utils/hooks";
+export default function FileItem({ file }) {
   const { data: publicUrl } = supabase.storage.from("files").getPublicUrl("");
   const theme = useTheme();
   const alerts = useAlerts();
-  const [photoUrlExists, setPhotoUrlExists] = useState<boolean>(false);
+  const [photoUrlExists, setPhotoUrlExists] = useState<boolean>(true);
   const fullUrl = publicUrl.publicUrl + file.fullPath;
+  /* const {
+    mutate: deleteFile,
+    isLoading,
+    error,
+  } = useDeleteFile(file.fullPath, "files");*/
   /**
    * getFileIconSource - Determines the icon source based on the file extension.
    * @param {string} extension - The file extension.
@@ -40,6 +45,15 @@ export default function FileItem({ file, onDeletePress }) {
         return require("../../assets/OneDrive_Folder_Icon.svg.png");
     }
   };
+  async function deleteFile(file) {
+    const { error } = await supabase.storage
+      .from("files")
+      .remove([file.fullPath]);
+  }
+    /**
+   * handleDownload - Placeholder for file download logic.
+   * @param {object} file - The file to download.
+   */
   const handleDownload = async () => {
     const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
@@ -48,7 +62,6 @@ export default function FileItem({ file, onDeletePress }) {
       });
       return;
     }
-
     try {
       if (photoUrlExists) {
         // Generate the local URI for the file
@@ -88,16 +101,11 @@ export default function FileItem({ file, onDeletePress }) {
       }
     } catch (error) {
       console.error("Error saving to camera roll:", error);
-      alerts.error({
+      error({
         message: `Error saving to camera roll: ${error.message}`,
       });
     }
   };
-  /**
-   * handleDownload - Placeholder for file download logic.
-   * @param {object} file - The file to download.
-   */
-
   return (
     <List.Item
       style={{
@@ -132,7 +140,18 @@ export default function FileItem({ file, onDeletePress }) {
               style={{ marginRight: responsiveFontSize(0.05) }}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={onDeletePress}>
+          <TouchableOpacity
+            onPress={() => {
+              alerts.confirm({
+                title: "Delete file",
+                icon: "delete",
+                message: `Are you sure you want to delete ${file.name}?`,
+                cancelText: "Cancel",
+                okText: "Delete",
+                okAction: () => deleteFile(file),
+              });
+            }}
+          >
             <IconButton icon="delete" size={responsiveFontSize(3)} />
           </TouchableOpacity>
         </View>

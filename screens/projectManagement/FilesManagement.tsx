@@ -84,6 +84,7 @@ export default function FilesManagement() {
         "postgres_changes",
         { event: "*", schema: "storage", table: "objects" },
         (payload) => {
+          console.log("hallo");
           mutateFiles();
           mutatePhotos();
         },
@@ -97,72 +98,13 @@ export default function FilesManagement() {
       : mutateFiles();
   };
 
-  const [visible, setVisible] = useState(false);
   const [files, setFiles] = useState({
     pdf: [],
     docx: [],
     xlsx: [],
     misc: [],
   });
-  const [selectedFile, setSelectedFile] = useState(null);
 
-  /**
-   * confirmDelete - Opens a dialog to confirm deletion of a file.
-   * @param {string} fileId - The ID of the file to potentially delete.
-   */
-
-  const confirmDelete = (fileWithPath) => {
-    console.log("Selected for deletion:", fileWithPath);
-
-    setSelectedFile(fileWithPath); // Store the full path along with the file object
-    setVisible(true); // Show the confirmation dialog
-  };
-
-  const onDeleteConfirmed = async () => {
-    console.log("Attempting to delete:", selectedFile);
-
-    if (!selectedFile) return;
-
-    const { error } = await supabase.storage
-      .from("files")
-      .remove([selectedFile.fullPath]);
-
-    if (error) {
-      console.error("Error deleting file:", error.message);
-    } else {
-      // Update state to remove the file from the list
-      if (selectedFile.fullPath.includes("/photos/")) {
-        setPhotos(
-          photos.filter(
-            (photo) =>
-              `${projectId}/photos/${photo.name}` !== selectedFile.fullPath,
-          ),
-        );
-      } else {
-        setFiles((prevFiles) => {
-          return {
-            pdf: prevFiles.pdf.filter(
-              (file) =>
-                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
-            ),
-            docx: prevFiles.docx.filter(
-              (file) =>
-                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
-            ),
-            xlsx: prevFiles.xlsx.filter(
-              (file) =>
-                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
-            ),
-            misc: prevFiles.misc.filter(
-              (file) =>
-                `${projectId}/documents/${file.name}` !== selectedFile.fullPath,
-            ),
-          };
-        });
-      }
-      setVisible(false);
-    }
-  };
   const categories = [
     { title: "PDF Documents (.pdf)", files: files.pdf },
     { title: "Word Documents (.docx)", files: files.docx },
@@ -187,13 +129,10 @@ export default function FilesManagement() {
                     <Fragment key={index}>
                       <FileCategory
                         title={category.title}
-                        files={category.files.map(
-                          (file) => ({
-                            ...file,
-                            fullPath: `${projectId}/${folder}/${file.name}`,
-                          }),
-                        )}
-                        onDelete={confirmDelete}
+                        files={category.files.map((file) => ({
+                          ...file,
+                          fullPath: `${projectId}/${folder}/${file.name}`,
+                        }))}
                       />
                       <Divider style={{ marginHorizontal: 8 }} />
                     </Fragment>
@@ -214,18 +153,6 @@ export default function FilesManagement() {
       />
       <FAB style={styles.fab2} small icon="camera" onPress={onSelectImage} />
       {/* Delete confirmation dialog */}
-      <Portal>
-        <Dialog visible={visible} onDismiss={() => setVisible(false)}>
-          <Dialog.Title>Delete Confirmation</Dialog.Title>
-          <Dialog.Content>
-            <Text>Are you sure you want to remove this file?</Text>
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setVisible(false)}>Cancel</Button>
-            <Button onPress={onDeleteConfirmed}>Delete</Button>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
     </View>
   );
 }
