@@ -132,7 +132,7 @@ export const StrokeSettings = ({}) => {
       ),
     },
     {
-      title: "Select pen size",
+      title: "Select line size",
       customNode: renderSelection(
         openStroke,
         STROKE_SIZE,
