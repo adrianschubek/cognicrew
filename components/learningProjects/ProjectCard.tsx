@@ -36,7 +36,7 @@ export default function ProjectCard(props: {
         style={{
           margin: 3,
           marginBottom: 10,
-          backgroundColor: theme.colors.backdrop,
+          backgroundColor: theme.colors.secondaryContainer,
           borderRadius: 20,
         }}
       >
