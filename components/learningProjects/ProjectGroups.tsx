@@ -132,7 +132,11 @@ export default function ProjectGroups() {
                       });
                     }}
                   >
-                    <LearningProjectAvatarWithTitle projectName={project.name} />
+                    <LearningProjectAvatarWithTitle
+                      projectName={project.name /*+ "+#+#+#+#+#+#+#+#"*/}
+                      numberOfLines={2}
+                      titleMarginHorizontal={5}
+                    />
                   </TouchableOpacity>
                 </View>
               ))}

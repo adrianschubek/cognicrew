@@ -23,7 +23,7 @@ export default function ProjectCard(props: {
   const extraInfo = [
     {
       title: "Owner",
-      data: item.username /*+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"*/,
+      data: item.username /*+ "xxxxxxxx"*/,
     },
     { title: "Created in", data: item.created_at.substring(0, 4) },
   ];
@@ -49,21 +49,19 @@ export default function ProjectCard(props: {
             }}
           >
             <LearningProjectAvatarWithTitle
-              projectName={
-                item.name /*+ "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"*/
-              }
+              projectName={item.name /*+ "+#+#+#+#+#+#+#+#"*/}
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               textStyle={{
                 marginTop: 0,
                 marginLeft: 10,
-                maxWidth: "65%",
-                //backgroundColor: "red",
               }}
               textVariant="bodyLarge"
               textAlign="left"
-              extraInfoTexts={extraInfo.map(
-                (item) => item.title + ": " + item.data,
-              )}
+              textMaxWidth="65%"
+              numberOfLines={1}
+              extraInfoTexts={extraInfo.map((item) => {
+                return item.title + ": " + item.data;
+              })}
             />
             <View
               style={{
