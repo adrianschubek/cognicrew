@@ -34,8 +34,21 @@ export default function ProjectCard(props: {
         setExpanded(!expanded);
       }}
     >
-      <Card style={{ margin: 3, marginBottom: 10 }}>
-        <Card.Content style={{ flexDirection: "column", gap: 10 }}>
+      <Card
+        elevation={0}
+        style={{
+          margin: 3,
+          marginBottom: 10,
+          backgroundColor: theme.colors.backdrop,
+          borderRadius: 20,
+        }}
+      >
+        <Card.Content
+          style={{
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
           <View
             style={{
               flexDirection: "row",
