@@ -15,8 +15,8 @@ import ProjectCard from "../components/learningProjects/ProjectCard";
 
 //Show projects
 export default function SearchProjects() {
-  const [searchQuery, setSearchQuery] = useState([""]);
-  const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string[]>([""]);
+  const [searchQueryDisplay, setSearchQueryDisplay] = useState<string>("");
 
   const { data } = useQuery(supabase.rpc("get_public_projects"), {
     onSuccess(data) {

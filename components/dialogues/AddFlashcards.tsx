@@ -39,9 +39,9 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
       resetDialogue();
     });
   };
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [priority, setPriority] = useState(5);
+  const [question, setQuestion] = useState<string>("");
+  const [answer, setAnswer] = useState<string>("");
+  const [priority, setPriority] = useState<number>(5);
   const [selectedSetId, setSelectedSetId] = useState(null);
   const [showErrorNoSetSelected, setShowErrorNoSetSelected] =
     useState<boolean>(false);

@@ -22,7 +22,7 @@ export default function SearchWithList(props: {
 }) {
   const theme = useTheme();
   const projectId = useProjectStore((state) => state.projectId);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [setId, setSetId] = useState(null);
   const { data, isLoading, error } = useSets(props.type, projectId);
   useEffect(() => {
