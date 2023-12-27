@@ -34,7 +34,7 @@ const AchievementNotification = ({
           duration: 1000,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     ).start();
   };
 
@@ -50,7 +50,7 @@ const AchievementNotification = ({
   if (!isVisible) return null;
 
   const glowStyle = {
-    opacity: glowAnim,
+    //opacity: glowAnim, //This doesn't look good
     shadowColor: goldenColor,
     shadowRadius: 10,
     shadowOpacity: 0.9,
@@ -98,13 +98,14 @@ const AchievementNotification = ({
 
 const styles = StyleSheet.create({
   notification: {
-    position: "absolute",
+    position: "absolute", //absolute doesn't work as it should
     padding: 10,
     borderRadius: 10,
-    elevation: 5,
+    /*elevation: 5,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3.84,*/ //all of this stuff doesn't do anything O.o
+    alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row",
