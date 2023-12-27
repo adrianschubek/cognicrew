@@ -331,8 +331,6 @@ export default function Discover() {
         >
           Recommendations for you
         </Text>
-
-        <Divider style={{ marginBottom: 10 }} />
       </View>
     );
   };
