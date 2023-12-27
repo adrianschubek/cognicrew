@@ -3,14 +3,13 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { FAB, IconButton, Text, useTheme } from "react-native-paper";
 import AccordionSection from "../../components/learningProject/AccordionSection";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import AddExercises from "../../components/dialogues/AddExercises";
 import SearchWithList from "../../components/common/SearchWithList";
-import { use } from "chai";
 
 export default function FlashcardExerciseManagement({
   navigation,
@@ -19,8 +18,7 @@ export default function FlashcardExerciseManagement({
   route: { params: { type: ManagementType } };
   navigation: any;
 }) {
-  const [creationOptionFocused, setCreationOptionFocused] =
-    useState<boolean>(false);
+  const creationOptionFocusedRef = useRef(false);
   const theme = useTheme();
   const { confirm } = useAlerts();
   const type = route.params.type;
@@ -179,26 +177,31 @@ export default function FlashcardExerciseManagement({
             label: "Create, delete and edit \n" + typeName(false) + " sets",
             onPress: () => {
               //setShowManageSets(true);
-
               confirm({
                 icon: "",
                 title: "Manage your " + typeName(false) + " sets",
                 okText: "Done",
                 cancelText: "",
                 okAction: () => {
-                  if (!creationOptionFocused) return;
-                  confirm({
-                    icon: "alert-circle",
-                    title: "Are you sure to leave?",
-                    message:
-                      "Your currently entered set will be lost. Please make sure to save it before pressing 'Done'",
-                    okText: "Accept",
-                    cancelText: "Cancel",
-                    cancelAction: () => {
-                      setCreationOptionFocused(false);
-                    },
+                  if (!creationOptionFocusedRef.current) return;
+                  return new Promise<void>((resolve) => {
+                    // Close the first confirm alert
+                    resolve();
+                  }).then(() => {
+                    // Open the second confirm alert
+                    confirm({
+                      icon: "alert-circle",
+                      title: "Are you sure to leave?",
+                      message:
+                        "Your currently entered set will be lost. Please make sure to save it before pressing 'Done'",
+                      okText: "Accept",
+                      cancelText: "Cancel",
+                      cancelAction: () => {},
+                      okAction: () => {
+                        creationOptionFocusedRef.current = false;
+                      },
+                    });
                   });
-                  return ""; //confirm is not triggered
                 },
                 fields: [
                   {
@@ -217,7 +220,7 @@ export default function FlashcardExerciseManagement({
                           }
                           creationOption={true}
                           creationOptionFocused={(boolean) => {
-                            setCreationOptionFocused(boolean); //this doesnt work
+                            creationOptionFocusedRef.current = boolean;
                           }}
                         />
                       );
