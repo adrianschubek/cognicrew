@@ -77,11 +77,11 @@ export default function ProjectCard(props: {
           </View>
           {expanded && (
             <View style={{ flexDirection: "column" }}>
-              {hiddenInfo &&
+              {hiddenInfo[0].data &&
                 hiddenInfo.map((item, index) => {
                   return (
                     <View key={index} style={{ flexDirection: "row", gap: 10 }}>
-                      <Text variant="bodyMedium">{item.title}: </Text>
+                      {/*<Text variant="bodyMedium">{item.title}: </Text>*/}
                       <Text key={index} variant="bodyMedium">
                         {item.data}
                       </Text>
