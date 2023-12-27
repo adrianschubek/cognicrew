@@ -11,28 +11,23 @@ import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
 
-//TODO realtime updating
-
+//TODO realtime updating | @Fabian, what do you mean with that?
 
 //Show projects
 export default function SearchProjects() {
   const [searchQuery, setSearchQuery] = useState([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
 
-  const { data } = useQuery(
-    supabase.rpc("get_public_projects"),
-    {
-      onSuccess(data) {
-        console.log("Data fetched successfully:", data.data);
-      },
-      onError(err) {
-        errorAlert({
-          message: err.message,
-        });
-      },
+  const { data } = useQuery(supabase.rpc("get_public_projects"), {
+    onSuccess(data) {
+      console.log("Data fetched successfully:", data.data);
     },
-  );
-
+    onError(err) {
+      errorAlert({
+        message: err.message,
+      });
+    },
+  });
 
   //CLONING STARTS
 
@@ -383,27 +378,33 @@ export default function SearchProjects() {
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: 15 }}>
-     
       {renderHeader()}
       <FlatList
+        /* windowSize={9}
+        maxToRenderPerBatch={5}
+        removeClippedSubviews={true} //can cause issues with component state as this unmounts components*/
+        //these are the props that can be used to improve performance
         data={data.filter((project) =>
           searchQuery.some(
             (query) =>
-              project.project_name.toLowerCase().includes(query.toLowerCase()) ||
+              project.project_name
+                .toLowerCase()
+                .includes(query.toLowerCase()) ||
               project.project_tags
                 .split(",")
                 .map((tag) => tag.trim())
                 .some((tag) =>
                   tag.toLowerCase().includes(query.toLowerCase()),
                 ) ||
-              project.project_description.toLowerCase().includes(query.toLowerCase()),
+              project.project_description
+                .toLowerCase()
+                .includes(query.toLowerCase()),
           ),
         )}
         renderItem={({ item }) => {
           return <ProjectCard item={item} save={save} />;
         }}
       />
-
     </SafeAreaView>
   );
 }
