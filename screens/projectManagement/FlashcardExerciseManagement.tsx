@@ -30,9 +30,6 @@ export default function FlashcardExerciseManagement({
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
   const { open } = FABOpen;
-  function capitalizeFirstLetter(string: string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-  }
   const typeName = (plural: boolean) =>
     (type === ManagementType.FLASHCARD ? "flashcard" : "quiz") +
     (plural ? "s" : "");

@@ -1,13 +1,6 @@
 import { Fragment, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import {
-  Button,
-  Card,
-  Divider,
-  Icon,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
 import LearningProjectAvatarWithTitle from "../learningProject/LearningProjectAvatarWithTitle";
 
@@ -38,8 +31,21 @@ export default function ProjectCard(props: {
         setExpanded(!expanded);
       }}
     >
-      <Card style={{ margin: 3, marginBottom: 10 }}>
-        <Card.Content style={{ flexDirection: "column", gap: 10 }}>
+      <Card
+        elevation={0}
+        style={{
+          margin: 3,
+          marginBottom: 10,
+          backgroundColor: theme.colors.backdrop,
+          borderRadius: 20,
+        }}
+      >
+        <Card.Content
+          style={{
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
           <View
             style={{
               flexDirection: "row",
@@ -50,6 +56,7 @@ export default function ProjectCard(props: {
           >
             <LearningProjectAvatarWithTitle
               projectName={item.project_name /*+ "+#+#+#+#+#+#+#+#"*/}
+              avatarSize={65}
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               textStyle={{
                 marginTop: 0,
@@ -80,13 +87,17 @@ export default function ProjectCard(props: {
           </View>
           {expanded && (
             <View style={{ flexDirection: "column" }}>
-              {hiddenInfo.map((item, index) => {
-                return (
-                  <Text key={index} variant="bodyMedium">
-                    {item.data}
-                  </Text>
-                );
-              })}
+              {hiddenInfo[0].data &&
+                hiddenInfo.map((item, index) => {
+                  return (
+                    <View key={index} style={{ flexDirection: "row", gap: 10 }}>
+                      {/*<Text variant="bodyMedium">{item.title}: </Text>*/}
+                      <Text key={index} variant="bodyMedium">
+                        {item.data}
+                      </Text>
+                    </View>
+                  );
+                })}
               <View
                 style={{
                   flexDirection: "row",
