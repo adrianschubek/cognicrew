@@ -659,13 +659,6 @@ export interface Database {
         }
         Returns: number
       }
-      bullshit_list_room_members: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          id: string
-          username: string
-        }[]
-      }
       cleanup_rooms: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -693,44 +686,11 @@ export interface Database {
         }
         Returns: boolean
       }
-      exercise_count: {
-        Args: {
-          p_project_id: number
-        }
-        Returns: number
-      }
-      flashcard_count: {
-        Args: {
-          p_project_id: number
-        }
-        Returns: number
-      }
-      get_all_statistics: {
-        Args: {
-          p_user_id: string
-          p_project_id: number
-        }
-        Returns: {
-          count_links: number
-          count_flashcards: number
-          count_exercises: number
-          project_stats: Json
-          global_rank: number
-          friends_rank: number
-        }[]
-      }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
         Returns: {
           group: string
         }[]
-      }
-      get_friends_rank: {
-        Args: {
-          user_id_param: string
-          project_id_param: number
-        }
-        Returns: number
       }
       get_global_statistics: {
         Args: {
@@ -784,20 +744,6 @@ export interface Database {
           project_avg_rating: number
         }[]
       }
-      get_published_learning_projects_with_avg_rating: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          project_id: number
-          name: string
-          description: string
-          created_at: string
-          tags: string
-          owner_id: string
-          is_published: boolean
-          username: string
-          avg_rating: number
-        }[]
-      }
       get_recommendations: {
         Args: {
           p_user_id: string
@@ -813,20 +759,6 @@ export interface Database {
           project_owner_name: string
           project_avg_rating: number
         }[]
-      }
-      get_user_friends_rank: {
-        Args: {
-          user_id_param: string
-          project_id_param: number
-        }
-        Returns: number
-      }
-      get_user_global_rank: {
-        Args: {
-          user_id_param: string
-          project_id_param: number
-        }
-        Returns: number
       }
       get_usernames: {
         Args: {
@@ -864,12 +796,6 @@ export interface Database {
       leave_room: {
         Args: Record<PropertyKey, never>
         Returns: undefined
-      }
-      link_count: {
-        Args: {
-          p_project_id: number
-        }
-        Returns: number
       }
       list_friends: {
         Args: Record<PropertyKey, never>
