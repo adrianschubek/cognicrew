@@ -48,7 +48,7 @@ export default function CreateEditProject({
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
 
-  const myid = useAuth().user.id;
+  const myId = useAuth().user.id;
 
   useEffect(() => {
     navigation.setOptions({
@@ -148,7 +148,7 @@ export default function CreateEditProject({
         }}
       >
         <StatusBar style="auto" />
-        {project && project?.owner_id !== myid && (
+        {project && project?.owner_id !== myId && (
           <Card
             theme={{
               colors: {
@@ -167,7 +167,7 @@ export default function CreateEditProject({
             </Card.Content>
           </Card>
         )}
-        {((project && project?.owner_id === myid) || !project) && (
+        {((project && project?.owner_id === myId) || !project) && (
           <>
             <TextInput
               testID="input-project-title"
@@ -351,7 +351,7 @@ export default function CreateEditProject({
             </HelperText>
           </>
         )}
-        {project && project?.owner_id === myid && (
+        {project && project?.owner_id === myId && (
           <Button
             testID="delete-project-button"
             style={{
@@ -378,7 +378,7 @@ export default function CreateEditProject({
         )}
         {!project && <View style={{ marginBottom: 60 }}></View>}
       </ScrollView>
-      {project && project?.owner_id !== myid && (
+      {project && project?.owner_id !== myId && (
         <Button
           style={{
             alignSelf: "flex-start",
@@ -398,7 +398,7 @@ export default function CreateEditProject({
                 console.log(project);
                 removeUserFromLearningProject({
                   learning_project_id: project.id,
-                  user_id: myid,
+                  user_id: myId,
                 });
                 navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
               },
@@ -408,7 +408,7 @@ export default function CreateEditProject({
           <Text>Leave project</Text>
         </Button>
       )}
-      {(!project || project?.owner_id === myid) && (
+      {(!project || project?.owner_id === myId) && (
         <FAB
           testID='create-project-button'
           icon={project === null ? "plus" : "check"}
