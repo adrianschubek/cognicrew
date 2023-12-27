@@ -1,13 +1,6 @@
 import { Fragment, useState } from "react";
 import { TouchableOpacity, View } from "react-native";
-import {
-  Button,
-  Card,
-  Divider,
-  Icon,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
 import LearningProjectAvatarWithTitle from "../learningProject/LearningProjectAvatarWithTitle";
 
@@ -19,7 +12,10 @@ export default function ProjectCard(props: {
   const { confirm } = useAlerts();
   const { item, save } = props;
   const [expanded, setExpanded] = useState<boolean>(false);
-  const hiddenInfo = [{ title: "Description", data: item.description }];
+  const hiddenInfo = [
+    //{ title: "Project title", data: item.name },
+    { title: "Description", data: item.description },
+  ];
   const extraInfo = [
     {
       title: "Owner",
@@ -50,6 +46,7 @@ export default function ProjectCard(props: {
           >
             <LearningProjectAvatarWithTitle
               projectName={item.name /*+ "+#+#+#+#+#+#+#+#"*/}
+              avatarSize={65}
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               textStyle={{
                 marginTop: 0,
@@ -80,13 +77,17 @@ export default function ProjectCard(props: {
           </View>
           {expanded && (
             <View style={{ flexDirection: "column" }}>
-              {hiddenInfo.map((item, index) => {
-                return (
-                  <Text key={index} variant="bodyMedium">
-                    {item.data}
-                  </Text>
-                );
-              })}
+              {hiddenInfo &&
+                hiddenInfo.map((item, index) => {
+                  return (
+                    <View key={index} style={{ flexDirection: "row", gap: 10 }}>
+                      <Text variant="bodyMedium">{item.title}: </Text>
+                      <Text key={index} variant="bodyMedium">
+                        {item.data}
+                      </Text>
+                    </View>
+                  );
+                })}
               <View
                 style={{
                   flexDirection: "row",
