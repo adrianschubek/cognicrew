@@ -128,7 +128,7 @@ export default function AccountInfo(props) {
         </Text>
         <Button
           onPress={() => {
-            setPlayButtonSoundEffect(true); //Will later be added to new Button component
+            //setPlayButtonSoundEffect(true); //Will later be added to new Button component
             navigation.navigate(NAVIGATION.GLOBAL_STATISTICS);
           }}
           icon={"chart-bar"}
