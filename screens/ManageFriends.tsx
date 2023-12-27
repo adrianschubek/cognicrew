@@ -177,6 +177,7 @@ export default function ManageFriends({ navigation }) {
             onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
             placeholder="Search friends"
+            style={{ marginBottom: 10 }}
           />
           <ScrollView
             style={styles.friendsListContainer}
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   section: {
-    marginBottom: 10,
+    //marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 22,
@@ -310,6 +311,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   friendsListContainer: {
-    maxHeight: responsiveHeight(37.5),
+    maxHeight: responsiveHeight(38),
   },
 });

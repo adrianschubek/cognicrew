@@ -2,11 +2,8 @@ import * as React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
-  Avatar,
   Text,
   Card,
-  IconButton,
-  Button,
   useTheme,
 } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
@@ -17,14 +14,13 @@ import { useEffect } from "react";
 import { NAVIGATION } from "../types/common";
 import { useAvatarStore } from "../stores/AvatarStore";
 import { useAuth } from "../providers/AuthProvider";
-import ProfilePictureAvatar from "../components/common/ProfilePictureAvatar";
+import ProfilePictureAvatar from "../components/profile/ProfilePictureAvatar";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
   const { user } = useAuth();
   const theme = useTheme();
-  const { avatarUrl } = useAvatarStore();
   useEffect(() => {
     navigation.setOptions({
       title: "CogniCrew",
@@ -36,32 +32,6 @@ export default function HomeScreen({ navigation }) {
       ),
     });
   }, []);
-
-  const {
-    data: profilePictureUrl,
-    error,
-    isLoading: profilePictureIsLoading,
-    mutate,
-  } = useFileUrl(`${user.id}`, "profile-pictures");
-  const { setAvatarUrl, setUrlHasMatchingImage } = useAvatarStore();
-  useEffect(() => {
-    if (!profilePictureUrl || profilePictureIsLoading) return;
-    const timestamp = Date.now();
-    const url = `${profilePictureUrl.data.publicUrl}/avatar?${timestamp}`;
-    setAvatarUrl(url);
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        setUrlHasMatchingImage(true);
-        console.log("matching image");
-      })
-      .catch(() => {
-        setUrlHasMatchingImage(false);
-        console.log("no matching image");
-      });
-  }, [profilePictureUrl]);
 
   if (isLoading)
     return (
@@ -80,6 +50,7 @@ export default function HomeScreen({ navigation }) {
         <ProfilePictureAvatar
           style={styles.avatar}
           username={isLoading ? "...." : data}
+          userId={user.id}
           size={48}
         />
       </View>

@@ -1,5 +1,5 @@
 import { Slider } from "@miblanchard/react-native-slider";
-import { useState } from "react";
+import { Fragment } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
 import { usePreferencesStore } from "../../stores/PreferencesStore";
 import { useSoundsStore } from "../../stores/SoundsStore";
@@ -7,47 +7,46 @@ import { useSoundsStore } from "../../stores/SoundsStore";
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
 export default function MusicSettings(props) {
-  const {
-    musicVolume,
-    setMusicVolume,
-    effectsVolume,
-    setEffectsVolume,
-    masterVolume,
-    setMasterVolume,
-  } = usePreferencesStore();
 
 
+  const {musicVolume, setMusicVolume, soundEffectVolume, setSoundEffectVolume, masterVolume, setMasterVolume} = useSoundsStore();
+
+  const soundCategories = [
+    {
+      title: "Master",
+      volume: masterVolume,
+      setVolume: setMasterVolume,
+    },
+    {
+      title: "Music",
+      volume: musicVolume,
+      setVolume: setMusicVolume,
+    },
+    {
+      title: "Effects",
+      volume: soundEffectVolume,
+      setVolume: setSoundEffectVolume,
+    },
+  ] as { title: string; volume: number; setVolume: (v: number) => void }[];
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
       <Card.Content>
-        <Text variant="bodyMedium">
-          Master ({(masterVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={masterVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setMasterVolume(v)}
-        ></Slider>
-        <Text variant="bodyMedium">
-          Music ({(musicVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={musicVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setMusicVolume(v)}
-        ></Slider>
-        <Text variant="bodyMedium">
-          Effects ({(effectsVolume * 100).toFixed(0) + "%"})
-        </Text>
-        <Slider
-          step={0.05}
-          value={effectsVolume}
-          // @ts-ignore
-          onSlidingComplete={(v) => setEffectsVolume(v)}
-        ></Slider>
+        {soundCategories.map((category, index) => {
+          return (
+            <Fragment key={index}>
+              <Text variant="bodyMedium">
+                {category.title} ({(category.volume * 100).toFixed(0) + "%"})
+              </Text>
+              <Slider
+                step={0.05}
+                value={category.volume}
+                // @ts-ignore
+                onSlidingComplete={(v) => { const volumeToSet = Array.isArray(v) ? v[0] : v; category.setVolume(volumeToSet); console.log(category.volume)}}
+              ></Slider>
+            </Fragment>
+          );
+        })}
       </Card.Content>
     </Card>
   );

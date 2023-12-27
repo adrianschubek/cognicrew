@@ -87,10 +87,10 @@ serve(async (req) => {
           publicState.roundEndsAt < dayjs().valueOf() ||
           publicState.roundBeganAt > dayjs().valueOf()
         )
-          return err("Round is over (#24a)", 400);
+          return err("Round is over (#24A)", 400);
         // check if round is still active
         if (publicState.screen !== ScreenState.INGAME)
-          return err("Round is over (#24b)", 400);
+          return err("Round is over (#24B)", 400);
 
         // check and save if answer is correct
         const { error } = await supabase.from("player_answers").upsert({
@@ -124,6 +124,12 @@ serve(async (req) => {
         break;
       }
       case "reset_room": {
+        // FIXME: Disclaimer
+        return err(
+          "The 'reset_room' command is currently unavailable due to a potential critical error that causes the game loop to crash. Please restart the app to continue or wait until the game is over (#26X)",
+          500,
+        );
+
         // => reset room back to lobby if host. ---nein otherwise leave room (clientside return true to leave room for non host)
         // check if user is host
         // FIXME: refactor use is_host in publicState
@@ -152,9 +158,7 @@ serve(async (req) => {
         return err("Not implemented (#27)", 501);
         break;
       case "end_game":
-        return err("Not implemented (#27a)", 501);
-
-        
+        return err("Not implemented (#27A)", 501);
 
         break;
       default:

@@ -2,33 +2,17 @@ import {
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-import React, { useEffect, useState } from "react";
-import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  FlatList,
-} from "react-native";
-import {
-  Card,
-  Dialog,
-  Divider,
-  HelperText,
-  Icon,
-  Portal,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
-import { Searchbar, Button } from "react-native-paper";
+import React, { useState } from "react";
+import { SafeAreaView, View, FlatList } from "react-native";
+import { Divider, HelperText, useTheme } from "react-native-paper";
+import { Searchbar } from "react-native-paper";
 import { supabase } from "../supabase";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
+import ProjectCard from "../components/learningProjects/ProjectCard";
 
 //TODO realtime updating
 export default function SearchProjects() {
-  const theme = useTheme();
-
   const [searchQuery, setSearchQuery] = useState([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
 
@@ -46,20 +30,7 @@ export default function SearchProjects() {
     },
   );
 
-
-  // Add state to manage visibility for each card
-  const [cardVisibility, setCardVisibility] = useState(
-    Array(data?.length).fill(false),
-  );
-
-  const onChangeSearch = (query) => {
-    const tokens = query.split(",");
-    setSearchQueryDisplay(query);
-    setSearchQuery(tokens);
-  };
-  
-
-  const { success, error: errorAlert} = useAlerts();
+  const { success, error: errorAlert } = useAlerts();
   const { trigger: upsert } = useUpsertMutation(
     supabase.from("learning_projects"),
     ["id"],
@@ -147,9 +118,8 @@ export default function SearchProjects() {
   };
 
   const save = async (project, newProjectName) => {
-
     try {
-      const projectName = newProjectName? newProjectName : project.name;
+      const projectName = newProjectName ? newProjectName : project.name;
       // Upsert the project and get the project_id
       const upsertedProject = await upsert([
         {
@@ -368,183 +338,61 @@ export default function SearchProjects() {
       console.error("Save error:", error.message);
     }
   };
-
-
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const showDialog = (item) => {
-    setSelectedItem(item);
-    setDialogVisible(true);
-  };
-
-  const hideDialog = () => {
-    setDialogVisible(false);
-    setInputValue("");
-  };
-
-  const handleChangeText = (text) => setInputValue(text);
-
-  const renderDialog = () => (
-    <Portal>
-      <Dialog visible={dialogVisible} onDismiss={hideDialog}>
-        <Dialog.Title>Clone Project</Dialog.Title>
-        <Dialog.Content>
-          <TextInput
-            label="New Project Name"
-            value={inputValue}
-            onChangeText={handleChangeText}
-          />
-        </Dialog.Content>
-        <Dialog.Actions style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button
-            onPress={hideDialog}
-            style={{ marginLeft: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Cancel</Button>
-          <Button
-            buttonColor={theme.colors.primary}
-            textColor="white"
-            onPress={() => { save(selectedItem, inputValue); hideDialog(); }} 
-            style={{ marginRight: 0, paddingHorizontal: 10, paddingVertical: 5 }}>Save</Button>
-        </Dialog.Actions>
-      </Dialog>
-    </Portal>
-  );
-
   if (!data) return null;
-
+  const renderHeader = () => {
+    const onChangeSearch = (query) => {
+      const tokens = query.split(",");
+      setSearchQueryDisplay(query);
+      setSearchQuery(tokens);
+    };
+    return (
+      <>
+        <View>
+          <Searchbar
+            style={{
+              marginHorizontal: 10,
+              marginTop: 10,
+              marginBottom: 5,
+              elevation: 0,
+              borderRadius: 10,
+            }}
+            placeholder="Search"
+            onChangeText={(text) => {
+              onChangeSearch(text);
+            }}
+            value={searchQueryDisplay}
+          />
+          <HelperText type="info" style={{ marginHorizontal: 10 }}>
+            Search for title and tags separated by commas in all learning
+            projects
+          </HelperText>
+        </View>
+        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+      </>
+    );
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
-        <Searchbar
-          style={{
-            marginHorizontal: 10,
-            marginTop: 10,
-            marginBottom: 5,
-            elevation: 0,
-            borderRadius: 10,
-          }}
-          placeholder="Search"
-          onChangeText={(text) => {
-            onChangeSearch(text);
-          }}
-          value={searchQueryDisplay}
-        />
-
-        <HelperText type="info" style={{ marginHorizontal: 10 }}>
-          Search for title and tags separated by commas in all learning projects
-        </HelperText>
-      </View>
-      <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-      {renderDialog()}
+    <SafeAreaView style={{ flex: 1, marginTop: 15 }}>
+      {renderHeader()}
       <FlatList
-        /*TODO : ADDING DIALOG */
-        style={styles.flatList}
-        data={data.filter(
-          (project) =>
-            searchQuery.some(query =>
+        data={data.filter((project) =>
+          searchQuery.some(
+            (query) =>
               project.name.toLowerCase().includes(query.toLowerCase()) ||
-              project.tags.split(',').map(tag => tag.trim()).some(tag => tag.toLowerCase().includes(query.toLowerCase())) ||
-              project.description.toLowerCase().includes(query.toLowerCase())
-            )
+              project.tags
+                .split(",")
+                .map((tag) => tag.trim())
+                .some((tag) =>
+                  tag.toLowerCase().includes(query.toLowerCase()),
+                ) ||
+              project.description.toLowerCase().includes(query.toLowerCase()),
+          ),
         )}
-        
-        renderItem={({ item, index }) => (
-          <Card
-            style={styles.card}
-            key={index.toString()}
-            onPress={() => {
-              // Toggle visibility for the pressed card
-              const updatedVisibility = [...cardVisibility];
-              updatedVisibility[index] = !updatedVisibility[index];
-              setCardVisibility(updatedVisibility);
-            }}
-          >
-            <Card.Title title={item.name} titleVariant="titleLarge" />
-            <Card.Content>
-              {cardVisibility[index] && (
-                <>
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Description: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.description}
-                    </Text>
-                  </View>
-
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Owner: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.username}
-                    </Text>
-                  </View>
-
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Created in: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.created_at.substring(0, 4)}
-                    </Text>
-                  </View>
-
-                  <View style={{ flexDirection: "row" }}>
-                    <Text variant="bodyMedium">Rating: </Text>
-                    <Text variant="bodyMedium" style={{ fontWeight: "bold" }}>
-                      {item.avg_rating.toFixed(2)}
-                    </Text>
-                    <Icon source="star" size={20} color="#ffb300" />
-                  </View>
-
-                  <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
-                    Tags: {item.tags}
-                  </Text>
-
-                  <View style={styles.horizontalCardButtons}>
-                    <Button
-                      buttonColor={theme.colors.primary}
-                      textColor="white"
-                      onPress={() => {
-                        showDialog(item);
-                      }}
-                    >
-                      Clone
-                    </Button>
-                  </View>
-                </>
-              )}
-            </Card.Content>
-          </Card>
-        )}
+        renderItem={({ item }) => {
+          return <ProjectCard item={item} save={save} />;
+        }}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 15,
-  },
-  item: {
-    padding: 10,
-    marginVertical: 4,
-    marginHorizontal: 10,
-  },
-  title: {
-    fontSize: 30,
-  },
-  card: {
-    margin: 10,
-  },
-  horizontalCardButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-  flatList: {},
-  searchbar: {
-    marginBottom: 5,
-  },
-  semesterFilter: {
-    marginBottom: 5,
-    marginRight: 5,
-  },
-});

@@ -3,27 +3,18 @@ import {
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
-import {
-  Card,
-  Dialog,
-  Divider,
-  Icon,
-  Portal,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { FlatList, SafeAreaView, View } from "react-native";
+import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
 import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
+import ProjectCard from "../components/learningProjects/ProjectCard";
 
 export default function Discover() {
   const theme = useTheme();
   const { data: ownName } = useUsername();
-  const { confirm } = useAlerts();
 
   //Get all published learning projects and relevant data
   const [getData, setData] = useState(null);
@@ -444,18 +435,6 @@ export default function Discover() {
 
   //CLONING END
 
-  //Visibility and scramble functionss for display of the list
-
-  const [cardVisibility, setCardVisibility] = useState(
-    Array(data?.length).fill(false),
-  );
-
-  const toggleCardVisibility = (index) => {
-    const updatedVisibility = [...cardVisibility];
-    updatedVisibility[index] = !updatedVisibility[index];
-    setCardVisibility(updatedVisibility);
-  };
-
   function reScramble() {
     setData(
       data
@@ -497,7 +476,7 @@ export default function Discover() {
   };
 
   const renderFooter = () => (
-    <View style={{ flexDirection: "row" }}>
+    <View style={{ flexDirection: "row", marginBottom: 10 }}>
       <Divider />
       <Button
         mode="contained-tonal"
@@ -531,83 +510,8 @@ export default function Discover() {
             .slice(0, 5)
             .sort((a, b) => b["avg_rating"] - a["avg_rating"])
         }
-        renderItem={({ item, index }) => {
-          const stats = [
-            { title: "Description", data: item.description },
-            { title: "Owner", data: item.username },
-            { title: "Created in", data: item.created_at.substring(0, 4) },
-            {
-              title: "Rating",
-              data: item.avg_rating.toFixed(2) + " ",
-              icon: <Icon source="star" size={20} color="#ffb300" />,
-            },
-          ];
-          return (
-            <Card
-              style={{ margin: 3, marginBottom: 10 }}
-              key={index.toString()}
-              onPress={() => toggleCardVisibility(index)}
-            >
-              <Card.Title title={item.name} titleVariant="titleLarge" />
-
-              <Card.Content style={{ gap: 5 }}>
-                {cardVisibility[index] && (
-                  <>
-                    {stats.map((stat, index) => {
-                      return (
-                        <View style={{ flexDirection: "row" }} key={index}>
-                          <Text variant="bodyMedium">{stat.title}: </Text>
-                          <Text
-                            variant="bodyMedium"
-                            style={{ fontWeight: "bold" }}
-                          >
-                            {stat.data}
-                          </Text>
-                          {stat.icon && stat.icon}
-                        </View>
-                      );
-                    })}
-                    <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
-                      Tags: {item.tags}
-                    </Text>
-
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "flex-end",
-                      }}
-                    >
-                      <Button
-                        buttonColor={theme.colors.primary}
-                        textColor={theme.colors.onPrimary}
-                        onPress={() => {
-                          confirm({
-                            title: "Clone project",
-                            icon: "content-copy",
-                            okText: "Clone",
-                            okAction: (vars) => {
-                              save(item, vars[0]);
-                            },
-                            fields: [
-                              {
-                                label: "New project name",
-                                type: "text",
-                                required: true,
-                                errorText:
-                                  "Cannot clone this project without a new name",
-                              },
-                            ],
-                          });
-                        }}
-                      >
-                        Clone
-                      </Button>
-                    </View>
-                  </>
-                )}
-              </Card.Content>
-            </Card>
-          );
+        renderItem={({ item }) => {
+          return <ProjectCard item={item} save={save} />;
         }}
         ListHeaderComponent={renderHeader}
         ListFooterComponent={renderFooter}

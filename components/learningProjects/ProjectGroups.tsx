@@ -9,6 +9,7 @@ import { responsiveFontSize } from "react-native-responsive-dimensions";
 import { getRandomColor } from "../../utils/common";
 import { useNavigation } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
+import LearningProjectAvatarWithTitle from "../learningProject/LearningProjectAvatarWithTitle";
 
 export default function ProjectGroups() {
   const theme = useTheme();
@@ -117,7 +118,7 @@ export default function ProjectGroups() {
               .map((project) => (
                 <View style={styles.projectElement} key={project.id}>
                   <TouchableOpacity
-                    testID='select-project-button'
+                    testID="select-project-button"
                     onPress={() => {
                       // @ts-expect-error idk why
                       navigation.navigate(NAVIGATION.LEARNING_PROJECT, {
@@ -131,21 +132,7 @@ export default function ProjectGroups() {
                       });
                     }}
                   >
-                    <>
-                      <Avatar.Text
-                        style={styles.avatar}
-                        size={responsiveFontSize(10)}
-                        label={project.name.substring(0, 2)}
-                        theme={{
-                          colors: { primary: getRandomColor(project.name) },
-                        }}
-                      />
-                      <Text style={styles.textStyle}>
-                        {project.name.length > 32
-                          ? project.name.substring(0, 32) + "..."
-                          : project.name.substring(0, 32)}
-                      </Text>
-                    </>
+                    <LearningProjectAvatarWithTitle projectName={project.name} />
                   </TouchableOpacity>
                 </View>
               ))}
@@ -165,12 +152,5 @@ const styles = StyleSheet.create({
   projectElement: {
     width: "33%",
     paddingBottom: 10,
-  },
-  textStyle: {
-    textAlign: "center",
-    marginTop: 5,
-  },
-  avatar: {
-    alignSelf: "center",
   },
 });
