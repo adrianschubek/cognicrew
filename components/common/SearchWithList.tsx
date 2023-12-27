@@ -47,6 +47,7 @@ export default function SearchWithList(props: {
   return (
     <View style={{ width: responsiveWidth(70), marginBottom: 8 }}>
       <Searchbar
+        testID="input-search-for-flashcard-set"
         value={searchQuery}
         style={{ elevation: 1 }}
         placeholder={props.searchPlaceholder || "Search"}

@@ -229,6 +229,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                 }}
               />
               <IconButton
+                testID="delete-flashcard-button"
                 icon="delete"
                 onPress={() => {
                   deleteFlashcardOrExercise();
@@ -241,6 +242,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       />
       <Card.Content>
         <TextInput
+          testID="input-edit-flashcard-question"
           style={{ marginBottom: 8 }}
           multiline={true}
           label="Question:"

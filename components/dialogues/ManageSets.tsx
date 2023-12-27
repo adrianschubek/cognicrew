@@ -66,6 +66,7 @@ export default function ManageSets(props: {
         />
         <Dialog.Actions>
           <Button
+            testID="manage-sets-done-button"
             style={{ width: responsiveWidth(70), marginTop: 10 }}
             onPress={() => {
               creationOptionFocused

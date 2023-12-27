@@ -11,6 +11,7 @@ export default function EditFlashcard(props: {
   return (
     <TextInput
       label="Answer:"
+      testID="input-edit-flashcard-answer"
       multiline={true}
       value={answer}
       onChangeText={(answer) => {

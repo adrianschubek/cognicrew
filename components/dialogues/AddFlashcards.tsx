@@ -93,6 +93,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           />
 
           <TextInput
+            testID="input-flashcard-question"
             style={[styles.textInputStyle]}
             multiline={true}
             blurOnSubmit={true}
@@ -103,6 +104,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
             }}
           />
           <TextInput
+            testID="input-flashcard-answer"
             style={styles.textInputStyle}
             label="Answer:"
             multiline={true}
@@ -124,6 +126,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
         </View>
         <Dialog.Actions>
           <Button
+            testID="add-new-flashcard-button"
             style={{ width: responsiveWidth(70), marginTop: 10 }}
             disabled={isMutating}
             onPress={() => {

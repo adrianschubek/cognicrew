@@ -92,6 +92,7 @@ export default function FlashcardExerciseManagement({
         </ScrollView>
       </View>
       <FAB.Group
+        testID="flashcard-fab-button"
         open={open}
         visible
         icon={open ? "card-text" : "plus"}

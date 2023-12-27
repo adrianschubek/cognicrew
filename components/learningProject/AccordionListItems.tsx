@@ -61,6 +61,7 @@ export default function AccordionListItems(props: {
   if (error) return <LoadingOverlay visible={isLoading} />;
   return noSetItemsAvailable ? (
     <HelperText
+      testID="empty-set-text"
       type="info"
       style={{ backgroundColor: theme.colors.secondaryContainer }}
     >
@@ -71,6 +72,7 @@ export default function AccordionListItems(props: {
     orderedContent.map((listItem) => (
       <View key={listItem.id}>
         <List.Accordion
+          testID="flashcard-list-button"
           title={listItem.question}
           titleNumberOfLines={4}
           style={{

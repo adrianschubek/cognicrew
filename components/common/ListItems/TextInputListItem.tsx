@@ -23,12 +23,14 @@ export default function TextInputListItem({ item }) {
   return (
     <React.Fragment>
       <TextInput
+        testID="flashcard-sets-list-adjust-button"
         value={title}
         mode="flat"
         disabled={isMutating || isMutating2}
         style={{ backgroundColor: "" }}
         right={
           <TextInput.Icon
+            testID="button-delete-set"
             forceTextInputFocus={false}
             icon="close"
             disabled={isMutating || isMutating2}

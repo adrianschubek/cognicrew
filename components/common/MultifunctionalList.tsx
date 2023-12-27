@@ -63,6 +63,7 @@ export default function MultifunctionalList(props: {
           {/* Option ein neues Set zu erstellen */}
           {(props.creationOption || props.noSetAvailable) && (
             <TextInput
+              testID="input-create-new-set"
               label="create new Set"
               value={creationQuery}
               mode="flat"
@@ -71,6 +72,7 @@ export default function MultifunctionalList(props: {
               //left={<TextInput.Icon icon="plus" />}
               right={
                 <TextInput.Icon
+                  testID="button-create-new-set"
                   forceTextInputFocus={false}
                   icon="check"
                   disabled={isMutating}

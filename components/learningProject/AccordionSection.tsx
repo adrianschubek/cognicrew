@@ -53,6 +53,7 @@ export default function AccordionSection(props: {
         .map((learningSet) => (
           <Fragment key={learningSet.id}>
             <List.Accordion
+              testID="flashcard-sets-list-folder-button"
               title={learningSet.name}
               left={(props) => <List.Icon {...props} icon="folder" />}
             >

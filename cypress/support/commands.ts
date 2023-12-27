@@ -12,6 +12,9 @@ declare namespace Cypress {
   interface Chainable<Subject> {
     openApp(): Chainable<Subject>;
     clearLinks(): Chainable<Subject>;
+    clearSets(): Chainable<Subject>;
+    clearFlashcards(): Chainable<Subject>;
+
   }
 }
 
@@ -49,6 +52,33 @@ Cypress.Commands.add("clearLinks", () => {
     }
   });
 });
+
+Cypress.Commands.add("clearSets", () => {
+  // Check if any sets exist and delete them
+  cy.get('body').then((body) => {
+    if (body.find('[data-testid="flashcard-sets-list-adjust-button"]').length > 0) {
+      cy.get('[data-testid="flashcard-sets-list-adjust-button"]').each(() => {
+        cy.get('[data-testid="button-delete-set"]').first().click();
+        cy.wait(500);
+      });
+    }
+  });
+});
+
+Cypress.Commands.add("clearFlashcards", () => {
+  cy.get('body').then(body => {
+    if (body.find('[data-testid="flashcard-list-button"]').length > 0) {
+      cy.get('[data-testid="flashcard-list-button"]').each(() => {
+        cy.get('[data-testid="flashcard-list-button"]').first().click();
+        cy.get('[data-testid="delete-flashcard-button"]').click();
+        cy.wait(500);
+      });
+    }
+  });
+});
+
+
+
 
 //
 // -- This is a parent command --
