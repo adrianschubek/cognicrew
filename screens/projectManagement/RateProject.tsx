@@ -6,6 +6,7 @@ import { StyleSheet, View, SafeAreaView } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useDeleteProjectRating,
+  useProjectRatings,
   useUpsertProjectRating,
   useUsername,
 } from "../../utils/hooks";
@@ -103,54 +104,30 @@ export default function RateProject({
   const [arrRatings, setArrRatings] = useState([]);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
 
-  async function getUsersRating() {
-    let { data, error } = await supabase.rpc("get_users_rating_for_project", {
-      project_id_param: projectId,
-      user_id_param: user.id,
-    });
-    if (data) {
-      setRating(data);
-    }
-  }
-  async function calculateSum() {
-    let { data, error } = await supabase.rpc("sum_project_ratings", {
-      project_id_param: projectId,
-    });
-    setSum(data);
-  }
-
-  async function calculateAvg() {
-    let { data, error } = await supabase.rpc("avg_project_rating", {
-      project_id_param: projectId,
-    });
-    if (data) {
-      data = parseFloat(data.toFixed(2));
-      setAvg(data);
-    } else {
-      setAvg(data);
-    }
-  }
-
-  async function calculateIndividualRatings() {
-    let { data, error } = await supabase.rpc("get_particular_amount_ratings", {
-      project_id_param: projectId,
-    });
-    const dataArray = Object.values(data);
-    if (dataArray) {
-      setArrRatings(dataArray);
-    }
-  }
-
-  async function calculateStatistics() {
-    calculateSum();
-    calculateAvg();
-    calculateIndividualRatings();
-  }
+  const { data, error, isLoading, mutate } = useProjectRatings(
+    projectId,
+    user.id,
+  );
 
   useEffect(() => {
-    getUsersRating();
-    calculateStatistics();
+    if (!data || isLoading) return;
+    setAvg(data[0]["avg_rating"]);
+    setRating(data[0]["user_rating"]);
+    setSum(data[0]["count_all_ratings"]);
+    const ratingsObject = data[0]["individual_ratings_arr"];
+    setArrRatings([
+      ratingsObject["count_one_star"],
+      ratingsObject["count_two_star"],
+      ratingsObject["count_three_star"],
+      ratingsObject["count_four_star"],
+      ratingsObject["count_five_star"],
+    ]);
+  }, [data]);
+
+  useEffect(() => {
+    mutate();
   }, []);
+
 
   useFocusEffect(() => {
     const ratingsTracker = supabase
@@ -164,7 +141,7 @@ export default function RateProject({
           filter: "key=eq.rate",
         },
         (payload) => {
-          calculateStatistics();
+          mutate();
         },
       )
       .subscribe();
@@ -262,16 +239,20 @@ export default function RateProject({
       title: `Individual ratings:`,
       dataPointCategories: [
         {
-          dataPoints: [{ customNode: (
-            <>
-              {starsArray.map((e, index) => (
-                <Fragment key={index}>{renderStars(e)}</Fragment>
-              ))}
-            </>
-          ), }],
+          dataPoints: [
+            {
+              customNode: (
+                <>
+                  {starsArray.map((e, index) => (
+                    <Fragment key={index}>{renderStars(e)}</Fragment>
+                  ))}
+                </>
+              ),
+            },
+          ],
         },
-      ]
-    }
+      ],
+    },
   ];
   return (
     <ScrollView>
@@ -299,7 +280,7 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  
+
   starUnselected: {
     color: "#aaa",
   },

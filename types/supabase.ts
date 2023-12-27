@@ -714,6 +714,18 @@ export interface Database {
         }
         Returns: Record<string, unknown>
       }
+      get_project_ratings: {
+        Args: {
+          p_user_id: string
+          p_project_id: number
+        }
+        Returns: {
+          user_rating: number
+          count_all_ratings: number
+          avg_rating: number
+          individual_ratings_arr: Record<string, unknown>
+        }[]
+      }
       get_project_statistics: {
         Args: {
           p_user_id: string

@@ -173,6 +173,24 @@ export function useRecommendations(userId: string) {
 //Search projects
 
 
+//Rate projects
+export function useProjectRatings(projectId: number, userId: string) {
+  const query = supabase.rpc("get_project_ratings", {p_user_id: userId, p_project_id: projectId});
+
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+
+  useEffect(() => {
+    mutate();
+  }, []);
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+  };
+}
+
+
 //Project statistics
 export function useProjectStatistics(projectId: number, userId: string) {
   const query = supabase.rpc("get_project_statistics", {
