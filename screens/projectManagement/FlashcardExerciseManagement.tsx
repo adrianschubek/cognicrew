@@ -9,6 +9,8 @@ import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import AddExercises from "../../components/dialogues/AddExercises";
+import SearchWithList from "../../components/common/SearchWithList";
+import { use } from "chai";
 
 export default function FlashcardExerciseManagement({
   navigation,
@@ -17,6 +19,8 @@ export default function FlashcardExerciseManagement({
   route: { params: { type: ManagementType } };
   navigation: any;
 }) {
+  const [creationOptionFocused, setCreationOptionFocused] =
+    useState<boolean>(false);
   const theme = useTheme();
   const { confirm } = useAlerts();
   const type = route.params.type;
@@ -173,7 +177,55 @@ export default function FlashcardExerciseManagement({
           {
             icon: "table-settings",
             label: "Create, delete and edit \n" + typeName(false) + " sets",
-            onPress: () => setShowManageSets(true),
+            onPress: () => {
+              //setShowManageSets(true);
+
+              confirm({
+                icon: "",
+                title: "Manage your " + typeName(false) + " sets",
+                okText: "Done",
+                cancelText: "",
+                okAction: () => {
+                  if (!creationOptionFocused) return;
+                  confirm({
+                    icon: "alert-circle",
+                    title: "Are you sure to leave?",
+                    message:
+                      "Your currently entered set will be lost. Please make sure to save it before pressing 'Done'",
+                    okText: "Accept",
+                    cancelText: "Cancel",
+                    cancelAction: () => {
+                      setCreationOptionFocused(false);
+                    },
+                  });
+                  return ""; //confirm is not triggered
+                },
+                fields: [
+                  {
+                    type: "custom",
+                    render: () => {
+                      return (
+                        <SearchWithList
+                          type={type}
+                          mode="edit"
+                          searchPlaceholder={
+                            "Search for " +
+                            (type === ManagementType.FLASHCARD
+                              ? "flashcard"
+                              : "exercise") +
+                            " set"
+                          }
+                          creationOption={true}
+                          creationOptionFocused={(boolean) => {
+                            setCreationOptionFocused(boolean); //this doesnt work
+                          }}
+                        />
+                      );
+                    },
+                  },
+                ],
+              });
+            },
           },
         ]}
         onStateChange={onStateChange}

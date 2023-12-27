@@ -20,7 +20,6 @@ import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function MultifunctionalList(props: {
   dataSource: any[];
-  close;
   mode?: Mode;
   creationOption?: boolean;
   creationOptionFocused?: (e: boolean) => any;

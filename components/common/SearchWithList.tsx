@@ -17,7 +17,6 @@ export default function SearchWithList(props: {
   mode?: Mode;
   sendSetId?: any;
   noSetSelected?: boolean;
-  close?: any;
   [name: string]: any;
 }) {
   const theme = useTheme();
@@ -45,7 +44,13 @@ export default function SearchWithList(props: {
     setSetId(setId);
   };
   return (
-    <View style={{ width: responsiveWidth(70), marginBottom: 8 }}>
+    <View
+      style={{
+        width: responsiveWidth(70),
+        marginBottom: 8,
+        alignSelf: "center",
+      }}
+    >
       <Searchbar
         testID="input-search-for-flashcard-set"
         value={searchQuery}
@@ -65,9 +70,6 @@ export default function SearchWithList(props: {
         sendSetId={getSetId}
         noSetAvailable={data?.length === 0 ? true : false}
         creationOptionFocused={props.creationOptionFocused}
-        close={() => {
-          close(), Keyboard.dismiss();
-        }}
       />
       {props.noSetSelected &&
         !setId /*!setId does that the error message is only shown when the user has not selected a set, 
