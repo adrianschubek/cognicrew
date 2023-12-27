@@ -152,6 +152,25 @@ export function useDeleteProjectRating() {
     ),
   );
 }
+//Recommender system
+
+
+export function useRecommendations(userId: string) {
+  const query = supabase.rpc("get_recommendations", {p_user_id: userId});
+
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+
+  useEffect(() => {
+    mutate();
+  }, []);
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+  };
+}
+
 
 //Project statistics
 

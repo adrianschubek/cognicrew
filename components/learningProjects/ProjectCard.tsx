@@ -12,20 +12,17 @@ export default function ProjectCard(props: {
   const { confirm } = useAlerts();
   const { item, save } = props;
   const [expanded, setExpanded] = useState<boolean>(false);
-  const hiddenInfo = [
-    //{ title: "Project title", data: item.name },
-    { title: "Description", data: item.description },
-  ];
+  const hiddenInfo = [{ title: "Description", data: item.project_description }];
   const extraInfo = [
     {
       title: "Owner",
-      data: item.username /*+ "xxxxxxxx"*/,
+      data: item.project_owner_name /*+ "xxxxxxxx"*/,
     },
-    { title: "Created in", data: item.created_at.substring(0, 4) },
+    { title: "Created in", data: item.project_created_at.substring(0, 4) },
   ];
   const ratingStats = {
     title: "Rating",
-    data: item.avg_rating.toFixed(2),
+    data: item.project_avg_rating.toFixed(2),
     icon: <Icon source="star" size={30} color="#ffb300" />,
   };
   return (
@@ -58,7 +55,7 @@ export default function ProjectCard(props: {
             }}
           >
             <LearningProjectAvatarWithTitle
-              projectName={item.name /*+ "+#+#+#+#+#+#+#+#"*/}
+              projectName={item.project_name /*+ "+#+#+#+#+#+#+#+#"*/}
               avatarSize={65}
               style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
               textStyle={{
@@ -109,7 +106,7 @@ export default function ProjectCard(props: {
                 }}
               >
                 <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
-                  Tags: {item.tags}
+                  Tags: {item.project_tags}
                 </Text>
                 <Button
                   buttonColor={theme.colors.primary}
