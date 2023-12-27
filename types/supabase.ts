@@ -784,6 +784,22 @@ export interface Database {
           avg_rating: number
         }[]
       }
+      get_recommendations: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: {
+          project_id: number
+          project_name: string
+          project_description: string
+          project_created_at: string
+          project_tags: string
+          project_owner_id: string
+          project_is_published: boolean
+          project_owner_name: string
+          project_avg_rating: number
+        }[]
+      }
       get_user_friends_rank: {
         Args: {
           user_id_param: string

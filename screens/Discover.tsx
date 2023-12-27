@@ -11,154 +11,30 @@ import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
+import { useAuth } from "../providers/AuthProvider";
+
+import { useRecommendations } from "../utils/hooks";
 
 export default function Discover() {
   const theme = useTheme();
   const { data: ownName } = useUsername();
 
-  //Get all published learning projects and relevant data
-  const [getData, setData] = useState(null);
-  const { data } = useQuery(
-    supabase.rpc("get_published_learning_projects_with_avg_rating"),
-    {
-      onSuccess(data) {
-        console.log("Data fetched successfully:", data.data);
-      },
-      onError(err) {
-        errorAlert({
-          message: err.message,
-        });
-      },
-    },
-  );
+  const { user } = useAuth();
 
-  //Recommender system functionality START
+  //Recommendation system
 
-  const [projectsUserIsIn, setUsersProjects] = useState([]);
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendations, setRecommendations] = useState(null);
 
-  async function getUserGlobalTags() {
-    let { data: profiles, error } = await supabase
-      .from("profiles")
-      .select("user_tags");
-    let resultArray = profiles[0]["user_tags"].split(",");
-    return resultArray;
-  }
-
-  async function getPublishedProjectTags() {
-    let resultArray: (number | string)[][] = [];
-
-    let { data: publicProjects, error } = await supabase.rpc("public_projects");
-
-    for (let i = 0; i < publicProjects.length; i++) {
-      let pArr = [];
-      pArr.push(publicProjects[i]["tags"].split(","));
-      pArr.push(publicProjects[i]["id"]);
-      resultArray.push(pArr);
-    }
-    return resultArray;
-  }
-
-  async function getUserProjectTags() {
-    let resultArray = [];
-
-    let { data: usersProjects, error } = await supabase
-      .from("learning_projects")
-      .select("*");
-
-    for (let i = 0; i < usersProjects.length; i++) {
-      let tags = usersProjects[i]["tags"].split(",");
-      if (tags.some((tag) => tag.trim() !== "")) {
-        resultArray.push(tags);
-      }
-    }
-    resultArray = resultArray.flat();
-
-    return resultArray;
-  }
-
-  async function recommendProjects(
-    ownGlobalTags,
-    usersProjectTags,
-    publishedProjectTags,
-  ) {
-    console.log(ownGlobalTags);
-    console.log(usersProjectTags);
-    console.log(publishedProjectTags);
-
-    try {
-      let recommendedProjects = publishedProjectTags.filter((project) => {
-        const projectTagArray = project[0];
-        return ownGlobalTags.some((tag) => projectTagArray.includes(tag));
-      });
-
-      recommendedProjects = recommendedProjects.concat(
-        publishedProjectTags.filter((project) => {
-          const userProjectTagArray = project[0];
-          return usersProjectTags.some((tag) =>
-            userProjectTagArray.includes(tag),
-          );
-        }),
-      );
-
-      console.log(recommendedProjects);
-
-      // Extract only the ids from the recommendedProjects array
-      const recommendedIds = recommendedProjects.map((project) => project[1]);
-
-      let recommendedIdsAndRatings = [];
-
-      for (let i = 0; i < recommendedIds.length; i++) {
-        let { data: avgrating, error } = await supabase.rpc(
-          "avg_project_rating",
-          {
-            project_id_param: recommendedIds[i],
-          },
-        );
-        //unrated projects are not taken into account
-        if (avgrating != null) {
-          recommendedIdsAndRatings.push([recommendedIds[i], avgrating]);
-        }
-      }
-      return recommendedIdsAndRatings;
-    } catch (error) {
-      console.error("Error in recommending projects:", error.message);
-      throw error;
-    }
-  }
-
-  async function getUsersProjects() {
-    let { data: user_learning_projects, error } = await supabase
-      .from("user_learning_projects")
-      .select("learning_project_id");
-
-    return user_learning_projects;
-  }
+  const { data, error, isLoading, mutate } = useRecommendations(user.id);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usersProjects = await getUsersProjects(); //get projects user is member of so they get excluded from being displayed
-        setUsersProjects(usersProjects);
+    if (!data || isLoading) return;
+    setRecommendations(data);
+  }, [data]);
 
-        const userTags = await getUserGlobalTags(); //get global, personal preference tags to match published projects tags
-        const usersProjectTags = await getUserProjectTags(); //get project tags of projects the user is a member of to match published projects tags
-        const publishedProjectTags = await getPublishedProjectTags(); //get published projects tags and ids of projects
-        const recommendations = await recommendProjects(
-          userTags,
-          usersProjectTags,
-          publishedProjectTags,
-        ); //return the recommended projects
-        setRecommendations(recommendations);
-      } catch (error) {
-        console.error("Error in fetching data:", error.message);
-      }
-    };
-
-    fetchData();
+  useEffect(() => {
+    mutate();
   }, []);
-
-  //Recommender system functionality END
 
   //CLONING START
 
@@ -435,25 +311,11 @@ export default function Discover() {
 
   //CLONING END
 
-  function reScramble() {
-    setData(
-      data
-        .filter(
-          (project) =>
-            recommendations.some(
-              (recommendation) => recommendation[0] === project.project_id,
-            ) &&
-            !projectsUserIsIn.some(
-              (projectObj) =>
-                projectObj.learning_project_id === project.project_id,
-            ),
-        )
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 5)
-        .sort((a, b) => b["avg_rating"] - a["avg_rating"]),
-    );
-  }
   //Render footer and header of the projects FlatList
+
+  function reScramble() {
+    mutate();
+  }
 
   const renderHeader = () => {
     return (
@@ -494,23 +356,9 @@ export default function Discover() {
   return (
     <SafeAreaView>
       <FlatList
-        data={
-          getData ??
-          data
-            .filter(
-              (project) =>
-                recommendations.some(
-                  (recommendation) => recommendation[0] === project.project_id,
-                ) &&
-                !projectsUserIsIn.some(
-                  (projectObj) =>
-                    projectObj.learning_project_id === project.project_id,
-                ),
-            )
-            .slice(0, 5)
-            .sort((a, b) => b["avg_rating"] - a["avg_rating"])
-        }
+        data={recommendations}
         renderItem={({ item }) => {
+          console.log("Das ist ein Item", item);
           return <ProjectCard item={item} save={save} />;
         }}
         ListHeaderComponent={renderHeader}

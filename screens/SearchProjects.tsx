@@ -374,6 +374,7 @@ export default function SearchProjects() {
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: 15 }}>
+      {/*
       {renderHeader()}
       <FlatList
         data={data.filter((project) =>
@@ -393,6 +394,7 @@ export default function SearchProjects() {
           return <ProjectCard item={item} save={save} />;
         }}
       />
+      */}
     </SafeAreaView>
   );
 }
