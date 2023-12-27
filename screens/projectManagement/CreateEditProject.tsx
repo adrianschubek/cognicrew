@@ -1,6 +1,6 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import {
   Button,
@@ -43,7 +43,7 @@ export default function CreateEditProject({
    */
 
   const { edit: project } = route.params;
-
+  const showDiscardPopUp = useRef<boolean>(true);
   const username = useUsername(project?.owner_id ?? null);
   const { success, error: errorAlert, info, confirm } = useAlerts();
   const theme = useTheme();
@@ -64,6 +64,9 @@ export default function CreateEditProject({
           {...props}
           style={styles.fixHeaderStyles}
           onPress={() => {
+            if (project?.owner_id !== myId && project !== null) {
+              showDiscardPopUp.current = false;
+            }
             navigation.goBack();
           }}
         />
@@ -73,12 +76,17 @@ export default function CreateEditProject({
       // Prevent default behavior of leaving the screen
       e.preventDefault();
 
-      confirm({
-        key: "discard",
-        title: "Discard changes?",
-        message: "You may have unsaved changes. Are you sure to discard them?",
-        okAction: () => navigation.dispatch(e.data.action),
-      });
+      if (showDiscardPopUp.current) {
+        confirm({
+          key: "discard",
+          title: "Discard changes?",
+          message:
+            "You may have unsaved changes. Are you sure to discard them?",
+          okAction: () => navigation.dispatch(e.data.action),
+        });
+      } else {
+        navigation.dispatch(e.data.action);
+      }
     });
   }, [navigation]);
   const { trigger: removeUserFromLearningProject } =
@@ -304,7 +312,8 @@ export default function CreateEditProject({
               right={
                 <TextInput.Icon
                   /* TODO */
-                  onPress={() =>
+                  onPress={() => {
+                    showDiscardPopUp.current = false;
                     confirm({
                       title: "Change owner",
                       message:
@@ -335,8 +344,8 @@ export default function CreateEditProject({
                           helperText: "Enter the username of the new owner.",
                         },
                       ],
-                    })
-                  }
+                    });
+                  }}
                   icon="pencil"
                 />
               }
@@ -367,6 +376,7 @@ export default function CreateEditProject({
                 message:
                   "Deleted projects cannot be restored.\nDo you want to continue?",
                 okAction: () => {
+                  showDiscardPopUp.current = false;
                   deleteProject({ id: project.id });
                   navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
                 },
@@ -395,7 +405,7 @@ export default function CreateEditProject({
               message:
                 "You will lose all access to this project \nDo you want to continue?",
               okAction: () => {
-                console.log(project);
+                showDiscardPopUp.current = false;
                 removeUserFromLearningProject({
                   learning_project_id: project.id,
                   user_id: myId,
@@ -410,7 +420,7 @@ export default function CreateEditProject({
       )}
       {(!project || project?.owner_id === myId) && (
         <FAB
-          testID='create-project-button'
+          testID="create-project-button"
           icon={project === null ? "plus" : "check"}
           color={theme.colors.onPrimary}
           style={{
@@ -422,12 +432,12 @@ export default function CreateEditProject({
           }}
           label={!project ? "Create" : "Save"}
           onPress={() => {
+            showDiscardPopUp.current = false;
             save();
           }}
           disabled={isMutating}
         />
       )}
-      
     </Fragment>
   );
 }
