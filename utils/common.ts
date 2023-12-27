@@ -102,7 +102,9 @@ export async function handleEdgeError(error: Error): Promise<string> {
 export function checkForLineBreak(initial: string, addition: string) {
   return initial === "" ? addition : "\n" + addition;
 }
-
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
 export function shuffle<T>(array: T[]): T[] {
   const newArray = [...array];
   for (let i = newArray.length - 1; i > 0; i--) {
