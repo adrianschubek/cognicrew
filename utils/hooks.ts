@@ -152,9 +152,8 @@ export function useDeleteProjectRating() {
     ),
   );
 }
+
 //Recommender system
-
-
 export function useRecommendations(userId: string) {
   const query = supabase.rpc("get_recommendations", {p_user_id: userId});
 
@@ -171,9 +170,10 @@ export function useRecommendations(userId: string) {
   };
 }
 
+//Search projects
+
 
 //Project statistics
-
 export function useProjectStatistics(projectId: number, userId: string) {
   const query = supabase.rpc("get_project_statistics", {
     p_user_id: userId,
@@ -194,7 +194,6 @@ export function useProjectStatistics(projectId: number, userId: string) {
 }
 
 //Global statistics
-
 export function useGlobalStatistics(userId: string) {
   const query = supabase.rpc("get_global_statistics", {
     p_user_id: userId,

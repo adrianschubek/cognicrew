@@ -770,6 +770,20 @@ export interface Database {
           friends_rank: number
         }[]
       }
+      get_public_projects: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          project_id: number
+          project_name: string
+          project_description: string
+          project_created_at: string
+          project_tags: string
+          project_owner_id: string
+          project_is_published: boolean
+          project_owner_name: string
+          project_avg_rating: number
+        }[]
+      }
       get_published_learning_projects_with_avg_rating: {
         Args: Record<PropertyKey, never>
         Returns: {

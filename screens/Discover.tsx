@@ -358,7 +358,6 @@ export default function Discover() {
       <FlatList
         data={recommendations}
         renderItem={({ item }) => {
-          console.log("Das ist ein Item", item);
           return <ProjectCard item={item} save={save} />;
         }}
         ListHeaderComponent={renderHeader}

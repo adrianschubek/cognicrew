@@ -12,15 +12,18 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
 
 //TODO realtime updating
+
+
+//Show projects
 export default function SearchProjects() {
   const [searchQuery, setSearchQuery] = useState([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState("");
 
   const { data } = useQuery(
-    supabase.rpc("get_published_learning_projects_with_avg_rating"),
+    supabase.rpc("get_public_projects"),
     {
       onSuccess(data) {
-        //console.log("Data fetched successfully:", data.data);
+        console.log("Data fetched successfully:", data.data);
       },
       onError(err) {
         errorAlert({
@@ -29,6 +32,9 @@ export default function SearchProjects() {
       },
     },
   );
+
+
+  //CLONING STARTS
 
   const { success, error: errorAlert } = useAlerts();
   const { trigger: upsert } = useUpsertMutation(
@@ -338,6 +344,9 @@ export default function SearchProjects() {
       console.error("Save error:", error.message);
     }
   };
+
+  //CLONING ENDS
+
   if (!data) return null;
   const renderHeader = () => {
     const onChangeSearch = (query) => {
@@ -374,27 +383,27 @@ export default function SearchProjects() {
 
   return (
     <SafeAreaView style={{ flex: 1, marginTop: 15 }}>
-      {/*
+     
       {renderHeader()}
       <FlatList
         data={data.filter((project) =>
           searchQuery.some(
             (query) =>
-              project.name.toLowerCase().includes(query.toLowerCase()) ||
-              project.tags
+              project.project_name.toLowerCase().includes(query.toLowerCase()) ||
+              project.project_tags
                 .split(",")
                 .map((tag) => tag.trim())
                 .some((tag) =>
                   tag.toLowerCase().includes(query.toLowerCase()),
                 ) ||
-              project.description.toLowerCase().includes(query.toLowerCase()),
+              project.project_description.toLowerCase().includes(query.toLowerCase()),
           ),
         )}
         renderItem={({ item }) => {
           return <ProjectCard item={item} save={save} />;
         }}
       />
-      */}
+
     </SafeAreaView>
   );
 }
