@@ -184,24 +184,7 @@ export default function FlashcardExerciseManagement({
                 cancelText: "",
                 okAction: () => {
                   if (!creationOptionFocusedRef.current) return;
-                  return new Promise<void>((resolve) => {
-                    // Close the first confirm alert
-                    resolve();
-                  }).then(() => {
-                    // Open the second confirm alert
-                    confirm({
-                      icon: "alert-circle",
-                      title: "Are you sure to leave?",
-                      message:
-                        "Your currently entered set will be lost. Please make sure to save it before pressing 'Done'",
-                      okText: "Accept",
-                      cancelText: "Cancel",
-                      cancelAction: () => {},
-                      okAction: () => {
-                        creationOptionFocusedRef.current = false;
-                      },
-                    });
-                  });
+                  return "";
                 },
                 fields: [
                   {
