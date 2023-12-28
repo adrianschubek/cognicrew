@@ -11,6 +11,7 @@ import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../providers/AuthProvider";
 import StatisticCategory from "../components/profile/StatisticCategory";
 import { useGlobalStatistics } from "../utils/hooks";
+import LoadingOverlay from "../components/alerts/LoadingOverlay";
 
 export default function GlobalStatistics() {
   const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
@@ -88,10 +89,7 @@ export default function GlobalStatistics() {
 
   const { user } = useAuth();
 
-  const { data, error, isLoading, mutate } = useGlobalStatistics(
-    user.id,
-  );
-
+  const { data, error, isLoading, mutate } = useGlobalStatistics(user.id);
 
   useEffect(() => {
     if (!data || isLoading) return;
@@ -111,7 +109,6 @@ export default function GlobalStatistics() {
     mutate();
   }, []);
 
-  
   const statistics = [
     {
       title: "Global statistics",
@@ -119,9 +116,11 @@ export default function GlobalStatistics() {
         {
           dataPoints: [
             `Total amount of learning projects: ${countLearningProjects}`,
-            `Total time spent playing CogniGames: ${
-              (series[0] + series[1] + series[2]).toFixed(2)
-            } hours`,
+            `Total time spent playing CogniGames: ${(
+              series[0] +
+              series[1] +
+              series[2]
+            ).toFixed(2)} hours`,
           ],
         },
       ],
@@ -170,6 +169,7 @@ export default function GlobalStatistics() {
       }),
     },
   ];
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <SafeAreaView style={{ marginTop: -28 }}>
       <StatusBar style="auto" />

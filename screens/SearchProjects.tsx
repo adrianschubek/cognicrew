@@ -11,7 +11,7 @@ import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
 
-//TODO realtime updating | @Fabian, what do you mean with that?
+//TODO realtime updating
 
 //Show projects
 export default function SearchProjects() {
