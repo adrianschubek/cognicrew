@@ -653,12 +653,6 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      avg_project_rating: {
-        Args: {
-          project_id_param: number
-        }
-        Returns: number
-      }
       cleanup_rooms: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -707,12 +701,6 @@ export interface Database {
           total_time_spent_flashcards: number
           total_time_spent_whiteboard: number
         }[]
-      }
-      get_particular_amount_ratings: {
-        Args: {
-          project_id_param: number
-        }
-        Returns: Record<string, unknown>
       }
       get_project_ratings: {
         Args: {
@@ -777,13 +765,6 @@ export interface Database {
           user_ids: string[]
         }
         Returns: unknown
-      }
-      get_users_rating_for_project: {
-        Args: {
-          project_id_param: number
-          user_id_param: string
-        }
-        Returns: number
       }
       getUsername: {
         Args: {
@@ -892,12 +873,6 @@ export interface Database {
           search_query: string
         }
         Returns: Record<string, unknown>
-      }
-      sum_project_ratings: {
-        Args: {
-          project_id_param: number
-        }
-        Returns: number
       }
       switch_locked_room: {
         Args: Record<PropertyKey, never>
