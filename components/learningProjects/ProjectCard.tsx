@@ -105,8 +105,11 @@ export default function ProjectCard(props: {
                   alignItems: "center",
                 }}
               >
-                <Text variant="bodyMedium" style={{ fontStyle: "italic" }}>
-                  Tags: {item.project_tags}
+                <Text
+                  variant="bodyMedium"
+                  style={{ fontStyle: "italic", width: "80%" }}
+                >
+                  Tags: {item.project_tags}{/*maybe return tags as string[], so this look nicer */}
                 </Text>
                 <Button
                   buttonColor={theme.colors.primary}
