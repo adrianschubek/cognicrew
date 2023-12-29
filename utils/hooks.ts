@@ -524,9 +524,23 @@ export function usePrivateFileUrl(filePath: string, bucketName?: string) {
     const { data, error } = await supabase.storage
       .from(bucket)
       .createSignedUrl(filePath, 3600); // URL will be valid for 1 hour
-    return data ? data?.signedUrl : "not found";
+    return data ? data.signedUrl : "not found";
   };
-  return customUseFunction(getSignedUrl, "getFile", filePath);
+  return customUseFunction(
+    getSignedUrl,
+    `getPrivateFileUrl:` /*${unique Identifier}*/,
+    filePath,
+  );
+}
+export function usePublicFileUrl(filePath: string, bucketName?: string) {
+  const bucket = bucketName || "files";
+  const fetchPublicUrl = async () => {
+    const { data } = await supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath);
+      return data ? data.publicUrl : "not found";
+  };
+  return customUseFunction(fetchPublicUrl, "getPublicFileUrl:", filePath);
 }
 export function useFiles(
   filePath: string,
@@ -575,20 +589,6 @@ export function useDeleteFile(filePath: string, bucketName?: string) {
     isLoading: !error && !data,
     isDeleted: data?.isDeleted,
     remove,
-  };
-}
-export function useFileUrl(filePath: string, bucketName?: string) {
-  const bucket = bucketName || "files";
-  const fetchPublicUrl = () =>
-    supabase.storage.from(bucket).getPublicUrl(filePath);
-  const { data, error, mutate } = handleErrors(
-    useSWR(["url", filePath], fetchPublicUrl),
-  );
-  return {
-    data,
-    isLoading: !error && !data,
-    error: error,
-    mutate,
   };
 }
 

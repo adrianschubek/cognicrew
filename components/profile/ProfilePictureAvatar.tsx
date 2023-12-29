@@ -1,6 +1,6 @@
 import { Avatar } from "react-native-paper";
 import { StyleProp, ViewStyle } from "react-native";
-import { usePrivateFileUrl } from "../../utils/hooks";
+import { usePublicFileUrl } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 
@@ -14,19 +14,27 @@ export default function ProfilePictureAvatar(props: {
   /*maybe use global state for own avatar, so the fast-alert doesnt always refetch when opened */
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const { username, userId, size, style } = props;
-  const { data, error, isLoading, mutate } = usePrivateFileUrl(
-    `${userId}/avatar`,
+  const { data, error, isLoading, mutate } = usePublicFileUrl(
+    `${userId}`,
     "profile-pictures",
   );
 
   useEffect(() => {
     if (!data) return;
-    if (data === "not found") {
-      setAvatarUrl("");
-      return;
-    }
-    //console.log("In PPA: ", data);
-    setAvatarUrl(data);
+    const timestamp = Date.now();
+    const url = `${data}/avatar?${timestamp}`;
+    fetch(url)
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setAvatarUrl(url);
+        console.log("matching image");
+      })
+      .catch(() => {
+        setAvatarUrl("");
+        console.log("no matching image");
+      });
   }, [data]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return avatarUrl ? (
