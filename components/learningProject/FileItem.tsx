@@ -67,7 +67,7 @@ export default function FileItem({ file, filePath, folder }) {
       return;
     }
     try {
-      if (photoUrl) {
+      if (folder === "photos") {
         // Generate the local URI for the file
         const filename = encodeURIComponent(file.name);
         const fileUri = FileSystem.documentDirectory + filename;
