@@ -66,12 +66,12 @@ export default function FileItem({ file, filePath, folder }) {
       });
       return;
     }
+    // Generate the local URI for the file
+    const photoFilename = encodeURIComponent(file.name);
+    const fileName = folder === "photos" ? photoFilename : file.name;
+    const localUri = FileSystem.documentDirectory + fileName;
     try {
       if (folder === "photos") {
-        // Generate the local URI for the file
-        const filename = encodeURIComponent(file.name);
-        const fileUri = FileSystem.documentDirectory + filename;
-
         // Fetch the Blob from the download URL
         const response = await fetch(photoUrl);
         const blob = await response.blob();
@@ -84,12 +84,12 @@ export default function FileItem({ file, filePath, folder }) {
             const base64data = (reader.result as string).split(",")[1]; // Remove the prefix (`data:image/png;base64,`)
 
             // Write the base64 string to the local file system
-            await FileSystem.writeAsStringAsync(fileUri, base64data, {
+            await FileSystem.writeAsStringAsync(localUri, base64data, {
               encoding: FileSystem.EncodingType.Base64,
             });
 
             // Save the local image to the camera roll
-            const asset = await MediaLibrary.createAssetAsync(fileUri);
+            const asset = await MediaLibrary.createAssetAsync(localUri);
             await MediaLibrary.createAlbumAsync("Download", asset, false);
             alerts.success({ message: "Saved to camera roll!" });
           }
@@ -99,9 +99,12 @@ export default function FileItem({ file, filePath, folder }) {
         };
         reader.readAsDataURL(blob);
       } else {
-        const localUri = FileSystem.documentDirectory + file.name;
-        const { uri } = await FileSystem.downloadAsync(photoUrl, localUri);
-        console.log("File downloaded to:", uri);
+        try {
+          const { uri } = await FileSystem.downloadAsync(photoUrl, localUri);
+          console.log("File downloaded to:", uri);
+        } catch (error) {
+          console.log("Error downloading the file: ", error);
+        }
       }
     } catch (error) {
       console.error("Error saving to camera roll:", error);
