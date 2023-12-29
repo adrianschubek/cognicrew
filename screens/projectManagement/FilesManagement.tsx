@@ -3,7 +3,7 @@
  * It handles file uploads, deletions, and categorizes files for display.
  */
 
-import React, { useState, Fragment } from "react";
+import React, { Fragment } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import { Divider, FAB, List } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
