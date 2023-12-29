@@ -3,23 +3,30 @@
  * @param {object} props - Contains the file object, onIconPress and onDeletePress functions.
  */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { IconButton, List, useTheme } from "react-native-paper";
-import {
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
+import { responsiveFontSize } from "react-native-responsive-dimensions";
 import { supabase } from "../../supabase";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useDeleteFile } from "../../utils/hooks";
-export default function FileItem({ file }) {
-  const { data: publicUrl } = supabase.storage.from("files").getPublicUrl("");
+//import { useDeleteFile } from "../../utils/hooks";
+import { usePrivateFileUrl } from "../../utils/hooks";
+import LoadingOverlay from "../alerts/LoadingOverlay";
+export default function FileItem({ file, filePath, folder }) {
   const theme = useTheme();
   const alerts = useAlerts();
-  const [photoUrlExists, setPhotoUrlExists] = useState<boolean>(true);
-  const fullUrl = publicUrl.publicUrl + file.fullPath;
+  const [photoUrl, setPhotoUrl] = useState<string>();
+  const { data, error, isLoading, mutate } = usePrivateFileUrl(
+    filePath,
+    "files",
+  );
+  useEffect(() => {
+    if (!data) return;
+    setPhotoUrl(data);
+  }, [data]);
+  //console.log(fullUrl);
   /* const {
     mutate: deleteFile,
     isLoading,
@@ -30,27 +37,24 @@ export default function FileItem({ file }) {
    * @param {string} extension - The file extension.
    * @returns {object} - The source path of the icon image.
    */
-  const getIconOrImageSource = (extension) => {
-    switch (extension?.toLowerCase()) {
+  const getIconOrImageSource = (folder) => {
+    switch (folder) {
       case "pdf":
         return require("../../assets/pdf.png");
       case "docx":
         return require("../../assets/docx_icon.svg.png");
       case "xlsx":
         return require("../../assets/xlsx_icon.svg.png");
-      case undefined:
-        setPhotoUrlExists(true);
-        return fullUrl;
+      case "photos":
+        return photoUrl;
       default:
         return require("../../assets/OneDrive_Folder_Icon.svg.png");
     }
   };
-  async function deleteFile(file) {
-    const { error } = await supabase.storage
-      .from("files")
-      .remove([file.fullPath]);
+  async function deleteFile() {
+    const { error } = await supabase.storage.from("files").remove([filePath]);
   }
-    /**
+  /**
    * handleDownload - Placeholder for file download logic.
    * @param {object} file - The file to download.
    */
@@ -63,13 +67,13 @@ export default function FileItem({ file }) {
       return;
     }
     try {
-      if (photoUrlExists) {
+      if (photoUrl) {
         // Generate the local URI for the file
         const filename = encodeURIComponent(file.name);
         const fileUri = FileSystem.documentDirectory + filename;
 
         // Fetch the Blob from the download URL
-        const response = await fetch(fullUrl);
+        const response = await fetch(photoUrl);
         const blob = await response.blob();
 
         // Convert the Blob to base64
@@ -96,7 +100,7 @@ export default function FileItem({ file }) {
         reader.readAsDataURL(blob);
       } else {
         const localUri = FileSystem.documentDirectory + file.name;
-        const { uri } = await FileSystem.downloadAsync(fullUrl, localUri);
+        const { uri } = await FileSystem.downloadAsync(photoUrl, localUri);
         console.log("File downloaded to:", uri);
       }
     } catch (error) {
@@ -106,6 +110,7 @@ export default function FileItem({ file }) {
       });
     }
   };
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Item
       style={{
@@ -117,9 +122,9 @@ export default function FileItem({ file }) {
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Image
             source={
-              file.extension
-                ? getIconOrImageSource(file.extension)
-                : { uri: getIconOrImageSource(file.extension) }
+              folder !== "photos"
+                ? getIconOrImageSource(folder)
+                : { uri: getIconOrImageSource(folder) }
             }
             style={file.extension ? styles.fileIcon : { width: 80, height: 80 }}
           />
@@ -148,7 +153,7 @@ export default function FileItem({ file }) {
                 message: `Are you sure you want to delete ${file.name}?`,
                 cancelText: "Cancel",
                 okText: "Delete",
-                okAction: () => deleteFile(file),
+                okAction: () => deleteFile(),
               });
             }}
           >

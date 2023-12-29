@@ -20,92 +20,21 @@ import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 export default function FilesManagement() {
   const [photos, setPhotos] = useState<FileObject[]>([]);
   const projectId = useProjectStore((state) => state.projectId);
-  const {
-    data: photoData,
-    error: photoError,
-    isLoading: photosLoading,
-    mutate: mutatePhotos,
-  } = useFiles(`${projectId}/photos`);
-  const {
-    data: fileData,
-    error: fileError,
-    isLoading: filesLoading,
-    mutate: mutateFiles,
-  } = useFiles(`${projectId}/documents`);
-
   const onSelectImage = async () => {
     const filePath = `${projectId}/photos`;
     await selectAndUploadImage(filePath);
-    mutatePhotos();
   };
-
-  useEffect(() => {
-    if (!photoData) return;
-    setPhotos(photoData.data);
-  }, [photoData]);
-
-  useEffect(() => {
-    if (!fileData) return;
-    const filesWithExtension = fileData.data.map((file) => {
-      const extension = file.name.split(".").pop().toLowerCase();
-      return { ...file, extension };
-    });
-    const categorizedFiles = filesWithExtension.reduce(
-      (acc, file) => {
-        if (file.extension === "pdf") {
-          acc.pdf.push(file);
-        } else if (file.extension === "docx") {
-          acc.docx.push(file);
-        } else if (file.extension === "xlsx") {
-          acc.xlsx.push(file);
-        } else {
-          acc.misc.push(file);
-        }
-        return acc;
-      },
-      { pdf: [], docx: [], xlsx: [], misc: [] },
-    );
-    setFiles(categorizedFiles);
-  }, [fileData]);
-
-  useEffect(() => {
-    const realtimeFiles = supabase
-      .channel("files_all")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "storage", table: "objects" },
-        (payload) => {
-          //this subscription does not work!
-          console.log("hallo");
-          mutateFiles();
-          mutatePhotos();
-        },
-      )
-      .subscribe();
-  }, []);
-
   const onSelectDocument = async () => {
-    (await selectAndUploadFile(`${projectId}`, true)).isImage
-      ? mutatePhotos()
-      : mutateFiles();
+    await selectAndUploadFile(`${projectId}`, true);
   };
-
-  const [files, setFiles] = useState({
-    pdf: [],
-    docx: [],
-    xlsx: [],
-    misc: [],
-  });
-
   const categories = [
-    { title: "PDF Documents (.pdf)", files: files.pdf },
-    { title: "Word Documents (.docx)", files: files.docx },
-    { title: "Excel Documents (.xlsx)", files: files.xlsx },
-    { title: "Miscellaneous", files: files.misc },
-    { title: "Photos", files: photos, folder: "photos" },
+    { title: "PDF Documents (.pdf)", folder: "pdf" },
+    { title: "Word Documents (.docx)", folder: "docx" },
+    { title: "Excel Documents (.xlsx)", folder: "xlsx" },
+    { title: "Miscellaneous", folder: "miscellaneous" },
+    { title: "Photos", folder: "photos" },
   ];
-  if (photosLoading || filesLoading)
-    return <LoadingOverlay visible={photosLoading || filesLoading} />;
+
   return (
     <View style={styles.container}>
       <VirtualizedList
@@ -121,10 +50,8 @@ export default function FilesManagement() {
                     <Fragment key={index}>
                       <FileCategory
                         title={category.title}
-                        files={category.files.map((file) => ({
-                          ...file,
-                          fullPath: `${projectId}/${folder}/${file.name}`,
-                        }))}
+                        projectId={projectId}
+                        folder={folder}
                       />
                       <Divider style={{ marginHorizontal: 8 }} />
                     </Fragment>

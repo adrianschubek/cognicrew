@@ -155,7 +155,7 @@ export function useDeleteProjectRating() {
 
 //Recommender system
 export function useRecommendations(userId: string) {
-  const query = supabase.rpc("get_recommendations", {p_user_id: userId});
+  const query = supabase.rpc("get_recommendations", { p_user_id: userId });
 
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
 
@@ -172,10 +172,12 @@ export function useRecommendations(userId: string) {
 
 //Search projects
 
-
 //Rate projects
 export function useProjectRatings(projectId: number, userId: string) {
-  const query = supabase.rpc("get_project_ratings", {p_user_id: userId, p_project_id: projectId});
+  const query = supabase.rpc("get_project_ratings", {
+    p_user_id: userId,
+    p_project_id: projectId,
+  });
 
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
 
@@ -189,7 +191,6 @@ export function useProjectRatings(projectId: number, userId: string) {
     mutate,
   };
 }
-
 
 //Project statistics
 export function useProjectStatistics(projectId: number, userId: string) {
@@ -516,6 +517,16 @@ function customUseFunction(query, key, filePath) {
     error: error,
     mutate,
   };
+}
+export function usePrivateFileUrl(filePath: string, bucketName?: string) {
+  const bucket = bucketName || "files";
+  const getSignedUrl = async () => {
+    const { data, error } = await supabase.storage
+      .from(bucket)
+      .createSignedUrl(filePath, 3600); // URL will be valid for 1 hour
+    return data.signedUrl;
+  };
+  return customUseFunction(getSignedUrl, "getFile", filePath);
 }
 export function useFiles(
   filePath: string,

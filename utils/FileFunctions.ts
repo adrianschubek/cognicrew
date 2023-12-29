@@ -57,9 +57,18 @@ export async function selectAndUploadFile(
 
     const isImage = mimeType.startsWith("image");
     let fileExtension = mimeType.split("/").pop();
+    //console.log("fileExtension", fileExtension);
+    const folderName = isImage
+      ? "photos"
+      : fileExtension === "pdf" ||
+        fileExtension === "docx" ||
+        fileExtension === "xlsx"
+      ? "/" + fileExtension
+      : "/miscellaneous";
     const folderPath = onlyProjectIdGivenAsRootFolder
-      ? filePath + (isImage ? "/photos" : "/documents")
+      ? filePath + folderName
       : filePath;
+    //console.log("folderPath", folderPath);
     const newFileName = `${new Date().getTime()}.${fileExtension}`;
     const filePathWithDocumentName = `${folderPath}/${newFileName}`;
     const base64 = await FileSystem.readAsStringAsync(uri, {
