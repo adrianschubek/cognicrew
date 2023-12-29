@@ -93,8 +93,6 @@ Cypress.Commands.add("createProject", (id: string) => {
   cy.get('[data-testid="create-project-button"]').click();
   cy.contains("Project created").should("be.visible");
   cy.contains("OK").click();
-  cy.contains("Discard changes").should("be.visible");
-  cy.contains("OK").click(); // FIXME click again for Discard Changes dialog
 });
 
 Cypress.Commands.add("deleteProject", (id: string) => {
@@ -105,8 +103,6 @@ Cypress.Commands.add("deleteProject", (id: string) => {
   cy.get('[data-testid="project-settings-button"]').click();
   cy.get('[data-testid="delete-project-button"]').click();
   cy.contains("OK").click();
-  cy.contains("Discard changes").should("be.visible");
-  cy.contains("OK").click(); // FIXME click again for Discard Changes dialog
 });
 
 //
