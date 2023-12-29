@@ -25,7 +25,7 @@ export default function ProfilePictureAvatar(props: {
       setAvatarUrl("");
       return;
     }
-    console.log("In PPA: ", data);
+    //console.log("In PPA: ", data);
     setAvatarUrl(data);
   }, [data]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
