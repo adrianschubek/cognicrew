@@ -3,22 +3,17 @@
  * It handles file uploads, deletions, and categorizes files for display.
  */
 
-import React, { useState, useEffect, Fragment } from "react";
-import { View, StyleSheet, VirtualizedList, ScrollView } from "react-native";
+import React, { useState, Fragment } from "react";
+import { View, StyleSheet, VirtualizedList } from "react-native";
 import { Divider, FAB, List } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
-import { FileObject } from "@supabase/storage-js";
-import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import {
   selectAndUploadFile,
   selectAndUploadImage,
 } from "../../utils/FileFunctions";
-import { useFiles } from "../../utils/hooks";
-import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function FilesManagement() {
-  const [photos, setPhotos] = useState<FileObject[]>([]);
   const projectId = useProjectStore((state) => state.projectId);
   const onSelectImage = async () => {
     const filePath = `${projectId}/photos`;
