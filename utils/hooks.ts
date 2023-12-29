@@ -524,7 +524,10 @@ export function usePrivateFileUrl(filePath: string, bucketName?: string) {
     const { data, error } = await supabase.storage
       .from(bucket)
       .createSignedUrl(filePath, 3600); // URL will be valid for 1 hour
-    return data.signedUrl;
+    console.log("filePath", filePath);
+    console.log(data);
+    console.log(error);
+    return data ? data?.signedUrl : "not found";
   };
   return customUseFunction(getSignedUrl, "getFile", filePath);
 }
