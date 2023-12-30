@@ -18,12 +18,20 @@ export default function FileItem({ file, filePath, folder, icon }) {
   const theme = useTheme();
   const alerts = useAlerts();
   const [photoUrl, setPhotoUrl] = useState<string>();
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const { data, error, isLoading, mutate } = icon
     ? { data: null, error: null, isLoading: false, mutate: null }
     : usePrivateFileUrl(filePath, "files");
   useEffect(() => {
     if (!data) return;
     setPhotoUrl(data);
+    Image.getSize(data, (width, height) => {
+      if (width > height) {
+        setImageSize({ width: 80, height: 80 * (height / width) });
+      } else {
+        setImageSize({ width: 80 * (width / height), height: 80 });
+      }
+    });
   }, [data]);
   //console.log(fullUrl);
   /* const {
@@ -103,10 +111,21 @@ export default function FileItem({ file, filePath, folder, icon }) {
       }}
       title={file.name}
       left={() => (
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: 80,
+            height: 80,
+          }}
+        >
           <Image
             source={icon ? icon : { uri: photoUrl }}
-            style={icon ? styles.fileIcon : { width: 80, height: 80 }}
+            style={
+              icon
+                ? styles.fileIcon
+                : { width: imageSize.width, height: imageSize.height }
+            }
           />
         </View>
       )}
