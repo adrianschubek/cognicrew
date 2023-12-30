@@ -1,9 +1,9 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
-import { FAB, IconButton, Text, useTheme } from "react-native-paper";
+import { FAB, Text } from "react-native-paper";
 import AccordionSection from "../../components/learningProject/AccordionSection";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 //import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
