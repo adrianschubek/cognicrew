@@ -5,7 +5,6 @@ import {
   HelperText,
   RadioButton,
   TextInput,
-  useTheme,
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -27,7 +26,6 @@ export default function MultifunctionalList(props: {
   noSetAvailable: boolean;
   [name: string]: any;
 }) {
-  const theme = useTheme();
   const [creationQuery, setCreationQuery] = useState("");
   const [creationError, setCreationError] = useState<string>("");
   const [value, setValue] = useState("");

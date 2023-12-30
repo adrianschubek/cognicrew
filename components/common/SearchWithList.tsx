@@ -19,7 +19,6 @@ export default function SearchWithList(props: {
   noSetSelected?: boolean;
   [name: string]: any;
 }) {
-  const theme = useTheme();
   const projectId = useProjectStore((state) => state.projectId);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [setId, setSetId] = useState(null);
