@@ -3,12 +3,13 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { FAB, IconButton, Text, useTheme } from "react-native-paper";
 import AccordionSection from "../../components/learningProject/AccordionSection";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import AddExercises from "../../components/dialogues/AddExercises";
+import SearchWithList from "../../components/common/SearchWithList";
 
 export default function FlashcardExerciseManagement({
   navigation,
@@ -17,6 +18,7 @@ export default function FlashcardExerciseManagement({
   route: { params: { type: ManagementType } };
   navigation: any;
 }) {
+  const creationOptionFocusedRef = useRef(false);
   const theme = useTheme();
   const { confirm } = useAlerts();
   const type = route.params.type;
@@ -170,7 +172,39 @@ export default function FlashcardExerciseManagement({
           {
             icon: "table-settings",
             label: "Create, delete and edit \n" + typeName(false) + " sets",
-            onPress: () => setShowManageSets(true),
+            onPress: () => {
+              //setShowManageSets(true);
+              confirm({
+                icon: "",
+                title: "Manage your " + typeName(false) + " sets",
+                okText: "Done",
+                cancelText: "",
+                okAction: () => {
+                  return;
+                },
+                fields: [
+                  {
+                    type: "custom",
+                    render: () => {
+                      return (
+                        <SearchWithList
+                          type={type}
+                          mode="edit"
+                          searchPlaceholder={
+                            "Search for " +
+                            (type === ManagementType.FLASHCARD
+                              ? "flashcard"
+                              : "exercise") +
+                            " set"
+                          }
+                          creationOption={true}
+                        />
+                      );
+                    },
+                  },
+                ],
+              });
+            },
           },
         ]}
         onStateChange={onStateChange}

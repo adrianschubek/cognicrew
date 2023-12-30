@@ -62,7 +62,6 @@ export default function ManageSets(props: {
           creationOptionFocused={(boolean) => {
             setCreationOptionFocused(boolean);
           }}
-          close={props.close}
         />
         <Dialog.Actions>
           <Button

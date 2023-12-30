@@ -1,6 +1,6 @@
 import * as React from "react";
-import { Fragment, useState } from "react";
-import { StyleSheet, View, ScrollView, Keyboard } from "react-native";
+import { Fragment, useEffect, useRef, useState } from "react";
+import { View, ScrollView, Keyboard } from "react-native";
 import {
   HelperText,
   RadioButton,
@@ -10,7 +10,6 @@ import {
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { ManagementType, Mode } from "../../types/common";
 import { useUpsertSet } from "../../utils/hooks";
@@ -20,7 +19,6 @@ import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function MultifunctionalList(props: {
   dataSource: any[];
-  close;
   mode?: Mode;
   creationOption?: boolean;
   creationOptionFocused?: (e: boolean) => any;
@@ -54,6 +52,14 @@ export default function MultifunctionalList(props: {
     setCreationQuery("");
     setCreationError("");
   };
+  const createSetRef = useRef(createSet);
+  createSetRef.current = createSet;
+  useEffect(() => {
+    //create Set when unmounted
+    return () => {
+      createSetRef.current();
+    };
+  }, []);
   return (
     <Fragment>
       <View style={{ width: responsiveWidth(70) }}>
