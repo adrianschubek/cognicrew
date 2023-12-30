@@ -26,8 +26,6 @@ type WhiteboardStoreType = {
 
   selectedShape: "square" | "triangle" | "circle" | "none";
   shapeSize: number;
-  openColor: boolean;
-  openStroke: boolean;
   isDrawing: boolean;
   setIsDrawing: (isDrawing: boolean) => void;
   updatePath: (x: number, y: number) => void;
@@ -40,8 +38,6 @@ type WhiteboardStoreType = {
   resetActions: () => void;
   undoLastAction: () => void;
   redoLastAction: () => void;
-  setOpenColor: (open: boolean) => void;
-  setOpenStroke: (open: boolean) => void;
 };
 
 export const useWhiteboardStore = create<WhiteboardStoreType>((set) => ({
@@ -52,11 +48,7 @@ export const useWhiteboardStore = create<WhiteboardStoreType>((set) => ({
   stroke: 12,
   selectedShape: "none",
   shapeSize: 50,
-  openColor: false,
-  openStroke: false,
 
-  setOpenColor: (open) => set({ openColor: open }),
-  setOpenStroke: (open) => set({ openStroke: open }),
   setIsDrawing: (isDrawing) => set({ isDrawing }),
   setShapeSize: (size) => set({ shapeSize: size }),
   setSelectedShape: (shape) => set({ selectedShape: shape }),

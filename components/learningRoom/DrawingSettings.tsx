@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Text } from "react-native-paper";
 import Animated from "react-native-reanimated";
@@ -9,19 +9,11 @@ import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 import Slider from "@react-native-community/slider";
 
 export const StrokeSettings = ({}) => {
-  const {
-    openColor,
-    openStroke,
-    setOpenStroke,
-    setOpenColor,
-    color,
-    setColor,
-    setStroke,
-    stroke,
-    setShapeSize,
-    shapeSize,
-  } = useWhiteboardStore();
+  const { color, stroke, shapeSize, setColor, setStroke, setShapeSize } =
+    useWhiteboardStore();
 
+  const [openColor, setOpenColor] = useState(false);
+  const [openStroke, setOpenStroke] = useState(false);
   // Width of each container, a derived state from open/close state
   const COLOR_CONTAINER_WIDTH = openColor ? WIDTH - 150 : 35;
   const STROKE_CONTAINER_WIDTH = openStroke ? WIDTH - 150 : 35;
