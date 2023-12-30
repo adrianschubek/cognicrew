@@ -48,11 +48,13 @@ export default function Visual(props) {
           </Button>
         </Card.Content>
       </Card>
-      <AchievementNotification
-        isVisible={achievementVisible}
-        achievementName={achievementName}
-        achievementIconName={achievementIcon}
-      />
+      {achievementVisible && (
+        <AchievementNotification
+          isVisible={achievementVisible}
+          achievementName={achievementName}
+          achievementIconName={achievementIcon}
+        />
+      )}
     </>
   );
 }
