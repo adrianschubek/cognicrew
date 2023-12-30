@@ -329,7 +329,7 @@ export default function Discover() {
             color: theme.colors.primary,
           }}
         >
-          Recommendations for you
+          Recommendations
         </Text>
       </View>
     );
