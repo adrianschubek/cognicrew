@@ -535,10 +535,8 @@ export function usePrivateFileUrl(filePath: string, bucketName?: string) {
 export function usePublicFileUrl(filePath: string, bucketName?: string) {
   const bucket = bucketName || "files";
   const fetchPublicUrl = async () => {
-    const { data } = await supabase.storage
-      .from(bucket)
-      .getPublicUrl(filePath);
-      return data ? data.publicUrl : "not found";
+    const { data } = await supabase.storage.from(bucket).getPublicUrl(filePath);
+    return data ? data.publicUrl : "not found";
   };
   return customUseFunction(fetchPublicUrl, "getPublicFileUrl:", filePath);
 }

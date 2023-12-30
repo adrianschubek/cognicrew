@@ -14,14 +14,13 @@ import { useAlerts } from "react-native-paper-fastalerts";
 //import { useDeleteFile } from "../../utils/hooks";
 import { usePrivateFileUrl } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-export default function FileItem({ file, filePath, folder }) {
+export default function FileItem({ file, filePath, folder, icon }) {
   const theme = useTheme();
   const alerts = useAlerts();
   const [photoUrl, setPhotoUrl] = useState<string>();
-  const { data, error, isLoading, mutate } = usePrivateFileUrl(
-    filePath,
-    "files",
-  );
+  const { data, error, isLoading, mutate } = icon
+    ? { data: null, error: null, isLoading: false, mutate: null }
+    : usePrivateFileUrl(filePath, "files");
   useEffect(() => {
     if (!data) return;
     setPhotoUrl(data);
@@ -32,25 +31,7 @@ export default function FileItem({ file, filePath, folder }) {
     isLoading,
     error,
   } = useDeleteFile(file.fullPath, "files");*/
-  /**
-   * getFileIconSource - Determines the icon source based on the file extension.
-   * @param {string} extension - The file extension.
-   * @returns {object} - The source path of the icon image.
-   */
-  const getIconOrImageSource = (folder) => {
-    switch (folder) {
-      case "pdf":
-        return require("../../assets/pdf.png");
-      case "docx":
-        return require("../../assets/docx_icon.svg.png");
-      case "xlsx":
-        return require("../../assets/xlsx_icon.svg.png");
-      case "photos":
-        return photoUrl;
-      default:
-        return require("../../assets/OneDrive_Folder_Icon.svg.png");
-    }
-  };
+
   async function deleteFile() {
     const { error } = await supabase.storage.from("files").remove([filePath]);
   }
@@ -124,12 +105,8 @@ export default function FileItem({ file, filePath, folder }) {
       left={() => (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <Image
-            source={
-              folder !== "photos"
-                ? getIconOrImageSource(folder)
-                : { uri: getIconOrImageSource(folder) }
-            }
-            style={file.extension ? styles.fileIcon : { width: 80, height: 80 }}
+            source={icon ? icon : { uri: photoUrl }}
+            style={icon ? styles.fileIcon : { width: 80, height: 80 }}
           />
         </View>
       )}

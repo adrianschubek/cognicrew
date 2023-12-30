@@ -19,6 +19,21 @@ export default function FileCategory({ title, folder, projectId }) {
     if (!data) return;
     setFiles(data.data);
   }, [data]);
+  const getIconSource = (folder) => {
+    switch (folder) {
+      case "pdf":
+        return require("../../assets/pdf.png");
+      case "docx":
+        return require("../../assets/docx_icon.svg.png");
+      case "xlsx":
+        return require("../../assets/xlsx_icon.svg.png");
+      case "photos":
+        return null;
+      default:
+        return require("../../assets/OneDrive_Folder_Icon.svg.png");
+    }
+  };
+  const icon = getIconSource(folder);
 
   /*
   //here will the subscription be
@@ -63,6 +78,7 @@ export default function FileCategory({ title, folder, projectId }) {
                 file={item}
                 filePath={`${projectId}/${folder}/${item.name}`}
                 folder={folder}
+                icon={icon}
               />
               <Divider />
             </>
