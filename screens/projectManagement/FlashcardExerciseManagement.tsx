@@ -173,7 +173,7 @@ export default function FlashcardExerciseManagement({
             onPress: () => {
               //setShowManageSets(true);
               confirm({
-                icon: "",
+                icon: "folder",
                 title: "Manage your " + typeName(false) + " sets",
                 okText: "Done",
                 cancelText: "",
