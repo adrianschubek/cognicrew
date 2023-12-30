@@ -183,8 +183,7 @@ export default function FlashcardExerciseManagement({
                 okText: "Done",
                 cancelText: "",
                 okAction: () => {
-                  if (!creationOptionFocusedRef.current) return;
-                  return "";
+                  return;
                 },
                 fields: [
                   {
@@ -202,9 +201,6 @@ export default function FlashcardExerciseManagement({
                             " set"
                           }
                           creationOption={true}
-                          creationOptionFocused={(boolean) => {
-                            creationOptionFocusedRef.current = boolean;
-                          }}
                         />
                       );
                     },
