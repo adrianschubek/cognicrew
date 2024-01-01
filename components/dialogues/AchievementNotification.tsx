@@ -27,12 +27,12 @@ const AchievementNotification = ({
         Animated.timing(glowAnim, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
         Animated.timing(glowAnim, {
           toValue: 0,
           duration: 1000,
-          useNativeDriver: true,
+          useNativeDriver: false,
         }),
       ]),
     ).start();
@@ -40,9 +40,9 @@ const AchievementNotification = ({
 
   useEffect(() => {
     if (isVisible) {
+      startGlowAnimation();
       animationRef.current?.bounceInUp().then(() => {
         animationRef.current?.tada();
-        startGlowAnimation();
       });
     }
   }, [isVisible]);
@@ -50,19 +50,25 @@ const AchievementNotification = ({
   if (!isVisible) return null;
 
   const glowStyle = {
-    //opacity: glowAnim, //This doesn't look good
-    shadowColor: goldenColor,
+    /*shadowColor: goldenColor,
+    shadowOpacity: glowAnim,
     shadowRadius: 10,
-    shadowOpacity: 0.9,
+    shadowOffset: { width: 0, height: 0 },*/ //ditch shadow completely? Shadow only works on iOS
+    elevation: glowAnim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [10, 40], // you can adjust the output range for a more pronounced effect
+    }),
   };
-
+  const AnimatedAnimatableView = Animated.createAnimatedComponent(
+    Animatable.View,
+  );
   return (
-    <Animatable.View
+    <AnimatedAnimatableView
       ref={animationRef}
       style={[styles.notification, { backgroundColor: goldenColor }, glowStyle]}
       animation="bounceIn"
       duration={1500}
-      useNativeDriver={true}
+      useNativeDriver={false}
     >
       <ConfettiCannon count={50} origin={{ x: -10, y: 0 }} fadeOut={true} />
       <View style={styles.contentContainer}>
@@ -92,19 +98,21 @@ const AchievementNotification = ({
           </Animatable.View>
         </View>
       </View>
-    </Animatable.View>
+    </AnimatedAnimatableView>
   );
 };
 
 const styles = StyleSheet.create({
   notification: {
-    position: "absolute", //absolute doesn't work as it should
+    position: "absolute",
+    top: 20,
     padding: 10,
     borderRadius: 10,
+    //all of this  bellow doesn't do anything O.o (now i know why. Because shadow is iOS only)
     /*elevation: 5,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,*/ //all of this stuff doesn't do anything O.o
+    shadowRadius: 3.84,*/
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",

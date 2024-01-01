@@ -1,21 +1,21 @@
-import React, { useContext, useState } from "react";
-import { Appearance } from "react-native";
-import { Card, Button, useTheme, Avatar } from "react-native-paper";
+import React, { useContext } from "react";
+import { Card, Button, Avatar } from "react-native-paper";
 import { PreferencesContext } from "../../stores/PreferencesContext";
-import { usePreferencesStore } from "../../stores/PreferencesStore";
 import { useAchievements, useUnlockAchievement } from "../../utils/hooks";
-import AchievementNotification from "../dialogues/AchievementNotification";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 
-export default function Visual(props) {
-  const theme = useTheme();
+export default function Visual(props: {
+  sendAchievementData: (
+    achievementName: string,
+    achievementIconName: string,
+    achievementVisible: boolean,
+  ) => void;
+  [name: string]: any;
+}) {
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
   const unlockAchievement = useUnlockAchievement();
-  const [achievementVisible, setAchievementVisible] = useState(false);
   const { data: achievementsData } = useAchievements();
-  const [achievementName, setAchievementName] = useState("");
-  const [achievementIcon, setAchievementIcon] = useState("");
 
   const handleToggleTheme = async () => {
     toggleTheme();
@@ -27,34 +27,26 @@ export default function Visual(props) {
       const achievement = achievementsData?.find(
         (ach) => ach.id === achievementId,
       );
-      setAchievementName(achievement?.name || "");
-      setAchievementIcon(achievement?.icon_name || "");
-      setAchievementVisible(true);
-      setTimeout(() => setAchievementVisible(false), 5500);
+      props.sendAchievementData(
+        achievement?.name || "",
+        achievement?.icon_name || "",
+        true,
+      );
     }
   };
 
   return (
-    <>
-      <Card {...props} mode="contained">
-        <Card.Title title="Design" left={Icon} />
-        <Card.Content>
-          <Button
-            icon={darkmode ? "weather-sunny" : "weather-night"}
-            mode="contained-tonal"
-            onPress={handleToggleTheme}
-          >
-            {darkmode ? "Lightmode" : "Darkmode"}
-          </Button>
-        </Card.Content>
-      </Card>
-      {achievementVisible && (
-        <AchievementNotification
-          isVisible={achievementVisible}
-          achievementName={achievementName}
-          achievementIconName={achievementIcon}
-        />
-      )}
-    </>
+    <Card {...props} mode="contained">
+      <Card.Title title="Design" left={Icon} />
+      <Card.Content>
+        <Button
+          icon={darkmode ? "weather-sunny" : "weather-night"}
+          mode="contained-tonal"
+          onPress={handleToggleTheme}
+        >
+          {darkmode ? "Lightmode" : "Darkmode"}
+        </Button>
+      </Card.Content>
+    </Card>
   );
 }
