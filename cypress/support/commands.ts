@@ -30,15 +30,23 @@ Cypress.Commands.add("openApp", () => {
 
 Cypress.Commands.add("login", () => {
   // TODO: use environment variables for auth
-  cy.get('[data-testid="text-input-flat"]').first().type("5r0yjo@test.de");
-  cy.get('[data-testid="text-input-flat"]').last().type("password");
+  cy.get('[data-testid="text-input-flat"]').first().clear().type("5r0yjo@test.de");
+  cy.get('[data-testid="text-input-flat"]').last().clear().type("password");
   cy.get('[data-testid="login-button"]').click();
+  cy.wait(500);
 });
 
 Cypress.Commands.add("logout", () => {
-  cy.get('[href="/SettingsTab"]').click();
-  cy.get('[data-testid="logout-button-icon-container"]').click();
-  cy.get('[data-testid="logout-confirm-button-text"]').click();
+  cy.get('[href="/_main_/SettingsTab"]').click();
+  cy.get('[data-testid="logout-button"]').click();
+  cy.contains('button', 'Logout').click();
+  cy.wait(500);
+});
+
+Cypress.Commands.add("relog", () => {
+  cy.logout();
+  cy.wait(500);
+  cy.login();
 });
 
 Cypress.Commands.add("clearLinks", () => {
@@ -129,6 +137,7 @@ declare namespace Cypress {
     openApp(): Chainable<void>;
     login(): Chainable<void>;
     logout(): Chainable<void>;
+    relog(): Chainable<void>;
     createProject(id: string): Chainable<void>;
     deleteProject(id: string): Chainable<void>;
     // login(email: string, password: string): Chainable<void>

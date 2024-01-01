@@ -44,6 +44,7 @@ export default function NameChange(props) {
       </Card.Content>
       <Card.Actions>
         <Button
+          testID="update-username-button"
           disabled={!validator}
           mode="contained-tonal"
           onPress={() => updateUsername()}

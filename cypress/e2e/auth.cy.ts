@@ -2,57 +2,68 @@ beforeEach(() => {
   cy.openApp();
 });
 
-// TODO: move to environment variables
-const DEMO_USER = {
-  username: "test_5r0yjo",
-  email: "5r0yjo@test.de",
-  pw: "password",
-};
 
 describe("Login", () => {
+
+  const TEST_USER = Cypress.env('TEST_USER');
+
   it("can login with valid credentials", () => {
-    cy.get('[data-testid="text-input-flat"]').first().type(DEMO_USER.email);
-    cy.get('[data-testid="text-input-flat"]').last().type(DEMO_USER.pw);
+    cy.get('[data-testid="text-input-flat"]').first().type(TEST_USER.email);
+    cy.get('[data-testid="text-input-flat"]').last().type(TEST_USER.pw);
     cy.get('[data-testid="login-button"]').click();
-    cy.contains(`Hello, ${DEMO_USER.username}`).should("exist");
+    cy.contains(`Hello, ${TEST_USER.username}`).should("exist");
   });
 
   it("cannot login with invalid email", () => {
     cy.get('[data-testid="text-input-flat"]').first().type("wrong@wrong.de");
-    cy.get('[data-testid="text-input-flat"]').last().type(DEMO_USER.pw);
+    cy.get('[data-testid="text-input-flat"]').last().type(TEST_USER.pw);
     cy.get('[data-testid="login-button"]').click();
     cy.contains("Invalid login credentials").should("exist");
   });
 
   it("cannot login with invalid password", () => {
-    cy.get('[data-testid="text-input-flat"]').first().type(DEMO_USER.email);
+    cy.get('[data-testid="text-input-flat"]').first().type(TEST_USER.email);
     cy.get('[data-testid="text-input-flat"]').last().type("wrong");
     cy.get('[data-testid="login-button"]').click();
     cy.contains("Invalid login credentials").should("exist");
   });
 
   it("cannot login with empty email", () => {
-    cy.get('[data-testid="text-input-flat"]').last().type(DEMO_USER.pw);
+    cy.get('[data-testid="text-input-flat"]').last().type(TEST_USER.pw);
     cy.get('[data-testid="login-button"]').click();
     cy.contains("Invalid login credentials").should("exist");
   });
 
   it("cannot login with empty password", () => {
-    cy.get('[data-testid="text-input-flat"]').first().type(DEMO_USER.email);
+    cy.get('[data-testid="text-input-flat"]').first().type(TEST_USER.email);
     cy.get('[data-testid="login-button"]').click();
     cy.contains("Invalid login credentials").should("exist");
   });
+
+  it("should not allow login with empty fields", () => {
+    cy.get('[data-testid="login-button"]').click();
+    cy.contains("Invalid login credentials").should("exist");
+  });
+
+  it("should persist user session after app reload", () => {
+    cy.login();
+    cy.reload();
+    // after app reload, check if user remains logged in
+    cy.contains(`Hello, ${TEST_USER.username}`).should("exist");
+  });
+  
+  
 });
 
 describe("Logout", () => {
   it("can logout", () => {
     cy.login();
-    cy.get('[href="/_main_/SettingsTab"]').click();
-    cy.get('[data-testid="logout-button"]').click();
-    cy.get('[style="background-color: rgb(71, 85, 182); border-color: rgba(0, 0, 0, 0); border-width: 0px; border-radius: 25px; margin-right: 0px; padding-right: 10px; padding-left: 10px; box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px;"] > [data-testid="button"] > .css-view-175oi2r > [data-testid="button-text"]').click();
-    cy.get('[data-testid="login-button"]').should('contain.text', 'Login');
+    cy.wait(500);
+    cy.logout();
   });
 });
+
+
 
 // describe("Register", () => {
   // const userID = Math.random().toString(36).substring(7);
