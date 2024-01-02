@@ -10,7 +10,6 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCard from "../../components/learningProject/LinkCard";
 import { useLinks, useUpsertLink } from "../../utils/hooks";
 import { useEffect, useState } from "react";

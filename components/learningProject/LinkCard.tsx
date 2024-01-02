@@ -72,7 +72,10 @@ export default function LinkCard({ link, onEdit }) {
       accessibilityLabel={`Link titled ${link.title}`}
     >
       <Card.Title
-        titleStyle={{ marginTop: 0, marginBottom:  link.subtitle !== "" ? 16 : 36 }}
+        titleStyle={{
+          marginTop: 0,
+          marginBottom: link.subtitle !== "" ? 16 : 36,
+        }}
         title={link.title}
         subtitle={link.subtitle}
         left={() => (
@@ -95,7 +98,7 @@ export default function LinkCard({ link, onEdit }) {
               />
             </TouchableOpacity>
             <IconButton
-              testID='chevron-button'
+              testID="chevron-button"
               style={{ margin: 0, padding: 0, marginTop: 8 }}
               icon={expandedId === link.id ? "chevron-up" : "chevron-down"}
               onPress={() =>
@@ -154,9 +157,11 @@ export default function LinkCard({ link, onEdit }) {
       {expandedId === link.id && (
         <Card.Content>
           <Text style={{ marginLeft: 10 }}>
-            {typeof link.description === "string"
-              ? link.description
-              : "Invalid description"}
+            {link.description
+              ? typeof link.description === "string"
+                ? link.description
+                : "Invalid description"
+              : "No description"}
           </Text>
         </Card.Content>
       )}

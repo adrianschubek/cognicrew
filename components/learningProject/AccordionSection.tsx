@@ -4,7 +4,6 @@ import { List, Divider } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import AccordionListItems from "./AccordionListItems";
 import { ManagementType, orderByPrinciple } from "../../types/common";
