@@ -1,13 +1,11 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { Divider, Avatar, Text, TextInput, useTheme } from "react-native-paper";
-import { Snackbar } from "react-native-paper";
+import { Divider, Text, TextInput, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
   responsiveHeight,
 } from "react-native-responsive-dimensions";
-import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import { friendIdsAndNames } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -16,7 +14,6 @@ import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function InviteFriends({ navigation }) {
   const theme = useTheme();
-  const { info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
   const projectId = useProjectStore((state) => state.projectId);
   const { error: errorAlert, success } = useAlerts();
@@ -30,58 +27,12 @@ export default function InviteFriends({ navigation }) {
     if (error) console.log(error);
     return { data, error };
   }
-  const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [selectedFriend, setSelectedFriend] = useState(null);
-  const [snackbarText, setSnackbarText] = useState("");
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [invitedFriends, setInvitedFriends] = useState({});
-  const [checkedState, setCheckedState] = useState({});
-
-  const handleCheckboxChange = (friend) => {
-    setCheckedState((prevState) => ({
-      ...prevState,
-      [friend]: !prevState[friend],
-    }));
-  };
-
-  /*const icon = (props) => (
-    <Avatar.Icon
-      {...props}
-      icon="email-plus-outline"
-      size={responsiveFontSize(5)}
-    />
-  );*/
-
   const filteredFriends = friendIdsAndNamesData.filter((friend) =>
     friend.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-  };
-
-  const inviteFriend = (friend) => {
-    setSelectedFriend(friend);
-    setShowInviteDialog(true);
-    setInvitedFriends((prevState) => ({ ...prevState, [friend]: true }));
-    setCheckedState((prevState) => ({ ...prevState, [friend]: false }));
-  };
-
-  const handleMultipleInvites = () => {
-    let anyChecked = false;
-    Object.keys(checkedState).forEach((friend) => {
-      if (checkedState[friend]) {
-        anyChecked = true;
-        inviteFriend(friend);
-      }
-    });
-
-    if (anyChecked) {
-      setSnackbarText("Invites have been sent to selected friends.");
-    } else {
-      setSnackbarText("No friends were selected.");
-    }
-    setSnackbarVisible(true);
   };
 
   const remove = async (userId: string) => {
@@ -173,15 +124,6 @@ export default function InviteFriends({ navigation }) {
           <Divider style={styles.divider} />
         </View>
       </View>
-
-      {/* Snackbar - providing feedback to the user */}
-      <Snackbar
-        visible={snackbarVisible}
-        onDismiss={() => setSnackbarVisible(false)}
-        duration={3000}
-      >
-        {snackbarText}
-      </Snackbar>
     </ScrollView>
   );
 }
