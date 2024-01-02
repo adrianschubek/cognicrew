@@ -204,7 +204,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   useEffect(() => {
     if (!answerOrAnswers) return;
     setIsInitialized(true);
-  }, [answerOrAnswers]);
+  }, [answerOrAnswers, priority, question]);
 
   return (
     <Card elevation={1} style={styles.cardStyle}>
