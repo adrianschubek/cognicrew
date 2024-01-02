@@ -124,12 +124,6 @@ serve(async (req) => {
         break;
       }
       case "reset_room": {
-        // FIXME: Disclaimer
-        return err(
-          "The 'reset_room' command is currently unavailable due to a potential critical error that causes the game loop to crash. Please restart the app to continue or wait until the game is over (#26X)",
-          500,
-        );
-
         // => reset room back to lobby if host. ---nein otherwise leave room (clientside return true to leave room for non host)
         // check if user is host
         // FIXME: refactor use is_host in publicState

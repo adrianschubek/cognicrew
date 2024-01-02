@@ -60,6 +60,9 @@ supabase-edge-functions  | 2023-12-23T01:08:10.430672906+01:00     at async wrap
 supabase-edge-functions  | 2023-12-23T01:08:10.430675381+01:00     at async startGameLoop (file:///home/deno/functions/main/index.ts:44:5)
 supabase-edge-functions  | 2023-12-23T01:08:10.431012249+01:00 No interval is currently running.
      */
+
+    // TODO: instead of try/catch use docker auto restart on crash
+
     // const wrapper = async () => {
     //   try {
     //     await handler();
@@ -230,6 +233,7 @@ async function updateStats(
 async function mainLoop() {
   // main game loop here
   const start = performance.now();
+  let commandsCount = 0;
   // let updatedCount = 0;
 
   // for each public_room_state:
@@ -248,16 +252,7 @@ async function mainLoop() {
     .from("player_answers")
     .select("*");
 
-  // Poll all commands from queue
-  const { data: commands, error } = await supabase
-    .from("queue")
-    .delete()
-    .neq("type", null)
-    .select("id,room_id,type,data")
-    .order("created_at", { ascending: true });
-  if (error) console.error("queue: ", error);
-
-  roomsLoop: for (const state of publicRoomStates) {
+  for (const state of publicRoomStates) {
     const newState = state.data as PublicRoomState;
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
@@ -278,37 +273,14 @@ async function mainLoop() {
       player.currentTimeNeeded = playerAnswer.answer_time;
     }
 
-    /**
-     * Process commands for this room
-     */
-    const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
-    if (roomCmds) {
-      for (const cmd of roomCmds) {
-        switch (cmd.type) {
-          case "reset_room":
-            console.log("reset_room");
-
-            await updateStats(newState, privateState);
-
-            newState.screen = ScreenState.LOBBY;
-            newState.round = 0; // fixes bug where answers not updated in quiz game on startup
-
-            // delete old game data
-            await supabase
-              .from("private_room_states")
-              .delete()
-              .eq("room_id", state.room_id);
-            // delete player answers
-            await supabase
-              .from("player_answers")
-              .delete()
-              .eq("room_id", state.room_id);
-            continue roomsLoop; // FIXME NOT FIXED! : this causes privateState and gameData to be undefined later on
-          default:
-            console.error(`Unhandled command type '${cmd.type}'`);
-        }
-      }
-    }
+    // Poll all commands from queue
+    const { data: commands, error } = await supabase
+      .from("queue")
+      .delete()
+      .neq("type", null)
+      .select("id,room_id,type,data")
+      .order("created_at", { ascending: true });
+    if (error) console.error("queue: ", error);
 
     /**
      * ScreenState:
@@ -548,6 +520,39 @@ async function mainLoop() {
     // (-) Increses Latency (-) More Server CPU usage (-) when client suddenly disconnects the state may not be updated a while
     // if (deepEqual(state.data, newState)) continue;
 
+    /**
+     * Process commands for this room
+     */
+    const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
+    if (roomCmds) {
+      for (const cmd of roomCmds) {
+        commandsCount++;
+        switch (cmd.type) {
+          case "reset_room":
+            console.log("reset_room");
+
+            await updateStats(newState, privateState);
+
+            newState.screen = ScreenState.LOBBY;
+            newState.round = 0; // fixes bug where answers not updated in quiz game on startup
+
+            // delete old game data
+            await supabase
+              .from("private_room_states")
+              .delete()
+              .eq("room_id", state.room_id);
+            // delete player answers
+            await supabase
+              .from("player_answers")
+              .delete()
+              .eq("room_id", state.room_id);
+            break;
+          default:
+            console.error(`Unhandled command type '${cmd.type}'`);
+        }
+      }
+    }
+
     // updatedCount++;
     console.log(newState);
     await supabase
@@ -559,9 +564,9 @@ async function mainLoop() {
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
-    `main_loop: ${publicRoomStates.length} states and ${
-      commands?.length ?? 0
-    } commands processed in ${end - start}ms`,
+    `main_loop: ${
+      publicRoomStates.length
+    } states and ${commandsCount} commands processed in ${end - start}ms`,
   );
 }
 startGameLoop(mainLoop, 1000);
