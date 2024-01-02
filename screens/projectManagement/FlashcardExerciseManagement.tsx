@@ -32,7 +32,7 @@ export default function FlashcardExerciseManagement({
   const { open } = FABOpen;
   const typeName = (plural: boolean) =>
     (type === ManagementType.FLASHCARD ? "flashcard" : "quiz") +
-    (plural ? "s" : "");
+    (plural ? (type === ManagementType.FLASHCARD ? "s" : "zes") : "");
   useEffect(() => {
     navigation.setOptions({
       title: type === ManagementType.FLASHCARD ? "Flashcards" : "Quizzes",
