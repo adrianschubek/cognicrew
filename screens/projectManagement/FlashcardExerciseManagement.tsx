@@ -112,14 +112,14 @@ export default function FlashcardExerciseManagement({
                     helperText: "Choose a sorting option to your liking",
                     required: true,
                     data: [
-                      { key: "creation date", value: "created_at" },
+                      { key: "oldest to newest", value: "created_at" },
                       {
-                        key: "inverse creation date",
+                        key: "newest to oldest",
                         value: "reverse_created_at",
                       },
-                      { key: "priority", value: "priority" },
+                      { key: "ascending priority", value: "priority" },
                       {
-                        key: "inverse priority",
+                        key: "descending priority",
                         value: "reverse_priority",
                       },
                     ],
@@ -146,9 +146,9 @@ export default function FlashcardExerciseManagement({
                     helperText: "Choose a sorting option to your liking",
                     required: true,
                     data: [
-                      { key: "creation date", value: "created_at" },
+                      { key: "oldest to newest", value: "created_at" },
                       {
-                        key: "inverse creation date",
+                        key: "newest to oldest",
                         value: "reverse_created_at",
                       },
                       { key: "alphabetical order", value: "name" },

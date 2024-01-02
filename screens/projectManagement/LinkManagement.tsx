@@ -175,9 +175,9 @@ export default function LinkManagement() {
                     helperText: "Choose a sorting option to your liking",
                     required: true,
                     data: [
-                      { key: "creation date", value: "created_at" },
+                      { key: "oldest to newest", value: "created_at" },
                       {
-                        key: "inverse creation date",
+                        key: "newest to oldest",
                         value: "reverse_created_at",
                       },
                       { key: "alphabetical order", value: "title" },
