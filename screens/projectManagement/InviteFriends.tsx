@@ -1,30 +1,20 @@
 import * as React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import {
-  Divider,
-  Avatar,
-  Text,
-  TextInput,
-  useTheme
-} from "react-native-paper";
+import { Divider, Avatar, Text, TextInput, useTheme } from "react-native-paper";
 import { Snackbar } from "react-native-paper";
 import {
   responsiveFontSize,
-  responsiveHeight
+  responsiveHeight,
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
-import {
-  friendIdsAndNames,
-} from "../../utils/hooks";
+import { friendIdsAndNames } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../../components/manageFriends/FriendItem";
 import { useAlerts } from "react-native-paper-fastalerts";
 
-
 export default function InviteFriends({ navigation }) {
-  
   const theme = useTheme();
   const { info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,7 +28,7 @@ export default function InviteFriends({ navigation }) {
       p_project_id: projectId,
     });
     if (error) console.log(error);
-    return {data, error};
+    return { data, error };
   }
   const [showInviteDialog, setShowInviteDialog] = useState(false);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -54,13 +44,13 @@ export default function InviteFriends({ navigation }) {
     }));
   };
 
-  const icon = (props) => (
+  /*const icon = (props) => (
     <Avatar.Icon
       {...props}
       icon="email-plus-outline"
       size={responsiveFontSize(5)}
     />
-  );
+  );*/
 
   const filteredFriends = friendIdsAndNamesData.filter((friend) =>
     friend.username.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -115,12 +105,12 @@ export default function InviteFriends({ navigation }) {
   };
 
   const fetchFriends = async () => {
-    const { data } = await friendIdsAndNames(); 
+    const { data } = await friendIdsAndNames();
     setFriendIdsAndNamesData(data);
   };
 
   const fetchProjectMembers = async () => {
-    const {data} = await getProjectMembers();
+    const { data } = await getProjectMembers();
     setProjectMembers(data);
   };
   useEffect(() => {
@@ -136,7 +126,7 @@ export default function InviteFriends({ navigation }) {
       .subscribe();
   }, []);
   useEffect(() => {
-    fetchFriends(); 
+    fetchFriends();
     fetchProjectMembers();
   }, []);
   useEffect(() => {
@@ -147,10 +137,6 @@ export default function InviteFriends({ navigation }) {
       <View style={styles.innerContainer}>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>Invite Friends</Text>
-          <View style={styles.iconsContainer}>
-            <TextWithPlusButton text="" onPress={handleMultipleInvites} />
-            {icon({ style: styles.iconStyle })}
-          </View>
         </View>
 
         {/* Friends list */}
@@ -167,7 +153,7 @@ export default function InviteFriends({ navigation }) {
               let isMember = projectMembers
                 .map((member) => member.user_id)
                 .includes(friend.id);
-                //console.log(isMember);
+              //console.log(isMember);
               return (
                 <FriendItem
                   key={index}
@@ -175,7 +161,11 @@ export default function InviteFriends({ navigation }) {
                   friendName={friend.username}
                   //onCheck={() => handleCheckboxChange(friend)}
                   icon={isMember ? "close" : "email-plus-outline"}
-                  onIconPress={() => (isMember ? remove(friend.id) : invite(friend.id)).then(() => setRefetchIndex(refetchIndex + 1))}
+                  onIconPress={() =>
+                    (isMember ? remove(friend.id) : invite(friend.id)).then(
+                      () => setRefetchIndex(refetchIndex + 1),
+                    )
+                  }
                 />
               );
             })}
