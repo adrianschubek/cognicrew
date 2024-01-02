@@ -26,16 +26,18 @@ export const enum NAVIGATION {
   SPLASH_INGAME = "SplashIngame",
   END_RESULTS = "EndResults",
   PROJECT_STATISTICS = "ProjectStatistics",
-  GLOBAL_STATISTICS = "GlobalStatistics"
+  GLOBAL_STATISTICS = "GlobalStatistics",
 }
 export const enum ManagementType {
   FLASHCARD = 0,
   EXERCISE = 1,
   FILE = 2,
   LINK = 3,
-  BOARD = 4
+  BOARD = 4,
 }
 export type orderByPrinciple =
+  | "title"
+  | "reverse_title"
   | "name"
   | "reverse_name"
   | "created_at"
