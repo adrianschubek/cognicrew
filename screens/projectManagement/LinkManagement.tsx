@@ -153,11 +153,6 @@ export default function LinkManagement() {
         icon={open ? "card-text" : "plus"}
         actions={[
           {
-            icon: "plus",
-            label: "Add new " + "link",
-            onPress: openAddEditLinkDialog,
-          },
-          {
             icon: "sort",
             label: "Sort links by",
             onPress: () => {
@@ -190,6 +185,11 @@ export default function LinkManagement() {
                 ],
               });
             },
+          },
+          {
+            icon: "plus",
+            label: "Add new " + "link",
+            onPress: openAddEditLinkDialog,
           },
         ]}
         onStateChange={onStateChange}
