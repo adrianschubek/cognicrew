@@ -12,15 +12,14 @@ import {
 } from "react-native-responsive-dimensions";
 import TextWithPlusButton from "../../components/common/TextWithPlusButton";
 import LinkCard from "../../components/learningProject/LinkCard";
-import {
-  useLinks,
-  useUpsertLink,
-} from "../../utils/hooks";
+import { useLinks, useUpsertLink } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { supabase } from "../../supabase";
 import { FAB, Text } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
+import { orderByPrinciple } from "../../types/common";
+import { sortByOrder } from "../../utils/common";
 
 export default function LinkManagement() {
   const { confirm } = useAlerts();
@@ -31,9 +30,11 @@ export default function LinkManagement() {
       : `http://${url}`;
   }
   const projectId = useProjectStore((state) => state.projectId);
-  const { data, isLoading, error, mutate } = useLinks(projectId);
+  const [orderLinkCardsBy, setOrderLinkCardsBy] =
+    useState<orderByPrinciple>("created_at");
   const [noLinkCardAvailable, setNoLinkCardAvailable] =
     useState<boolean>(false);
+  const { data, isLoading, error, mutate } = useLinks(projectId);
   const { isMutating, trigger: upsertLink } = useUpsertLink();
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
@@ -136,7 +137,7 @@ export default function LinkManagement() {
       )}
       <View style={[noLinkCardAvailable ? { flex: 0 } : styles.container]}>
         <ScrollView style={{ paddingHorizontal: 16, paddingTop: 16 }}>
-          {linkItems.map((linkItem, index) => {
+          {sortByOrder(linkItems, orderLinkCardsBy).map((linkItem, index) => {
             return <LinkCard key={index} link={linkItem} onEdit={handleEdit} />;
           })}
 
@@ -155,6 +156,40 @@ export default function LinkManagement() {
             icon: "plus",
             label: "Add new " + "link",
             onPress: openAddEditLinkDialog,
+          },
+          {
+            icon: "sort",
+            label: "Sort links by",
+            onPress: () => {
+              confirm({
+                icon: "",
+                title: "Sort your links by?",
+                okText: "Accept",
+                okAction: (val) => {
+                  setOrderLinkCardsBy(val[0] as orderByPrinciple);
+                },
+                fields: [
+                  {
+                    type: "radio",
+                    icon: "sort",
+                    helperText: "Choose a sorting option to your liking",
+                    required: true,
+                    data: [
+                      { key: "creation date", value: "created_at" },
+                      {
+                        key: "inverse creation date",
+                        value: "reverse_created_at",
+                      },
+                      { key: "alphabetical order", value: "title" },
+                      {
+                        key: "inverse alphab. order",
+                        value: "reverse_title",
+                      },
+                    ],
+                  },
+                ],
+              });
+            },
           },
         ]}
         onStateChange={onStateChange}
