@@ -24,7 +24,6 @@ export default function FileCategory({
   const { data, error, isLoading, mutate } = useFiles(`${projectId}/${folder}`);
   useEffect(() => {
     if (!data) return;
-    console.log("setFiles in folder: ", folder);
     setFiles(data.data);
   }, [data]);
   const getIconSource = (folder) => {
@@ -55,8 +54,8 @@ export default function FileCategory({
           filter: "key=eq.files",
         },
         (payload) => {
-          console.log("payload: ", payload);
-          console.log("new: ", payload.new);
+          //console.log("payload: ", payload);
+          //console.log("new: ", payload.new);
           mutate();
         },
       )
