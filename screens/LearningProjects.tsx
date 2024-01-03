@@ -125,7 +125,7 @@ export default function LearningProjects({ navigation }) {
               }}
             >
               {" "}
-              My Projects
+              My projects
             </Text>
           ),
         }}
