@@ -22,6 +22,7 @@ export async function selectAndUploadImage(
       ? props?.fileName
       : `${new Date().getTime()}.${"png"}`;
     const filePathWithDocumentName = `${filePath}/${newFileName}`;
+    //console.log("filePathWithDocumentName", filePathWithDocumentName);
     const contentType = "image/png";
     const bucket = props?.bucketName || "files";
     const { data, error } = await supabase.storage
@@ -59,7 +60,7 @@ export async function selectAndUploadFile(
     let fileExtension = mimeType.split("/").pop();
     //console.log("fileExtension", fileExtension);
     const folderName = isImage
-      ? "photos"
+      ? "/photos"
       : fileExtension === "pdf" ||
         fileExtension === "docx" ||
         fileExtension === "xlsx"
@@ -71,6 +72,7 @@ export async function selectAndUploadFile(
     //console.log("folderPath", folderPath);
     const newFileName = `${new Date().getTime()}.${fileExtension}`;
     const filePathWithDocumentName = `${folderPath}/${newFileName}`;
+    console.log("filePathWithDocumentName", filePathWithDocumentName);
     const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem?.EncodingType?.Base64,
     });

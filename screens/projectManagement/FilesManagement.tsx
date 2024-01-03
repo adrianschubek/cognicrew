@@ -40,13 +40,12 @@ export default function FilesManagement() {
             <View>
               <List.Section>
                 {categories.map((category, index) => {
-                  let folder = category.folder ? category.folder : "documents";
                   return (
                     <Fragment key={index}>
                       <FileCategory
                         title={category.title}
                         projectId={projectId}
-                        folder={folder}
+                        folder={category.folder}
                       />
                       <Divider style={{ marginHorizontal: 8 }} />
                     </Fragment>

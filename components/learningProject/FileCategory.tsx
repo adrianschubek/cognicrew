@@ -9,6 +9,7 @@ import FileItem from "./FileItem";
 import { List, Divider, HelperText, useTheme } from "react-native-paper";
 import { useFiles } from "../../utils/hooks";
 import { FileObject } from "@supabase/storage-js";
+import { supabase } from "../../supabase";
 
 export default function FileCategory({ title, folder, projectId }) {
   const theme = useTheme();
@@ -17,6 +18,7 @@ export default function FileCategory({ title, folder, projectId }) {
   const { data, error, isLoading, mutate } = useFiles(`${projectId}/${folder}`);
   useEffect(() => {
     if (!data) return;
+    console.log("setFiles in folder: ", folder);
     setFiles(data.data);
   }, [data]);
   const getIconSource = (folder) => {
@@ -35,24 +37,31 @@ export default function FileCategory({ title, folder, projectId }) {
   };
   const icon = getIconSource(folder);
 
-  /*
   //here will the subscription be
   useEffect(() => {
-    const realtimeFiles = supabase
-      .channel("files_all")
+    const fileTracker = supabase
+      .channel(`files-${folder}-tracker`)
       .on(
         "postgres_changes",
-        { event: "*", schema: "storage", table: "objects" },
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "key=eq.files",
+        },
         (payload) => {
-          //this subscription does not work!
-          console.log("hallo");
-          mutateFiles();
-          mutatePhotos();
+          //console.log("payload: ", payload);
+          //console.log("folder: ", `${projectId}/${folder}`);
+          mutate();
         },
       )
       .subscribe();
+    /* //?
+    return () => {
+      fileTracker.unsubscribe();
+    };*/
   }, []);
-*/
+
   return (
     <List.Accordion
       title={title}
