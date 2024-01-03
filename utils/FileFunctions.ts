@@ -72,7 +72,7 @@ export async function selectAndUploadFile(
     //console.log("folderPath", folderPath);
     const newFileName = `${new Date().getTime()}.${fileExtension}`;
     const filePathWithDocumentName = `${folderPath}/${newFileName}`;
-    console.log("filePathWithDocumentName", filePathWithDocumentName);
+    //console.log("filePathWithDocumentName", filePathWithDocumentName);
     const base64 = await FileSystem.readAsStringAsync(uri, {
       encoding: FileSystem?.EncodingType?.Base64,
     });

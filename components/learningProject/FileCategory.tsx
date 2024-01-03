@@ -10,8 +10,14 @@ import { List, Divider, HelperText, useTheme } from "react-native-paper";
 import { useFiles } from "../../utils/hooks";
 import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../../supabase";
+import LoadingOverlay from "../alerts/LoadingOverlay";
 
-export default function FileCategory({ title, folder, projectId }) {
+export default function FileCategory({
+  title,
+  folder,
+  projectId,
+  mutationSignal,
+}) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState<boolean>(false);
   const [files, setFiles] = useState<FileObject[]>([]);
@@ -37,7 +43,6 @@ export default function FileCategory({ title, folder, projectId }) {
   };
   const icon = getIconSource(folder);
 
-  //here will the subscription be
   useEffect(() => {
     const fileTracker = supabase
       .channel(`files-${folder}-tracker`)
@@ -50,18 +55,17 @@ export default function FileCategory({ title, folder, projectId }) {
           filter: "key=eq.files",
         },
         (payload) => {
-          //console.log("payload: ", payload);
-          //console.log("folder: ", `${projectId}/${folder}`);
+          console.log("payload: ", payload);
+          console.log("new: ", payload.new);
           mutate();
         },
       )
       .subscribe();
-    /* //?
-    return () => {
-      fileTracker.unsubscribe();
-    };*/
   }, []);
-
+  /*useEffect(() => {
+    if (!mutationSignal) return;
+  }, [mutationSignal]);*/
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Accordion
       title={title}

@@ -3,7 +3,7 @@
  * It handles file uploads, deletions, and categorizes files for display.
  */
 
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import { Divider, FAB, List } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
@@ -12,6 +12,7 @@ import {
   selectAndUploadFile,
   selectAndUploadImage,
 } from "../../utils/FileFunctions";
+import { supabase } from "../../supabase";
 
 export default function FilesManagement() {
   const projectId = useProjectStore((state) => state.projectId);
@@ -29,7 +30,24 @@ export default function FilesManagement() {
     { title: "Miscellaneous", folder: "miscellaneous" },
     { title: "Photos", folder: "photos" },
   ];
-
+  /*useEffect(() => {
+    const fileTracker = supabase
+      .channel(`files-tracker`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "key=eq.files",
+        },
+        (payload) => {
+          console.log("payload: ", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);*/
   return (
     <View style={styles.container}>
       <VirtualizedList
@@ -46,6 +64,7 @@ export default function FilesManagement() {
                         title={category.title}
                         projectId={projectId}
                         folder={category.folder}
+                        mutationSignal={() => {}}
                       />
                       <Divider style={{ marginHorizontal: 8 }} />
                     </Fragment>
