@@ -1,7 +1,7 @@
 import { Avatar } from "react-native-paper";
 import { StyleProp, ViewStyle } from "react-native";
-import { usePrivateFileUrl, usePublicFileUrl } from "../../utils/hooks";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { usePublicFileUrl } from "../../utils/hooks";
+import { useEffect, useRef, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { supabase } from "../../supabase";
 import { v4 as uuidv4 } from "uuid";
