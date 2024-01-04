@@ -1,9 +1,10 @@
 import { Avatar } from "react-native-paper";
 import { StyleProp, ViewStyle } from "react-native";
-import { usePublicFileUrl } from "../../utils/hooks";
-import { useEffect, useState } from "react";
+import { usePrivateFileUrl, usePublicFileUrl } from "../../utils/hooks";
+import { useEffect, useMemo, useRef, useState } from "react";
 import LoadingOverlay from "../alerts/LoadingOverlay";
-
+import { supabase } from "../../supabase";
+import { v4 as uuidv4 } from "uuid";
 export default function ProfilePictureAvatar(props: {
   username: string;
   userId: string;
@@ -12,37 +13,47 @@ export default function ProfilePictureAvatar(props: {
   [name: string]: any;
 }) {
   /*maybe use global state for own avatar, so the fast-alert doesnt always refetch when opened */
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [avatarTimestamp, setAvatarTimestamp] = useState<number>(Date.now());
+  const originalUrlRef = useRef<string | undefined>();
   const { username, userId, size, style } = props;
   const { data, error, isLoading, mutate } = usePublicFileUrl(
-    `${userId}`,
+    `${userId}/avatar`,
     "profile-pictures",
   );
+  useEffect(() => {
+    const uniqueId = uuidv4();
+    const avatarTracker = supabase
+      .channel(`files-${username}-tracker-${uniqueId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "key=eq.profile-pictures",
+        },
+        (payload) => {
+          setAvatarTimestamp(Date.now());
+          //mutate();
+        },
+      )
+      .subscribe();
+  }, []);
 
   useEffect(() => {
-    if (!data) return;
-    const timestamp = Date.now();
-    const url = `${data}/avatar?${timestamp}`;
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        setAvatarUrl(url);
-        console.log("matching image");
-      })
-      .catch(() => {
-        setAvatarUrl("");
-        console.log("no matching image");
-      });
+    if (!data || data === "not found") return;
+    originalUrlRef.current = data;
+    setAvatarTimestamp(Date.now());
   }, [data]);
+
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
-  return avatarUrl ? (
+  return avatarTimestamp ? (
     <Avatar.Image
       {...props}
+      key={avatarTimestamp}
       style={style}
       size={size}
-      source={{ uri: avatarUrl }}
+      source={{ uri: originalUrlRef.current + "?t=" + avatarTimestamp }}
     />
   ) : (
     <Avatar.Text
