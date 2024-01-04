@@ -51,7 +51,7 @@ export default function FileCategory({
           event: "*",
           schema: "public",
           table: "tracker",
-          filter: "key=eq.files",
+          filter: "key=eq." + folder,
         },
         (payload) => {
           //console.log("payload: ", payload);

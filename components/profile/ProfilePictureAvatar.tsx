@@ -12,7 +12,6 @@ export default function ProfilePictureAvatar(props: {
   style?: StyleProp<ViewStyle>;
   [name: string]: any;
 }) {
-
   const [avatarTimestamp, setAvatarTimestamp] = useState<number>();
   const originalUrlRef = useRef<string | undefined>();
   const { username, userId, size, style } = props;
@@ -30,12 +29,19 @@ export default function ProfilePictureAvatar(props: {
           event: "*",
           schema: "public",
           table: "tracker",
-          filter: "key=eq.profile-pictures",
+          filter: "key=eq." + userId,
         },
         (payload) => {
-          //Avatar.Text should be shown correctly when filter is applied to only the users folder
-          setAvatarTimestamp(Date.now());
-          //mutate();
+          //console.log(avatarTimestamp);
+          fetch(originalUrlRef.current, {
+            headers: {
+              "Cache-Control": "no-cache",
+            },
+          }).then((response) => {
+            response.ok
+              ? setAvatarTimestamp(Date.now())
+              : setAvatarTimestamp(null);
+          });
         },
       )
       .subscribe();
@@ -44,7 +50,15 @@ export default function ProfilePictureAvatar(props: {
   useEffect(() => {
     if (!data || data === "not found") return;
     originalUrlRef.current = data;
-    setAvatarTimestamp(Date.now());
+    fetch(data, {
+      headers: {
+        "Cache-Control": "no-cache",
+      },
+    }).then((response) => {
+      if (response.ok) {
+        setAvatarTimestamp(Date.now());
+      }
+    });
   }, [data]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return avatarTimestamp ? (
