@@ -12,8 +12,8 @@ export default function ProfilePictureAvatar(props: {
   style?: StyleProp<ViewStyle>;
   [name: string]: any;
 }) {
-  /*maybe use global state for own avatar, so the fast-alert doesnt always refetch when opened */
-  const [avatarTimestamp, setAvatarTimestamp] = useState<number>(Date.now());
+
+  const [avatarTimestamp, setAvatarTimestamp] = useState<number>();
   const originalUrlRef = useRef<string | undefined>();
   const { username, userId, size, style } = props;
   const { data, error, isLoading, mutate } = usePublicFileUrl(
@@ -33,6 +33,7 @@ export default function ProfilePictureAvatar(props: {
           filter: "key=eq.profile-pictures",
         },
         (payload) => {
+          //Avatar.Text should be shown correctly when filter is applied to only the users folder
           setAvatarTimestamp(Date.now());
           //mutate();
         },
@@ -45,7 +46,6 @@ export default function ProfilePictureAvatar(props: {
     originalUrlRef.current = data;
     setAvatarTimestamp(Date.now());
   }, [data]);
-
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return avatarTimestamp ? (
     <Avatar.Image

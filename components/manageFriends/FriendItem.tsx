@@ -26,7 +26,6 @@ export default function FriendItem(props: {
   const friendName = props.friendName
     ? props.friendName
     : useUsername(props.friendId).data;
-  console.log(friendName);
   return (
     <Card style={{ marginBottom: 8 }}>
       <Card.Content style={styles.item}>
