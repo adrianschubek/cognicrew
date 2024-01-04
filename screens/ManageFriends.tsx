@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-dimensions";
 import {
   friendIdsAndNames,
-  useDeleteFriend,
+  useDeleteFriendRequest,
   useFriends,
   useInsertFriend,
 } from "../utils/hooks";
@@ -37,7 +37,7 @@ export default function ManageFriends({ navigation }) {
   //const { friendPairs } = useSubscriptionFriends();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
   const { data, error, isLoading, mutate } = useFriends();
-  const { trigger: deleteFriendRequest } = useDeleteFriend();
+  const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
 
   async function deleteFriend(friend) {

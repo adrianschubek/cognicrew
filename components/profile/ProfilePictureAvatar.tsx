@@ -12,7 +12,7 @@ export default function ProfilePictureAvatar(props: {
   style?: StyleProp<ViewStyle>;
   [name: string]: any;
 }) {
-  const [avatarTimestamp, setAvatarTimestamp] = useState<number>();
+  const [avatarTimestamp, setAvatarTimestamp] = useState<number>(null);
   const originalUrlRef = useRef<string | undefined>();
   const { username, userId, size, style } = props;
   const { data, error, isLoading, mutate } = usePublicFileUrl(
@@ -57,14 +57,19 @@ export default function ProfilePictureAvatar(props: {
     }).then((response) => {
       if (response.ok) {
         setAvatarTimestamp(Date.now());
+      } else {
+        setAvatarTimestamp(null);
       }
     });
   }, [data]);
+  useEffect(() => {
+    console.log("avatarTimestamp: ", username, ": ", avatarTimestamp);
+  }, [username]);
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return avatarTimestamp ? (
     <Avatar.Image
       {...props}
-      key={avatarTimestamp}
+      key={`image-${avatarTimestamp}`}
       style={style}
       size={size}
       source={{ uri: originalUrlRef.current + "?t=" + avatarTimestamp }}
@@ -72,6 +77,7 @@ export default function ProfilePictureAvatar(props: {
   ) : (
     <Avatar.Text
       {...props}
+      key={`text-${username}`}
       style={style}
       size={size}
       label={username.substring(0, 2)}

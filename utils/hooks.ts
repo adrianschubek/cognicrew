@@ -104,7 +104,7 @@ export function useFriends(refetchIndex?: number) {
   }, [refetchIndex]);
   return { data, isLoading, error, mutate };
 }
-export function useDeleteFriend() {
+export function useDeleteFriendRequest() {
   return handleErrors(
     useDeleteMutation(
       supabase.from("friends"),
