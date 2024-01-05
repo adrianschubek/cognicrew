@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Image, StyleProp, ViewStyle } from "react-native";
+import { StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Card, Checkbox, IconButton, Text, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,

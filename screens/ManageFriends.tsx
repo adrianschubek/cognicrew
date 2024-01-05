@@ -11,7 +11,6 @@ import {
 } from "react-native-paper";
 import FriendItem from "../components/manageFriends/FriendItem";
 import {
-  responsiveFontSize,
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {

@@ -1,11 +1,7 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { Divider, Text, TextInput, useTheme } from "react-native-paper";
-import {
-  responsiveFontSize,
-  responsiveHeight,
-} from "react-native-responsive-dimensions";
+import { Text, TextInput } from "react-native-paper";
 import { friendIdsAndNames } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -13,7 +9,6 @@ import FriendItem from "../../components/manageFriends/FriendItem";
 import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function InviteFriends({ navigation }) {
-  const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState("");
   const projectId = useProjectStore((state) => state.projectId);
   const { error: errorAlert, success } = useAlerts();
