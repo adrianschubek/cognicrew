@@ -99,7 +99,7 @@ describe("Cognicards Functionality", () => {
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').first().should('have.value', EDIT_SET_1);   
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').last().click().clear().type(EDIT_SET_2 + '{enter}');
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').last().should('have.value', EDIT_SET_2);     
-        cy.get('[data-testid="manage-sets-done-button"]').click();
+        cy.contains('button', 'Done').click();
         
         // check if edit was successful
         cy.wait(500)
@@ -108,7 +108,7 @@ describe("Cognicards Functionality", () => {
       });
 
       it("can sort flashcard sets by both alphabetical and inverse alphabetical order", function () {
-        cy.get('[data-testid="manage-sets-done-button"]').click();
+        cy.contains('button', 'Done').click();
         cy.get('[data-testid="flashcard-fab-button"]').click();
         cy.contains('button', 'Sort sets by').click();
       
@@ -213,7 +213,7 @@ describe("Cognicards Functionality", () => {
        addAndValidateFlashcardSet(TEST_SET_1);
        addAndValidateFlashcardSet(TEST_SET_2);
        addAndValidateFlashcardSet(TEST_SET_3);
-       cy.get('[data-testid="manage-sets-done-button"]').click();
+       cy.contains('button', 'Done').click();
 
        addNewFlashcard(TEST_SET_1, FLASHCARD_1);
        
@@ -225,7 +225,7 @@ describe("Cognicards Functionality", () => {
      }); 
 
      it("can edit flashcard", function () {
-      cy.get('[data-testid="manage-sets-done-button"]').click();
+      cy.contains('button', 'Done').click();
 
       // navigate to exemplary flashcard
       cy.contains('[data-testid="flashcard-sets-list-folder-button"]', TEST_SET_1).click();
@@ -250,7 +250,7 @@ describe("Cognicards Functionality", () => {
   context("Delete Flashcards", () => {
     // creates a consistent test environment for deletion tests
     beforeEach(() => {
-      cy.get('[data-testid="manage-sets-done-button"]').click();
+      cy.contains('button', 'Done').click();
 
       // navigate to exemplary flashcard set and delete all flashcards
       cy.get('[data-testid="flashcard-sets-list-folder-button"]').first().click();
