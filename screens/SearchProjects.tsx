@@ -4,8 +4,7 @@ import {
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useState } from "react";
 import { SafeAreaView, View, FlatList } from "react-native";
-import { Divider, HelperText, useTheme } from "react-native-paper";
-import { Searchbar } from "react-native-paper";
+import { Divider, HelperText, Searchbar } from "react-native-paper";
 import { supabase } from "../supabase";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";

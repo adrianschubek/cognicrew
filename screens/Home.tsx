@@ -7,7 +7,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
-import { useFileUrl, useUsername } from "../utils/hooks";
+import { useUsername } from "../utils/hooks";
 import { useEffect } from "react";
 
 //for testing purposes
