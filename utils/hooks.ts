@@ -92,6 +92,12 @@ export async function friendIdsAndNames() {
   if (error) console.log(error);
   return { data, error };
 }
+export function useFriendRelations() {
+  const { data, error, isLoading, mutate } = handleErrors(
+    useQuery(supabase.rpc("friend_relations")),
+  );
+  return { data, error, isLoading, mutate };
+}
 /**
  * Returns all Friends.
  * @see Use {@link useFriendsList} instead if you only want tuples non pending friends.

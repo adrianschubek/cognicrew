@@ -15,9 +15,8 @@ import {
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {
-  friendIdsAndNames,
   useDeleteFriendRequest,
-  useFriends,
+  useFriendRelations,
   useInsertFriend,
 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -33,12 +32,10 @@ export default function ManageFriends({ navigation }) {
   const [projectQuery, setProjectQuery] = useState("");
   const [friendRequestsSent, setFriendRequestsSent] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
-  //const [friendPairs, setFriendPairs] = useState([]);
-  //const { friendPairs } = useSubscriptionFriends();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
-  const { data, error, isLoading, mutate } = useFriends();
   const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
+  const { data, error, isLoading, mutate } = useFriendRelations();
 
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
@@ -64,23 +61,6 @@ export default function ManageFriends({ navigation }) {
       return e.username.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
-  function filterForPendingFriends(
-    friendPairs,
-    direction: "sent" | "received",
-  ) {
-    return friendPairs.filter((friendPair) =>
-      //if (User A, User B) => (User B, User A) combination is found return false
-      friendPairs.some(
-        (friendPair2) =>
-          friendPair2.user_from_id === friendPair.user_to_id &&
-          friendPair2.user_to_id === friendPair.user_from_id,
-      )
-        ? false
-        : direction === "received"
-        ? friendPair.user_to_id === user.id
-        : friendPair.user_from_id === user.id,
-    );
-  }
   /**
    * `handleSearch` - Updates the search query state based on user input.
    * @param {string} query - The current text in the search input field.
@@ -110,14 +90,9 @@ export default function ManageFriends({ navigation }) {
 
   useEffect(() => {
     if (!data) return;
-    //setFriendPairs(data);
-    setFriendRequestsSent(filterForPendingFriends(data, "sent")),
-      setFriendRequestsReceived(filterForPendingFriends(data, "received"));
-    const fetchData = async () => {
-      const { data: data2 } = await friendIdsAndNames();
-      setFriendIdsAndNamesData(data2);
-    };
-    fetchData();
+    setFriendRequestsSent(data[0]?.sent_array ?? []);
+    setFriendRequestsReceived(data[0]?.received_array ?? []);
+    setFriendIdsAndNamesData(data[0]?.friend_array ?? []);
   }, [data]);
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
@@ -217,12 +192,13 @@ export default function ManageFriends({ navigation }) {
                 key={index}
                 icon="check"
                 secondIcon="close-circle"
-                friendId={friend.user_from_id}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() =>
                   addFriend({
                     //@ts-expect-error
-                    user_from_id: friend.user_to_id,
-                    user_to_id: friend.user_from_id,
+                    user_from_id: user.id,
+                    user_to_id: friend.id,
                   })
                 }
                 onSecondIconPress={() => {
@@ -232,7 +208,10 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriendRequest(friend);
+                      deleteFriendRequest({
+                        user_from_id: friend.id,
+                        user_to_id: user.id,
+                      });
                     },
                   });
                 }}
@@ -250,7 +229,8 @@ export default function ManageFriends({ navigation }) {
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friendId={friend.user_to_id}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() => {
                   info({
                     //icon: "information-outline",
@@ -258,7 +238,10 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriendRequest(friend);
+                      deleteFriendRequest({
+                        user_from_id: user.id,
+                        user_to_id: friend.id,
+                      });
                     },
                   });
                 }}
