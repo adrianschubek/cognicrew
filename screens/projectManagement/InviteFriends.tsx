@@ -2,11 +2,12 @@ import * as React from "react";
 import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import { Text, TextInput } from "react-native-paper";
-import { friendIdsAndNames } from "../../utils/hooks";
+import { useFriendIdsAndNames, useProjectMembers } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
 import FriendItem from "../../components/manageFriends/FriendItem";
 import { useAlerts } from "react-native-paper-fastalerts";
+import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
 export default function InviteFriends({ navigation }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -14,14 +15,13 @@ export default function InviteFriends({ navigation }) {
   const { error: errorAlert, success } = useAlerts();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
   const [projectMembers, setProjectMembers] = useState([]);
-  const [refetchIndex, setRefetchIndex] = useState(0);
-  async function getProjectMembers() {
-    let { data, error } = await supabase.rpc("project_members", {
-      p_project_id: projectId,
-    });
-    if (error) console.log(error);
-    return { data, error };
-  }
+  const { data, error, isLoading, mutate } = useFriendIdsAndNames();
+  const {
+    data: projectMembersData,
+    error: projectMembersError,
+    isLoading: projectMembersIsLoading,
+    mutate: mutateProjectMembers,
+  } = useProjectMembers(projectId);
   const filteredFriends = friendIdsAndNamesData.filter((friend) =>
     friend.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
@@ -50,15 +50,6 @@ export default function InviteFriends({ navigation }) {
     else success({ message: "User invited to project." });
   };
 
-  const fetchFriends = async () => {
-    const { data } = await friendIdsAndNames();
-    setFriendIdsAndNamesData(data);
-  };
-
-  const fetchProjectMembers = async () => {
-    const { data } = await getProjectMembers();
-    setProjectMembers(data);
-  };
   useEffect(() => {
     const realtimeFriends = supabase
       .channel("invite_friends")
@@ -66,18 +57,21 @@ export default function InviteFriends({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
         (payload) => {
-          fetchFriends();
+          mutate();
         },
       )
       .subscribe();
   }, []);
   useEffect(() => {
-    fetchFriends();
-    fetchProjectMembers();
-  }, []);
+    if (!data) return;
+    setFriendIdsAndNamesData(data);
+  }, [data]);
   useEffect(() => {
-    fetchProjectMembers();
-  }, [refetchIndex]);
+    if (!projectMembersData) return;
+    setProjectMembers(projectMembersData);
+  }, [projectMembersData]);
+  if (isLoading || projectMembersIsLoading)
+    return <LoadingOverlay visible={isLoading || projectMembersIsLoading} />;
   return (
     <ScrollView style={{ flex: 1 }}>
       <View style={{ padding: 20, gap: 10 }}>
@@ -110,7 +104,9 @@ export default function InviteFriends({ navigation }) {
                   icon={isMember ? "close" : "email-plus-outline"}
                   onIconPress={() =>
                     (isMember ? remove(friend.id) : invite(friend.id)).then(
-                      () => setRefetchIndex(refetchIndex + 1),
+                      () => {
+                        mutateProjectMembers();
+                      },
                     )
                   }
                 />

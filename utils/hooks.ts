@@ -84,13 +84,24 @@ export function useRemoveUserFromLearningProject() {
     ),
   );
 }
+export function useProjectMembers(projectId: number) {
+  const { data, error, isLoading, mutate } = handleErrors(
+    useQuery(
+      supabase.rpc("project_members", {
+        p_project_id: projectId,
+      }),
+    ),
+  );
+  return { data, error, isLoading, mutate };
+}
 export function useFriendsList() {
   return handleErrors(useQuery(supabase.rpc("list_friends")));
 }
-export async function friendIdsAndNames() {
-  let { data, error } = await supabase.rpc("list_friends_ids_and_names");
-  if (error) console.log(error);
-  return { data, error };
+export function useFriendIdsAndNames() {
+  const { data, error, isLoading, mutate } = handleErrors(
+    useQuery(supabase.rpc("list_friends_ids_and_names")),
+  );
+  return { data, error, isLoading, mutate };
 }
 export function useFriendRelations() {
   const { data, error, isLoading, mutate } = handleErrors(
