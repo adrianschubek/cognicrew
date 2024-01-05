@@ -116,7 +116,7 @@ describe("Cognicards Functionality", () => {
         function checkSortingOrder(index, comparator) {
           cy.get('[data-testid="right-icon-adornment-container"]').eq(index).click();
           cy.contains('button', 'Accept').click();
-          cy.wait(1000); // Wait for sorting to complete
+          cy.wait(1000); // wait for sorting to complete
       
           cy.get('[data-testid="flashcard-sets-list-folder-button"]').then($buttons => {
             const setNames = $buttons.map((i, el) => Cypress.$(el).text()).get();
@@ -166,7 +166,7 @@ describe("Cognicards Functionality", () => {
           // assert that each button is an HTMLInputElement and get its value
           const values = $buttons.toArray().map(el => (el as HTMLInputElement).value);
 
-          //check if the values include EDIT_SET_1 and EDIT_SET_2
+          // check if the values include EDIT_SET_1 and EDIT_SET_2
           expect(values).to.include(EDIT_SET_1);
           expect(values).to.include(EDIT_SET_2);
         });
