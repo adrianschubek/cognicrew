@@ -61,7 +61,7 @@ export default function InviteFriends({ navigation }) {
   };
   useEffect(() => {
     const realtimeFriends = supabase
-      .channel("friends_all")
+      .channel("invite_friends")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
