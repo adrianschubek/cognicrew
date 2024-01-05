@@ -84,8 +84,8 @@ export default function InviteFriends({ navigation }) {
     fetchProjectMembers();
   }, [refetchIndex]);
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.innerContainer}>
+    <ScrollView style={{ flex: 1 }}>
+      <View style={{ padding: 20, gap: 10 }}>
         <Text variant="headlineSmall" style={{ marginBottom: 10 }}>
           Invite Friends
         </Text>
@@ -127,36 +127,3 @@ export default function InviteFriends({ navigation }) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  innerContainer: {
-    padding: 20,
-    gap: 10,
-  },
-  divider: {
-    height: 1,
-    marginVertical: 8,
-  },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  iconStyle: {
-    // can style the icon later if we want to
-  },
-  iconsContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  friendItem2: {
-    // flexDirection: "row",
-    alignItems: "center",
-  },
-  invitedFriendItem: {
-    opacity: 0.5,
-  },
-});
