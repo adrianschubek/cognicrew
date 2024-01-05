@@ -36,7 +36,7 @@ export default function ManageFriends({ navigation }) {
   const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
   const { data, error, isLoading, mutate } = useFriendRelations();
-
+  const sectionTitleVariant = "titleMedium";
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,
@@ -97,10 +97,10 @@ export default function ManageFriends({ navigation }) {
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
-    <ScrollView style={styles.container} nestedScrollEnabled={true}>
-      <View style={styles.innerContainer}>
+    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true}>
+      <View style={{ padding: 20, gap: 10 }}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Manage Friends</Text>
+          <Text variant="headlineSmall">Manage Friends</Text>
 
           <View style={styles.iconsContainer}>
             <IconButton
@@ -145,22 +145,29 @@ export default function ManageFriends({ navigation }) {
         </View>
 
         {/* Friends list */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>All friends</Text>
+        <View>
+          <Text
+            variant={sectionTitleVariant}
+            style={[styles.sectionTitle, { paddingBottom: 8 }]}
+          >
+            All friends
+          </Text>
 
           <TextInput
+            style={{ marginBottom: 8 }}
             onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
             placeholder="Search friends"
-            style={{ marginBottom: 10 }}
           />
           <ScrollView
-            style={styles.friendsListContainer}
+            style={{ maxHeight: responsiveHeight(36) }}
             nestedScrollEnabled={true}
           >
+            {/*ScrollView does it so the elevation effect looks bad horizontally */}
             {searchFilterFriends.map((friend, index) => (
               <FriendItem
                 key={index}
+                style={{ marginBottom: 8 }}
                 icon="close-circle"
                 friendId={friend.id}
                 friendName={friend.username}
@@ -184,7 +191,7 @@ export default function ManageFriends({ navigation }) {
         {/* Pending friends list */}
         {friendRequestsReceived.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+            <Text variant={sectionTitleVariant} style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
             {friendRequestsReceived.map((friend, index) => (
@@ -222,7 +229,7 @@ export default function ManageFriends({ navigation }) {
         )}
         {friendRequestsSent.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+            <Text variant={sectionTitleVariant} style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
             {friendRequestsSent.map((friend, index) => (
@@ -256,28 +263,11 @@ export default function ManageFriends({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  innerContainer: {
-    padding: 20,
-  },
-  titleText: {
-    fontSize: 28,
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
   section: {
-    //marginBottom: 10,
+    gap: 8,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    paddingVertical: 10,
+    paddingBottom: 2,
   },
   divider: {
     height: 1,
@@ -287,13 +277,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: 10,
   },
   iconsContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  friendsListContainer: {
-    maxHeight: responsiveHeight(38),
   },
 });

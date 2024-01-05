@@ -86,19 +86,19 @@ export default function InviteFriends({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.innerContainer}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Invite Friends</Text>
-        </View>
+        <Text variant="headlineSmall" style={{ marginBottom: 10 }}>
+          Invite Friends
+        </Text>
 
         {/* Friends list */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Your Friends</Text>
+        <View style={{ gap: 10 }}>
+          <Text variant="titleMedium">Your Friends</Text>
           <TextInput
             onChangeText={handleSearch}
             value={searchQuery}
             placeholder="Search to invite"
           />
-          <ScrollView style={styles.friendsListContainer}>
+          <View>
             {filteredFriends.map((friend, index) => {
               //console.log(projectMembers.map((member) => member.user_id)),
               let isMember = projectMembers
@@ -108,6 +108,7 @@ export default function InviteFriends({ navigation }) {
               return (
                 <FriendItem
                   key={index}
+                  style={{ marginBottom: 10 }}
                   friendId={friend.id}
                   friendName={friend.username}
                   //onCheck={() => handleCheckboxChange(friend)}
@@ -120,8 +121,7 @@ export default function InviteFriends({ navigation }) {
                 />
               );
             })}
-          </ScrollView>
-          <Divider style={styles.divider} />
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -134,25 +134,7 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     padding: 20,
-  },
-  titleText: {
-    fontSize: responsiveFontSize(3.5),
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  section: {
-    marginBottom: 10,
-  },
-  sectionTitle: {
-    fontSize: responsiveFontSize(2.75),
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  deleteButtonText: {},
-  acceptButtonText: {},
-  dropdownItemText: {
-    fontSize: responsiveFontSize(2.25),
-    paddingVertical: 10,
+    gap: 10,
   },
   divider: {
     height: 1,
@@ -162,7 +144,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: 10,
   },
   iconStyle: {
     // can style the icon later if we want to
@@ -170,9 +151,6 @@ const styles = StyleSheet.create({
   iconsContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  friendsListContainer: {
-    maxHeight: responsiveHeight(37.5),
   },
   friendItem2: {
     // flexDirection: "row",
