@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, StyleProp, ViewStyle } from "react-native";
 import { Card, Checkbox, IconButton, Text, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
@@ -19,6 +19,7 @@ export default function FriendItem(props: {
   onSecondIconPress?;
   showCheckbox?: boolean;
   onCheck?: () => void;
+  style?: StyleProp<ViewStyle>;
   [name: string]: any;
 }) {
   const theme = useTheme();
@@ -27,7 +28,7 @@ export default function FriendItem(props: {
     ? props.friendName
     : useUsername(props.friendId).data;
   return (
-    <Card style={{ marginBottom: 8 }}>
+    <Card style={props.style}>
       <Card.Content style={styles.item}>
         {props.showCheckbox && (
           <Checkbox

@@ -1,5 +1,4 @@
 import {
-  useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";

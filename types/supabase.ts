@@ -680,6 +680,14 @@ export interface Database {
         }
         Returns: boolean
       }
+      friend_relations: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          friend_array: string[]
+          sent_array: string[]
+          received_array: string[]
+        }[]
+      }
       get_distinct_project_groups: {
         Args: Record<PropertyKey, never>
         Returns: {

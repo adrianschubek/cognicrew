@@ -16,7 +16,6 @@ export default function FileCategory({
   title,
   folder,
   projectId,
-  mutationSignal,
 }) {
   const theme = useTheme();
   const [expanded, setExpanded] = useState<boolean>(false);
@@ -51,19 +50,14 @@ export default function FileCategory({
           event: "*",
           schema: "public",
           table: "tracker",
-          filter: "key=eq.files",
+          filter: "key=eq." + folder,
         },
         (payload) => {
-          //console.log("payload: ", payload);
-          //console.log("new: ", payload.new);
           mutate();
         },
       )
       .subscribe();
   }, []);
-  /*useEffect(() => {
-    if (!mutationSignal) return;
-  }, [mutationSignal]);*/
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Accordion

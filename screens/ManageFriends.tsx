@@ -11,13 +11,11 @@ import {
 } from "react-native-paper";
 import FriendItem from "../components/manageFriends/FriendItem";
 import {
-  responsiveFontSize,
   responsiveHeight,
 } from "react-native-responsive-dimensions";
 import {
-  friendIdsAndNames,
-  useDeleteFriend,
-  useFriends,
+  useDeleteFriendRequest,
+  useFriendRelations,
   useInsertFriend,
 } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -33,13 +31,11 @@ export default function ManageFriends({ navigation }) {
   const [projectQuery, setProjectQuery] = useState("");
   const [friendRequestsSent, setFriendRequestsSent] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
-  //const [friendPairs, setFriendPairs] = useState([]);
-  //const { friendPairs } = useSubscriptionFriends();
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
-  const { data, error, isLoading, mutate } = useFriends();
-  const { trigger: deleteFriendRequest } = useDeleteFriend();
+  const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
-
+  const { data, error, isLoading, mutate } = useFriendRelations();
+  const sectionTitleVariant = "titleMedium";
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,
@@ -64,23 +60,6 @@ export default function ManageFriends({ navigation }) {
       return e.username.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
-  function filterForPendingFriends(
-    friendPairs,
-    direction: "sent" | "received",
-  ) {
-    return friendPairs.filter((friendPair) =>
-      //if (User A, User B) => (User B, User A) combination is found return false
-      friendPairs.some(
-        (friendPair2) =>
-          friendPair2.user_from_id === friendPair.user_to_id &&
-          friendPair2.user_to_id === friendPair.user_from_id,
-      )
-        ? false
-        : direction === "received"
-        ? friendPair.user_to_id === user.id
-        : friendPair.user_from_id === user.id,
-    );
-  }
   /**
    * `handleSearch` - Updates the search query state based on user input.
    * @param {string} query - The current text in the search input field.
@@ -110,22 +89,17 @@ export default function ManageFriends({ navigation }) {
 
   useEffect(() => {
     if (!data) return;
-    //setFriendPairs(data);
-    setFriendRequestsSent(filterForPendingFriends(data, "sent")),
-      setFriendRequestsReceived(filterForPendingFriends(data, "received"));
-    const fetchData = async () => {
-      const { data: data2 } = await friendIdsAndNames();
-      setFriendIdsAndNamesData(data2);
-    };
-    fetchData();
+    setFriendRequestsSent(data[0]?.sent_array ?? []);
+    setFriendRequestsReceived(data[0]?.received_array ?? []);
+    setFriendIdsAndNamesData(data[0]?.friend_array ?? []);
   }, [data]);
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
-    <ScrollView style={styles.container} nestedScrollEnabled={true}>
-      <View style={styles.innerContainer}>
+    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true}>
+      <View style={{ padding: 20, gap: 10 }}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Manage Friends</Text>
+          <Text variant="headlineSmall">Manage Friends</Text>
 
           <View style={styles.iconsContainer}>
             <IconButton
@@ -170,22 +144,29 @@ export default function ManageFriends({ navigation }) {
         </View>
 
         {/* Friends list */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>All friends</Text>
+        <View>
+          <Text
+            variant={sectionTitleVariant}
+            style={[styles.sectionTitle, { paddingBottom: 8 }]}
+          >
+            All friends
+          </Text>
 
           <TextInput
+            style={{ marginBottom: 8 }}
             onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
             placeholder="Search friends"
-            style={{ marginBottom: 10 }}
           />
           <ScrollView
-            style={styles.friendsListContainer}
+            style={{ maxHeight: responsiveHeight(36) }}
             nestedScrollEnabled={true}
           >
+            {/*ScrollView does it so the elevation effect looks bad horizontally */}
             {searchFilterFriends.map((friend, index) => (
               <FriendItem
                 key={index}
+                style={{ marginBottom: 8 }}
                 icon="close-circle"
                 friendId={friend.id}
                 friendName={friend.username}
@@ -209,7 +190,7 @@ export default function ManageFriends({ navigation }) {
         {/* Pending friends list */}
         {friendRequestsReceived.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+            <Text variant={sectionTitleVariant} style={styles.sectionTitle}>
               Pending received friend requests
             </Text>
             {friendRequestsReceived.map((friend, index) => (
@@ -217,12 +198,13 @@ export default function ManageFriends({ navigation }) {
                 key={index}
                 icon="check"
                 secondIcon="close-circle"
-                friendId={friend.user_from_id}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() =>
                   addFriend({
                     //@ts-expect-error
-                    user_from_id: friend.user_to_id,
-                    user_to_id: friend.user_from_id,
+                    user_from_id: user.id,
+                    user_to_id: friend.id,
                   })
                 }
                 onSecondIconPress={() => {
@@ -232,7 +214,10 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriendRequest(friend);
+                      deleteFriendRequest({
+                        user_from_id: friend.id,
+                        user_to_id: user.id,
+                      });
                     },
                   });
                 }}
@@ -243,14 +228,15 @@ export default function ManageFriends({ navigation }) {
         )}
         {friendRequestsSent.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
+            <Text variant={sectionTitleVariant} style={styles.sectionTitle}>
               Pending sent friend requests
             </Text>
             {friendRequestsSent.map((friend, index) => (
               <FriendItem
                 key={index}
                 icon="close-circle"
-                friendId={friend.user_to_id}
+                friendId={friend.id}
+                friendName={friend.username}
                 onIconPress={() => {
                   info({
                     //icon: "information-outline",
@@ -258,7 +244,10 @@ export default function ManageFriends({ navigation }) {
                     message: "Are you sure you want to delete this friend?",
                     okText: "Delete Friend",
                     okAction: () => {
-                      deleteFriendRequest(friend);
+                      deleteFriendRequest({
+                        user_from_id: user.id,
+                        user_to_id: friend.id,
+                      });
                     },
                   });
                 }}
@@ -273,28 +262,11 @@ export default function ManageFriends({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  innerContainer: {
-    padding: 20,
-  },
-  titleText: {
-    fontSize: 28,
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
   section: {
-    //marginBottom: 10,
+    gap: 8,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  dropdownItemText: {
-    fontSize: 16,
-    paddingVertical: 10,
+    paddingBottom: 2,
   },
   divider: {
     height: 1,
@@ -304,13 +276,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingBottom: 10,
   },
   iconsContainer: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  friendsListContainer: {
-    maxHeight: responsiveHeight(38),
   },
 });
