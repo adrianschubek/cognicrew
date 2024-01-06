@@ -54,16 +54,16 @@ describe("Cognicards Functionality", () => {
     cy.get('[data-testid="add-new-flashcard-button"]').click();
     cy.wait(500); // wait for flashcard to render after pressing add button
   }
-
+  
   context("Flashcard sets and flashcards", () => {
-
+    
     beforeEach(() => {
       // navigate to the correct page before performing test
       cy.get('[data-testid="flashcard-fab-button"]').click();
       cy.contains('button', 'Create, delete and edit flashcard sets').click();
-      cy.wait(500)
+      cy.wait(1000)
     })
-     
+    
     context("Create and Edit Sets", () => { 
       it("can add flashcard set", function () {
         // check if there are any sets to clear
@@ -139,8 +139,14 @@ describe("Cognicards Functionality", () => {
 
     
     context("Search Sets", () => {
+
+      beforeEach(() => {
+        cy.wait(500);
+      })
+
       it("can search flashcard set by exact name", function () {
         cy.get('[data-testid="input-search-for-flashcard-set"]').click().type(EDIT_SET_1);
+        cy.wait(500);
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').should('have.value', EDIT_SET_1);
       });
 
@@ -148,6 +154,7 @@ describe("Cognicards Functionality", () => {
 
       it("can search flashcard set by partial name", function () {
         cy.get('[data-testid="input-search-for-flashcard-set"]').click().type(searchTerm);
+        cy.wait(500);
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').then($buttons => {
 
           // assert that each button is an HTMLInputElement and get its value
@@ -161,6 +168,7 @@ describe("Cognicards Functionality", () => {
 
       it("search is case insensitive", function () {
         cy.get('[data-testid="input-search-for-flashcard-set"]').click().type(searchTerm.toLowerCase());
+        cy.wait(500);
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').then($buttons => {
 
           // assert that each button is an HTMLInputElement and get its value
