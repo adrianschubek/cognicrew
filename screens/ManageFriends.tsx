@@ -8,11 +8,10 @@ import {
   TextInput,
   useTheme,
   IconButton,
+  Searchbar,
 } from "react-native-paper";
 import FriendItem from "../components/manageFriends/FriendItem";
-import {
-  responsiveHeight,
-} from "react-native-responsive-dimensions";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 import {
   useDeleteFriendRequest,
   useFriendRelations,
@@ -151,12 +150,15 @@ export default function ManageFriends({ navigation }) {
           >
             All friends
           </Text>
-
-          <TextInput
-            style={{ marginBottom: 8 }}
+          <Searchbar
+            style={{
+              marginBottom: 8,
+              elevation: 0,
+              borderRadius: 10,
+            }}
+            placeholder="Search"
             onChangeText={(query) => handleSearch(query, "friends")}
             value={searchQuery}
-            placeholder="Search friends"
           />
           <ScrollView
             style={{ maxHeight: responsiveHeight(36) }}

@@ -113,7 +113,7 @@ export default function FileItem({ file, filePath, folder, icon }) {
    * @param {object} file - The file to download.
    */
   async function downloadFile() {
-    const { status } = await MediaLibrary.getPermissionsAsync();
+    const { status } = await MediaLibrary.requestPermissionsAsync();
     if (status !== "granted") {
       alerts.error({
         message: "Sorry, we need camera roll permissions to make this work!",
