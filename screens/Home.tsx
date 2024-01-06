@@ -33,7 +33,13 @@ export default function HomeScreen({ navigation }) {
       </>
     );
   return (
-    <View style={{ flex: 1, justifyContent: "center", paddingHorizontal: 20 }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        marginHorizontal: 20,
+      }}
+    >
       <StatusBar style="auto" />
       <View
         style={{
@@ -50,9 +56,15 @@ export default function HomeScreen({ navigation }) {
           size={48}
         />
       </View>
-      <View style={{ flex: 1, justifyContent: "space-around", padding: 10 }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-around",
+          padding: 10,
+        }}
+      >
         <Card
-          style={{ padding: 20, marginVertical: 10 }}
+          style={{ padding: 20 }}
           mode="contained"
           theme={{
             colors: { surfaceVariant: theme.colors.secondaryContainer },
