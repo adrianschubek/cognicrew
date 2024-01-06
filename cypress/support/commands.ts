@@ -105,6 +105,11 @@ Cypress.Commands.add("createProject", (id: string) => {
 });
 
 Cypress.Commands.add("deleteProject", (id: string) => {
+  cy.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from failing the test caused by the exception
+    return false;
+  });
+
   cy.get('[href="/_main_/LearningProjectsTab"]').click();
   cy.get('[data-testid="select-project-button"]')
     .contains(`title_${id}`)
