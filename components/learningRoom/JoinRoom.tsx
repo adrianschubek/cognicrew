@@ -20,7 +20,7 @@ export default function JoinRoom({ navigation }) {
   const setRoom = useRoomStore((state) => state.setRoom);
   return (
     <React.Fragment>
-      <Text style={[styles.container, { textAlign: "center", marginTop: -10 }]}>
+      <Text style={[styles.container, { textAlign: "center" }]}>
         Enter Join Code
       </Text>
       <TextInput
@@ -43,7 +43,7 @@ export default function JoinRoom({ navigation }) {
         maxLength={7}
         inputMode="numeric"
         mode="outlined"
-        style={{ textAlign: "center", marginBottom: 10, height: 38}}
+        style={{ textAlign: "center", marginBottom: 10 }}
       />
       <View style={{ flexDirection: "row", gap: 5 }}>
         <Button

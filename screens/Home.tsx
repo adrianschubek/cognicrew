@@ -1,9 +1,18 @@
 import * as React from "react";
-import { View, StyleSheet, Image, ImageBackground, StatusBar, Text } from "react-native";
-import { Card, useTheme } from "react-native-paper";
+import { View, StyleSheet, Image } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import {
+  Text,
+  Card,
+  useTheme,
+} from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
-import { useUsername } from "../utils/hooks";
+import { useFileUrl, useUsername } from "../utils/hooks";
 import { useEffect } from "react";
+
+//for testing purposes
+import { NAVIGATION } from "../types/common";
+import { useAvatarStore } from "../stores/AvatarStore";
 import { useAuth } from "../providers/AuthProvider";
 import ProfilePictureAvatar from "../components/profile/ProfilePictureAvatar";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
@@ -12,7 +21,6 @@ export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
   const { user } = useAuth();
   const theme = useTheme();
-
   useEffect(() => {
     navigation.setOptions({
       title: "CogniCrew",
@@ -25,43 +33,51 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <>
-        <StatusBar barStyle="light-content" />
+        <StatusBar style="auto" />
         <LoadingOverlay visible={isLoading} />
       </>
     );
-  }
-
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
-      <ImageBackground 
-        source={require("../assets/HomeScreen_3.0.png")} 
-        style={styles.fullBackground}
-      >
+      <StatusBar style="auto" />
+      <View style={styles.header}>
         <Text style={styles.headerText}>
           Hello, {isLoading ? "...." : data}
         </Text>
-        <View style={styles.avatarOutline}>
-          <ProfilePictureAvatar
-            style={styles.avatar}
-            username={isLoading ? "...." : data}
-            userId={user.id}
-            size={40}
-          />
-        </View>
-      </ImageBackground>
-      <Card
-        style={styles.card}
-        mode="contained"
-        theme={{
-          colors: { surfaceVariant: theme.colors.secondaryContainer },
+        <ProfilePictureAvatar
+          style={styles.avatar}
+          username={isLoading ? "...." : data}
+          userId={user.id}
+          size={48}
+        />
+      </View>
+      <View style={styles.body}>
+        <Card
+          style={styles.card}
+          mode="contained"
+          theme={{
+            colors: { surfaceVariant: theme.colors.secondaryContainer },
+          }}
+        >
+          <JoinRoom navigation={navigation} />
+        </Card>
+      </View>
+      {/* for testing purposes*/}
+      {/* 
+      <Button
+      style={{marginBottom: 20}}
+        onPress={() => {
+          navigation.navigate(NAVIGATION.END_RESULTS, {
+            roomState: null,
+            user_id: null,
+          });
         }}
       >
-        <JoinRoom navigation={navigation} />
-      </Card>
+        PRESS ME, DADDY!
+      </Button>*/}
     </View>
   );
 }
@@ -69,48 +85,35 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-start",
-    paddingHorizontal: 0,
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
   },
   headerText: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    position: 'absolute',
-    top: 28,
-    alignSelf: 'center', 
+    fontSize: 20,
+    fontWeight: "bold",
   },
   headerIcon: {
     height: 42,
     width: 41,
   },
-  greetingIcon: {
-    height: 42,
-    width: 41,
-  },
   avatar: {},
-  avatarOutline: {
-    borderWidth: 2,
-    borderColor: 'white',
-    borderRadius: 25,
-    overflow: 'hidden',
-    position: 'absolute',
-    right: 8,
-    top: 17,
-  },
-  fullBackground: {
-    width: '100%',
-    height: '89%',
-    resizeMode: 'cover',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+  body: {
+    flex: 1,
+    justifyContent: "space-around",
+    padding: 10,
   },
   card: {
     padding: 20,
-    marginVertical: 0,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E8E8E8',
-    marginTop: -76, // see for yourself: -67 would allow for the ImageBackground to be completely visible, but I like -76 better since the card is then completely visible
-                    // and takes up more space of the screen 
+    marginVertical: 10,
+  },
+  button: {
+    width: "80%",
+    alignSelf: "center",
   },
 });
