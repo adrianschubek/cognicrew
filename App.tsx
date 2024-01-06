@@ -1,4 +1,5 @@
 import * as React from "react";
+import 'react-native-get-random-values'
 import {
   MD3DarkTheme,
   MD3LightTheme,
