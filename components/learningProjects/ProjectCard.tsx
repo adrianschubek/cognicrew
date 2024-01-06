@@ -1,15 +1,21 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
 import LearningProjectAvatarWithTitle from "../learningProject/LearningProjectAvatarWithTitle";
+import { supabase } from "../../supabase";
+import { useNavigation } from "@react-navigation/native";
+import { NAVIGATION } from "../../types/common";
+import { useRoomStore } from "../../stores/RoomStore";
 
 export default function ProjectCard(props: {
   item: any;
   save: (item, vars) => void;
 }) {
   const theme = useTheme();
+  const navigation = useNavigation();
   const { confirm } = useAlerts();
+  const setRoom = useRoomStore((state) => state.setRoom);
   const { item, save } = props;
   const [expanded, setExpanded] = useState<boolean>(false);
   const hiddenInfo = [{ title: "Description", data: item.project_description }];
@@ -22,7 +28,7 @@ export default function ProjectCard(props: {
   ];
   const ratingStats = {
     title: "Rating",
-    data: item.project_avg_rating.toFixed(2),
+    data: item.project_avg_rating.toFixed(1),
     icon: <Icon source="star" size={30} color="#ffb300" />,
   };
   return (
@@ -101,19 +107,20 @@ export default function ProjectCard(props: {
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  // justifyContent: "space-between",
+                  // alignItems: "center",
                 }}
               >
                 <Text
                   variant="bodyMedium"
-                  style={{ fontStyle: "italic", width: "80%" }}
+                  style={{ fontStyle: "italic", marginRight: "auto" }}
                 >
-                  Tags: {item.project_tags}{/*maybe return tags as string[], so this look nicer */}
+                  Tags: {item.project_tags}
+                  {/*maybe return tags as string[], so this look nicer */}
                 </Text>
                 <Button
-                  buttonColor={theme.colors.primary}
-                  textColor={theme.colors.onPrimary}
+                  mode="outlined"
+                  style={{ marginRight: 10 }}
                   onPress={() => {
                     confirm({
                       title: "Clone project",
@@ -135,6 +142,75 @@ export default function ProjectCard(props: {
                   }}
                 >
                   Clone
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={() =>
+                    confirm({
+                      icon: "play",
+                      title: "Create Room",
+                      okText: "Create",
+                      okAction: async (params) => {
+                        const { data, error } = await supabase.rpc(
+                          "create_room",
+                          {
+                            p_project_id: parseInt(item.project_id),
+                            p_name: params[0] ?? null,
+                            p_code: parseInt(params[1]) ?? null,
+                            p_share_code: parseInt(params[2]) ?? null,
+                            p_private: !!params[3],
+                            p_size: parseInt(params[4]) ?? null,
+                          },
+                        );
+                        navigation.navigate(NAVIGATION.LOBBY as never);
+                        if (error) return error.message;
+                        setRoom(data as any);
+                      },
+                      fields: [
+                        {
+                          label: "Name",
+                          icon: "tag-text",
+                          defaultValue: item.project_name,
+                        },
+                        {
+                          label: "Password",
+                          type: "number",
+                          icon: "key",
+                          helperText: "A password required to join. Optional.",
+                          validator: (value) => /^[0-9]{0,6}$/.test(value),
+                          errorText: "Room code must be between 0 and 6 digits",
+                        },
+                        {
+                          label: "Join Code",
+                          type: "number",
+                          icon: "share-circle",
+                          helperText:
+                            "A code to enter this room directly. This also bypasses the password. Optional.",
+                          validator: (value) => /^[0-9]{0,6}$/.test(value),
+                          errorText: "Room code must be between 0 and 6 digits",
+                        },
+                        {
+                          label: "Friends only",
+                          icon: "account-heart",
+                          type: "checkbox",
+                          helperText: "Only friends can join this room.",
+                        },
+                        {
+                          label: "Size (1-100)",
+                          type: "number",
+                          helperText:
+                            "The maximum amount of players in this room.",
+                          icon: "account-group",
+                          defaultValue: "10",
+                          validator: (value) =>
+                            /^[1-9][0-9]?$|^100$/.test(value),
+                          errorText: "Size must be between 1 and 100",
+                        },
+                      ],
+                    })
+                  }
+                >
+                  Play
                 </Button>
               </View>
             </View>
