@@ -257,7 +257,7 @@ async function mainLoop() {
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === state.room_id,
     )?.data as PrivateRoomState;
-    // TODO: |> maybe: if players is not in room -> remove them from the players[]. later. Performacne cost?
+    // TODO: |> maybe: if players is not in room -> remove them from the players[]. later. Performance cost?
 
     // |> foreach player in room -> update currentCorrect if player has submitted an answer
     // TODO: only do this when timer ends  ?
@@ -294,7 +294,7 @@ async function mainLoop() {
     ) {
       newState.screen = ScreenState.ROUND_SOLUTION;
 
-      // if this triggered by all players already answred then set roundEndsAt to now so that the following screens dont delay.
+      // if this triggered by all players already answered then set roundEndsAt to now so that the following screens don't delay.
       if (newState.players.every((p) => p.currentCorrect !== null)) {
         newState.roundEndsAt = dayjs().valueOf();
       }
@@ -485,7 +485,7 @@ async function mainLoop() {
             continue;
         }
       } else {
-        // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievemnts, do nothing.
+        // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievements, do nothing.
         newState.screen = ScreenState.END_RESULTS;
 
         await updateStats(newState, privateState);
@@ -499,7 +499,7 @@ async function mainLoop() {
         dayjs().valueOf()
     ) {
       // After game end / END_RESULTS screen is shown
-      // dont close lobby instead let stay in obby so host can start new game
+      // don't close lobby instead let stay in obby so host can start new game
       newState.screen = ScreenState.LOBBY;
       newState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
