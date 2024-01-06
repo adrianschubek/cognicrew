@@ -48,6 +48,7 @@ export default function HomeScreen({ navigation }) {
           alignItems: "center",
           justifyContent: "space-between",
           paddingTop: 10,
+          marginBottom: 10,
         }}
       >
         <Text variant="titleLarge">Hello, {isLoading ? "...." : data}</Text>
@@ -66,7 +67,7 @@ export default function HomeScreen({ navigation }) {
         <JoinRoom
           style={{
             gap: 5,
-            alignSelf: "flex-start",
+            //alignSelf: "flex-start",
           }}
         />
         <RoomsList />

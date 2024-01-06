@@ -1,4 +1,11 @@
-import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
+import {
+  Card,
+  Divider,
+  Icon,
+  Text,
+  useTheme,
+  Searchbar,
+} from "react-native-paper";
 import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
@@ -157,6 +164,17 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
   if (isLoading) return <LoadingOverlay visible />;
   return (
     <View style={[props.style, { gap: 5 }]}>
+      {/* <Searchbar
+        style={{
+          marginTop: 10,
+          marginBottom: 5,
+          elevation: 0,
+          borderRadius: 10,
+        }}
+        placeholder="Search"
+        value={""}
+      />
+      */}
       {roomTypes.map((roomType, index) => (
         <Fragment key={index}>
           <Text variant="titleSmall" style={{ marginBottom: 2 }}>
