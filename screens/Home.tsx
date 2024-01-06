@@ -1,13 +1,14 @@
 import * as React from "react";
-import { View, Image } from "react-native";
+import { View, Image, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Text, Card, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import { useUsername } from "../utils/hooks";
 import { useEffect } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import ProfilePictureAvatar from "../components/profile/ProfilePictureAvatar";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
+import RoomsList from "./RoomsList";
 
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
@@ -33,11 +34,11 @@ export default function HomeScreen({ navigation }) {
       </>
     );
   return (
-    <View
+    <ScrollView
       style={{
         flex: 1,
-        justifyContent: "center",
-        marginHorizontal: 20,
+        paddingHorizontal: 35,
+        gap: 10,
       }}
     >
       <StatusBar style="auto" />
@@ -46,7 +47,7 @@ export default function HomeScreen({ navigation }) {
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: 10,
+          paddingTop: 10,
         }}
       >
         <Text variant="titleLarge">Hello, {isLoading ? "...." : data}</Text>
@@ -58,21 +59,18 @@ export default function HomeScreen({ navigation }) {
       </View>
       <View
         style={{
-          flex: 1,
-          justifyContent: "space-around",
-          padding: 10,
+          marginBottom: 20,
+          gap: 10,
         }}
       >
-        <Card
-          style={{ padding: 20 }}
-          mode="contained"
-          theme={{
-            colors: { surfaceVariant: theme.colors.secondaryContainer },
+        <JoinRoom
+          style={{
+            gap: 5,
+            alignSelf: "flex-start",
           }}
-        >
-          <JoinRoom navigation={navigation} />
-        </Card>
+        />
+        <RoomsList />
       </View>
-    </View>
+    </ScrollView>
   );
 }
