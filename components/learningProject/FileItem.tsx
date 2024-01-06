@@ -17,21 +17,24 @@ import LoadingOverlay from "../alerts/LoadingOverlay";
 export default function FileItem({ file, filePath, folder, icon }) {
   const theme = useTheme();
   const alerts = useAlerts();
-  const [photoUrl, setPhotoUrl] = useState<string>();
+  const [fileUrl, setFileUrl] = useState<string>();
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
-  const { data, error, isLoading, mutate } = icon
-    ? { data: null, error: null, isLoading: false, mutate: null }
-    : usePrivateFileUrl(filePath, "files");
+  const { data, error, isLoading, mutate } = usePrivateFileUrl(
+    filePath,
+    "files",
+  );
   useEffect(() => {
     if (!data) return;
-    setPhotoUrl(data);
-    Image.getSize(data, (width, height) => {
-      if (width > height) {
-        setImageSize({ width: 80, height: 80 * (height / width) });
-      } else {
-        setImageSize({ width: 80 * (width / height), height: 80 });
-      }
-    });
+    setFileUrl(data);
+    if (folder === "photos") {
+      Image.getSize(data, (width, height) => {
+        if (width > height) {
+          setImageSize({ width: 80, height: 80 * (height / width) });
+        } else {
+          setImageSize({ width: 80 * (width / height), height: 80 });
+        }
+      });
+    }
   }, [data]);
   //console.log(fullUrl);
   /* const {
@@ -62,7 +65,7 @@ export default function FileItem({ file, filePath, folder, icon }) {
     try {
       if (folder === "photos") {
         // Fetch the Blob from the download URL
-        const response = await fetch(photoUrl);
+        const response = await fetch(fileUrl);
         const blob = await response.blob();
 
         // Convert the Blob to base64
@@ -89,7 +92,7 @@ export default function FileItem({ file, filePath, folder, icon }) {
         reader.readAsDataURL(blob);
       } else {
         try {
-          const { uri } = await FileSystem.downloadAsync(photoUrl, localUri);
+          const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
           console.log("File downloaded to:", uri);
         } catch (error) {
           console.log("Error downloading the file: ", error);
@@ -120,7 +123,7 @@ export default function FileItem({ file, filePath, folder, icon }) {
           }}
         >
           <Image
-            source={icon ? icon : { uri: photoUrl }}
+            source={icon ? icon : { uri: fileUrl }}
             style={
               icon
                 ? styles.fileIcon
