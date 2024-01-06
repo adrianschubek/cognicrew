@@ -50,12 +50,13 @@ Cypress.Commands.add("relog", () => {
 });
 
 Cypress.Commands.add("clearLinks", () => {
-  cy.get("body").then((body) => {
+  cy.get('body').then((body) => {
     if (body.find('[data-testid="link-card"]').length > 0) {
       cy.get('[data-testid="link-card"]').each(() => {
         cy.get('[data-testid="vertical-dots-button"]').first().click();
+        cy.wait(1000);
         cy.get('[data-testid="delete-link-button"]').click();
-        cy.wait(500);
+        cy.wait(1000);
       });
     }
   });
