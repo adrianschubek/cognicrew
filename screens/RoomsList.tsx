@@ -1,10 +1,17 @@
-import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
-import { ScrollView, TouchableOpacity } from "react-native";
+import {
+  Card,
+  Divider,
+  Icon,
+  Text,
+  useTheme,
+  Searchbar,
+} from "react-native-paper";
+import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
-import { useFocusEffect, useIsFocused } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
 import { useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
@@ -12,7 +19,6 @@ import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
 
 function Room({ room }) {
-
   const theme = useTheme();
   const { data: username } = useUsername();
   const user = useAuth().user;
@@ -99,14 +105,13 @@ function Room({ room }) {
   );
 }
 
-export default function RoomsList() {
+export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
   const theme = useTheme();
   const {
     data: rooms,
     isLoading,
     mutate,
   } = useQuery(supabase.rpc("list_rooms"), {});
-
   const [friends, setFriends] = useState([]);
   const getFriends = async () => {
     const { data, error } = await supabase.rpc("list_friends_ids_and_names");
@@ -129,7 +134,12 @@ export default function RoomsList() {
       .channel("list-rooms-tracker")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "tracker", filter: "key=eq.rooms" },
+        {
+          event: "*",
+          schema: "public",
+          table: "tracker",
+          filter: "key=eq.rooms",
+        },
         (payload) => {
           mutate();
           getFriends();
@@ -147,72 +157,52 @@ export default function RoomsList() {
   const otherRooms = (rooms ?? []).filter(
     (room) => !friends.includes(room.host),
   );
-
+  const roomTypes = [
+    { title: "Friend Rooms", rooms: friendRooms },
+    { title: "Other Rooms", rooms: otherRooms },
+  ];
   if (isLoading) return <LoadingOverlay visible />;
-
   return (
-    <>
-      <ScrollView
+    <View style={[props.style, { gap: 5 }]}>
+      {/* <Searchbar
         style={{
-          margin: 10,
-          marginHorizontal: 15,
+          marginTop: 10,
+          marginBottom: 5,
+          elevation: 0,
+          borderRadius: 10,
+        }}
+        placeholder="Search"
+        value={""}
+      />
+      */}
+      {roomTypes.map((roomType, index) => (
+        <Fragment key={index}>
+          <Text variant="titleSmall" style={{ marginBottom: 2 }}>
+            {roomType.title}
+          </Text>
+          {roomType.rooms.map((room) => (
+            <Room key={room.id} room={room} />
+          ))}
+          {roomType.rooms.length === 0 && (
+            <Card mode="contained">
+              <Card.Content
+                style={{ alignContent: "center", alignItems: "center" }}
+              >
+                <Text>No active Rooms</Text>
+              </Card.Content>
+            </Card>
+          )}
+        </Fragment>
+      ))}
+      <Card.Content
+        style={{
+          marginTop: 20,
+          alignContent: "center",
+          alignItems: "center",
         }}
       >
-        <Text variant="titleMedium">Friend Rooms</Text>
-        {friendRooms.map((room) => (
-          <Room key={room.id} room={room} />
-        ))}
-        {friendRooms.length === 0 && (
-          <Card mode="contained">
-            <Card.Content
-              style={{ alignContent: "center", alignItems: "center" }}
-            >
-              <Text>No active Rooms</Text>
-            </Card.Content>
-          </Card>
-        )}
-        <Text variant="titleMedium">All Rooms</Text>
-        {otherRooms.map((room) => (
-          <Room key={room.id} room={room} />
-        ))}
-        {otherRooms.length === 0 && (
-          <Card mode="contained">
-            <Card.Content
-              style={{ alignContent: "center", alignItems: "center" }}
-            >
-              <Text>No active Rooms</Text>
-            </Card.Content>
-          </Card>
-        )}
-        <Card.Content
-          style={{
-            marginTop: 20,
-            alignContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <LoadingAnimation color={theme.colors.secondaryContainer} />
-        </Card.Content>
-      </ScrollView>
-      {/* TODO: maybe remove FAb and use two buttons on home screen, Join and List Rooms */}
-      {/*  <FAB
-        icon={"location-enter"}
-        onPress={() => {
-          info({
-            title: "Coming soon",
-            message: "This feature is coming soon.",
-          });
-        }}
-        color={theme.colors.onPrimary}
-        style={{
-          position: "absolute",
-          margin: 16,
-          right: 0,
-          bottom: 0,
-          backgroundColor: theme.colors.primary,
-        }}
-        label={"Enter Room code"}
-      /> */}
-    </>
+        <LoadingAnimation color={theme.colors.secondaryContainer} />
+      </Card.Content>
+    </View>
   );
 }

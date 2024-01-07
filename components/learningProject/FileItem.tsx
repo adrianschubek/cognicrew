@@ -14,6 +14,8 @@ import { useAlerts } from "react-native-paper-fastalerts";
 //import { useDeleteFile } from "../../utils/hooks";
 import { usePrivateFileUrl } from "../../utils/hooks";
 import LoadingOverlay from "../alerts/LoadingOverlay";
+import * as Sharing from "expo-sharing";
+
 export default function FileItem({ file, filePath, folder, icon }) {
   const theme = useTheme();
   const alerts = useAlerts();
@@ -129,9 +131,26 @@ export default function FileItem({ file, filePath, folder, icon }) {
     try {
       const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
       // Save the file to the camera roll
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      await MediaLibrary.createAlbumAsync("Download", asset, false);
-      console.log("File saved to camera roll");
+      
+      //test for pdf, thats why folder === "pdf" is in there.
+      if (folder === "photos" || folder === "pdf") {
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        const album = await MediaLibrary.getAlbumAsync("Download");
+        if (album == null) {
+          await MediaLibrary.createAlbumAsync("Download", asset, false);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        }
+        console.log("File saved to camera roll");
+      } else {
+        // Check if sharing is available
+        if (!(await Sharing.isAvailableAsync())) {
+          alert(`Uh oh, sharing isn't available on your platform`);
+          return;
+        }
+        // Share the file
+        await Sharing.shareAsync(uri);
+      }
       //console.log("File downloaded to:", uri);
     } catch (error) {
       console.log("Error downloading the file: ", error);
