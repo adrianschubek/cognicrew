@@ -7,6 +7,8 @@ import { supabase } from "../../supabase";
 import { useNavigation } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
 import { useRoomStore } from "../../stores/RoomStore";
+import dayjs from "dayjs";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function ProjectCard(props: {
   item: any;
@@ -16,6 +18,7 @@ export default function ProjectCard(props: {
   const navigation = useNavigation();
   const { confirm } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
+  const setProjectId = useProjectStore((state) => state.setProjectId);
   const { item, save } = props;
   const [expanded, setExpanded] = useState<boolean>(false);
   const hiddenInfo = [{ title: "Description", data: item.project_description }];
@@ -24,13 +27,17 @@ export default function ProjectCard(props: {
       title: "Owner",
       data: item.project_owner_name /*+ "xxxxxxxx"*/,
     },
-    { title: "Created in", data: item.project_created_at.substring(0, 4) },
+    {
+      title: "Created",
+      data: dayjs(item.project_created_at).format("DD.MM.YYYY HH:mm"),
+    },
   ];
   const ratingStats = {
     title: "Rating",
     data: item.project_avg_rating.toFixed(1),
     icon: <Icon source="star" size={30} color="#ffb300" />,
   };
+
   return (
     <TouchableOpacity
       onPress={() => {
@@ -154,7 +161,7 @@ export default function ProjectCard(props: {
                         const { data, error } = await supabase.rpc(
                           "create_room",
                           {
-                            p_project_id: parseInt(item.project_id),
+                            p_project_id: item.project_id,
                             p_name: params[0] ?? null,
                             p_code: parseInt(params[1]) ?? null,
                             p_share_code: parseInt(params[2]) ?? null,
@@ -164,6 +171,7 @@ export default function ProjectCard(props: {
                         );
                         navigation.navigate(NAVIGATION.LOBBY as never);
                         if (error) return error.message;
+                        setProjectId(item.project_id);
                         setRoom(data as any);
                       },
                       fields: [
