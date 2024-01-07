@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
 import { useRoomStore } from "../../stores/RoomStore";
 import dayjs from "dayjs";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function ProjectCard(props: {
   item: any;
@@ -17,6 +18,7 @@ export default function ProjectCard(props: {
   const navigation = useNavigation();
   const { confirm } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
+  const setProjectId = useProjectStore((state) => state.setProjectId);
   const { item, save } = props;
   const [expanded, setExpanded] = useState<boolean>(false);
   const hiddenInfo = [{ title: "Description", data: item.project_description }];
@@ -169,6 +171,7 @@ export default function ProjectCard(props: {
                         );
                         navigation.navigate(NAVIGATION.LOBBY as never);
                         if (error) return error.message;
+                        setProjectId(item.project_id);
                         setRoom(data as any);
                       },
                       fields: [
