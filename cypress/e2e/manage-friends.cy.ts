@@ -12,16 +12,16 @@ describe('Manage Friends Functionality', () => {
 
   it('can search friends', function() {
     // Search has no match thus results empty list
-    cy.get('input[placeholder="Search friends"]').type('b');
+    cy.get('input[placeholder="Search"]').type('b');
     cy.contains(FRIEND.nickname).should('not.exist');
-    cy.get('input[placeholder="Search friends"]').clear()
+    cy.get('input[placeholder="Search"]').clear()
 
     // Search for substring of the friend and make sure he is still within the list
-    cy.get('input[placeholder="Search friends"]').type(FRIEND.nickname.substring(0, 4));
+    cy.get('input[placeholder="Search"]').type(FRIEND.nickname.substring(0, 4));
     cy.contains(FRIEND.nickname).should('be.visible');
 
     // Search for the friend with complete nickname and make sure he is still within the list
-    cy.get('input[placeholder="Search friends"]').type(FRIEND.nickname.slice(-4));
+    cy.get('input[placeholder="Search"]').type(FRIEND.nickname.slice(-4));
     cy.contains(FRIEND.nickname).should('be.visible');
   });
 

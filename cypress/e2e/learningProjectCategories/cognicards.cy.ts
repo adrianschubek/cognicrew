@@ -61,7 +61,7 @@ describe("Cognicards Functionality", () => {
       // navigate to the correct page before performing test
       cy.get('[data-testid="flashcard-fab-button"]').click();
       cy.contains('button', 'Create, delete and edit flashcard sets').click();
-      cy.wait(1000)
+      cy.wait(1000);
     })
     
     context("Create and Edit Sets", () => { 
@@ -79,7 +79,7 @@ describe("Cognicards Functionality", () => {
       });
 
       it("should have correct number of flashcard sets", function () {
-        cy.wait(500)
+        cy.wait(500);
         cy.get('[data-testid="flashcard-sets-list-adjust-button"]').should('have.length', numberOfSets);
       });    
 
@@ -102,7 +102,7 @@ describe("Cognicards Functionality", () => {
         cy.contains('button', 'Done').click();
         
         // check if edit was successful
-        cy.wait(500)
+        cy.wait(500);
         cy.contains('[data-testid="flashcard-sets-list-folder-button"]', EDIT_SET_1);
         cy.contains('[data-testid="flashcard-sets-list-folder-button"]', EDIT_SET_2);
       });

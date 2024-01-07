@@ -12,7 +12,7 @@ context("Username", () => {
 
   it("can change username", () => {
     // change username
-    cy.get('[data-testid="text-input-flat"]').eq(2).click().type(DEMO_USER.username); // index 2 <=> input field for changing user name
+    cy.get('[data-testid="text-input-flat"]').eq(1).click().type(DEMO_USER.username); // index 1 <=> input field for changing user name
     cy.get('[data-testid="update-username-button"]').click();
     cy.contains('Success').should('be.visible');
     cy.contains('button', 'OK').click();
@@ -24,7 +24,7 @@ context("Username", () => {
     // change name back to original
     cy.get('[href="/_main_/SettingsTab"]').click();
     cy.contains("Settings").click({ force: true });
-    cy.get('[data-testid="text-input-flat"]').eq(2).click().type(TEST_USER.username);
+    cy.get('[data-testid="text-input-flat"]').eq(1).click().type(TEST_USER.username);
     cy.get('[data-testid="update-username-button"]').click();
   });
 
