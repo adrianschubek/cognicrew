@@ -1,83 +1,53 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Image, Text } from "react-native";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
-} from "react-native-responsive-dimensions";
-import { useAuth } from "../../providers/AuthProvider";
-import {
-  useAchievementsByUser,
-  useNotAchievementsByUser,
-  useUnlockAchievement,
-} from "../../utils/hooks";
-import { Snackbar, Divider, List } from "react-native-paper";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Image } from "react-native";
+import { responsiveWidth } from "react-native-responsive-dimensions";
+import { useAchievements, useUnlockAchievement } from "../../utils/hooks";
+import { Divider, List } from "react-native-paper";
 import { supabase } from "../../supabase";
+import LoadingOverlay from "../alerts/LoadingOverlay";
 
 export default function Achievement() {
-  const { user } = useAuth();
-  const { data: achievements, isLoading } = useAchievementsByUser(user.id);
-  const { data: notAchievements, isLoading: isLoadingNotAchievements } =
-    useNotAchievementsByUser(user.id);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [achievementsAchieved, setAchievementsAchieved] = useState([]);
+  const [achievementsNotAchieved, setAchievementsNotAchieved] = useState([]);
+  const { data, error, isLoading, mutate } = useAchievements();
+  useEffect(() => {
+    if (!data) return;
+    setAchievementsAchieved(data[0].achieved_achievements);
+    setAchievementsNotAchieved(data[0].not_achieved_achievements);
+  }, [data]);
 
+  const list = [achievementsAchieved, achievementsNotAchieved];
+  //if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <View>
-      {/* Snackbar for notifications */}
-      {snackbarVisible && (
-        <Snackbar
-          visible={snackbarVisible}
-          onDismiss={() => setSnackbarVisible(false)}
-          duration={3000}
-        >
-          {snackbarMessage}
-        </Snackbar>
-      )}
-
       {/* Achievement list */}
-      <List.Section style={styles.achievementStyle}>
-        {/* Display achievements achieved by the user */}
-        {achievements?.map((achievement, index) => (
-          <View key={achievement.id} style={styles.achieved}>
-            <List.Item
-              title={achievement.name}
-              description={achievement.description}
-              left={() => (
-                <Image
-                  source={{
-                    uri: supabase.storage
-                      .from("achievements")
-                      .getPublicUrl(achievement.icon_name).data.publicUrl,
-                  }}
-                  style={styles.image}
-                />
+      <List.Section style={{ width: responsiveWidth(100) }}>
+        {list.map((achievementList, listIndex) => {
+          return achievementList?.map((achievement, index) => (
+            <View
+              key={achievement.id}
+              style={listIndex === 0 ? styles.achieved : styles.notAchieved}
+            >
+              <List.Item
+                title={achievement.name}
+                description={achievement.description}
+                left={() => (
+                  <Image
+                    source={{
+                      uri: supabase.storage
+                        .from("achievements")
+                        .getPublicUrl(achievement.icon_name).data.publicUrl,
+                    }}
+                    style={styles.image}
+                  />
+                )}
+              />
+              {(listIndex === 0 || index < achievementList.length - 1) && (
+                <Divider />
               )}
-            />
-            {index < achievements.length - 1 && <Divider />}
-          </View>
-        ))}
-
-        {/* Display achievements not achieved by the user */}
-        {notAchievements?.map((achievement, index) => (
-          <View key={achievement.id} style={styles.notAchieved}>
-            <List.Item
-              title={achievement.name}
-              description={achievement.description}
-              left={() => (
-                <Image
-                  source={{
-                    uri: supabase.storage
-                      .from("achievements")
-                      .getPublicUrl(achievement.icon_name).data.publicUrl,
-                  }}
-                  style={styles.image}
-                />
-              )}
-            />
-            {index < notAchievements.length - 1 && <Divider />}
-          </View>
-        ))}
+            </View>
+          ));
+        })}
       </List.Section>
     </View>
   );
@@ -89,20 +59,6 @@ const styles = StyleSheet.create({
   },
   achieved: {
     opacity: 1.0,
-  },
-  achievementStyle: {
-    width: responsiveWidth(100),
-  },
-  achievementItem: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  title: {
-    fontWeight: "bold",
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "grey",
   },
   image: {
     marginLeft: responsiveWidth(7),

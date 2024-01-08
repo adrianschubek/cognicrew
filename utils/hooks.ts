@@ -5,16 +5,15 @@ import {
   useQuery,
   useUpsertMutation,
 } from "@supabase-cache-helpers/postgrest-swr";
-import { FileObject } from "@supabase/storage-js";
 import { supabase } from "../supabase";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { ManagementType } from "../types/common";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "./common";
 import { useAlerts } from "react-native-paper-fastalerts";
-import useSWR, { KeyedMutator, mutate } from "swr";
+import useSWR, { mutate } from "swr";
 /**
  * Handles errors thrown by the given supabase query.
  * Shows an alert if an error is thrown.
@@ -249,7 +248,7 @@ export function useGlobalStatistics(userId: string) {
 }
 
 //Achievements
-export function useAchievements() {
+export function useAchievementsOld() {
   return handleErrors(
     useQuery(
       supabase
@@ -260,67 +259,11 @@ export function useAchievements() {
   );
 }
 
-/**
- * Returns all achievements for a specific user.
- */
-export function useAchievementsByUser(userId: string) {
-  const { data: userAchievements, isLoading: isLoadingUserAchievements } =
-    useQuery(
-      supabase
-        .from("user_achievements")
-        .select("achievement_id")
-        .eq("user_id", userId),
-    );
-
-  const userAchievementIds =
-    userAchievements?.map((ua) => ua.achievement_id) || [];
-
-  const { data: allAchievements, isLoading: isLoadingAllAchievements } =
-    useQuery(
-      supabase
-        .from("achievements")
-        .select("id, name, icon_name, description")
-        .in("id", userAchievementIds)
-        .order("id"),
-    );
-
-  const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
-
-  return { data: allAchievements, isLoading };
-}
-
-/**
- * Returns all achievements not achieved by a specific user.
- */
-export function useNotAchievementsByUser(userId: string) {
-  const { data: userAchievements, isLoading: isLoadingUserAchievements } =
-    useQuery(
-      supabase
-        .from("user_achievements")
-        .select("achievement_id")
-        .eq("user_id", userId),
-    );
-
-  const userAchievementIds =
-    userAchievements?.map((ua) => ua.achievement_id) || [];
-
-  const { data: allAchievements, isLoading: isLoadingAllAchievements } =
-    useQuery(
-      supabase
-        .from("achievements")
-        .select("id, name, icon_name, description")
-        .order("id"),
-    );
-
-  // Filter out user achievements
-  const notAchieved =
-    allAchievements?.filter(
-      (achievement) => !userAchievementIds.includes(achievement.id),
-    ) || [];
-
-  const isLoading = isLoadingUserAchievements || isLoadingAllAchievements;
-
-  return { data: notAchieved, isLoading };
+export function useAchievements() {
+  const { data, error, isLoading, mutate } = handleErrors(
+    useQuery(supabase.rpc("get_achievements")),
+  );
+  return { data, error, isLoading, mutate };
 }
 
 export function useUnlockAchievement() {

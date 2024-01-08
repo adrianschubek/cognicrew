@@ -17,7 +17,7 @@ import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useSoundsStore } from "../stores/SoundsStore";
 import {
-  useAchievements,
+  useAchievementsOld,
   useConfirmLeaveLobby,
   useUnlockAchievement,
 } from "../utils/hooks";
@@ -48,7 +48,7 @@ export default function Whiteboard({ navigation }) {
   const [achievementName, setAchievementName] = useState("");
   const [achievementIcon, setAchievementIcon] = useState("");
   const [isTextToolSelected, setTextToolSelected] = useState(false);
-  const { data: achievementsData } = useAchievements();
+  const { data: achievementsData } = useAchievementsOld();
 
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {

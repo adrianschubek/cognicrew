@@ -683,9 +683,16 @@ export interface Database {
       friend_relations: {
         Args: Record<PropertyKey, never>
         Returns: {
-          friend_array: string[]
-          sent_array: string[]
-          received_array: string[]
+          friend_array: Json[]
+          sent_array: Json[]
+          received_array: Json[]
+        }[]
+      }
+      get_achievements: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          achieved_achievements: Database["public"]["CompositeTypes"]["achievement_type"][]
+          not_achieved_achievements: Database["public"]["CompositeTypes"]["achievement_type"][]
         }[]
       }
       get_distinct_project_groups: {
@@ -904,6 +911,12 @@ export interface Database {
       [_ in never]: never
     }
     CompositeTypes: {
+      achievement_type: {
+        id: number
+        name: string
+        description: string
+        icon_name: string
+      }
       answer_type: {
         exercise: number
         order_position: number

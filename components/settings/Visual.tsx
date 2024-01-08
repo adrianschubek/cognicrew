@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Card, Button, Avatar } from "react-native-paper";
 import { PreferencesContext } from "../../stores/PreferencesContext";
-import { useAchievements, useUnlockAchievement } from "../../utils/hooks";
+import { useAchievementsOld, useUnlockAchievement } from "../../utils/hooks";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 
@@ -15,7 +15,7 @@ export default function Visual(props: {
 }) {
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
   const unlockAchievement = useUnlockAchievement();
-  const { data: achievementsData } = useAchievements();
+  const { data: achievementsData } = useAchievementsOld();
 
   const handleToggleTheme = async () => {
     toggleTheme();
