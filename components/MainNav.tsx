@@ -167,7 +167,7 @@ function MainTabs({ navigation }) {
           icon: "wifi-off",
           title: "Connection Lost",
           message:
-            "You have lost connection to the server. This can indicate a network issue on your device, a high load or an error on the server. You may leave the room or wait. (#68)",
+            "You have lost connection to the server. This can indicate a network issue on your device or a server-side error. You may leave the room or wait. (#68)",
           okText: "Leave room",
           cancelText: "Wait",
           async okAction(values) {
