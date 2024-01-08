@@ -111,7 +111,6 @@ export default function FileItem({ file, filePath, folder, icon }) {
 };
 */
   /**
-   * downloadFile - Placeholder for file download logic.
    * @param {object} file - The file to download.
    */
   async function downloadFile() {

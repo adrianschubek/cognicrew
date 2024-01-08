@@ -3,6 +3,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "../supabase";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system";
+import { getFormattedTime } from "./common";
 export async function selectAndUploadImage(
   filePath: string,
   props?: { fileName?: string; bucketName?: string },
@@ -17,10 +18,11 @@ export async function selectAndUploadImage(
     const base64 = await FileSystem.readAsStringAsync(img.uri, {
       encoding: "base64",
     });
-    //const fileName = img.fileName || `${new Date().getTime()}.${"png"}`;
-    const newFileName = props?.fileName
-      ? props?.fileName
-      : `${new Date().getTime()}.${"png"}`;
+    console.log("img.fileName", img.fileName);
+    const fileName = img.fileName
+      ? img.fileName + `_${getFormattedTime()}.png`
+      : `${getFormattedTime()}.png`;
+    const newFileName = props?.fileName ? props?.fileName : fileName;
     const filePathWithDocumentName = `${filePath}/${newFileName}`;
     //console.log("filePathWithDocumentName", filePathWithDocumentName);
     const contentType = "image/png";
@@ -55,7 +57,6 @@ export async function selectAndUploadFile(
     //console.log(pickedFile.name, "|", pickedFile.fileName);
     const uri = pickedFile.uri;
     const mimeType = pickedFile.mimeType || "application/octet-stream";
-
     const isImage = mimeType.startsWith("image");
     let fileExtension = mimeType.split("/").pop();
     //console.log("fileExtension", fileExtension);
@@ -70,7 +71,11 @@ export async function selectAndUploadFile(
       ? filePath + folderName
       : filePath;
     //console.log("folderPath", folderPath);
-    const newFileName = `${new Date().getTime()}.${fileExtension}`;
+    console.log("pickedFile.fileName", pickedFile.fileName);
+    console.log("pickedFile.name", pickedFile.name);
+    const newFileName = pickedFile.name
+      ? pickedFile.name //+ `_${getFormattedTime()}.${fileExtension}`
+      : `${getFormattedTime()}.${fileExtension}`;
     const filePathWithDocumentName = `${folderPath}/${newFileName}`;
     //console.log("filePathWithDocumentName", filePathWithDocumentName);
     const base64 = await FileSystem.readAsStringAsync(uri, {
