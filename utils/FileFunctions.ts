@@ -18,7 +18,7 @@ export async function selectAndUploadImage(
     const base64 = await FileSystem.readAsStringAsync(img.uri, {
       encoding: "base64",
     });
-    console.log("img.fileName", img.fileName);
+    //console.log("img.fileName", img.fileName);
     const fileName = img.fileName
       ? img.fileName + `_${getFormattedTime()}.png`
       : `${getFormattedTime()}.png`;
@@ -71,8 +71,7 @@ export async function selectAndUploadFile(
       ? filePath + folderName
       : filePath;
     //console.log("folderPath", folderPath);
-    console.log("pickedFile.fileName", pickedFile.fileName);
-    console.log("pickedFile.name", pickedFile.name);
+    //console.log("pickedFile.name", pickedFile.name);
     const newFileName = pickedFile.name
       ? pickedFile.name //+ `_${getFormattedTime()}.${fileExtension}`
       : `${getFormattedTime()}.${fileExtension}`;
