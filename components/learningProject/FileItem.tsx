@@ -131,32 +131,35 @@ export default function FileItem({ file, filePath, folder, icon }) {
     try {
       const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
       // Save the file to the camera roll
-      
-      //test for pdf, thats why folder === "pdf" is in there.
-      if (folder === "photos" || folder === "pdf") {
-        const asset = await MediaLibrary.createAssetAsync(uri);
-        const album = await MediaLibrary.getAlbumAsync("Download");
-        if (album == null) {
-          await MediaLibrary.createAlbumAsync("Download", asset, false);
-        } else {
-          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
-        }
-        console.log("File saved to camera roll");
+      const asset = await MediaLibrary.createAssetAsync(uri);
+      const album = await MediaLibrary.getAlbumAsync("Download");
+      if (album == null) {
+        await MediaLibrary.createAlbumAsync("Download", asset, false);
       } else {
-        // Check if sharing is available
-        if (!(await Sharing.isAvailableAsync())) {
-          alert(`Uh oh, sharing isn't available on your platform`);
-          return;
-        }
-        // Share the file
-        await Sharing.shareAsync(uri);
+        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
       }
+      console.log("File saved to camera roll");
       //console.log("File downloaded to:", uri);
     } catch (error) {
       console.log("Error downloading the file: ", error);
     }
   }
-
+  async function shareFile() {
+    const fileName = encodeURIComponent(file.name);
+    const localUri = FileSystem.documentDirectory + fileName;
+    try {
+      const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
+      if (!(await Sharing.isAvailableAsync())) {
+        alerts.error({
+          message: `Uh oh, sharing isn't available on your platform`,
+        });
+        return;
+      }
+      await Sharing.shareAsync(uri);
+    } catch (error) {
+      console.log("Error downloading the file: ", error);
+    }
+  }
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <List.Item
@@ -203,6 +206,13 @@ export default function FileItem({ file, filePath, folder, icon }) {
               style={{ marginRight: responsiveFontSize(0.05) }}
             />
           </TouchableOpacity>
+          <IconButton
+            style={{ margin: 0, padding: 0 }}
+            icon="share"
+            onPress={() => {
+              shareFile();
+            }}
+          />
           <TouchableOpacity
             onPress={() => {
               alerts.confirm({
