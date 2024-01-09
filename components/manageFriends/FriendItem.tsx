@@ -9,6 +9,7 @@ import {
 import { useUsername } from "../../utils/hooks";
 import { useState } from "react";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
+import { usePresenceStore } from "../../stores/PresenceStore";
 
 export default function FriendItem(props: {
   icon: string;
@@ -23,6 +24,7 @@ export default function FriendItem(props: {
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const online = usePresenceStore((state) => state.online);
   const [checked, setChecked] = useState(false);
   const friendName = props.friendName
     ? props.friendName

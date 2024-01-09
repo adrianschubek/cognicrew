@@ -37,6 +37,7 @@ import ProjectStatistics from "../screens/projectManagement/ProjectStatistics";
 import AchievementAlert from "./alerts/AchievementAlert";
 import { useUserAchievements } from "../utils/hooks";
 import { usePreferencesStore } from "../stores/PreferencesStore";
+import { usePresenceStore } from "../stores/PresenceStore";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -294,6 +295,48 @@ const SetAchievementIds = ({ userId }) => {
 };
 export default function MainNav() {
   const { session, user } = useAuth();
+  const update = usePresenceStore((state) => state.update);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const onlineFriends = supabase.channel("friends_online", {
+      config: { presence: { key: user.id } },
+    });
+    onlineFriends
+      .on("presence", { event: "sync" }, () => {
+        const newState = onlineFriends.presenceState();
+        // console.log(
+        //   "sync",
+        //   Object.values(newState).map((e: any) => ({
+        //     user_id: e[0].user_id,
+        //     online_at: e[0].online_at,
+        //   })),
+        // );
+        update(
+          Object.values(newState).map((e: any) => ({
+            user_id: e[0].user_id,
+            online_at: e[0].online_at,
+          })),
+        );
+      })
+      /* .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        console.log("join", key, newPresences);
+      })
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        console.log("leave", key, leftPresences);
+      }) */
+      .subscribe(async (status) => {
+        if (status !== "SUBSCRIBED") {
+          return;
+        }
+        const presenceTrackStatus = await onlineFriends.track({
+          user_id: user.id,
+          online_at: dayjs().valueOf(),
+        });
+        console.log(presenceTrackStatus);
+      });
+  }, [user]);
 
   return !session || !user ? (
     <Stack.Navigator

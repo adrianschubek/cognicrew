@@ -85,29 +85,6 @@ export default function ManageFriends({ navigation }) {
         },
       )
       .subscribe();
-
-    const onlineFriends = supabase.channel("friends_online");
-    onlineFriends
-      .on("presence", { event: "sync" }, () => {
-        const newState = onlineFriends.presenceState();
-        console.log("sync", newState);
-      })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("join", key, newPresences);
-      })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("leave", key, leftPresences);
-      }).subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-
-      const presenceTrackStatus = await onlineFriends.track({
-        user_id: user.id,
-        online_at: dayjs().valueOf(),
-      });
-      console.log(presenceTrackStatus);
-    });
   }, []);
 
   useEffect(() => {
