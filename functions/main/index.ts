@@ -154,15 +154,15 @@ async function mainLoop() {
     // Process commands for this room
     commandsCount = await processCommands(state, newState, privateState);
 
-    // Process achievements
-    await processAchievements();
-
     console.log(newState);
     await supabase
       .from("public_room_states")
       .update({ data: newState })
       .eq("room_id", state.room_id);
   }
+
+  // Process achievements
+  await processAchievements();
 
   const end = performance.now();
   console.log(
@@ -408,7 +408,7 @@ async function stateAfterEndResults(
  */
 
 async function processAchievements() {
-  // TODO: HERE ALEX !! 
+  // TODO: HERE ALEX !!
 }
 
 /**
