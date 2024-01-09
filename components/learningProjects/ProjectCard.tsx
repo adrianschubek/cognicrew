@@ -169,10 +169,10 @@ export default function ProjectCard(props: {
                             p_size: parseInt(params[4]) ?? null,
                           },
                         );
-                        navigation.navigate(NAVIGATION.LOBBY as never);
                         if (error) return error.message;
                         setProjectId(item.project_id);
                         setRoom(data as any);
+                        navigation.navigate(NAVIGATION.LOBBY as never);
                       },
                       fields: [
                         {

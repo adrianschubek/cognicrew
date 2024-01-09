@@ -20,12 +20,14 @@ import {
   useUpsertFlashcard,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
+import { useAlerts } from "react-native-paper-fastalerts";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
   type: ManagementType;
 }) {
   const { listItem, type } = props;
+  const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
   const [priority, setPriority] = useState<number>(listItem.priority);
@@ -209,7 +211,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title
-        title="Edit here:"
+        title="Edit question"
         titleStyle={{}}
         style={{}}
         right={() => (
@@ -232,7 +234,14 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                 testID="delete-flashcard-button"
                 icon="delete"
                 onPress={() => {
-                  deleteFlashcardOrExercise();
+                  alerts.confirm({
+                    icon: "delete",
+                    message: "Are you sure you want to delete this question?",
+                    okText: "Delete",
+                    okAction(values) {
+                      deleteFlashcardOrExercise();
+                    },
+                  })
                 }}
                 style={{ alignSelf: "center" }}
               />

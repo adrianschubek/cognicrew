@@ -148,6 +148,13 @@ const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
+async function achieve(achievementId: number, userId: string) {
+  const { error } = await supabase
+    .from("user_achievements")
+    .insert([{ achievement_id: achievementId, user_id: userId }]);
+  if (error) console.error("Achievement Error: " + error);
+}
+
 async function updateStats(
   publicState: PublicRoomState,
   privateState: PrivateRoomState,
