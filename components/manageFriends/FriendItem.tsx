@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, StyleProp, ViewStyle } from "react-native";
+import { StyleSheet, StyleProp, ViewStyle, View } from "react-native";
 import { Card, Checkbox, IconButton, Text, useTheme } from "react-native-paper";
 import {
   responsiveFontSize,
@@ -10,6 +10,7 @@ import { useUsername } from "../../utils/hooks";
 import { useState } from "react";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
 import { usePresenceStore } from "../../stores/PresenceStore";
+import { PulseIndicator } from "react-native-indicators";
 
 export default function FriendItem(props: {
   icon: string;
@@ -46,9 +47,15 @@ export default function FriendItem(props: {
           username={friendName ?? ""}
           userId={props.friendId}
         />
-        <Text variant="titleMedium" style={{ flex: 1 }}>
-          {friendName}
-        </Text>
+        <Text variant="titleMedium">{friendName}</Text>
+        {online.some((v) => v.user_id === props.friendId) && (
+          <PulseIndicator
+            style={{ flex: 0, opacity: 0.7 }}
+            size={25}
+            color={"green"}
+          />
+        )}
+        <Text style={{ flex: 1 }}>{""}</Text>
         <IconButton
           icon={props.icon}
           size={responsiveFontSize(3)}
