@@ -258,6 +258,17 @@ export function useAchievementsOld() {
     ),
   );
 }
+export function useUserAchievements(userId: string) {
+  return handleErrors(
+    useQuery(
+      supabase
+        .from("user_achievements")
+        .select("achievement_id")
+        .eq("user_id", userId)
+        .order("achievement_id"),
+    ),
+  );
+}
 
 export function useAchievements() {
   const { data, error, isLoading, mutate } = handleErrors(

@@ -9,9 +9,11 @@ type PreferencesStore = {
   rememberMe: boolean;
   email: string;
   password: string;
+  unlockedAchievementIds: number[];
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
   setRememberMe: (rememberMe: boolean) => void;
+  setUnlockedAchievementIds: (unlockedAchievementIds: number[]) => void;
 };
 
 export const usePreferencesStore = create<PreferencesStore>()(
@@ -22,9 +24,12 @@ export const usePreferencesStore = create<PreferencesStore>()(
       rememberMe: false,
       email: "",
       password: "",
+      unlockedAchievementIds: [],
       setEmail: (email: string) => set({ email: email }),
       setPassword: (password: string) => set({ password: password }),
       setRememberMe: (rememberMe: boolean) => set({ rememberMe: rememberMe }),
+      setUnlockedAchievementIds: (unlockedAchievementIds: number[]) =>
+        set({ unlockedAchievementIds: unlockedAchievementIds }),
     }),
     {
       name: "preferences",

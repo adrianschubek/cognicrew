@@ -3,6 +3,7 @@ import AchievementNotification from "../dialogues/AchievementNotification";
 import { supabase } from "../../supabase";
 import { useAchievement, useUsername } from "../../utils/hooks";
 import { Portal } from "react-native-paper";
+import { usePreferencesStore } from "../../stores/PreferencesStore";
 
 export default function AchievementAlert(props: { userId: string }) {
   const [achievementVisible, setAchievementVisible] = useState(false);
@@ -25,7 +26,7 @@ export default function AchievementAlert(props: { userId: string }) {
       .on(
         "postgres_changes",
         {
-          event: "UPDATE", // should be "INSERT" when everything is set up
+          event: "INSERT", // should be "INSERT" when everything is set up
           schema: "public",
           table: "user_achievements",
           filter: "user_id=eq." + props.userId,

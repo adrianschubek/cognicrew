@@ -35,6 +35,8 @@ import dayjs from "dayjs";
 import GlobalStatistics from "../screens/GlobalStatistics";
 import ProjectStatistics from "../screens/projectManagement/ProjectStatistics";
 import AchievementAlert from "./alerts/AchievementAlert";
+import { useUserAchievements } from "../utils/hooks";
+import { usePreferencesStore } from "../stores/PreferencesStore";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -273,7 +275,23 @@ function MainTabs({ navigation }) {
     </Tab.Navigator>
   );
 }
+const SetAchievementIds = ({ userId }) => {
+  const { data } = useUserAchievements(userId);
+  const setUnlockedAchievementIds = usePreferencesStore(
+    (state) => state.setUnlockedAchievementIds,
+  );
+  useEffect(() => {
+    if (!data) return;
+    const unlockedAchievementIds = [];
+    data.forEach((achievement) => {
+      unlockedAchievementIds.push(achievement.achievement_id);
+    });
+    setUnlockedAchievementIds(unlockedAchievementIds);
+    //console.log("unlockedAchievementIds: ", unlockedAchievementIds);
+  }, [data]);
 
+  return null; // This component doesn't render anything
+};
 export default function MainNav() {
   const { session, user } = useAuth();
 
@@ -286,7 +304,10 @@ export default function MainNav() {
     </Stack.Navigator>
   ) : (
     <>
-      <AchievementAlert userId={user.id} />
+      <>
+        <SetAchievementIds userId={user.id} />
+        <AchievementAlert userId={user.id} />
+      </>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={"_main_"} component={MainTabs} />
         <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />

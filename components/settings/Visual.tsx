@@ -1,18 +1,36 @@
 import React, { useContext } from "react";
 import { Card, Button, Avatar } from "react-native-paper";
 import { PreferencesContext } from "../../stores/PreferencesContext";
-import { useAchievementsOld, useUnlockAchievement } from "../../utils/hooks";
+import {
+  useAchievement,
+  useAchievementsOld,
+  useInsertAchievement,
+  useUnlockAchievement,
+} from "../../utils/hooks";
+import { useAuth } from "../../providers/AuthProvider";
+import { usePreferencesStore } from "../../stores/PreferencesStore";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 
 export default function Visual(props: { [name: string]: any }) {
+  const { user } = useAuth();
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
-  const unlockAchievement = useUnlockAchievement();
-
+  const unlockedAchievementIds = usePreferencesStore(
+    (state) => state.unlockedAchievementIds,
+  );
+  //const unlockAchievement = useUnlockAchievement();
+  const { trigger: unlockAchievement } = useInsertAchievement();
   const handleToggleTheme = async () => {
     toggleTheme();
-    const achievementId = 9;
-    const { success, data } = await unlockAchievement(achievementId);
+    if (!darkmode) {
+      if (!unlockedAchievementIds.includes(9)) {
+        unlockAchievement({
+          //@ts-expect-error
+          achievement_id: 9, //achievementId
+          user_id: user.id,
+        });
+      }
+    }
   };
 
   return (
