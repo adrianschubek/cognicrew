@@ -1,5 +1,5 @@
 import * as React from "react";
-import 'react-native-get-random-values'
+import "react-native-get-random-values";
 import {
   MD3DarkTheme,
   MD3LightTheme,
@@ -54,7 +54,14 @@ const CombinedDarkTheme = {
 export default function App() {
   const music = useRef(new Audio.Sound());
 
-  const { inGame, musicVolume, soundEffectVolume, masterVolume, playButtonSoundEffect, setPlayButtonSoundEffect } = useSoundsStore();
+  const {
+    inGame,
+    musicVolume,
+    soundEffectVolume,
+    masterVolume,
+    playButtonSoundEffect,
+    setPlayButtonSoundEffect,
+  } = useSoundsStore();
 
   //MUSIC
 
