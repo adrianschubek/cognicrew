@@ -404,6 +404,9 @@ async function stateAfterEndResults(
  * Utility functions
  */
 
+/**
+ * Returns the next state based on the current state or false if no state change is needed
+ */
 function nextState(newState: PublicRoomState): State | false {
   if (
     // |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
