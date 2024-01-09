@@ -5,16 +5,19 @@ import ManageFriends from "./ManageFriends";
 import Achievements from "./Achievements";
 import React from "react";
 import { Icon, Text, useTheme } from "react-native-paper";
+import { usePreferencesStore } from "../stores/PreferencesStore";
 
 const Top = createMaterialTopTabNavigator();
 export default function AccountManage({ navigation }) {
   const theme = useTheme();
-
+  const unlockedAchievementIds = usePreferencesStore(
+    (state) => state.unlockedAchievementIds,
+  );
   return (
     <Top.Navigator
       screenOptions={{
         tabBarLabelStyle: { textTransform: "none" },
-        tabBarItemStyle: { flexDirection: "row" },        
+        tabBarItemStyle: { flexDirection: "row" },
       }}
       initialRouteName={NAVIGATION.MANAGE_FRIENDS}
     >
@@ -25,7 +28,7 @@ export default function AccountManage({ navigation }) {
           tabBarIcon: ({ focused }) => (
             <Icon
               color={focused ? theme.colors.primary : theme.colors.secondary}
-              source={"trophy"}
+              source={unlockedAchievementIds.length > 0 ? "trophy" : "lock-question"}
               size={24}
             />
           ),
@@ -36,8 +39,7 @@ export default function AccountManage({ navigation }) {
                 color: focused ? theme.colors.primary : theme.colors.secondary,
               }}
             >
-              Achievements
-              {/* ??? */}
+              {unlockedAchievementIds.length > 0 ? "Achievements" : " ??? "}
             </Text>
           ),
         }}
