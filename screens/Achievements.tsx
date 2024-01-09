@@ -6,6 +6,7 @@ import { useAchievements, useUnlockAchievement } from "../utils/hooks";
 import { Avatar, Divider, List } from "react-native-paper";
 import { supabase } from "../supabase";
 import { StatusBar } from "expo-status-bar";
+import { usePreferencesStore } from "../stores/PreferencesStore";
 
 export default function Achievements() {
   const [achievementsAchieved, setAchievementsAchieved] = useState([]);
@@ -16,7 +17,11 @@ export default function Achievements() {
     setAchievementsAchieved(data[0].achieved_achievements);
     setAchievementsNotAchieved(data[0].not_achieved_achievements);
   }, [data]);
+  const { achievementSignal } = usePreferencesStore();
 
+  useEffect(() => {
+    mutate();
+  }, [achievementSignal]);
   const list = [achievementsAchieved, achievementsNotAchieved];
   //if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
