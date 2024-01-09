@@ -12,7 +12,12 @@ export default function AchievementAlert(props: { userId: string }) {
   const [achievementIconName, setAchievementIconName] = useState<string>("");
   const { data: username } = useUsername(props.userId);
   const { data, error, isLoading, mutate } = useAchievement(achievementId);
-
+  const setUnlockedAchievementIds = usePreferencesStore(
+    (state) => state.setUnlockedAchievementIds,
+  );
+  const unlockedAchievementIds = usePreferencesStore(
+    (state) => state.unlockedAchievementIds,
+  );
   useEffect(() => {
     if (!data) return;
     setAchievementName(data[0].name);
@@ -32,6 +37,10 @@ export default function AchievementAlert(props: { userId: string }) {
           filter: "user_id=eq." + props.userId,
         },
         (payload) => {
+          setUnlockedAchievementIds([
+            ...unlockedAchievementIds,
+            payload.new.achievement_id,
+          ]);
           setAchievementId(payload.new.achievement_id);
           //console.log("achievement Id: ", payload.new.achievement_id);
         },
