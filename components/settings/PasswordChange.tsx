@@ -11,8 +11,8 @@ export default function PasswordChange(props) {
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
 
-  const pwLength = pw1.length >=9;
-  const validator = pw1 === pw2 && pw1.length > 8 && pw1.length < 64;
+  const pwLength = pw1.length >= 9 && pw1.length < 64;
+  const validator = pw1 === pw2 && pwLength;
 
   const { user } = useAuth();
   const { success, error: errorAlert } = useAlerts();
