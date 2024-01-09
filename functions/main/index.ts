@@ -7,6 +7,7 @@ import {
   PublicRoomState,
   UserProjectStats,
 } from "../rooms.ts";
+import { Database } from "../../types/supabase.ts";
 
 console.log("main function started");
 
@@ -70,7 +71,7 @@ async function updateGameLoop(
   await startGameLoop(handler, newInterval);
 }
 
-const supabase = createClient(
+const supabase = createClient<Database>(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
