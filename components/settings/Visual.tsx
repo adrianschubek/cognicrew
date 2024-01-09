@@ -8,7 +8,6 @@ const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 export default function Visual(props: { [name: string]: any }) {
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
   const unlockAchievement = useUnlockAchievement();
-  const { data: achievementsData } = useAchievementsOld();
 
   const handleToggleTheme = async () => {
     toggleTheme();
