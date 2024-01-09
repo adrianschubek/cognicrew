@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Card, TextInput, IconButton, HelperText } from "react-native-paper";
 import {
@@ -18,9 +18,13 @@ import {
   useUpsertAnswersExercise,
   useUpsertExercise,
   useUpsertFlashcard,
+  useUsername,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
+import { useAuth } from "../../providers/AuthProvider";
+import dayjs from "dayjs";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -208,6 +212,53 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setIsInitialized(true);
   }, [answerOrAnswers, priority, question]);
 
+  const [realtimeState, setRealtimeState] = useState<{ user_name: string }[]>(
+    [],
+  );
+  const { user } = useAuth();
+  const username = useUsername();
+  // const alreadyFetchedRealtime = useRef<boolean>(false);
+  useEffect(() => {
+    // if (!user || !username /* || !alreadyFetchedRealtime */) return;
+    // alreadyFetchedRealtime.current = true;
+    const realtime = supabase.channel(
+      `cardquiz:edit:${listItem.id as number}`,
+      {
+        config: { presence: { key: user.id } },
+      },
+    );
+    realtime
+      .on("presence", { event: "sync" }, () => {
+        const newState = realtime.presenceState();
+        console.log(
+          "sync",
+          newState
+          // Object.values(newState).flatMap((e: any) => e[0].user_name),
+        );
+        console.log(`cardquiz:edit:${listItem.id as number}`);
+        setRealtimeState(
+          Object.values(newState).flatMap((e: any) => e[0].user_name),
+        );
+      })
+
+      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        console.log("join", key, newPresences);
+      })
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        console.log("leave", key, leftPresences);
+      })
+      .subscribe();
+    // .subscribe(async (status) => {
+    //   if (status !== "SUBSCRIBED") {
+    //     return;
+    //   }
+    //   const presenceTrackStatus = await realtime.track({
+    //     user_name: username.data,
+    //   });
+    //   console.log(presenceTrackStatus);
+    // });
+  }, []);
+
   return (
     <Card elevation={1} style={styles.cardStyle}>
       <Card.Title
@@ -241,7 +292,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                     okAction(values) {
                       deleteFlashcardOrExercise();
                     },
-                  })
+                  });
                 }}
                 style={{ alignSelf: "center" }}
               />
@@ -254,8 +305,30 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           testID="input-edit-flashcard-question"
           style={{ marginBottom: 8 }}
           multiline={true}
-          label="Question:"
+          label="Question"
           value={question}
+          onFocus={async () => {
+            console.log("focus");
+            const realtime = supabase
+              .channel(`cardquiz:edit:${listItem.id as number}`)
+              .subscribe(async (status) => {
+                if (status !== "SUBSCRIBED") {
+                  return;
+                }
+                const presenceTrackStatus = await realtime.track({
+                  a:1,
+                  user_name: username.data,
+                });
+                console.log(presenceTrackStatus);
+              });
+          }}
+          onBlur={async () => {
+            // console.log("blur");
+            // const realtime = supabase
+            //   .channel(`cardquiz:edit:${listItem.id as number}`)
+            //   .subscribe();
+            // await realtime.untrack();
+          }}
           onChangeText={(question) => {
             setQuestion(question);
           }}

@@ -9,7 +9,7 @@ export default function EditFlashcard(props: {
   const [answer, setAnswer] = useState(props.listItem.answer);
   return (
     <TextInput
-      label="Answer:"
+      label="Answer"
       testID="input-edit-flashcard-answer"
       multiline={true}
       value={answer}
