@@ -7,7 +7,6 @@ export default function EditFlashcard(props: {
   sendAnswer: (answer: string) => any;
 }) {
   const [answer, setAnswer] = useState(props.listItem.answer);
-
   return (
     <TextInput
       label="Answer:"
