@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Avatar, Button, Card, TextInput, useTheme } from "react-native-paper";
+import { Avatar, Button, Card, TextInput, useTheme , Text } from "react-native-paper";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -34,6 +34,10 @@ export default function PasswordChange(props) {
           secureTextEntry={true}
           error={pw1.length > 0 && !validator}
         ></TextInput>
+        <Card.Content>
+        <Text variant="bodyMedium"> New Password has to be longer than 8. </Text>
+
+        </Card.Content>
         <TextInput
           style={{ marginTop: 10 }}
           theme={{ roundness: 10 }}
