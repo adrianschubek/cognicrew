@@ -132,7 +132,7 @@ async function mainLoop() {
     /**
      * ScreenState:
      * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~2s + ~3s] -> * OR END_RESULTS
-     * initial state is INGAME
+     * initial state is LOBBY (if already played once) or INGAME (if fresh lobby)
      */
     switch (nextState(newState)) {
       case State.ROUND_SOLUTION:
