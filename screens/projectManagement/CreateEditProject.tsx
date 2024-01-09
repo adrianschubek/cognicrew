@@ -302,89 +302,92 @@ export default function CreateEditProject({
                 : "Project is hidden and only project members can see and edit."}
             </HelperText>
             <Divider />
-            <TextInput
-              style={{ marginTop: 10 }}
-              // mode="outlined"
-              label="Owner"
-              value={owner}
-              editable={false}
-              left={<TextInput.Icon icon="account" />}
-              right={
-                <TextInput.Icon
-                  /* TODO */
-                  onPress={() => {
-                    showDiscardPopUp.current = false;
-                    confirm({
-                      title: "Change owner",
-                      message:
-                        "Transfer this project to another user. You may loose access to this project.\nThis action cannot be undone.",
-                      icon: "account-convert",
-                      okText: "Transfer project",
-                      async okAction(values) {
-                        const newOwner = values[0];
-                        let { error } = await supabase.rpc("transfer_project", {
-                          p_owner_name: newOwner,
-                          p_project_id: project?.id,
-                        });
-                        if (error) return error.message;
-                        else {
-                          setOwner(newOwner);
-                          success({
-                            title: "Project transferred",
-                            message: `Project was successfully transferred to ${newOwner}.`,
-                          });
-                        }
-                      },
-                      fields: [
-                        {
-                          label: "Username",
-                          placeholder: owner,
-                          type: "text",
-                          required: true,
-                          helperText: "Enter the username of the new owner.",
-                        },
-                      ],
+          </>
+        )}
+        <TextInput
+          style={{ marginTop: 10 }}
+          // mode="outlined"
+          label="Owner"
+          value={owner}
+          editable={false}
+          left={<TextInput.Icon icon="account" />}
+          right={
+            <TextInput.Icon
+              /* TODO */
+              onPress={() => {
+                showDiscardPopUp.current = false;
+                confirm({
+                  title: "Change owner",
+                  message:
+                    "Transfer this project to another user. You may loose access to this project.\nThis action cannot be undone.",
+                  icon: "account-convert",
+                  okText: "Transfer project",
+                  async okAction(values) {
+                    const newOwner = values[0];
+                    let { error } = await supabase.rpc("transfer_project", {
+                      p_owner_name: newOwner,
+                      p_project_id: project?.id,
                     });
-                  }}
-                  icon="pencil"
-                />
-              }
+                    if (error) return error.message;
+                    else {
+                      setOwner(newOwner);
+                      success({
+                        title: "Project transferred",
+                        message: `Project was successfully transferred to ${newOwner}.`,
+                      });
+                    }
+                  },
+                  fields: [
+                    {
+                      label: "Username",
+                      placeholder: owner,
+                      type: "text",
+                      required: true,
+                      helperText: "Enter the username of the new owner.",
+                    },
+                  ],
+                });
+              }}
+              icon="pencil"
             />
-            <HelperText type="info">
-              Only the owner can edit the project settings.
-            </HelperText>
+          }
+        />
+        <HelperText type="info">
+          Only the owner can edit the project settings.
+        </HelperText>
+
+        {project && project?.owner_id === myId && (
+          <>
             <Divider />
-            <HelperText type="info" style={{ marginBottom: 8 }}>
+            <HelperText type="info">
               You may invite other users to join your project on the learning
               project page.
             </HelperText>
+            <Button
+              testID="delete-project-button"
+              style={{
+                alignSelf: "flex-start",
+                marginBottom: 24,
+                backgroundColor: theme.colors.errorContainer,
+              }}
+              mode="elevated"
+              onPress={() => {
+                confirm({
+                  icon: "delete",
+                  title: "Delete project?",
+                  message:
+                    "Deleted projects cannot be restored.\nDo you want to continue?",
+                  okAction: () => {
+                    showDiscardPopUp.current = false;
+                    deleteProject({ id: project.id });
+                    navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
+                  },
+                });
+              }}
+            >
+              <Text>Delete project</Text>
+            </Button>
           </>
-        )}
-        {project && project?.owner_id === myId && (
-          <Button
-            testID="delete-project-button"
-            style={{
-              alignSelf: "flex-start",
-              marginBottom: 24,
-              backgroundColor: theme.colors.errorContainer,
-            }}
-            mode="elevated"
-            onPress={() => {
-              confirm({
-                icon: "delete",
-                title: "Delete project?",
-                message:
-                  "Deleted projects cannot be restored.\nDo you want to continue?",
-                okAction: () => {
-                  showDiscardPopUp.current = false;
-                  deleteProject({ id: project.id });
-                  navigation.navigate(NAVIGATION.LEARNING_PROJECTS);
-                },
-              });
-            }}
-          >
-            <Text>Delete project</Text>
-          </Button>
         )}
         {!project && <View style={{ marginBottom: 60 }}></View>}
       </ScrollView>

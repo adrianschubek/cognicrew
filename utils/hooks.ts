@@ -299,7 +299,6 @@ export function useAchievement(id: number) {
 
 export function useUnlockAchievement() {
   const { user } = useAuth();
-
   const unlockAchievement = async (achievementId) => {
     const { data, error } = await supabase.from("user_achievements").upsert({
       user_id: user?.id,
@@ -316,7 +315,15 @@ export function useUnlockAchievement() {
 
   return unlockAchievement;
 }
-
+export function useInsertAchievement() {
+  return handleErrors(
+    useInsertMutation(
+      supabase.from("user_achievements"),
+      ["achievement_id", "user_id"],
+      "achievement_id,user_id",
+    ),
+  );
+}
 export async function useDistinctProjectGroups() {
   let { data, error } = await supabase.rpc("get_distinct_project_groups");
   const stringArray = data.map((item) => item.group);

@@ -1,6 +1,6 @@
 import { TextInput } from "react-native-paper";
 import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoadingOverlay from "../../alerts/LoadingOverlay";
 import React from "react";
 import { Keyboard } from "react-native";
@@ -20,6 +20,14 @@ export default function TextInputListItem({ item }) {
       project_id: projectId,
     });
   };
+  const createSetRef = useRef(save);
+  createSetRef.current = save;
+  useEffect(() => {
+    //save Set when unmounted
+    return () => {
+      createSetRef.current();
+    };
+  }, []);
   return (
     <React.Fragment>
       <TextInput
