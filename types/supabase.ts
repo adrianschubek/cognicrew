@@ -787,6 +787,12 @@ export interface Database {
         }
         Returns: string
       }
+      insert_achievement: {
+        Args: {
+          id: number
+        }
+        Returns: undefined
+      }
       invite_user_to_project: {
         Args: {
           p_project_id: number

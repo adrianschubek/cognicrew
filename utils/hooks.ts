@@ -288,7 +288,6 @@ export function useUserAchievements(userId: string) {
     ),
   );
 }
-
 export function useAchievements() {
   const { data, error, isLoading, mutate } = handleErrors(
     useQuery(supabase.rpc("get_achievements")),
@@ -326,6 +325,7 @@ export function useUnlockAchievement() {
 
   return unlockAchievement;
 }
+
 export function useInsertAchievement() {
   return handleErrors(
     useInsertMutation(
