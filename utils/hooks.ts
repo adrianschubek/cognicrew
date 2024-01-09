@@ -265,6 +265,18 @@ export function useAchievements() {
   );
   return { data, error, isLoading, mutate };
 }
+export function useAchievement(id: number) {
+  //this fails on intitalRender always, because id is 0. This has to be done in order to avoid
+  //"Rendered more hooks than during the previous render" error
+  const { data, error, isLoading, mutate } = useQuery(
+    supabase
+      .from("achievements")
+      .select("id,name,icon_name,description")
+      .eq("id", id),
+  );
+  if (!id) return { data: null, error: null, isLoading: false, mutate };
+  return { data, error, isLoading, mutate };
+}
 
 export function useUnlockAchievement() {
   const { user } = useAuth();

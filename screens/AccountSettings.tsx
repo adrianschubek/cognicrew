@@ -9,19 +9,9 @@ import DangerZone from "../components/settings/DangerZone";
 import Visual from "../components/settings/Visual";
 import NameChange from "../components/settings/NameChange";
 import TagsSettings from "../components/settings/Tags";
-import AchievementNotification from "../components/dialogues/AchievementNotification";
-import { useEffect, useState } from "react";
 
 export default function AccountSettings() {
   const theme = useTheme();
-  const [achievementVisible, setAchievementVisible] = useState(false);
-  const [achievementName, setAchievementName] = useState("");
-  const [achievementIcon, setAchievementIcon] = useState("");
-  useEffect(() => {
-    if (achievementVisible) {
-      setTimeout(() => setAchievementVisible(false), 5500);
-    }
-  }, [achievementVisible]);
   return (
     <>
       <ScrollView
@@ -35,15 +25,6 @@ export default function AccountSettings() {
         <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
         <Divider />
         <Visual
-          sendAchievementData={(
-            achievementName,
-            achievementIcon,
-            achievementVisible,
-          ) => {
-            setAchievementName(achievementName);
-            setAchievementIcon(achievementIcon);
-            setAchievementVisible(achievementVisible);
-          }}
           style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
         />
         <Divider />
@@ -79,13 +60,6 @@ export default function AccountSettings() {
         }}
       /> */}
       </ScrollView>
-      {achievementVisible && (
-        <AchievementNotification
-          isVisible={achievementVisible}
-          achievementName={achievementName}
-          achievementIconName={achievementIcon}
-        />
-      )}
     </>
   );
 }

@@ -5,14 +5,7 @@ import { useAchievementsOld, useUnlockAchievement } from "../../utils/hooks";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 
-export default function Visual(props: {
-  sendAchievementData: (
-    achievementName: string,
-    achievementIconName: string,
-    achievementVisible: boolean,
-  ) => void;
-  [name: string]: any;
-}) {
+export default function Visual(props: { [name: string]: any }) {
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
   const unlockAchievement = useUnlockAchievement();
   const { data: achievementsData } = useAchievementsOld();
@@ -21,18 +14,6 @@ export default function Visual(props: {
     toggleTheme();
     const achievementId = 9;
     const { success, data } = await unlockAchievement(achievementId);
-
-    if (success && !darkmode) {
-      console.log("JA");
-      const achievement = achievementsData?.find(
-        (ach) => ach.id === achievementId,
-      );
-      props.sendAchievementData(
-        achievement?.name || "",
-        achievement?.icon_name || "",
-        true,
-      );
-    }
   };
 
   return (

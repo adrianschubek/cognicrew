@@ -1,15 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { StyleSheet, View, Text, Image, Animated } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, View, Text, Animated } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { supabase } from "../../supabase";
+import { useAchievement } from "../../utils/hooks";
 
-const AchievementNotification = ({
-  isVisible,
-  achievementName,
-  achievementIconName,
-}) => {
+const AchievementNotification = ({ achievementName, achievementIconName }) => {
   const theme = useTheme();
   const animationRef = useRef(null);
   const glowAnim = useRef(new Animated.Value(0)).current; // for the glow animation
@@ -39,15 +36,11 @@ const AchievementNotification = ({
   };
 
   useEffect(() => {
-    if (isVisible) {
-      startGlowAnimation();
-      animationRef.current?.bounceInUp().then(() => {
-        animationRef.current?.tada();
-      });
-    }
-  }, [isVisible]);
-
-  if (!isVisible) return null;
+    startGlowAnimation();
+    animationRef.current?.bounceInUp().then(() => {
+      animationRef.current?.tada();
+    });
+  }, []);
 
   const glowStyle = {
     /*shadowColor: goldenColor,
@@ -105,7 +98,7 @@ const AchievementNotification = ({
 const styles = StyleSheet.create({
   notification: {
     position: "absolute",
-    top: 20,
+    top: 150,
     padding: 10,
     borderRadius: 10,
     //all of this  bellow doesn't do anything O.o (now i know why. Because shadow is iOS only)

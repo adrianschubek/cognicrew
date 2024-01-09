@@ -34,6 +34,7 @@ import { GameState, ScreenState } from "../functions/rooms";
 import dayjs from "dayjs";
 import GlobalStatistics from "../screens/GlobalStatistics";
 import ProjectStatistics from "../screens/projectManagement/ProjectStatistics";
+import AchievementAlert from "./alerts/AchievementAlert";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -284,30 +285,33 @@ export default function MainNav() {
       <Tab.Screen name="Login" component={Login} />
     </Stack.Navigator>
   ) : (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name={"_main_"} component={MainTabs} />
-      <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
-      <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
-      <Stack.Screen
-        name={NAVIGATION.WHITEBOARD}
-        component={Whiteboard}
-        options={{ gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={NAVIGATION.EXERCISE_GAME}
-        component={ExerciseGame}
-        options={{ gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={NAVIGATION.END_RESULTS}
-        component={EndResults}
-        options={{ gestureEnabled: false }}
-      />
-      <Stack.Screen
-        name={NAVIGATION.FLASHCARD_GAME}
-        component={FlashcardGame}
-        options={{ gestureEnabled: false }}
-      />
-    </Stack.Navigator>
+    <>
+      <AchievementAlert userId={user.id} />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={"_main_"} component={MainTabs} />
+        <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
+        <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
+        <Stack.Screen
+          name={NAVIGATION.WHITEBOARD}
+          component={Whiteboard}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={NAVIGATION.EXERCISE_GAME}
+          component={ExerciseGame}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={NAVIGATION.END_RESULTS}
+          component={EndResults}
+          options={{ gestureEnabled: false }}
+        />
+        <Stack.Screen
+          name={NAVIGATION.FLASHCARD_GAME}
+          component={FlashcardGame}
+          options={{ gestureEnabled: false }}
+        />
+      </Stack.Navigator>
+    </>
   );
 }
