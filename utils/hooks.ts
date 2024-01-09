@@ -247,6 +247,25 @@ export function useGlobalStatistics(userId: string) {
   };
 }
 
+//Settings
+export function usePersonalTags() {
+  const query = supabase.from("profiles").select("user_tags");
+
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+
+  useEffect(() => {
+    mutate();
+  }, []);
+  return {
+    data,
+    error,
+    isLoading,
+    mutate,
+  };
+}
+
+
+
 //Achievements
 export function useAchievementsOld() {
   return handleErrors(
