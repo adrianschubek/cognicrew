@@ -32,12 +32,12 @@ export default function AchievementAlert(props: { userId: string }) {
         },
         (payload) => {
           setAchievementId(payload.new.achievement_id);
-          console.log("achievement Id: ", payload.new.achievement_id);
+          //console.log("achievement Id: ", payload.new.achievement_id);
         },
       )
       .subscribe();
   }, []);
-  console.log("achievementVisible: ", achievementVisible);
+  //console.log("achievementVisible: ", achievementVisible);
   return (
     <Portal>
       {achievementVisible && (

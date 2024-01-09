@@ -120,7 +120,7 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
       console.error(error);
       return;
     }
-    console.log(data);
+    //console.log(data);
     setFriends(data.map((friend) => friend.id));
   };
 

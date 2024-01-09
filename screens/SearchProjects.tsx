@@ -19,7 +19,7 @@ export default function SearchProjects() {
 
   const { data } = useQuery(supabase.rpc("get_public_projects"), {
     onSuccess(data) {
-      console.log("Data fetched successfully:", data.data);
+      //console.log("Data fetched successfully:", data.data);
     },
     onError(err) {
       errorAlert({
@@ -132,7 +132,7 @@ export default function SearchProjects() {
       ]);
 
       const upsertedProjectId = upsertedProject[0]?.id;
-      console.log("Test 1: ", upsertedProject[0]?.id);
+      //console.log("Test 1: ", upsertedProject[0]?.id);
 
       // FLASHCARDS
       const flashcardSets = await fetchSets(
@@ -164,16 +164,16 @@ export default function SearchProjects() {
             .eq("project_id", upsertedProjectId)
             .single();
 
-          console.log("Upserted Set Information:", upsertedSetInformation);
+          //console.log("Upserted Set Information:", upsertedSetInformation);
 
           // Check if data is not null before accessing it
           const upsertedSetData = upsertedSetInformation.data;
 
-          console.log("Upserted Set Data :", upsertedSetData);
-          console.log("Upserted Set Id:", upsertedSetData.id);
+          //console.log("Upserted Set Data :", upsertedSetData);
+          //console.log("Upserted Set Id:", upsertedSetData.id);
 
           const upsertedSetId = upsertedSetData.id;
-          console.log("Test 2: ", upsertedSetId);
+          //console.log("Test 2: ", upsertedSetId);
 
           // Fetch exercise for the existing set
           const flashcards = await fetchFlashcards(flashcardSet.id);
@@ -221,19 +221,19 @@ export default function SearchProjects() {
             .eq("project_id", upsertedProjectId)
             .single();
 
-          console.log("Upserted Set Information:", upsertedSetInformation);
+          //console.log("Upserted Set Information:", upsertedSetInformation);
 
           const upsertedSetData = upsertedSetInformation.data;
 
-          console.log("Upserted Set Data :", upsertedSetData);
-          console.log("Upserted Set Id:", upsertedSetData.id);
+          //console.log("Upserted Set Data :", upsertedSetData);
+          //console.log("Upserted Set Id:", upsertedSetData.id);
 
           const upsertedSetId = upsertedSetData.id;
-          console.log("Test 2: ", upsertedSetId);
+          //console.log("Test 2: ", upsertedSetId);
 
           // Fetch exercise for the existing set
           const exercises = await fetchExercises(exerciseSet.id);
-          console.log("Fetched Exercises");
+          //console.log("Fetched Exercises");
 
           if (exercises && exercises.data && Array.isArray(exercises.data)) {
             exercises.data.map(async (exercise) => {
@@ -254,14 +254,14 @@ export default function SearchProjects() {
                 .eq("set_id", upsertedSetId)
                 .single();
 
-              console.log(
+             /* console.log(
                 "Upserted Exercise Information:",
                 upsertedExerciseInformation,
-              );
+              );*/
 
               const upsertedExerciseId = upsertedExerciseInformation?.data.id;
-              console.log("Existing Exercise Id", exercise.id);
-              console.log("Upserted Exercise Id", upsertedExerciseId);
+              //console.log("Existing Exercise Id", exercise.id);
+              //console.log("Upserted Exercise Id", upsertedExerciseId);
 
               // Fetch answers for the existing exercise
               const answers = await fetchAnswers(exercise.id);
