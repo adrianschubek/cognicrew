@@ -154,6 +154,9 @@ async function mainLoop() {
     // Process commands for this room
     commandsCount = await processCommands(state, newState, privateState);
 
+    // Process achievements
+    await processAchievements();
+
     console.log(newState);
     await supabase
       .from("public_room_states")
@@ -403,6 +406,10 @@ async function stateAfterEndResults(
 /**
  * Utility functions
  */
+
+async function processAchievements() {
+  // TODO: HERE ALEX !! 
+}
 
 /**
  * Returns the next state based on the current state or false if no state change is needed
