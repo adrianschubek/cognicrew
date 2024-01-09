@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, Button, Card, HelperText, TextInput } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../../providers/AuthProvider";
+import { useFocusEffect } from "@react-navigation/native";
+import { usePersonalTags } from "../../utils/hooks";
 
 const Tags = (props) => <Avatar.Icon {...props} icon="tag-multiple" />;
 
@@ -11,6 +13,17 @@ export default function TagsSettings(props) {
   const { success, error: errorAlert } = useAlerts();
   const [tags, setTags] = useState("");
   const { user } = useAuth();
+  const { data, error, isLoading, mutate } = usePersonalTags();
+
+  useEffect(() => {
+    if (!data || isLoading) return;
+      setTags(data[0]["user_tags"])
+  }, [data]);
+
+  useEffect(() => {
+    mutate();
+  }, []);
+
 
   const updateTags = async () => {
     const { data, error } = await supabase
