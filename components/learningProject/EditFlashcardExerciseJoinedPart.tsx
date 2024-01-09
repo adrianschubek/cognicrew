@@ -232,7 +232,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         const newState = realtime.presenceState();
         console.log(
           "sync",
-          newState
+          newState,
           // Object.values(newState).flatMap((e: any) => e[0].user_name),
         );
         console.log(`cardquiz:edit:${listItem.id as number}`);
@@ -309,18 +309,22 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           value={question}
           onFocus={async () => {
             console.log("focus");
-            const realtime = supabase
-              .channel(`cardquiz:edit:${listItem.id as number}`)
-              .subscribe(async (status) => {
-                if (status !== "SUBSCRIBED") {
-                  return;
-                }
-                const presenceTrackStatus = await realtime.track({
-                  a:1,
-                  user_name: username.data,
-                });
-                console.log(presenceTrackStatus);
+            const realtime = supabase.channel(
+              `cardquiz:edit:${listItem.id as number}`,
+              {
+                config: { presence: { key: user.id } },
+              },
+            );
+            realtime.subscribe(async (status) => {
+              if (status !== "SUBSCRIBED") {
+                return;
+              }
+              const presenceTrackStatus = await realtime.track({
+                a: 1,
+                user_name: username.data,
               });
+              console.log(presenceTrackStatus);
+            });
           }}
           onBlur={async () => {
             // console.log("blur");
