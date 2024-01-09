@@ -87,7 +87,7 @@ export default function Achievements() {
             gap: 8,
           }}
         >
-          <Avatar.Icon icon="lock-question" size={48} />
+          <Avatar.Icon icon="lock-question" size={70} />
           <Text variant="headlineSmall">Secret Feature!!!</Text>
         </View>
       )}
