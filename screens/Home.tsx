@@ -27,99 +27,99 @@ export default function HomeScreen({ navigation }) {
     });
   }, []);
 
-  useEffect(() => {
-    // if (!user || !username /* || !alreadyFetchedRealtime */) return;
-    // alreadyFetchedRealtime.current = true;
-    const realtime = supabase.channel(`xxx`/* , { // TODO: das ist nen satte hiuer global packen useref
-      config: { presence: { key: "1" } },
-    } */);
-    realtime
-      .on("presence", { event: "sync" }, () => {
-        const newState = realtime.presenceState();
-        console.log(
-          "syncccc",
-          newState,
-          // Object.values(newState).flatMap((e: any) => e[0].user_name),
-        );
-        // setRealtimeState(
-        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
-        // );
-      })
+  // useEffect(() => {
+  //   // if (!user || !username /* || !alreadyFetchedRealtime */) return;
+  //   // alreadyFetchedRealtime.current = true;
+  //   const realtime = supabase.channel(`xxx`/* , { // TODO: das ist nen satte hiuer global packen useref
+  //     config: { presence: { key: "1" } },
+  //   } */);
+  //   realtime
+  //     .on("presence", { event: "sync" }, () => {
+  //       const newState = realtime.presenceState();
+  //       console.log(
+  //         "syncccc",
+  //         newState,
+  //         // Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //       );
+  //       // setRealtimeState(
+  //       //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //       // );
+  //     })
 
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("join", key, newPresences);
-      })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("leave", key, leftPresences);
-      })
-      // .subscribe();
-    .subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      const presenceTrackStatus = await realtime.track({
-       a:5555
-      });
-      console.log(presenceTrackStatus);
-    });
-  }, []);
+  //     .on("presence", { event: "join" }, ({ key, newPresences }) => {
+  //       console.log("join", key, newPresences);
+  //     })
+  //     .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+  //       console.log("leave", key, leftPresences);
+  //     })
+  //     // .subscribe();
+  //   .subscribe(async (status) => {
+  //     if (status !== "SUBSCRIBED") {
+  //       return;
+  //     }
+  //     const presenceTrackStatus = await realtime.track({
+  //      a:5555
+  //     });
+  //     console.log(presenceTrackStatus);
+  //   });
+  // }, []);
 
-  const fuckme = async () => {
-    console.log("FFF");
-    const realtime = supabase.channel(`xxx`, {
-      config: { presence: { key: "1" } },
-    });
-    realtime
-    .on("presence", { event: "sync" }, () => {
-      const newState = realtime.presenceState();
-      console.log(
-        "yyyyyy",
-        newState,
-        // Object.values(newState).flatMap((e: any) => e[0].user_name),
-      );
-      // setRealtimeState(
-      //   Object.values(newState).flatMap((e: any) => e[0].user_name),
-      // );
-    }).
-    subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      const presenceTrackStatus = await realtime.track({
-        a: 1,
-      });
-      console.log(presenceTrackStatus+ "aaaaaaaaaaa");
-    });
-  };
+  // const fuckme = async () => {
+  //   console.log("FFF");
+  //   const realtime = supabase.channel(`xxx`, {
+  //     config: { presence: { key: "1" } },
+  //   });
+  //   realtime
+  //   .on("presence", { event: "sync" }, () => {
+  //     const newState = realtime.presenceState();
+  //     console.log(
+  //       "yyyyyy",
+  //       newState,
+  //       // Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //     );
+  //     // setRealtimeState(
+  //     //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //     // );
+  //   }).
+  //   subscribe(async (status) => {
+  //     if (status !== "SUBSCRIBED") {
+  //       return;
+  //     }
+  //     const presenceTrackStatus = await realtime.track({
+  //       a: 1,
+  //     });
+  //     console.log(presenceTrackStatus+ "aaaaaaaaaaa");
+  //   });
+  // };
 
-  const fuckme2 = async () => {
-    console.log("FFF");
-    const realtime = supabase.channel(`xxx`, {
-      config: { presence: { key: "1" } },
-    });
-    realtime
-    .on("presence", { event: "sync" }, () => {
-      const newState = realtime.presenceState();
-      console.log(
-        "bbb",
-        newState,
-        // Object.values(newState).flatMap((e: any) => e[0].user_name),
-      );
-      // setRealtimeState(
-      //   Object.values(newState).flatMap((e: any) => e[0].user_name),
-      // );
-    }).
-    subscribe(async (status, err) => {
-      if(err) console.log("SUBSCRIPTION ERROR:"+ err);
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      const presenceTrackStatus = await realtime.track({
-        a: 1222222222,
-      });
-      console.log(presenceTrackStatus+ "bbbbbbbb");
-    });
-  };
+  // const fuckme2 = async () => {
+  //   console.log("FFF");
+  //   const realtime = supabase.channel(`xxx`, {
+  //     config: { presence: { key: "1" } },
+  //   });
+  //   realtime
+  //   .on("presence", { event: "sync" }, () => {
+  //     const newState = realtime.presenceState();
+  //     console.log(
+  //       "bbb",
+  //       newState,
+  //       // Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //     );
+  //     // setRealtimeState(
+  //     //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+  //     // );
+  //   }).
+  //   subscribe(async (status, err) => {
+  //     if(err) console.log("SUBSCRIPTION ERROR:"+ err);
+  //     if (status !== "SUBSCRIBED") {
+  //       return;
+  //     }
+  //     const presenceTrackStatus = await realtime.track({
+  //       a: 1222222222,
+  //     });
+  //     console.log(presenceTrackStatus+ "bbbbbbbb");
+  //   });
+  // };
 
   if (isLoading)
     return (
@@ -146,8 +146,8 @@ export default function HomeScreen({ navigation }) {
           marginBottom: 10,
         }}
       >
-        <Button onPress={fuckme}>FFFFF</Button>
-        <Button onPress={fuckme2}>HHHHH</Button>
+        {/* <Button onPress={fuckme}>FFFFF</Button> */}
+        {/* <Button onPress={fuckme2}>HHHHH</Button> */}
         <Text variant="titleLarge">Hello, {isLoading ? "...." : data}</Text>
         <ProfilePictureAvatar
           username={isLoading ? "...." : data}

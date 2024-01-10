@@ -223,16 +223,18 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   const { user } = useAuth();
   const username = useUsername();
-  // const alreadyFetchedRealtime = useRef<boolean>(false);
+
+  const realtime = useRef(
+    supabase.channel(`cardquiz:edit:${listItem.id}`, {
+      config: { presence: { key: user.id } },
+    }),
+  );
+
   useEffect(() => {
     // if (!user || !username /* || !alreadyFetchedRealtime */) return;
-    // alreadyFetchedRealtime.current = true;
-    const realtime = supabase.channel(`cardquiz:edit:1`, {
-      config: { presence: { key: "1" } },
-    });
-    realtime
+    realtime.current
       .on("presence", { event: "sync" }, () => {
-        const newState = realtime.presenceState();
+        const newState = realtime.current.presenceState();
         console.log(
           "sync",
           newState,
@@ -263,19 +265,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
 
   const fuckme = async () => {
     console.log("FFF");
-    const realtime = supabase.channel(`cardquiz:edit:1`, {
-      config: { presence: { key: "1" } },
-    });
-    realtime.subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      const presenceTrackStatus = await realtime.track({
+    // const realtime = supabase.channel(`cardquiz:edit:1`, {
+    //   config: { presence: { key: "1" } },
+    // });
+    
+      const presenceTrackStatus = await realtime.current.track({
         a: 1,
         user_name: username.data,
       });
       console.log(presenceTrackStatus);
-    });
   };
 
   return (
