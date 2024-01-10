@@ -217,15 +217,15 @@ export default function ProjectCard(props: {
                           helperText: "Only friends can join this room.",
                         },
                         {
-                          label: "Size (1-100)",
+                          label: "Size (1-1000)",
                           type: "number",
                           helperText:
                             "The maximum amount of players in this room.",
                           icon: "account-group",
                           defaultValue: "10",
                           validator: (value) =>
-                            /^[1-9][0-9]?$|^100$/.test(value),
-                          errorText: "Size must be between 1 and 100",
+                            +value >= 1 && +value <= 1000,
+                          errorText: "Size must be between 1 and 1000",
                         },
                       ],
                     })
