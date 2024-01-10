@@ -1,6 +1,12 @@
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, TextInput, IconButton, HelperText } from "react-native-paper";
+import {
+  Card,
+  TextInput,
+  IconButton,
+  HelperText,
+  Button,
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -221,12 +227,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   useEffect(() => {
     // if (!user || !username /* || !alreadyFetchedRealtime */) return;
     // alreadyFetchedRealtime.current = true;
-    const realtime = supabase.channel(
-      `cardquiz:edit:${listItem.id as number}`,
-      {
-        config: { presence: { key: user.id } },
-      },
-    );
+    const realtime = supabase.channel(`cardquiz:edit:1`, {
+      config: { presence: { key: "1" } },
+    });
     realtime
       .on("presence", { event: "sync" }, () => {
         const newState = realtime.presenceState();
@@ -235,10 +238,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           newState,
           // Object.values(newState).flatMap((e: any) => e[0].user_name),
         );
-        console.log(`cardquiz:edit:${listItem.id as number}`);
-        setRealtimeState(
-          Object.values(newState).flatMap((e: any) => e[0].user_name),
-        );
+        // setRealtimeState(
+        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+        // );
       })
 
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
@@ -259,8 +261,26 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     // });
   }, []);
 
+  const fuckme = async () => {
+    console.log("FFF");
+    const realtime = supabase.channel(`cardquiz:edit:1`, {
+      config: { presence: { key: "1" } },
+    });
+    realtime.subscribe(async (status) => {
+      if (status !== "SUBSCRIBED") {
+        return;
+      }
+      const presenceTrackStatus = await realtime.track({
+        a: 1,
+        user_name: username.data,
+      });
+      console.log(presenceTrackStatus);
+    });
+  };
+
   return (
     <Card elevation={1} style={styles.cardStyle}>
+      <Button onPress={fuckme}>Fuck me</Button>
       <Card.Title
         title="Edit question"
         titleStyle={{}}
@@ -307,25 +327,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           multiline={true}
           label="Question"
           value={question}
-          onFocus={async () => {
-            console.log("focus");
-            const realtime = supabase.channel(
-              `cardquiz:edit:${listItem.id as number}`,
-              {
-                config: { presence: { key: user.id } },
-              },
-            );
-            realtime.subscribe(async (status) => {
-              if (status !== "SUBSCRIBED") {
-                return;
-              }
-              const presenceTrackStatus = await realtime.track({
-                a: 1,
-                user_name: username.data,
-              });
-              console.log(presenceTrackStatus);
-            });
-          }}
+          onFocus={fuckme}
           onBlur={async () => {
             // console.log("blur");
             // const realtime = supabase
