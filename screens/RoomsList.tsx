@@ -3,8 +3,7 @@ import {
   Divider,
   Icon,
   Text,
-  useTheme,
-  Searchbar,
+  useTheme
 } from "react-native-paper";
 import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
@@ -17,6 +16,8 @@ import { useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
+import { usePresenceStore } from "../stores/PresenceStore";
+import { PulseIndicator } from "react-native-indicators";
 
 function Room({ room }) {
   const theme = useTheme();
@@ -128,6 +129,8 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
     getFriends();
   }, []);
 
+  const online = usePresenceStore((state) => state.online);
+
   // Cheating: check for updates on room_tracker then refetch rooms
   useFocusEffect(() => {
     const roomsTracker = supabase
@@ -179,6 +182,19 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
         <Fragment key={index}>
           <Text variant="titleSmall" style={{ marginBottom: 2 }}>
             {roomType.title}
+            {index === 0 && (
+              <>
+                <PulseIndicator
+                  style={{ flex: 0, opacity: 0.7 }}
+                  size={25}
+                  color={theme.colors.primary}
+                />
+                <Text style={{ color: theme.colors.primary }}>
+                  {online.filter((v) => friends.includes(v.user_id)).length}{" "}
+                  online
+                </Text>
+              </>
+            )}
           </Text>
           {roomType.rooms.map((room) => (
             <Room key={room.id} room={room} />
