@@ -2,14 +2,17 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
   Card,
+  Text,
   TextInput,
   IconButton,
   HelperText,
   Button,
+  useTheme,
+  Icon,
 } from "react-native-paper";
 import {
   responsiveHeight,
-  responsiveWidth
+  responsiveWidth,
 } from "react-native-responsive-dimensions";
 import PrioritySelector from "./PrioritySelector";
 import { checkForLineBreak, debounce } from "../../utils/common";
@@ -28,6 +31,8 @@ import {
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../../providers/AuthProvider";
+import { usePresenceStore } from "../../stores/PresenceStore";
+import { useShallow } from "zustand/react/shallow";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -215,9 +220,13 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setIsInitialized(true);
   }, [answerOrAnswers, priority, question]);
 
-  
+  const theme = useTheme();
   const { user } = useAuth();
   const username = useUsername();
+
+  const updateEditedBy = usePresenceStore(
+    (state) => state.updateCardQuizEditing,
+  );
 
   const realtime = useRef(
     supabase.channel(`cardquiz:edit:${listItem.id}`, {
@@ -226,26 +235,20 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
 
   useEffect(() => {
-    realtime.current
-      .on("presence", { event: "sync" }, () => {
-        const newState = realtime.current.presenceState();
-        console.log(
-          `sync cardquiz:edit:${listItem.id}`,
-          newState,
-          // Object.values(newState).flatMap((e: any) => e[0].user_name),
-        );
-        // setRealtimeState(
-        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
-        // );
-      })
-
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("join", key, newPresences);
-      })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("leave", key, leftPresences);
-      })
-      .subscribe();
+    realtime.current.on("presence", { event: "sync" }, () => {
+      const newState = realtime.current.presenceState();
+      console.log(
+        `sync cardquiz:edit:${listItem.id}`,
+        newState,
+        Object.values(newState).flatMap((e: any) => e[0].user_name),
+      );
+      // TODO: filter self username out!
+      updateEditedBy(
+        listItem.id,
+        Object.values(newState).flatMap((e: any) => e[0].user_name),
+      );
+    })
+    .subscribe();
   }, []);
 
   const startEditing = async () => {
@@ -262,12 +265,29 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     console.log(presenceTrackStatus);
   };
 
+  const liveEditBy =
+    usePresenceStore(
+      useShallow((state) => state.cardQuizEditing[props.listItem.id]),
+    ) ?? [];
+  console.log("liveEditBy: ", liveEditBy);
+
   return (
-    <Card elevation={1} style={styles.cardStyle}>
+    <Card
+      elevation={1}
+      style={[
+        styles.cardStyle,
+        liveEditBy.length > 0 && {
+          backgroundColor: theme.colors.primaryContainer,
+          borderColor: theme.colors.primary,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <Card.Title
         title="Edit question"
-        titleStyle={{}}
-        style={{}}
+        titleStyle={{
+          color: theme.colors.primary,
+        }}
         right={() => (
           <Fragment>
             <View
@@ -304,6 +324,33 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         )}
       />
       <Card.Content>
+        {liveEditBy.length > 0 && (
+          <Text
+            style={{
+              width: "auto",
+              textAlign: "center",
+              verticalAlign: "middle",
+              paddingVertical: 4,
+              marginBottom: 8,
+              marginLeft: -16,
+              marginRight: -16,
+              color: theme.colors.onPrimary,
+              backgroundColor: theme.colors.onPrimaryContainer,
+            }}
+          >
+            {liveEditBy.length === 1
+              ? `${liveEditBy[0]} is`
+              : liveEditBy.length === 2
+              ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
+              : "Multiple people are"}{" "}
+            editing this question{" "}
+            <Icon
+              color={theme.colors.onPrimary}
+              source={"account-multiple"}
+              size={16}
+            ></Icon>
+          </Text>
+        )}
         <TextInput
           testID="input-edit-flashcard-question"
           style={{ marginBottom: 8 }}
