@@ -53,7 +53,7 @@ export default function PasswordChange(props) {
           onChangeText={(t) => setPw2(t)}
           label={"Confirm New Password"}
           secureTextEntry={true}
-          error={pw1 !== pw2}
+          error={pw1 !== pw2 || !pwLength}
         ></TextInput>
       </Card.Content>
       <Card.Actions>
