@@ -187,7 +187,7 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
             {index === 0 && (
               <>
                 <PulseIndicator
-                  style={{ flex: 0, opacity: 0.7 }}
+                  style={{ flex: 0, opacity: 0.7, marginLeft: 5 }}
                   size={25}
                   color={theme.colors.primary}
                 />
