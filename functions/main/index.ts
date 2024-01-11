@@ -128,7 +128,7 @@ async function mainLoop() {
     )?.data as PrivateRoomState;
 
     // |> foreach player in room -> update if player has submitted an answer already
-    updatePlayerAnswers(publicState, playerAnswers, room);
+    updatePlayerAnswers(publicState, room, playerAnswers);
 
     /**
      * ScreenState:
@@ -137,7 +137,12 @@ async function mainLoop() {
      */
     switch (nextState(publicState)) {
       case State.ROUND_SOLUTION:
-        await stateRoundSolution(publicState, privateState, room, playerAnswers);
+        await stateRoundSolution(
+          publicState,
+          privateState,
+          room,
+          playerAnswers,
+        );
         break;
       case State.ROUND_RESULTS:
         await stateRoundResults(publicState, privateState, room, playerAnswers);
@@ -153,7 +158,7 @@ async function mainLoop() {
     }
 
     // Process commands for this room
-    commandsCount = await processCommands(room, publicState, privateState);
+    commandsCount = await processCommands(publicState, privateState, room);
 
     console.log(publicState);
     await supabase
@@ -233,7 +238,8 @@ async function stateRoundSolution(
   switch (publicState.game) {
     case GameState.EXERCISES: {
       let submittedAnswers = 0;
-      const roundAnswers = privateState.gameData.exercises[publicState.round - 1];
+      const roundAnswers =
+        privateState.gameData.exercises[publicState.round - 1];
       let answersWithCountWithIsCorrect: [string, number, boolean][] =
         roundAnswers.answers.map((answer, i) => [
           answer,
@@ -456,16 +462,16 @@ async function achieve(achievementId: number, userId: string) {
  * Updates player.currentCorrect and player.currentTimeNeeded in room state
  */
 function updatePlayerAnswers(
-  newState: PublicRoomState,
+  publicState: PublicRoomState,
+  room: { data: Json; room_id: string },
   playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
-  state: { data: Json; room_id: string },
 ) {
-  for (const player of newState.players) {
+  for (const player of publicState.players) {
     const playerAnswer = playerAnswers?.find(
       (pa) =>
         pa.user_id === player.id &&
-        pa.room_id === state.room_id &&
-        pa.round === newState.round,
+        pa.room_id === room.room_id &&
+        pa.round === publicState.round,
     );
     if (!playerAnswer) continue;
     player.currentCorrect = playerAnswer.answer_correct;
@@ -474,9 +480,9 @@ function updatePlayerAnswers(
 }
 
 async function processCommands(
-  state: { data: Json; room_id: string },
-  newState: PublicRoomState,
+  publicState: PublicRoomState,
   privateState: PrivateRoomState,
+  room: { data: Json; room_id: string },
 ) {
   // Poll all commands from queue
   const { data: commands, error } = await supabase
@@ -488,7 +494,7 @@ async function processCommands(
   if (error) console.error("queue: ", error);
 
   let commandsCount = 0;
-  const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
+  const roomCmds = commands?.filter((cmd) => cmd.room_id === room.room_id);
   if (roomCmds) {
     for (const cmd of roomCmds) {
       commandsCount++;
@@ -496,21 +502,21 @@ async function processCommands(
         case "reset_room":
           console.log("reset_room");
 
-          await updateStats(newState, privateState);
+          await updateStats(publicState, privateState);
 
-          newState.screen = ScreenState.LOBBY;
-          newState.round = 0; // fixes bug where answers not updated in quiz game on startup
+          publicState.screen = ScreenState.LOBBY;
+          publicState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
           // delete old game data
           await supabase
             .from("private_room_states")
             .delete()
-            .eq("room_id", state.room_id);
+            .eq("room_id", room.room_id);
           // delete player answers
           await supabase
             .from("player_answers")
             .delete()
-            .eq("room_id", state.room_id);
+            .eq("room_id", room.room_id);
           break;
         default:
           console.error(`Unhandled command type '${cmd.type}'`);
