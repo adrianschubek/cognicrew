@@ -457,8 +457,8 @@ async function achieve(achievementId: number, userId: string) {
  */
 function updatePlayerAnswers(
   newState: PublicRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
+  state: { data: Json; room_id: string },
 ) {
   for (const player of newState.players) {
     const playerAnswer = playerAnswers?.find(
