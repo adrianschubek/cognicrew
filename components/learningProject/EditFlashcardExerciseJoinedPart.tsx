@@ -5,10 +5,8 @@ import {
   Text,
   TextInput,
   IconButton,
-  HelperText,
-  Button,
-  useTheme,
-  Icon,
+  HelperText, useTheme,
+  Icon
 } from "react-native-paper";
 import {
   responsiveHeight,
@@ -235,20 +233,23 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
 
   useEffect(() => {
-    realtime.current.on("presence", { event: "sync" }, () => {
-      const newState = realtime.current.presenceState();
-      console.log(
-        `sync cardquiz:edit:${listItem.id}`,
-        newState,
-        Object.values(newState).flatMap((e: any) => e[0].user_name),
-      );
-      // TODO: filter self username out!
-      updateEditedBy(
-        listItem.id,
-        Object.values(newState).flatMap((e: any) => e[0].user_name),
-      );
-    })
-    .subscribe();
+    realtime.current
+      .on("presence", { event: "sync" }, () => {
+        const newState = realtime.current.presenceState();
+        // console.log(
+        //   `sync cardquiz:edit:${listItem.id}`,
+        //   newState,
+        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+        // );
+        updateEditedBy(
+          listItem.id,
+          Object.values(newState)
+            // @ts-expect-error user_name not defined
+            .filter((u) => u[0].user_name !== username.data)
+            .flatMap((e: any) => e[0].user_name as string),
+        );
+      })
+      .subscribe();
   }, []);
 
   const startEditing = async () => {
@@ -267,7 +268,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[props.listItem.id]),
     ) ?? [];
-  console.log("liveEditBy: ", liveEditBy);
+  // console.log("liveEditBy: ", liveEditBy);
 
   return (
     <Card
