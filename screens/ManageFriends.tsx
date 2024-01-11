@@ -5,7 +5,6 @@ import {
   Divider,
   Avatar,
   Text,
-  TextInput,
   useTheme,
   IconButton,
   Searchbar,
@@ -21,14 +20,12 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
-import dayjs from "dayjs";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
   const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const [searchQuery, setSearchQuery] = useState("");
-  const [projectQuery, setProjectQuery] = useState("");
   const [friendRequestsSent, setFriendRequestsSent] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
@@ -59,19 +56,6 @@ export default function ManageFriends({ navigation }) {
     friendIdsAndNamesData.filter((e) => {
       return e.username.toLowerCase().includes(searchQuery.toLowerCase());
     });
-
-  /**
-   * `handleSearch` - Updates the search query state based on user input.
-   * @param {string} query - The current text in the search input field.
-   * @param {string} list - The list type being searched ('friends' or 'projects').
-   */
-  const handleSearch = (query, list) => {
-    if (list === "friends") {
-      setSearchQuery(query);
-    } else {
-      setProjectQuery(query);
-    }
-  };
 
   useEffect(() => {
     const realtimeFriends = supabase
@@ -158,7 +142,9 @@ export default function ManageFriends({ navigation }) {
               borderRadius: 10,
             }}
             placeholder="Search"
-            onChangeText={(query) => handleSearch(query, "friends")}
+            onChangeText={(query) => {
+              setSearchQuery(query);
+            }}
             value={searchQuery}
           />
           <ScrollView
