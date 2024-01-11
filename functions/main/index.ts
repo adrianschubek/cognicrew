@@ -7,7 +7,7 @@ import {
   PublicRoomState,
   UserProjectStats,
 } from "../rooms.ts";
-import { Database } from "../../types/supabase.ts";
+import { Database, Json } from "../../types/supabase.ts";
 
 console.log("main function started");
 
@@ -137,10 +137,10 @@ async function mainLoop() {
      */
     switch (nextState(newState)) {
       case State.ROUND_SOLUTION:
-        await stateRoundSolution(newState, privateState, playerAnswers, state);
+        await stateRoundSolution(newState, privateState, state, playerAnswers);
         break;
       case State.ROUND_RESULTS:
-        await stateRoundResults(newState, playerAnswers, state, privateState);
+        await stateRoundResults(newState, privateState, state, playerAnswers);
         break;
       case State.INGAME_OR_END_RESULTS:
         await stateIngameOrEndResults(newState, privateState);
@@ -180,9 +180,9 @@ async function mainLoop() {
 
 async function stateRoundResults(
   newState: PublicRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
   privateState: PrivateRoomState,
+  state: { data: Json; room_id: string },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
 ) {
   newState.screen = ScreenState.ROUND_RESULTS;
   newState.players = newState.players.map((player) => {
@@ -220,8 +220,8 @@ async function stateRoundResults(
 async function stateRoundSolution(
   newState: PublicRoomState,
   privateState: PrivateRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
+  state: { data: Json; room_id: string },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
 ) {
   newState.screen = ScreenState.ROUND_SOLUTION;
 
@@ -385,10 +385,7 @@ async function stateIngameOrEndResults(
 
 async function stateAfterEndResults(
   newState: PublicRoomState,
-  state: {
-    data: any;
-    room_id: any;
-  },
+  state: { data: Json; room_id: string },
 ) {
   // After game end / END_RESULTS screen is shown
   // don't close lobby instead let stay in obby so host can start new game
