@@ -562,7 +562,7 @@ async function updateStats(
       continue;
     }
 
-    const stats: UserProjectStats = dbstats?.stats ?? {
+    const stats: UserProjectStats = (dbstats?.stats as UserProjectStats) ?? {
       scoreQuiz: 0,
       scoreFlashcards: 0,
       winsQuiz: 0,
@@ -589,13 +589,16 @@ async function updateStats(
         ? 1
         : 0;
 
-    const timeSpent = dayjs().valueOf() - publicState.gameBeganAt;
+    const timeSpentSeconds = Math.min(
+      Math.max(0, (dayjs().valueOf() - publicState.gameBeganAt) / 1000),
+      privateState.roundDuration * publicState.totalRounds,
+    );
     stats.timeSpentQuiz +=
-      publicState.game == GameState.EXERCISES ? timeSpent : 0;
+      publicState.game == GameState.EXERCISES ? timeSpentSeconds : 0;
     stats.timeSpentFlashcards +=
-      publicState.game == GameState.FLASHCARDS ? timeSpent : 0;
+      publicState.game == GameState.FLASHCARDS ? timeSpentSeconds : 0;
     stats.timeSpentWhiteboard +=
-      publicState.game == GameState.WHITEBOARD ? timeSpent : 0;
+      publicState.game == GameState.WHITEBOARD ? timeSpentSeconds : 0;
 
     const { error: errUpdate } = await supabase
       .from("user_learning_projects")
