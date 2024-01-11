@@ -299,7 +299,7 @@ export default function CreateEditProject({
             <HelperText type={isPublished ? "info" : "info"}>
               {isPublished
                 ? "Other users can find and clone this project. They will NOT be able to edit THIS project."
-                : "Project is hidden and only project members can see and edit."}
+                : "Project is hidden and only project members can access it."}
             </HelperText>
             <Divider />
           </>
