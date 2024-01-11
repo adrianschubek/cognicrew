@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Avatar, Button, Card, TextInput, useTheme } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  HelperText,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -40,7 +47,12 @@ export default function NameChange(props) {
           onChangeText={(e) => setName(e)}
           label={"New Username"}
           error={name.length > 0 && !validator}
-        ></TextInput>
+        />
+        {name.length > 0 && !validator && (
+          <HelperText type="error" variant="bodyMedium">
+            Name has to be longer than 4 and shorter than 32 characters.
+          </HelperText>
+        )}
       </Card.Content>
       <Card.Actions>
         <Button
