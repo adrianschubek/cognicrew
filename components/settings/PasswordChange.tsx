@@ -11,7 +11,7 @@ export default function PasswordChange(props) {
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
 
-  const pwLength = pw1.length >= 9 && pw1.length < 64;
+  const pwLength = pw1.length >= 9 && pw1.length < 64 || pw1.length == 0;
   const validator = pw1 === pw2 && pwLength;
 
   const { user } = useAuth();
@@ -30,7 +30,9 @@ export default function PasswordChange(props) {
         <TextInput
           theme={{ 
             roundness: 10,
-            colors :{ error: pwLength ? 'blue' : 'red'}, 
+            colors :{ 
+              primary: pw1 ? 'blue' : 'gray',
+              error: pwLength ? 'blue' : 'red'}, 
           }}
           value={pw1}
           onChangeText={(t) => setPw1(t)}
@@ -39,15 +41,13 @@ export default function PasswordChange(props) {
           error={!pwLength}
           
         ></TextInput>
-        <Card.Content>
-        <Text variant="bodyMedium"> New Password has to be longer than 8. </Text>
-
-        </Card.Content>
         <TextInput
           style={{ marginTop: 10 }}
           theme={{ 
             roundness: 10,
-            colors :{ error : pw1 !== pw2 ? 'red': 'blue',}
+            colors :{ 
+              primary: pw2 ? 'blue' : 'gray',
+              error : pw1 !== pw2 ? 'red': 'blue',}
            }}
           value={pw2}
           onChangeText={(t) => setPw2(t)}
