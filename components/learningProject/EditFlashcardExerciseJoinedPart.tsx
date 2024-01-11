@@ -252,17 +252,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   }, []);
 
   const startEditing = async () => {
-    console.log("FFF");
     const presenceTrackStatus = await realtime.current.track({
       user_name: username.data,
     });
-    console.log(presenceTrackStatus);
+    // console.log(presenceTrackStatus);
   };
 
   const endEditing = async () => {
-    console.log("end");
     const presenceTrackStatus = await realtime.current.untrack();
-    console.log(presenceTrackStatus);
+    // console.log(presenceTrackStatus);
   };
 
   const liveEditBy =
