@@ -418,30 +418,30 @@ async function processAchievements() {
 /**
  * Returns the next state based on the current state or false if no state change is needed
  */
-function nextState(newState: PublicRoomState): State | false {
+function nextState(publicState: PublicRoomState): State | false {
   if (
     // |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
-    newState.screen === ScreenState.INGAME &&
-    (newState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
-      newState.players.every((p) => p.currentCorrect !== null))
+    publicState.screen === ScreenState.INGAME &&
+    (publicState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
+      publicState.players.every((p) => p.currentCorrect !== null))
   )
     return State.ROUND_SOLUTION;
   else if (
     // |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
-    newState.screen === ScreenState.ROUND_SOLUTION &&
-    newState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
+    publicState.screen === ScreenState.ROUND_SOLUTION &&
+    publicState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
   )
     return State.ROUND_RESULTS;
   else if (
     // |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
-    newState.screen === ScreenState.ROUND_RESULTS &&
-    newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
+    publicState.screen === ScreenState.ROUND_RESULTS &&
+    publicState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
       dayjs().valueOf()
   )
     return State.INGAME_OR_END_RESULTS;
   else if (
-    newState.screen === ScreenState.END_RESULTS &&
-    newState.roundEndsAt +
+    publicState.screen === ScreenState.END_RESULTS &&
+    publicState.roundEndsAt +
       ROUND_SOLUTION_DURATION +
       ROUND_RESULTS_DURATION +
       END_RESULTS_DURATION <
