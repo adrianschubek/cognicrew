@@ -1,10 +1,4 @@
-import {
-  Card,
-  Divider,
-  Icon,
-  Text,
-  useTheme
-} from "react-native-paper";
+import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
@@ -180,8 +174,16 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
       */}
       {roomTypes.map((roomType, index) => (
         <Fragment key={index}>
-          <Text variant="titleSmall" style={{ marginBottom: 2 }}>
-            {roomType.title}
+          <View
+            style={{
+              marginBottom: 2,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text variant="titleSmall" style={{ alignItems: "center" }}>
+              {roomType.title}
+            </Text>
             {index === 0 && (
               <>
                 <PulseIndicator
@@ -195,7 +197,7 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
                 </Text>
               </>
             )}
-          </Text>
+          </View>
           {roomType.rooms.map((room) => (
             <Room key={room.id} room={room} />
           ))}
