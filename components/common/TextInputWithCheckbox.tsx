@@ -8,6 +8,8 @@ export default function TextInputWithCheckbox(props: {
   sendAnswer?: ([text, checked]: [string, boolean]) => void;
   listItemAnswer?: [string, boolean, number];
   flex?: number;
+  onStartEditing?: () => any;
+  onFinishEditing?: () => any;
   [name: string]: any;
 }) {
   const [answerText, setAnswerText] = useState<string>("");
@@ -26,6 +28,8 @@ export default function TextInputWithCheckbox(props: {
         flex: props.flex || 0,
         width: props.width || "auto",
       }}
+      onFocus={props.onStartEditing}
+      onBlur={props.onFinishEditing}
       right={
         <TextInput.Icon
           icon={() => (

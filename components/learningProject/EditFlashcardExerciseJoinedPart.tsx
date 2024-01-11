@@ -9,8 +9,7 @@ import {
 } from "react-native-paper";
 import {
   responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize,
+  responsiveWidth
 } from "react-native-responsive-dimensions";
 import PrioritySelector from "./PrioritySelector";
 import { checkForLineBreak, debounce } from "../../utils/common";
@@ -29,8 +28,6 @@ import {
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../../providers/AuthProvider";
-import dayjs from "dayjs";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -218,9 +215,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setIsInitialized(true);
   }, [answerOrAnswers, priority, question]);
 
-  const [realtimeState, setRealtimeState] = useState<{ user_name: string }[]>(
-    [],
-  );
+  
   const { user } = useAuth();
   const username = useUsername();
 
@@ -231,12 +226,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
 
   useEffect(() => {
-    // if (!user || !username /* || !alreadyFetchedRealtime */) return;
     realtime.current
       .on("presence", { event: "sync" }, () => {
         const newState = realtime.current.presenceState();
         console.log(
-          "sync",
+          `sync cardquiz:edit:${listItem.id}`,
           newState,
           // Object.values(newState).flatMap((e: any) => e[0].user_name),
         );
@@ -252,33 +246,24 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         console.log("leave", key, leftPresences);
       })
       .subscribe();
-    // .subscribe(async (status) => {
-    //   if (status !== "SUBSCRIBED") {
-    //     return;
-    //   }
-    //   const presenceTrackStatus = await realtime.track({
-    //     user_name: username.data,
-    //   });
-    //   console.log(presenceTrackStatus);
-    // });
   }, []);
 
-  const fuckme = async () => {
+  const startEditing = async () => {
     console.log("FFF");
-    // const realtime = supabase.channel(`cardquiz:edit:1`, {
-    //   config: { presence: { key: "1" } },
-    // });
-    
-      const presenceTrackStatus = await realtime.current.track({
-        a: 1,
-        user_name: username.data,
-      });
-      console.log(presenceTrackStatus);
+    const presenceTrackStatus = await realtime.current.track({
+      user_name: username.data,
+    });
+    console.log(presenceTrackStatus);
+  };
+
+  const endEditing = async () => {
+    console.log("end");
+    const presenceTrackStatus = await realtime.current.untrack();
+    console.log(presenceTrackStatus);
   };
 
   return (
     <Card elevation={1} style={styles.cardStyle}>
-      <Button onPress={fuckme}>Fuck me</Button>
       <Card.Title
         title="Edit question"
         titleStyle={{}}
@@ -325,14 +310,8 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           multiline={true}
           label="Question"
           value={question}
-          onFocus={fuckme}
-          onBlur={async () => {
-            // console.log("blur");
-            // const realtime = supabase
-            //   .channel(`cardquiz:edit:${listItem.id as number}`)
-            //   .subscribe();
-            // await realtime.untrack();
-          }}
+          onFocus={startEditing}
+          onBlur={endEditing}
           onChangeText={(question) => {
             setQuestion(question);
           }}
@@ -343,11 +322,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             sendAnswers={(val) => setAnswerOrAnswers(val)}
             sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
             updateCacheTrigger={updateCache}
+            onStartEditing={startEditing}
+            onFinishEditing={endEditing}
           />
         ) : (
           <EditFlashcard
             listItem={listItem}
             sendAnswer={(val) => setAnswerOrAnswers(val)}
+            onStartEditing={startEditing}
+            onFinishEditing={endEditing}
           />
         )}
         {showErrorUpload && errorText !== "" && (

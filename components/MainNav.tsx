@@ -334,7 +334,7 @@ export default function MainNav() {
           user_id: user.id,
           online_at: dayjs().valueOf(),
         });
-        console.log(presenceTrackStatus);
+        // console.log(presenceTrackStatus);
       });
   }, [user]);
 
