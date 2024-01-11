@@ -11,6 +11,8 @@ export default function EditExercise(props: {
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswersLength: (InitialAnswersLength: number) => any;
   updateCacheTrigger: boolean;
+  onStartEditing?: () => any;
+  onFinishEditing?: () => any;
 }) {
   const {
     listItem,
@@ -168,6 +170,8 @@ export default function EditExercise(props: {
               sendAnswer={getAnswer(index + 1)}
               number={index + 1}
               flex={1}
+              onStartEditing={props.onStartEditing}
+              onFinishEditing={props.onFinishEditing}
             />
             {showAnswerDeletionOptions && (
               <IconButton
