@@ -474,7 +474,7 @@ function updatePlayerAnswers(
 }
 
 async function processCommands(
-  state: { data: any; room_id: any },
+  state: { data: Json; room_id: string },
   newState: PublicRoomState,
   privateState: PrivateRoomState,
 ) {
