@@ -29,10 +29,7 @@ export default function PasswordChange(props) {
       <Card.Content>
         <TextInput
           theme={{ 
-            roundness: 10,
-            colors :{ 
-              primary: pw1 ? 'blue' : 'gray',
-              error: pwLength ? 'blue' : 'red'}, 
+            roundness: 10, 
           }}
           value={pw1}
           onChangeText={(t) => setPw1(t)}
@@ -45,9 +42,6 @@ export default function PasswordChange(props) {
           style={{ marginTop: 10 }}
           theme={{ 
             roundness: 10,
-            colors :{ 
-              primary: pw2 ? 'blue' : 'gray',
-              error : pw1 !== pw2 ? 'red': 'blue',}
            }}
           value={pw2}
           onChangeText={(t) => setPw2(t)}
