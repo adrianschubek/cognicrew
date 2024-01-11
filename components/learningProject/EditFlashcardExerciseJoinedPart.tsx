@@ -203,7 +203,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const debouncedUpdate = useCallback(updateDebounceApplied, []);
   useEffect(() => {
     // Call the debounced function
-    if (isInitialized || type === ManagementType.FLASHCARD) {
+    if (isInitialized) {
       debouncedUpdate(
         question,
         answerOrAnswers,

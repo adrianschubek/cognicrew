@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TextInput } from "react-native-paper";
 
 export default function EditFlashcard(props: {
@@ -9,6 +9,9 @@ export default function EditFlashcard(props: {
   onFinishEditing?: () => any;
 }) {
   const [answer, setAnswer] = useState(props.listItem.answer);
+  useEffect(() => {
+    props.sendAnswer(answer);
+  }, []);
   return (
     <TextInput
       label="Answer"
