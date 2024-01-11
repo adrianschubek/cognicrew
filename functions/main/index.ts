@@ -7,7 +7,7 @@ import {
   PublicRoomState,
   UserProjectStats,
 } from "../rooms.ts";
-import { Database } from "../../types/supabase.ts";
+import { Database, Json } from "../../types/supabase.ts";
 
 console.log("main function started");
 
@@ -121,45 +121,50 @@ async function mainLoop() {
     .from("player_answers")
     .select("*");
 
-  for (const state of publicRoomStates) {
-    const newState = state.data as PublicRoomState;
+  for (const room of publicRoomStates) {
+    const publicState = room.data as PublicRoomState;
     const privateState = privateRoomStates.find(
-      (prs) => prs.room_id === state.room_id,
+      (prs) => prs.room_id === room.room_id,
     )?.data as PrivateRoomState;
 
     // |> foreach player in room -> update if player has submitted an answer already
-    updatePlayerAnswers(newState, playerAnswers, state);
+    updatePlayerAnswers(publicState, room, playerAnswers);
 
     /**
      * ScreenState:
      * LOBBY -> (*) INGAME -> ROUND_SOLUTION [~2s] -> ROUND_RESULTS [~2s + ~3s] -> * OR END_RESULTS
      * initial state is LOBBY (if already played once) or INGAME (if fresh lobby)
      */
-    switch (nextState(newState)) {
+    switch (nextState(publicState)) {
       case State.ROUND_SOLUTION:
-        await stateRoundSolution(newState, privateState, playerAnswers, state);
+        await stateRoundSolution(
+          publicState,
+          privateState,
+          room,
+          playerAnswers,
+        );
         break;
       case State.ROUND_RESULTS:
-        await stateRoundResults(newState, playerAnswers, state, privateState);
+        await stateRoundResults(publicState, privateState, room, playerAnswers);
         break;
       case State.INGAME_OR_END_RESULTS:
-        await stateIngameOrEndResults(newState, privateState);
+        await stateIngameOrEndResults(publicState, privateState);
         break;
       case State.AFTER_END_RESULTS:
-        await stateAfterEndResults(newState, state);
+        await stateAfterEndResults(publicState, room);
         break;
       default:
         break;
     }
 
     // Process commands for this room
-    commandsCount = await processCommands(state, newState, privateState);
+    commandsCount = await processCommands(publicState, privateState, room);
 
-    console.log(newState);
+    console.log(publicState);
     await supabase
       .from("public_room_states")
-      .update({ data: newState })
-      .eq("room_id", state.room_id);
+      .update({ data: publicState })
+      .eq("room_id", room.room_id);
   }
 
   // Process achievements
@@ -179,18 +184,18 @@ async function mainLoop() {
  */
 
 async function stateRoundResults(
-  newState: PublicRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
+  publicState: PublicRoomState,
   privateState: PrivateRoomState,
+  room: { data: Json; room_id: string },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
 ) {
-  newState.screen = ScreenState.ROUND_RESULTS;
-  newState.players = newState.players.map((player) => {
+  publicState.screen = ScreenState.ROUND_RESULTS;
+  publicState.players = publicState.players.map((player) => {
     const plr = playerAnswers?.find(
       (plr) =>
         plr.user_id === player.id &&
-        plr.room_id === state.room_id &&
-        plr.round === newState.round &&
+        plr.room_id === room.room_id &&
+        plr.round === publicState.round &&
         plr.answer_correct,
     );
     return {
@@ -218,22 +223,23 @@ async function stateRoundResults(
 }
 
 async function stateRoundSolution(
-  newState: PublicRoomState,
+  publicState: PublicRoomState,
   privateState: PrivateRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
+  room: { data: Json; room_id: string },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
 ) {
-  newState.screen = ScreenState.ROUND_SOLUTION;
+  publicState.screen = ScreenState.ROUND_SOLUTION;
 
   // if this triggered by all players already answered then set roundEndsAt to now so that the following screens don't delay.
-  if (newState.players.every((p) => p.currentCorrect !== null)) {
-    newState.roundEndsAt = dayjs().valueOf();
+  if (publicState.players.every((p) => p.currentCorrect !== null)) {
+    publicState.roundEndsAt = dayjs().valueOf();
   }
 
-  switch (newState.game) {
+  switch (publicState.game) {
     case GameState.EXERCISES: {
       let submittedAnswers = 0;
-      const roundAnswers = privateState.gameData.exercises[newState.round - 1];
+      const roundAnswers =
+        privateState.gameData.exercises[publicState.round - 1];
       let answersWithCountWithIsCorrect: [string, number, boolean][] =
         roundAnswers.answers.map((answer, i) => [
           answer,
@@ -241,12 +247,12 @@ async function stateRoundSolution(
           roundAnswers.correct.includes(i),
         ]);
 
-      for (const player of newState.players) {
+      for (const player of publicState.players) {
         const playerAnswer = playerAnswers?.find(
           (pa) =>
             pa.user_id === player.id &&
-            pa.room_id === state.room_id &&
-            pa.round === newState.round,
+            pa.room_id === room.room_id &&
+            pa.round === publicState.round,
         );
         if (!playerAnswer) continue;
         submittedAnswers += playerAnswer.answer.split(",").length;
@@ -265,7 +271,7 @@ async function stateRoundSolution(
           ],
         );
       }
-      newState.userAnswers = answersWithCountWithIsCorrect.map(
+      publicState.userAnswers = answersWithCountWithIsCorrect.map(
         ([answer, count, isCorrect]) => ({
           answer,
           percentage: Math.max(
@@ -280,15 +286,15 @@ async function stateRoundSolution(
     case GameState.FLASHCARDS: {
       let submittedAnswers = 0;
       const roundAnswers = {
-        ...privateState.gameData.flashcards[newState.round - 1],
+        ...privateState.gameData.flashcards[publicState.round - 1],
         answers:
-          privateState.gameData.flashcards[newState.round - 1].answer.split(
+          privateState.gameData.flashcards[publicState.round - 1].answer.split(
             ",",
           ),
       };
       const playerAnswersForRound =
         playerAnswers?.filter(
-          (pa) => pa.room_id === state.room_id && pa.round === newState.round,
+          (pa) => pa.room_id === room.room_id && pa.round === publicState.round,
         ) ?? [];
       // @ts-expect-error may contain fewer elements
       let answersWithCountWithIsCorrect: [string, number, boolean][] =
@@ -320,7 +326,7 @@ async function stateRoundSolution(
             isCorrect,
           ],
         );
-        newState.userAnswers = answersWithCountWithIsCorrect.map(
+        publicState.userAnswers = answersWithCountWithIsCorrect.map(
           ([answer, count, isCorrect]) => ({
             answer,
             percentage: Math.max(
@@ -341,35 +347,35 @@ async function stateRoundSolution(
 }
 
 async function stateIngameOrEndResults(
-  newState: PublicRoomState,
+  publicState: PublicRoomState,
   privateState: PrivateRoomState,
 ) {
-  newState.userAnswers = null;
-  newState.players = newState.players.map((player) => ({
+  publicState.userAnswers = null;
+  publicState.players = publicState.players.map((player) => ({
     ...player,
     currentCorrect: null,
     currentTimeNeeded: null,
   }));
 
-  if (newState.round + 1 <= newState.totalRounds) {
+  if (publicState.round + 1 <= publicState.totalRounds) {
     // |  |> if current round + 1 <= total rounds -> load next question, increment current round, update scores. show INGAME screen.
-    newState.round += 1;
-    newState.roundBeganAt = dayjs().valueOf();
-    newState.roundEndsAt =
+    publicState.round += 1;
+    publicState.roundBeganAt = dayjs().valueOf();
+    publicState.roundEndsAt =
       dayjs().valueOf() + privateState.roundDuration * 1000;
-    newState.screen = ScreenState.INGAME;
+    publicState.screen = ScreenState.INGAME;
 
     // Load next question
-    switch (newState.game) {
+    switch (publicState.game) {
       case GameState.EXERCISES:
-        newState.question =
-          privateState.gameData.exercises[newState.round - 1].question;
-        newState.possibleAnswers =
-          privateState.gameData.exercises[newState.round - 1].answers;
+        publicState.question =
+          privateState.gameData.exercises[publicState.round - 1].question;
+        publicState.possibleAnswers =
+          privateState.gameData.exercises[publicState.round - 1].answers;
         break;
       case GameState.FLASHCARDS:
-        newState.question =
-          privateState.gameData.flashcards[newState.round - 1].question;
+        publicState.question =
+          privateState.gameData.flashcards[publicState.round - 1].question;
         break;
       default:
         console.error("invalid game type");
@@ -377,23 +383,20 @@ async function stateIngameOrEndResults(
     }
   } else {
     // |  |> else current round + 1 > total rounds -> game is over. save scores to DB, achievements, do nothing.
-    newState.screen = ScreenState.END_RESULTS;
+    publicState.screen = ScreenState.END_RESULTS;
 
-    await updateStats(newState, privateState);
+    await updateStats(publicState, privateState);
   }
 }
 
 async function stateAfterEndResults(
-  newState: PublicRoomState,
-  state: {
-    data: any;
-    room_id: any;
-  },
+  publicState: PublicRoomState,
+  state: { data: Json; room_id: string },
 ) {
   // After game end / END_RESULTS screen is shown
   // don't close lobby instead let stay in obby so host can start new game
-  newState.screen = ScreenState.LOBBY;
-  newState.round = 0; // fixes bug where answers not updated in quiz game on startup
+  publicState.screen = ScreenState.LOBBY;
+  publicState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
   // delete old game data
   await supabase
@@ -415,30 +418,30 @@ async function processAchievements() {
 /**
  * Returns the next state based on the current state or false if no state change is needed
  */
-function nextState(newState: PublicRoomState): State | false {
+function nextState(publicState: PublicRoomState): State | false {
   if (
     // |> if screen == INGAME && roundEndsAt < now (~ round is over) -> show ROUND_SOLUTION
-    newState.screen === ScreenState.INGAME &&
-    (newState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
-      newState.players.every((p) => p.currentCorrect !== null))
+    publicState.screen === ScreenState.INGAME &&
+    (publicState.roundEndsAt < dayjs().valueOf() || // OR if all players answered -> show ROUND_SOLUTION
+      publicState.players.every((p) => p.currentCorrect !== null))
   )
     return State.ROUND_SOLUTION;
   else if (
     // |> else if screen == ROUND_SOLUTION && roundEndsAt + 2s < now (~ show ROUND_SOLUTION for few secs) -> show ROUND_RESULTS
-    newState.screen === ScreenState.ROUND_SOLUTION &&
-    newState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
+    publicState.screen === ScreenState.ROUND_SOLUTION &&
+    publicState.roundEndsAt + ROUND_SOLUTION_DURATION < dayjs().valueOf()
   )
     return State.ROUND_RESULTS;
   else if (
     // |> else if screen == ROUND_RESULTS && roundEndsAt + 3s < now (~ show ROUND_RESULTS for few secs)
-    newState.screen === ScreenState.ROUND_RESULTS &&
-    newState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
+    publicState.screen === ScreenState.ROUND_RESULTS &&
+    publicState.roundEndsAt + ROUND_SOLUTION_DURATION + ROUND_RESULTS_DURATION <
       dayjs().valueOf()
   )
     return State.INGAME_OR_END_RESULTS;
   else if (
-    newState.screen === ScreenState.END_RESULTS &&
-    newState.roundEndsAt +
+    publicState.screen === ScreenState.END_RESULTS &&
+    publicState.roundEndsAt +
       ROUND_SOLUTION_DURATION +
       ROUND_RESULTS_DURATION +
       END_RESULTS_DURATION <
@@ -459,16 +462,16 @@ async function achieve(achievementId: number, userId: string) {
  * Updates player.currentCorrect and player.currentTimeNeeded in room state
  */
 function updatePlayerAnswers(
-  newState: PublicRoomState,
-  playerAnswers: any[] | null,
-  state: { data: any; room_id: any },
+  publicState: PublicRoomState,
+  room: { data: Json; room_id: string },
+  playerAnswers: Database["public"]["Tables"]["player_answers"]["Row"][] | null,
 ) {
-  for (const player of newState.players) {
+  for (const player of publicState.players) {
     const playerAnswer = playerAnswers?.find(
       (pa) =>
         pa.user_id === player.id &&
-        pa.room_id === state.room_id &&
-        pa.round === newState.round,
+        pa.room_id === room.room_id &&
+        pa.round === publicState.round,
     );
     if (!playerAnswer) continue;
     player.currentCorrect = playerAnswer.answer_correct;
@@ -477,9 +480,9 @@ function updatePlayerAnswers(
 }
 
 async function processCommands(
-  state: { data: any; room_id: any },
-  newState: PublicRoomState,
+  publicState: PublicRoomState,
   privateState: PrivateRoomState,
+  room: { data: Json; room_id: string },
 ) {
   // Poll all commands from queue
   const { data: commands, error } = await supabase
@@ -491,7 +494,7 @@ async function processCommands(
   if (error) console.error("queue: ", error);
 
   let commandsCount = 0;
-  const roomCmds = commands?.filter((cmd) => cmd.room_id === state.room_id);
+  const roomCmds = commands?.filter((cmd) => cmd.room_id === room.room_id);
   if (roomCmds) {
     for (const cmd of roomCmds) {
       commandsCount++;
@@ -499,21 +502,21 @@ async function processCommands(
         case "reset_room":
           console.log("reset_room");
 
-          await updateStats(newState, privateState);
+          await updateStats(publicState, privateState);
 
-          newState.screen = ScreenState.LOBBY;
-          newState.round = 0; // fixes bug where answers not updated in quiz game on startup
+          publicState.screen = ScreenState.LOBBY;
+          publicState.round = 0; // fixes bug where answers not updated in quiz game on startup
 
           // delete old game data
           await supabase
             .from("private_room_states")
             .delete()
-            .eq("room_id", state.room_id);
+            .eq("room_id", room.room_id);
           // delete player answers
           await supabase
             .from("player_answers")
             .delete()
-            .eq("room_id", state.room_id);
+            .eq("room_id", room.room_id);
           break;
         default:
           console.error(`Unhandled command type '${cmd.type}'`);

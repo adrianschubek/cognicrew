@@ -1,10 +1,16 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, TextInput, IconButton, HelperText } from "react-native-paper";
+import {
+  Card,
+  Text,
+  TextInput,
+  IconButton,
+  HelperText, useTheme,
+  Icon
+} from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import PrioritySelector from "./PrioritySelector";
 import { checkForLineBreak, debounce } from "../../utils/common";
@@ -18,9 +24,13 @@ import {
   useUpsertAnswersExercise,
   useUpsertExercise,
   useUpsertFlashcard,
+  useUsername,
 } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
+import { useAuth } from "../../providers/AuthProvider";
+import { usePresenceStore } from "../../stores/PresenceStore";
+import { useShallow } from "zustand/react/shallow";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -208,12 +218,75 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setIsInitialized(true);
   }, [answerOrAnswers, priority, question]);
 
+  const theme = useTheme();
+  const { user } = useAuth();
+  const username = useUsername();
+
+  const updateEditedBy = usePresenceStore(
+    (state) => state.updateCardQuizEditing,
+  );
+
+  const realtime = useRef(
+    supabase.channel(`cardquiz:edit:${listItem.id}`, {
+      config: { presence: { key: user.id } },
+    }),
+  );
+
+  useEffect(() => {
+    realtime.current
+      .on("presence", { event: "sync" }, () => {
+        const newState = realtime.current.presenceState();
+        // console.log(
+        //   `sync cardquiz:edit:${listItem.id}`,
+        //   newState,
+        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
+        // );
+        updateEditedBy(
+          listItem.id,
+          Object.values(newState)
+            // @ts-expect-error user_name not defined
+            .filter((u) => u[0].user_name !== username.data)
+            .flatMap((e: any) => e[0].user_name as string),
+        );
+      })
+      .subscribe();
+  }, []);
+
+  const startEditing = async () => {
+    const presenceTrackStatus = await realtime.current.track({
+      user_name: username.data,
+    });
+    // console.log(presenceTrackStatus);
+  };
+
+  const endEditing = async () => {
+    const presenceTrackStatus = await realtime.current.untrack();
+    // console.log(presenceTrackStatus);
+  };
+
+  const liveEditBy =
+    usePresenceStore(
+      useShallow((state) => state.cardQuizEditing[props.listItem.id]),
+    ) ?? [];
+  // console.log("liveEditBy: ", liveEditBy);
+
   return (
-    <Card elevation={1} style={styles.cardStyle}>
+    <Card
+      elevation={1}
+      style={[
+        styles.cardStyle,
+        liveEditBy.length > 0 && {
+          backgroundColor: theme.colors.primaryContainer,
+          borderColor: theme.colors.primary,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <Card.Title
         title="Edit question"
-        titleStyle={{}}
-        style={{}}
+        titleStyle={{
+          color: theme.colors.primary,
+        }}
         right={() => (
           <Fragment>
             <View
@@ -241,7 +314,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                     okAction(values) {
                       deleteFlashcardOrExercise();
                     },
-                  })
+                  });
                 }}
                 style={{ alignSelf: "center" }}
               />
@@ -250,12 +323,41 @@ export default function EditFlashcardExerciseJoinedPart(props: {
         )}
       />
       <Card.Content>
+        {liveEditBy.length > 0 && (
+          <Text
+            style={{
+              width: "auto",
+              textAlign: "center",
+              verticalAlign: "middle",
+              paddingVertical: 4,
+              marginBottom: 8,
+              marginLeft: -16,
+              marginRight: -16,
+              color: theme.colors.onPrimary,
+              backgroundColor: theme.colors.onPrimaryContainer,
+            }}
+          >
+            {liveEditBy.length === 1
+              ? `${liveEditBy[0]} is`
+              : liveEditBy.length === 2
+              ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
+              : "Multiple people are"}{" "}
+            editing this question{" "}
+            <Icon
+              color={theme.colors.onPrimary}
+              source={"account-multiple"}
+              size={16}
+            ></Icon>
+          </Text>
+        )}
         <TextInput
           testID="input-edit-flashcard-question"
           style={{ marginBottom: 8 }}
           multiline={true}
-          label="Question:"
+          label="Question"
           value={question}
+          onFocus={startEditing}
+          onBlur={endEditing}
           onChangeText={(question) => {
             setQuestion(question);
           }}
@@ -266,11 +368,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             sendAnswers={(val) => setAnswerOrAnswers(val)}
             sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
             updateCacheTrigger={updateCache}
+            onStartEditing={startEditing}
+            onFinishEditing={endEditing}
           />
         ) : (
           <EditFlashcard
             listItem={listItem}
             sendAnswer={(val) => setAnswerOrAnswers(val)}
+            onStartEditing={startEditing}
+            onFinishEditing={endEditing}
           />
         )}
         {showErrorUpload && errorText !== "" && (

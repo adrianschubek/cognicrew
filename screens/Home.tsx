@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, Image, ScrollView } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import JoinRoom from "../components/learningRoom/JoinRoom";
 import { useUsername } from "../utils/hooks";
 import { useEffect } from "react";
@@ -13,7 +13,6 @@ import RoomsList from "./RoomsList";
 export default function HomeScreen({ navigation }) {
   const { data, isLoading } = useUsername();
   const { user } = useAuth();
-  const theme = useTheme();
   useEffect(() => {
     navigation.setOptions({
       title: "CogniCrew",
@@ -67,7 +66,6 @@ export default function HomeScreen({ navigation }) {
         <JoinRoom
           style={{
             gap: 5,
-            //alignSelf: "flex-start",
           }}
         />
         <RoomsList />

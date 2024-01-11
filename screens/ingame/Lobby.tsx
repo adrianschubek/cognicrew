@@ -314,58 +314,92 @@ export default function Lobby({ navigation }) {
               name={"Cogniboard"}
               function={() => {
                 confirm({
-                  title: "Choose cogniboard",
-                  icon: "cards",
+                  title: "Configure game",
+                  icon: "cog",
                   dismissable: false,
-                  okText: "Load",
-                  okAction: (setValues) => {
-                    // TODO: load cogniboard. same dialog as below
+                  okText: "Start Game",
+                  okAction: async (values) => {
+                    const { data, error } = await supabase.functions.invoke(
+                      "room-init",
+                      {
+                        body: {
+                          type: ManagementType.BOARD,
+                          name: values[0],
+                        } as RoomClientInit,
+                      },
+                    );
+                    if (error) return handleEdgeError(error);
+                    setRoom({ ...room, is_ingame: true });
                   },
                   fields: [
                     {
-                      /* TODO: implement or remove */ type: "search-radio",
-                      placeholder: "Search cogniboards",
-                      data: [],
-                      required: true,
-                    },
-                    {
-                      type: "button",
-                      label: "New Cogniboard",
-                      icon: "plus",
-                      action(values) {
-                        confirm({
-                          title: "Configure game",
-                          icon: "cog",
-                          dismissable: false,
-                          okText: "Start Game",
-                          okAction: async (values) => {
-                            const { data, error } =
-                              await supabase.functions.invoke("room-init", {
-                                body: {
-                                  type: ManagementType.BOARD,
-                                  name: values[0],
-                                } as RoomClientInit,
-                              });
-                            if (error) return handleEdgeError(error);
-                            setRoom({ ...room, is_ingame: true });
-                          },
-                          fields: [
-                            {
-                              type: "text",
-                              label: "Name",
-                              helperText:
-                                "Optionally save your cogniboard as...",
-                              icon: "format-text",
-                              errorText:
-                                "Please enter a value between 0 and 600",
-                              required: false,
-                            },
-                          ],
-                        });
+                      type: "custom",
+                      render() {
+                        return (
+                          <Text
+                            variant="labelSmall"
+                            style={{ textAlign: "center" }}
+                          >
+                            No options available
+                          </Text>
+                        );
                       },
                     },
                   ],
                 });
+                // confirm({
+                //   title: "Choose cogniboard",
+                //   icon: "cards",
+                //   dismissable: false,
+                //   okText: "Load",
+                //   okAction: (setValues) => {
+                //     // TODO: load cogniboard. same dialog as below
+                //   },
+                //   fields: [
+                //     {
+                //       /* TODO: implement or remove */ type: "search-radio",
+                //       placeholder: "Search cogniboards",
+                //       data: [],
+                //       required: true,
+                //     },
+                //     {
+                //       type: "button",
+                //       label: "New Cogniboard",
+                //       icon: "plus",
+                //       action(values) {
+                //         confirm({
+                //           title: "Configure game",
+                //           icon: "cog",
+                //           dismissable: false,
+                //           okText: "Start Game",
+                //           okAction: async (values) => {
+                //             const { data, error } =
+                //               await supabase.functions.invoke("room-init", {
+                //                 body: {
+                //                   type: ManagementType.BOARD,
+                //                   name: values[0],
+                //                 } as RoomClientInit,
+                //               });
+                //             if (error) return handleEdgeError(error);
+                //             setRoom({ ...room, is_ingame: true });
+                //           },
+                //           fields: [
+                //             {
+                //               type: "text",
+                //               label: "Name",
+                //               helperText:
+                //                 "Optionally save your cogniboard as...",
+                //               icon: "format-text",
+                //               errorText:
+                //                 "Please enter a value between 0 and 600",
+                //               required: false,
+                //             },
+                //           ],
+                //         });
+                //       },
+                //     },
+                //   ],
+                // });
               }}
             />
           </View>
