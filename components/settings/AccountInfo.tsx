@@ -116,7 +116,7 @@ export default function AccountInfo(props) {
 
   return (
     <Card {...props} mode="contained">
-      <Card.Title title="Account" left={Account} />
+      <Card.Title title="◀ Change Avatar" left={Account} />
       <Card.Content>
         <Text variant="bodyMedium">{isLoading ? "..." : data}</Text>
         <Text variant="bodyMedium">{user.email}</Text>

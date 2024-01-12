@@ -44,7 +44,7 @@ export default function LearningProjectAvatarWithTitle(props: {
       <Avatar.Text
         style={[{ alignSelf: "center" }, avatarStyle]}
         size={avatarSize ?? responsiveFontSize(10)}
-        label={projectName.substring(0, 2)}
+        label={projectName.trim().substring(0, 2)}
         theme={{
           colors: { primary: getRandomColor(projectName) },
         }}

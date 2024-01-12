@@ -13,10 +13,12 @@ export default defineConfig({
         pw: "password",
       },
       DEMO_USER: {
-        username: "TimoDerWuschelkopf" + (Math.random() + 1).toString(36).substring(7),
-      }
+        username:
+          "TimoDerWuschelkopf" + (Math.random() + 1).toString(36).substring(7),
+      },
     },
   },
+  defaultCommandTimeout: 10000,
   screenshotOnRunFailure: false,
   video: false,
 });

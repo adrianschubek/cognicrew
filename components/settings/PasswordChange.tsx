@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Avatar, Button, Card, TextInput, useTheme , Text } from "react-native-paper";
+import {
+  Avatar,
+  Button,
+  Card,
+  TextInput,
+  useTheme,
+  HelperText,
+} from "react-native-paper";
 import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -12,8 +19,7 @@ export default function PasswordChange(props) {
   const [pw2, setPw2] = useState("");
 
   const pwLength = pw1.length >= 9 && pw1.length < 64;
-  const validator = pw1 === pw2 && pwLength;
-
+  const validator = pw1 === pw2 && pw1.length >= 9 && pw1.length < 64;
   const { user } = useAuth();
   const { success, error: errorAlert } = useAlerts();
   const update = async () => {
@@ -22,39 +28,43 @@ export default function PasswordChange(props) {
     if (error) errorAlert({ message: error.message });
     else success({ message: "Password updated successfully" });
   };
-
+  const pw1NotValid = !pwLength && pw1 !== "";
+  const pw2NotValid = pw1 !== pw2 && pw2 !== "";
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Change Password" left={Icon} />
       <Card.Content>
         <TextInput
-          theme={{ 
+          theme={{
             roundness: 10,
-            colors :{ error: pwLength ? 'blue' : 'red'}, 
           }}
           value={pw1}
           onChangeText={(t) => setPw1(t)}
           label={"New Password"}
           secureTextEntry={true}
-          error={!pwLength}
-          
-        ></TextInput>
-        <Card.Content>
-        <Text variant="bodyMedium"> New Password has to be longer than 8. </Text>
-
-        </Card.Content>
+          error={pw1NotValid}
+        />
+        {pw1NotValid && (
+          <HelperText type="error" variant="bodyMedium">
+            New Password has to be longer than 8.
+          </HelperText>
+        )}
         <TextInput
           style={{ marginTop: 10 }}
-          theme={{ 
+          theme={{
             roundness: 10,
-            colors :{ error : pw1 !== pw2 ? 'red': 'blue',}
-           }}
+          }}
           value={pw2}
           onChangeText={(t) => setPw2(t)}
           label={"Confirm New Password"}
           secureTextEntry={true}
-          error={pw1 !== pw2}
-        ></TextInput>
+          error={pw2NotValid}
+        />
+        {pw2NotValid && (
+          <HelperText type="error" variant="bodyMedium">
+            Password needs to match.
+          </HelperText>
+        )}
       </Card.Content>
       <Card.Actions>
         <Button disabled={!validator} mode="contained-tonal" onPress={update}>

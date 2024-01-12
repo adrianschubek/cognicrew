@@ -1,7 +1,7 @@
 import * as React from "react";
 import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { Text, TextInput } from "react-native-paper";
+import { Searchbar, Text } from "react-native-paper";
 import { useFriendIdsAndNames, useProjectMembers } from "../../utils/hooks";
 import { supabase } from "../../supabase";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -25,10 +25,6 @@ export default function InviteFriends({ navigation }) {
   const filteredFriends = friendIdsAndNamesData.filter((friend) =>
     friend.username.toLowerCase().includes(searchQuery.toLowerCase()),
   );
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-  };
 
   const remove = async (userId: string) => {
     let { data, error } = await supabase.rpc("remove_user_from_project", {
@@ -82,10 +78,17 @@ export default function InviteFriends({ navigation }) {
         {/* Friends list */}
         <View style={{ gap: 10 }}>
           <Text variant="titleMedium">Your Friends</Text>
-          <TextInput
-            onChangeText={handleSearch}
+          <Searchbar
+            style={{
+              //marginBottom: 8,
+              elevation: 0,
+              borderRadius: 10,
+            }}
+            placeholder="Search"
+            onChangeText={(query) => {
+              setSearchQuery(query);
+            }}
             value={searchQuery}
-            placeholder="Search to invite"
           />
           <View>
             {filteredFriends.map((friend, index) => {

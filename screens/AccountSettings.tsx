@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { ScrollView } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Divider, useTheme } from "react-native-paper";
 import MusicSettings from "../components/settings/Music";
 import PasswordChange from "../components/settings/PasswordChange";
@@ -14,44 +14,50 @@ export default function AccountSettings() {
   const theme = useTheme();
   return (
     <>
-      <ScrollView
-        style={{
-          flex: 1,
-          gap: 10,
-          padding: 10,
-        }}
+      {/* makes content avoid keyboard, extra space between TextInput and keyboard would be cool, 
+      idk how to do this without additional library like 'react-native-keyboard-aware-scroll-view' */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <StatusBar style="auto" />
-        <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
-        <Divider />
-        <Visual
-          style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-        />
-        <Divider />
-        <MusicSettings
-          style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-        />
-        <Divider />
-        <TagsSettings
-          style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-        />
-        <Divider />
-        <NameChange
-          style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-        />
-        <Divider />
-        <PasswordChange
-          style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-        />
-        <Divider />
-        <EmailChange
+        <ScrollView
           style={{
-            marginBottom: 10,
-            marginTop: 10,
-            backgroundColor: theme.colors.surface,
+            flex: 1,
+            gap: 10,
+            padding: 10,
           }}
-        />
-        {/* <Divider />
+        >
+          <StatusBar style="auto" />
+          <AccountInfo style={{ backgroundColor: theme.colors.surface }} />
+          <Divider />
+          <Visual
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+          />
+          <Divider />
+          <MusicSettings
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+          />
+          <Divider />
+          <TagsSettings
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+          />
+          <Divider />
+          <NameChange
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+          />
+          <Divider />
+          <PasswordChange
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+          />
+          <Divider />
+          <EmailChange
+            style={{
+              marginBottom: 10,
+              marginTop: 10,
+              backgroundColor: theme.colors.surface,
+            }}
+          />
+          {/* <Divider />
       <DangerZone
         style={{
           marginTop: 10,
@@ -59,7 +65,8 @@ export default function AccountSettings() {
           backgroundColor: theme.colors.errorContainer,
         }}
       /> */}
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </>
   );
 }

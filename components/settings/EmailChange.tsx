@@ -4,6 +4,7 @@ import {
   Avatar,
   Button,
   Card,
+  HelperText,
   Text,
   TextInput,
   useTheme,
@@ -17,7 +18,7 @@ export default function EmailChange(props) {
   const theme = useTheme();
   const [mail, setMail] = useState("");
 
-  const validator = mail.length > 0 && mail.includes("@");
+  const validator = mail.includes("@");
 
   const { success, error: errorAlert, alert } = useAlerts();
 
@@ -39,8 +40,8 @@ export default function EmailChange(props) {
         async okAction(verification) {
           const { data, error } = await supabase.auth.verifyOtp({
             email: mail,
-            token: verification[0], 
-            
+            token: verification[0],
+
             type: "email_change",
           });
           if (error) return error?.message ?? "Unknown error";
@@ -55,7 +56,6 @@ export default function EmailChange(props) {
           },
         ],
       });
-
   };
 
   return (
@@ -68,7 +68,12 @@ export default function EmailChange(props) {
           onChangeText={(e) => setMail(e)}
           label={"New E-Mail"}
           error={mail.length > 0 && !validator}
-        ></TextInput>
+        />
+        {mail.length > 0 && !validator && (
+          <HelperText type="error" variant="bodyMedium">
+            E-Mail not valid.
+          </HelperText>
+        )}
       </Card.Content>
       <Card.Actions>
         <Button disabled={!validator} mode="contained-tonal" onPress={update}>

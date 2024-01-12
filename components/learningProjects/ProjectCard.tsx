@@ -113,18 +113,31 @@ export default function ProjectCard(props: {
                 })}
               <View
                 style={{
+                  marginTop: 10,
                   flexDirection: "row",
                   // justifyContent: "space-between",
-                  // alignItems: "center",
+                  alignItems: "center",
                 }}
               >
-                <Text
-                  variant="bodyMedium"
-                  style={{ fontStyle: "italic", marginRight: "auto" }}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    width: "50%",
+                    flexWrap: "wrap",
+                    marginRight: "auto",
+                  }}
                 >
-                  Tags: {item.project_tags}
-                  {/*maybe return tags as string[], so this look nicer */}
-                </Text>
+                  <Text
+                    variant="bodyMedium"
+                    style={{
+                      fontStyle: "italic",
+                      //marginRight: "auto",
+                    }}
+                  >
+                    Tags: {item.project_tags}
+                  </Text>
+                </View>
                 <Button
                   mode="outlined"
                   style={{ marginRight: 10 }}
@@ -204,15 +217,15 @@ export default function ProjectCard(props: {
                           helperText: "Only friends can join this room.",
                         },
                         {
-                          label: "Size (1-100)",
+                          label: "Size (1-1000)",
                           type: "number",
                           helperText:
                             "The maximum amount of players in this room.",
                           icon: "account-group",
                           defaultValue: "10",
                           validator: (value) =>
-                            /^[1-9][0-9]?$|^100$/.test(value),
-                          errorText: "Size must be between 1 and 100",
+                            +value >= 1 && +value <= 1000,
+                          errorText: "Size must be between 1 and 1000",
                         },
                       ],
                     })

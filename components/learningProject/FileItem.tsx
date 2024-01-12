@@ -48,97 +48,72 @@ export default function FileItem({ file, filePath, folder, icon }) {
   async function deleteFile() {
     const { error } = await supabase.storage.from("files").remove([filePath]);
   }
-  /*
- const handleDownload = async () => {
-  const { status } = await MediaLibrary.requestPermissionsAsync();
-  if (status !== "granted") {
-    alerts.error({
-      message: "Sorry, we need camera roll permissions to make this work!",
-    });
-    return;
-  }
-  // Generate the local URI for the file
-  const photoFilename = encodeURIComponent(file.name);
-  const fileName = folder === "photos" ? photoFilename : file.name;
-  const localUri = FileSystem.documentDirectory + fileName;
-  try {
-    if (folder === "photos") {
-      // Fetch the Blob from the download URL
-      const response = await fetch(fileUrl);
-      const blob = await response.blob();
 
-      // Convert the Blob to base64
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        if (reader.result) {
-          // Assert that reader.result is a string
-          const base64data = (reader.result as string).split(",")[1]; // Remove the prefix (`data:image/png;base64,`)
-
-          // Write the base64 string to the local file system
-          await FileSystem.writeAsStringAsync(localUri, base64data, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-
-          // Save the local image to the camera roll
-          const asset = await MediaLibrary.createAssetAsync(localUri);
-          await MediaLibrary.createAlbumAsync("Download", asset, false);
-          alerts.success({ message: "Saved to camera roll!" });
-        }
-      };
-      reader.onerror = (error) => {
-        throw new Error(`FileReader error: ${error}`);
-      };
-      reader.readAsDataURL(blob);
-    } else {
-      //console.log(localUri);
-      try {
-        const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
-        // Save the file to the camera roll
-        const asset = await MediaLibrary.createAssetAsync(uri);
-        await MediaLibrary.createAlbumAsync("Download", asset, false);
-        console.log("File saved to camera roll");
-        //console.log("File downloaded to:", uri);
-      } catch (error) {
-        console.log("Error downloading the file: ", error);
-      }
-    }
-  } catch (error) {
-    console.error("Error saving to camera roll:", error);
-    error({
-      message: `Error saving to camera roll: ${error.message}`,
-    });
-  }
-};
-*/
   /**
    * @param {object} file - The file to download.
    */
   async function downloadFile() {
-    const { status } = await MediaLibrary.requestPermissionsAsync();
-    if (status !== "granted") {
-      alerts.error({
-        message: "Sorry, we need camera roll permissions to make this work!",
-      });
-      return;
-    }
-    if (status === "granted") {
-      console.log("granted");
-    }
     // Generate the local URI for the file
     const fileName = encodeURIComponent(file.name);
     const localUri = FileSystem.documentDirectory + fileName;
     try {
       const { uri } = await FileSystem.downloadAsync(fileUrl, localUri);
-      // Save the file to the camera roll
-      const asset = await MediaLibrary.createAssetAsync(uri);
-      const album = await MediaLibrary.getAlbumAsync("Download");
-      if (album == null) {
-        await MediaLibrary.createAlbumAsync("Download", asset, false);
-      } else {
-        await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+      //if file is not photo or video do this
+      if (folder !== "photos" && file.metadata?.mimetype !== "video/mp4") {
+        try {
+          const fileString = await FileSystem.readAsStringAsync(localUri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          const permissions =
+            await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+          if (!permissions.granted) {
+            return;
+          }
+          try {
+            const fileExtension = file.name.split(".").pop();
+            const mimeType =
+              file.metadata?.mimetype ?? `application/${fileExtension}`;
+            await FileSystem.StorageAccessFramework.createFileAsync(
+              permissions.directoryUri,
+              fileName,
+              mimeType,
+            ).then(async (uri) => {
+              await FileSystem.writeAsStringAsync(uri, fileString, {
+                encoding: FileSystem.EncodingType.Base64,
+              });
+              alerts.success({ message: "File Downloaded Successfully" });
+            });
+          } catch (e) {
+            throw new Error(e);
+          }
+        } catch (e) {
+          throw new Error(e);
+        }
+      } //if file is photo or video do this
+      else {
+        const { status } = await MediaLibrary.requestPermissionsAsync();
+        if (status !== "granted") {
+          alerts.error({
+            message:
+              "Sorry, we need camera roll permissions to make this work!",
+          });
+          return;
+        }
+        if (status === "granted") {
+          console.log("granted");
+        }
+        // Save the file to the camera roll
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        const album = await MediaLibrary.getAlbumAsync("Download");
+        if (album == null) {
+          await MediaLibrary.createAlbumAsync("Download", asset, false);
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
+        }
+        console.log("File saved to camera roll");
+        //console.log("File downloaded to:", uri);
       }
-      console.log("File saved to camera roll");
-      //console.log("File downloaded to:", uri);
     } catch (error) {
       console.log("Error downloading the file: ", error);
     }

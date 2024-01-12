@@ -1,11 +1,4 @@
-import {
-  Card,
-  Divider,
-  Icon,
-  Text,
-  useTheme,
-  Searchbar,
-} from "react-native-paper";
+import { Card, Divider, Icon, Text, useTheme } from "react-native-paper";
 import { StyleProp, TouchableOpacity, View, ViewStyle } from "react-native";
 import { useQuery } from "@supabase-cache-helpers/postgrest-swr";
 import { supabase } from "../supabase";
@@ -17,6 +10,8 @@ import { useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
+import { usePresenceStore } from "../stores/PresenceStore";
+import { PulseIndicator } from "react-native-indicators";
 
 function Room({ room }) {
   const theme = useTheme();
@@ -128,6 +123,8 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
     getFriends();
   }, []);
 
+  const online = usePresenceStore((state) => state.online);
+
   // Cheating: check for updates on room_tracker then refetch rooms
   useFocusEffect(() => {
     const roomsTracker = supabase
@@ -177,9 +174,30 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
       */}
       {roomTypes.map((roomType, index) => (
         <Fragment key={index}>
-          <Text variant="titleSmall" style={{ marginBottom: 2 }}>
-            {roomType.title}
-          </Text>
+          <View
+            style={{
+              marginBottom: 2,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text variant="titleSmall" style={{ alignItems: "center" }}>
+              {roomType.title}
+            </Text>
+            {index === 0 && (
+              <>
+                <PulseIndicator
+                  style={{ flex: 0, opacity: 0.7, marginLeft: 5 }}
+                  size={25}
+                  color={theme.colors.primary}
+                />
+                <Text style={{ color: theme.colors.primary }}>
+                  {online.filter((v) => friends.includes(v.user_id)).length}{" "}
+                  online
+                </Text>
+              </>
+            )}
+          </View>
           {roomType.rooms.map((room) => (
             <Room key={room.id} room={room} />
           ))}
