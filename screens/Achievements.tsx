@@ -53,7 +53,11 @@ export default function Achievements() {
                   >
                     <List.Item
                       title={achievement.name}
-                      description={achievement.description}
+                      description={() => (
+                        <Text variant="bodySmall">
+                          {achievement.description}
+                        </Text>
+                      )}
                       left={() => (
                         <Avatar.Image
                           source={{
