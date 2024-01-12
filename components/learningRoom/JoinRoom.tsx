@@ -21,30 +21,41 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
   return (
     <View style={props.style}>
       <Text variant="titleSmall">Join Room via code</Text>
-      <TextInput
-        editable
-        placeholder="#"
-        value={joinCode}
-        error={joinCode.length > 1 && joinCode.length !== 7}
-        maxLength={7}
-        inputMode="numeric"
-        mode="outlined"
-        style={{ height: 40, width: "auto", textAlign: "center" }}
-        onChangeText={(text) => {
-          if (text === "") {
-            text = "#";
-          }
-          // only allow numbers
-          text = text.replace(/[^0-9]/g, "");
-          // if the first character is not a #, add it.
-          if (!text.includes("#")) {
-            text = "#" + text;
-          }
-          setJoinCode(text);
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
+          gap: 5,
         }}
-        onSubmitEditing={join}
-      />
-      <Button mode="contained-tonal" onPress={join}>Join</Button>
+      >
+        <TextInput
+          editable
+          placeholder="#"
+          value={joinCode}
+          error={joinCode.length > 1 && joinCode.length !== 7}
+          maxLength={7}
+          inputMode="numeric"
+          mode="outlined"
+          style={{ height: 40, textAlign: "center", flex: 1 }}
+          onChangeText={(text) => {
+            if (text === "") {
+              text = "#";
+            }
+            // only allow numbers
+            text = text.replace(/[^0-9]/g, "");
+            // if the first character is not a #, add it.
+            if (!text.includes("#")) {
+              text = "#" + text;
+            }
+            setJoinCode(text);
+          }}
+          onSubmitEditing={join}
+        />
+        <Button mode="contained-tonal" onPress={join}>
+          Join
+        </Button>
+      </View>
     </View>
   );
 }
