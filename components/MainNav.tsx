@@ -158,8 +158,8 @@ function MainTabs({ navigation }) {
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
   const { alert, warning, info } = useAlerts();
-  /* useEffect(() => {
-    let lastUpdate = dayjs().valueOf();
+  useEffect(() => {
+    /* let lastUpdate = dayjs().valueOf();
     // Health check for server
     const serverAliveInterval = setInterval(() => {
       if (
@@ -194,7 +194,7 @@ function MainTabs({ navigation }) {
           filter: `room_id=eq.${room?.id}`,
         },
         (payload) => {
-          lastUpdate = dayjs(payload.commit_timestamp).valueOf();
+          // lastUpdate = dayjs(payload.commit_timestamp).valueOf();
 
           switch (payload.eventType) {
             case "INSERT": // new room state
@@ -252,7 +252,7 @@ function MainTabs({ navigation }) {
       .subscribe();
     return () => {
       publicRoomStates.unsubscribe();
-      clearInterval(serverAliveInterval);
+      // clearInterval(serverAliveInterval);
     };
   }, [room]);
 
