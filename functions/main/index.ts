@@ -417,7 +417,7 @@ async function stateAfterEndResults(
  */
 
 async function processAchievements() {
-    await supabase.rpc("check_achievements");
+    await supabase.rpc("check_user_achievements");
 }
 
 /**
@@ -546,6 +546,8 @@ async function updateStats(
       draw = false;
     }
   }
+
+
 
 
   //Check if there are two "winners" resulting in a draw
