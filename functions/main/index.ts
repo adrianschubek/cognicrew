@@ -104,6 +104,7 @@ const END_RESULTS_DURATION = 10000;
 
 async function mainLoop() {
   const start = performance.now();
+  let roomsCount = 0;
   let commandsCount = 0;
 
   const { data: publicRoomStates } = await supabase
@@ -126,6 +127,8 @@ async function mainLoop() {
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === room.room_id,
     )?.data as PrivateRoomState;
+    // safeguard for unexpected desync
+    if (!privateState) continue;
 
     // |> foreach player in room -> update if player has submitted an answer already
     updatePlayerAnswers(publicState, room, playerAnswers);
@@ -159,6 +162,7 @@ async function mainLoop() {
 
     // Process commands for this room
     commandsCount = await processCommands(publicState, privateState, room);
+    roomsCount++;
 
     console.log(publicState);
     await supabase
@@ -173,9 +177,9 @@ async function mainLoop() {
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
-    `main_loop: ${
-      publicRoomStates.length
-    } states and ${commandsCount} commands processed in ${end - start}ms`,
+    `main_loop: ${roomsCount} states and ${commandsCount} commands processed in ${
+      end - start
+    }ms`,
   );
 }
 
@@ -562,7 +566,7 @@ async function updateStats(
       continue;
     }
 
-    const stats: UserProjectStats = dbstats?.stats ?? {
+    const stats: UserProjectStats = (dbstats?.stats as UserProjectStats) ?? {
       scoreQuiz: 0,
       scoreFlashcards: 0,
       winsQuiz: 0,
@@ -589,13 +593,16 @@ async function updateStats(
         ? 1
         : 0;
 
-    const timeSpent = dayjs().valueOf() - publicState.gameBeganAt;
+    const timeSpentSeconds = Math.min(
+      Math.max(0, (dayjs().valueOf() - publicState.gameBeganAt) / 1000),
+      privateState.roundDuration * publicState.totalRounds,
+    );
     stats.timeSpentQuiz +=
-      publicState.game == GameState.EXERCISES ? timeSpent : 0;
+      publicState.game == GameState.EXERCISES ? timeSpentSeconds : 0;
     stats.timeSpentFlashcards +=
-      publicState.game == GameState.FLASHCARDS ? timeSpent : 0;
+      publicState.game == GameState.FLASHCARDS ? timeSpentSeconds : 0;
     stats.timeSpentWhiteboard +=
-      publicState.game == GameState.WHITEBOARD ? timeSpent : 0;
+      publicState.game == GameState.WHITEBOARD ? timeSpentSeconds : 0;
 
     const { error: errUpdate } = await supabase
       .from("user_learning_projects")
