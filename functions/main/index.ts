@@ -126,6 +126,8 @@ async function mainLoop() {
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === room.room_id,
     )?.data as PrivateRoomState;
+    // safeguard for unexpected desync
+    if (!privateState) continue;
 
     // |> foreach player in room -> update if player has submitted an answer already
     updatePlayerAnswers(publicState, room, playerAnswers);
