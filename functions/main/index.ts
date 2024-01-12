@@ -172,9 +172,6 @@ async function mainLoop() {
       .eq("room_id", room.room_id);
   }
 
-  // Process achievements
-  await processAchievements();
-
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
@@ -183,6 +180,13 @@ async function mainLoop() {
     }ms`,
   );
 }
+
+/**
+ * Achievement loop
+ */
+setInterval(async () => {
+  await processAchievements();
+}, 1000 * 10); // every 10 seconds
 
 /**
  * States
