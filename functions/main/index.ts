@@ -554,7 +554,7 @@ async function updateStats(
   let draw = false;
   const maxScore = playerScoresWithIds[0].score;
   const gameWonPlayerId = playerScoresWithIds[0].id;
-  const secondPlaceScore = playerScoresWithIds.length > 1 ? 0 : playerScoresWithIds[1].score;
+  const secondPlaceScore = playerScoresWithIds.length > 1 ? playerScoresWithIds[1].score : 0;
 
   //Check for achievements 5,6,7,8,11
   for (const player of publicState.players) {
