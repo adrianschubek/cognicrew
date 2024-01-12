@@ -538,16 +538,39 @@ async function updateStats(
 ) {
   let gameWonPlayerId;
   let maxScore = 0;
+  let secondPlaceScore = 0;
   let draw = true;
 
   for (const player of publicState.players) {
     if (player.score >= maxScore) {
       gameWonPlayerId = player.id;
+      secondPlaceScore = maxScore;
       maxScore = player.score;
       draw = false;
+    } else if(player.score >= secondPlaceScore) {
+      secondPlaceScore = player.score;
     }
   }
 
+   //Check for achievements 5,6,7,8,11
+   for (const player of publicState.players) {  
+     if (player.correctQuestions == 0) { //achievement 5
+       achieve(5, player.id)
+     } 
+     if(publicState.totalRounds == player.correctQuestions && publicState.game == GameState.FLASHCARDS) { //achievement 6
+       achieve(6, player.id) 
+     } 
+     if(gameWonPlayerId == player.id && maxScore - secondPlaceScore < 10) { //achievement 7
+       achieve(7, player.id) 
+     } 
+     if(publicState.gameBeganAt / 1000 < 60 && publicState.totalRounds == player.correctQuestions && publicState.totalRounds >= 20 && publicState.game == GameState.FLASHCARDS) { //achievement 8
+       achieve(8, player.id) 
+     }
+     if(publicState.totalRounds == player.correctQuestions && publicState.game == GameState.EXERCISES) { //achievement 11
+       achieve(11, player.id) 
+     }
+   }
+   //Check achievements end
 
 
 
