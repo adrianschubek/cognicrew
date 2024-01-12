@@ -418,7 +418,6 @@ async function stateAfterEndResults(
 
 async function processAchievements() {
   await supabase.rpc("check_user_achievements");
-    await supabase.rpc("check_user_achievements");
 }
 
 /**
