@@ -1,6 +1,12 @@
 import * as React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { FAB, Text } from "react-native-paper";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useEffect, useState } from "react";
@@ -75,18 +81,23 @@ export default function FlashcardExerciseManagement({
       )}
 
       <View style={[noSetAvailable ? { flex: 0 } : styles.container]}>
-        <ScrollView>
-          <AccordionSection
-            type={type}
-            orderSetsBy={orderSetsBy}
-            orderSetItemsBy={orderSetItemsBy}
-            sendNoSetAvailableToParent={(boolean) => {
-              setNoSetAvailable(boolean);
-            }}
-          />
-          {/*View margin for FAB.Group when scrolling down */}
-          <View style={{ marginBottom: 78 }}></View>
-        </ScrollView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <ScrollView>
+            <AccordionSection
+              type={type}
+              orderSetsBy={orderSetsBy}
+              orderSetItemsBy={orderSetItemsBy}
+              sendNoSetAvailableToParent={(boolean) => {
+                setNoSetAvailable(boolean);
+              }}
+            />
+            {/*View margin for FAB.Group when scrolling down */}
+            <View style={{ marginBottom: 78 }}></View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
       <FAB.Group
         testID="flashcard-fab-button"
