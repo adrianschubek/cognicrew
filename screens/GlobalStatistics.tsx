@@ -65,8 +65,8 @@ export default function GlobalStatistics() {
   const percentWhiteboard =
     series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
-  function formatTimeSpent(milliseconds: number) {
-    return (milliseconds / 1000 / 60 / 60).toFixed(2);
+  function formatTimeSpent(seconds: number) {
+    return (seconds / 60 / 60).toFixed(2);
   }
   const quizGotTime = series[0] === 0 ? false : true;
   const cardsGotTime = series[1] === 0 ? false : true;
