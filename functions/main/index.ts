@@ -541,20 +541,20 @@ async function updateStats(
   publicState: PublicRoomState,
   privateState: PrivateRoomState,
 ) {
-  let gameWonPlayerId;
-  let maxScore = 0;
-  let secondPlaceScore = 0;
-  let draw = true;
 
+  const playerScoresWithIds = [];
   for (const player of publicState.players) {
-    if (player.score >= maxScore) {
-      gameWonPlayerId = player.id;
-      maxScore = player.score;
-      draw = false;
-    } else if (player.score >= secondPlaceScore) {
-      secondPlaceScore = player.score;
-    }
+    const playerInfo = {
+      id: player.id,
+      score: player.score,
+    };
+    playerScoresWithIds.push(playerInfo);
   }
+  playerScoresWithIds.sort((a, b) => b.score - a.score);
+  let draw = false;
+  const maxScore = playerScoresWithIds[0].score;
+  const gameWonPlayerId = playerScoresWithIds[0].id;
+  const secondPlaceScore = playerScoresWithIds[1].score;
 
   //Check for achievements 5,6,7,8,11
   for (const player of publicState.players) {
