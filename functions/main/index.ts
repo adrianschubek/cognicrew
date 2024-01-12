@@ -549,7 +549,6 @@ async function updateStats(
   for (const player of publicState.players) {
     if (player.score >= maxScore) {
       gameWonPlayerId = player.id;
-      secondPlaceScore = maxScore;
       maxScore = player.score;
       draw = false;
     } else if (player.score >= secondPlaceScore) {
