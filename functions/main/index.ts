@@ -104,6 +104,7 @@ const END_RESULTS_DURATION = 10000;
 
 async function mainLoop() {
   const start = performance.now();
+  let roomsCount = 0;
   let commandsCount = 0;
 
   const { data: publicRoomStates } = await supabase
@@ -161,6 +162,7 @@ async function mainLoop() {
 
     // Process commands for this room
     commandsCount = await processCommands(publicState, privateState, room);
+    roomsCount++;
 
     console.log(publicState);
     await supabase
@@ -175,9 +177,9 @@ async function mainLoop() {
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
-    `main_loop: ${
-      publicRoomStates.length
-    } states and ${commandsCount} commands processed in ${end - start}ms`,
+    `main_loop: ${roomsCount} states and ${commandsCount} commands processed in ${
+      end - start
+    }ms`,
   );
 }
 
