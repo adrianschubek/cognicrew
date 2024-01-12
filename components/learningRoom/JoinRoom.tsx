@@ -1,5 +1,5 @@
 import * as React from "react";
-import { TextInput, Text } from "react-native-paper";
+import { TextInput, Text, Button } from "react-native-paper";
 import { StyleProp, View, ViewStyle } from "react-native";
 import { useState } from "react";
 import { supabase } from "../../supabase";
@@ -10,6 +10,14 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
   const [joinCode, setJoinCode] = useState("#");
   const { alert, error: errorAlert, info } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
+  const join = async () => {
+    const { data, error } = await supabase.rpc("quick_join_room", {
+      p_share_code: +joinCode.substring(1),
+    });
+    if (!data?.id)
+      return errorAlert({ title: "Error", message: "Room not found." });
+    setRoom(data);
+  };
   return (
     <View style={props.style}>
       <Text variant="titleSmall">Join Room via code</Text>
@@ -34,15 +42,9 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
           }
           setJoinCode(text);
         }}
-        onSubmitEditing={async () => {
-          const { data, error } = await supabase.rpc("quick_join_room", {
-            p_share_code: +joinCode.substring(1),
-          });
-          if (!data?.id)
-            return errorAlert({ title: "Error", message: "Room not found." });
-          setRoom(data);
-        }}
+        onSubmitEditing={join}
       />
+      <Button mode="contained-tonal" onPress={join}>Join</Button>
     </View>
   );
 }
