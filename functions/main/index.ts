@@ -172,9 +172,6 @@ async function mainLoop() {
       .eq("room_id", room.room_id);
   }
 
-  // Process achievements
-  await processAchievements();
-
   const end = performance.now();
   console.log(
     /* use `logs -t` to show timestamps */
@@ -183,6 +180,13 @@ async function mainLoop() {
     }ms`,
   );
 }
+
+/**
+ * Achievement loop
+ */
+setInterval(async () => {
+  await processAchievements();
+}, 1000 * 10); // every 10 seconds
 
 /**
  * States
@@ -221,6 +225,8 @@ async function stateRoundResults(
               (privateState.roundDuration * 1000)) *
               100,
           ),
+      correctQuestions:
+        player.correctQuestions + (player.currentCorrect ? 1 : 0),
       currentCorrect: null,
       currentTimeNeeded: null,
     };
@@ -481,7 +487,6 @@ function updatePlayerAnswers(
     if (!playerAnswer) continue;
     player.currentCorrect = playerAnswer.answer_correct;
     player.currentTimeNeeded = playerAnswer.answer_time;
-    player.correctQuestions += playerAnswer.answer_correct ? 1 : 0;
   }
 }
 
