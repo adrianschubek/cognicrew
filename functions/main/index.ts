@@ -552,6 +552,9 @@ async function updateStats(
     }
   }
 
+
+
+
   //Check if there are two "winners" resulting in a draw
   for (const player of publicState.players) {
     if (player.score == maxScore && player.id != gameWonPlayerId) {
