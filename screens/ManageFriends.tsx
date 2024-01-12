@@ -1,5 +1,12 @@
 import * as React from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  Dimensions,
+} from "react-native";
 import { useEffect, useState } from "react";
 import {
   Divider,
@@ -10,7 +17,6 @@ import {
   Searchbar,
 } from "react-native-paper";
 import FriendItem from "../components/manageFriends/FriendItem";
-import { responsiveHeight } from "react-native-responsive-dimensions";
 import {
   useDeleteFriendRequest,
   useFriendRelations,
@@ -20,6 +26,8 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../supabase";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 export default function ManageFriends({ navigation }) {
   const theme = useTheme();
@@ -77,14 +85,17 @@ export default function ManageFriends({ navigation }) {
     setFriendRequestsReceived(data[0]?.received_array ?? []);
     setFriendIdsAndNamesData(data[0]?.friend_array ?? []);
   }, [data]);
-
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
-    <ScrollView style={{ flex: 1 }} nestedScrollEnabled={true}>
-      <View style={{ padding: 20, gap: 10 }}>
+    <KeyboardAwareScrollView
+      extraScrollHeight={200} // Add extra height when keyboard is shown
+      contentContainerStyle={{ padding: 20, flexGrow: 1 }}
+      enableOnAndroid={true} // Enable for Android as well
+      keyboardShouldPersistTaps="handled" // This handles the closing of the keyboard when tapping outside
+    >
+      <View style={{ gap: 10 }}>
         <View style={styles.titleContainer}>
           <Text variant="headlineSmall">Manage Friends</Text>
-
           <View style={styles.iconsContainer}>
             <IconButton
               testID="plus-add-friend-button"
@@ -125,55 +136,6 @@ export default function ManageFriends({ navigation }) {
             />
             {icon({})}
           </View>
-        </View>
-
-        {/* Friends list */}
-        <View>
-          <Text
-            variant={sectionTitleVariant}
-            style={[styles.sectionTitle, { paddingBottom: 8 }]}
-          >
-            All friends
-          </Text>
-          <Searchbar
-            style={{
-              marginBottom: 8,
-              elevation: 0,
-              borderRadius: 10,
-            }}
-            placeholder="Search"
-            onChangeText={(query) => {
-              setSearchQuery(query);
-            }}
-            value={searchQuery}
-          />
-          <ScrollView
-            style={{ maxHeight: responsiveHeight(36) }}
-            nestedScrollEnabled={true}
-          >
-            {/*ScrollView does it so the elevation effect looks bad horizontally */}
-            {searchFilterFriends.map((friend, index) => (
-              <FriendItem
-                key={index}
-                style={{ marginBottom: 8 }}
-                icon="close-circle"
-                friendId={friend.id}
-                friendName={friend.username}
-                onIconPress={() => {
-                  info({
-                    //icon: "account-off",
-                    title: "",
-                    message: "Are you sure you want to delete this friend?",
-                    okText: "Delete Friend",
-                    okAction: () => {
-                      deleteFriend(friend.id);
-                    },
-                  });
-                }}
-              />
-            ))}
-          </ScrollView>
-          <Divider style={styles.divider} />
         </View>
 
         {/* Pending friends list */}
@@ -245,8 +207,51 @@ export default function ManageFriends({ navigation }) {
             <Divider style={styles.divider} />
           </View>
         )}
+        {/* Friends list */}
+        <View>
+          <Text
+            variant={sectionTitleVariant}
+            style={[styles.sectionTitle, { paddingBottom: 8 }]}
+          >
+            Friends
+          </Text>
+          <Searchbar
+            style={{
+              marginBottom: 8,
+              elevation: 0,
+              borderRadius: 10,
+            }}
+            placeholder="Search"
+            onChangeText={(query) => {
+              setSearchQuery(query);
+            }}
+            value={searchQuery}
+          />
+          {/*ScrollView does it so the elevation effect looks bad horizontally */}
+          {searchFilterFriends.map((friend, index) => (
+            <FriendItem
+              key={index}
+              style={{ marginBottom: 8 }}
+              icon="close-circle"
+              friendId={friend.id}
+              friendName={friend.username}
+              onIconPress={() => {
+                info({
+                  //icon: "account-off",
+                  title: "",
+                  message: "Are you sure you want to delete this friend?",
+                  okText: "Delete Friend",
+                  okAction: () => {
+                    deleteFriend(friend.id);
+                  },
+                });
+              }}
+            />
+          ))}
+          <Divider style={styles.divider} />
+        </View>
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
   );
 }
 
