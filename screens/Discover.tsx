@@ -125,6 +125,8 @@ export default function Discover() {
   };
 
   const save = async (project, newProjectName) => {
+    await supabase.rpc("copy_learning_project", {p_source_id: 1141, p_new_owner_id: user.id, p_new_project_name: "BigTest"})
+    /*
     try {
       const projectName = newProjectName ? newProjectName : project.name;
       const upsertedProject = await upsert([
@@ -136,6 +138,7 @@ export default function Discover() {
           tags: project.tags,
         },
       ]);
+
 
       const upsertedProjectId = upsertedProject[0]?.id;
 
@@ -305,7 +308,7 @@ export default function Discover() {
         message: "There was an error trying to clone the project.",
       });
       console.error("Save error:", error.message);
-    }
+    }*/
   };
 
   //CLONING END

@@ -664,6 +664,8 @@ export interface Database {
       copy_learning_project: {
         Args: {
           p_source_id: number
+          p_new_owner_id: string
+          p_new_project_name: string
         }
         Returns: undefined
       }
