@@ -53,6 +53,7 @@ export default function Achievements() {
                   >
                     <List.Item
                       title={achievement.name}
+                      titleStyle={{ marginBottom: 2, marginTop: -2 }}
                       description={() => (
                         <Text variant="bodySmall">
                           {achievement.description}
