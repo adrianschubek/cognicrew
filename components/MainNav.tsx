@@ -158,7 +158,7 @@ function MainTabs({ navigation }) {
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
   const { alert, warning, info } = useAlerts();
-  useEffect(() => {
+  /* useEffect(() => {
     let lastUpdate = dayjs().valueOf();
     // Health check for server
     const serverAliveInterval = setInterval(() => {
@@ -181,7 +181,7 @@ function MainTabs({ navigation }) {
           },
         });
       }
-    }, 12000);
+    }, 12000); */
 
     const publicRoomStates = supabase
       .channel("ingame-live-" + room?.id)
