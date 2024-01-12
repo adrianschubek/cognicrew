@@ -653,8 +653,18 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      check_user_achievements: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_rooms: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      copy_learning_project: {
+        Args: {
+          p_source_id: number
+        }
         Returns: undefined
       }
       create_room: {

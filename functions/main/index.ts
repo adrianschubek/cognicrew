@@ -417,6 +417,7 @@ async function stateAfterEndResults(
  */
 
 async function processAchievements() {
+  await supabase.rpc("check_user_achievements");
     await supabase.rpc("check_user_achievements");
 }
 
@@ -481,6 +482,7 @@ function updatePlayerAnswers(
     if (!playerAnswer) continue;
     player.currentCorrect = playerAnswer.answer_correct;
     player.currentTimeNeeded = playerAnswer.answer_time;
+    player.correctQuestions += playerAnswer.answer_correct ? 1 : 0;
   }
 }
 

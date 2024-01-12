@@ -43,6 +43,10 @@ export type PublicRoomState = {
      */
     score: number;
     /**
+     * Number of correct answers in this game
+     */
+    correctQuestions: number;
+    /**
      * Whether the user answered correctly in the current round.
      * Will be null if there is no current round, it is disabled or the user did not answer yet.
      */
