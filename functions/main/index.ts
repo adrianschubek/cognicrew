@@ -225,6 +225,8 @@ async function stateRoundResults(
               (privateState.roundDuration * 1000)) *
               100,
           ),
+      correctQuestions:
+        player.correctQuestions + (player.currentCorrect ? 1 : 0),
       currentCorrect: null,
       currentTimeNeeded: null,
     };
@@ -485,7 +487,6 @@ function updatePlayerAnswers(
     if (!playerAnswer) continue;
     player.currentCorrect = playerAnswer.answer_correct;
     player.currentTimeNeeded = playerAnswer.answer_time;
-    player.correctQuestions += playerAnswer.answer_correct ? 1 : 0;
   }
 }
 
@@ -551,9 +552,6 @@ async function updateStats(
       draw = false;
     }
   }
-
-
-
 
   //Check if there are two "winners" resulting in a draw
   for (const player of publicState.players) {
