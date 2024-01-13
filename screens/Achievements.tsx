@@ -93,7 +93,7 @@ export default function Achievements() {
           }}
         >
           <Avatar.Icon icon="lock-question" size={70} />
-          <Text variant="headlineSmall">Secret Feature!!!</Text>
+          <Text variant="headlineSmall">Not yet unlocked!</Text>
         </View>
       )}
     </>
