@@ -276,7 +276,7 @@ export default function ProjectStatistics() {
           zIndex: -1,
         }}
       />
-      <View style={{ gap: 20, marginBottom: 20 }}>
+      <View style={{ gap: 10, marginBottom: 20 }}>
         {leaderboard.map((item, index) => {
           return (
             <StatisticCategory

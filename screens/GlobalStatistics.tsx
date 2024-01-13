@@ -188,7 +188,7 @@ export default function GlobalStatistics() {
             />
           );
         })}
-        <Divider />
+        {/*<Divider />*/}
       </ScrollView>
     </SafeAreaView>
   );
