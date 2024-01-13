@@ -87,7 +87,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
           <SearchWithList
             mode="select"
             type={ManagementType.FLASHCARD}
-            searchPlaceholder="Search for flashcard set"
+            searchPlaceholder="Search for cognicard set"
             sendSetId={getSelectedSetId}
             noSetSelected={showErrorNoSetSelected}
           />
@@ -134,7 +134,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
             }}
             mode="contained"
           >
-            add new flashcard
+            add new cognicard
           </Button>
         </Dialog.Actions>
       </Dialog>

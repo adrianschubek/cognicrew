@@ -79,7 +79,7 @@ export default function LinkManagement() {
     link = link || null;
     confirm({
       icon: link ? "link" : "link-plus", //"link-edit" isn't working ;/
-      title: link ? "Edit link" : "Add new link",
+      title: (link ? "Edit" : "Add new") + " cognilink",
       okText: "Save",
       okAction: async (vars) => {
         addOrEdit(link?.id, vars[0], vars[1], vars[2], ensureHttpURL(vars[3]));
@@ -153,11 +153,11 @@ export default function LinkManagement() {
         actions={[
           {
             icon: "sort",
-            label: "Sort links by",
+            label: "Sort cognilinks by",
             onPress: () => {
               confirm({
                 icon: "",
-                title: "Sort your links by?",
+                title: "Sort your cognilinks by?",
                 okText: "Accept",
                 okAction: (val) => {
                   setOrderLinkCardsBy(val[0] as orderByPrinciple);
@@ -187,7 +187,7 @@ export default function LinkManagement() {
           },
           {
             icon: "plus",
-            label: "Add new " + "link",
+            label: "Add new cognilink",
             onPress: openAddEditLinkDialog,
           },
         ]}

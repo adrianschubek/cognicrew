@@ -11,7 +11,6 @@ import { FAB, Text } from "react-native-paper";
 import AccordionSection from "../../components/learningProject/AccordionSection";
 import { useEffect, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
-//import ManageSets from "../../components/dialogues/ManageSets";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import AddExercises from "../../components/dialogues/AddExercises";
@@ -37,11 +36,11 @@ export default function FlashcardExerciseManagement({
   const onStateChange = ({ open }) => setFABOpen({ open });
   const { open } = FABOpen;
   const typeName = (plural: boolean) =>
-    (type === ManagementType.FLASHCARD ? "flashcard" : "quiz") +
+    (type === ManagementType.FLASHCARD ? "cognicard" : "cogniquiz") +
     (plural ? (type === ManagementType.FLASHCARD ? "s" : "zes") : "");
   useEffect(() => {
     navigation.setOptions({
-      title: type === ManagementType.FLASHCARD ? "Flashcards" : "Quizzes",
+      title: type === ManagementType.FLASHCARD ? "Cognicards" : "Cogniquizzes",
     });
   }, []);
   return (
@@ -58,11 +57,6 @@ export default function FlashcardExerciseManagement({
           close={() => setShowAddItem(false)}
         />
       )}
-      {/*<ManageSets
-        showManageSets={showManageSets}
-        close={() => setShowManageSets(false)}
-        type={type}
-      />*/}
       {noSetAvailable && (
         <View
           style={{
@@ -200,11 +194,7 @@ export default function FlashcardExerciseManagement({
                           type={type}
                           mode="edit"
                           searchPlaceholder={
-                            "Search for " +
-                            (type === ManagementType.FLASHCARD
-                              ? "flashcard"
-                              : "exercise") +
-                            " set"
+                            "Search for " + typeName(false) + " set"
                           }
                           creationOption={true}
                         />

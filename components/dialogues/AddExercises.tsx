@@ -143,7 +143,7 @@ export default function AddExercises({ showAddExercises, close }) {
           <SearchWithList
             mode="select"
             type={ManagementType.EXERCISE}
-            searchPlaceholder="Search for exercise set"
+            searchPlaceholder="Search for cogniquiz set"
             sendSetId={getSelectedSetId}
             noSetSelected={showErrorNoSetSelected}
           />
@@ -237,7 +237,7 @@ export default function AddExercises({ showAddExercises, close }) {
             }}
             mode="contained"
           >
-            add new exercise
+            add new cogniquiz
           </Button>
         </Dialog.Actions>
       </Dialog>

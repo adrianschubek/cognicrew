@@ -120,12 +120,12 @@ function LearningProjectsTab() {
       <Stack.Screen
         name={NAVIGATION.LINK_MANAGEMENT}
         component={LinkManagement}
-        options={{ title: "Links" }}
+        options={{ title: "Cognilinks" }}
       />
       <Stack.Screen
         name={NAVIGATION.FILES_MANAGEMENT}
         component={FilesManagement}
-        options={{ title: "Files" }}
+        options={{ title: "Cognifiles" }}
       />
       <Stack.Screen name={NAVIGATION.LEARNING_ROOM} component={LearningRoom} />
 
