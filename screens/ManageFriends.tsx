@@ -3,14 +3,12 @@ import { useCallback, useRef } from "react";
 import { View, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
 import {
-  Divider,
   Avatar,
   Text,
   useTheme,
   IconButton,
   Searchbar,
   Button,
-  Badge,
 } from "react-native-paper";
 import FriendItem from "../components/manageFriends/FriendItem";
 import { useFriendRelations, useInsertFriend } from "../utils/hooks";
@@ -34,7 +32,6 @@ export default function ManageFriends({ navigation }) {
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
   const { trigger: addFriend } = useInsertFriend();
   const { data, error, isLoading, mutate } = useFriendRelations();
-  const sectionTitleVariant = "titleMedium";
   async function deleteFriend(friend) {
     let { data, error } = await supabase.rpc("delete_friend", {
       p_other_userid: friend,

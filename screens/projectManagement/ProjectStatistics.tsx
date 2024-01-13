@@ -107,7 +107,6 @@ export default function ProjectStatistics() {
       ? theme.colors.pieChartThird
       : theme.colors.isZero,
   };
-  
 
   useEffect(() => {
     if (!data || isLoading) return;
@@ -231,13 +230,11 @@ export default function ProjectStatistics() {
   return (
     <ScrollView>
       <StatusBar style="auto" />
-      <Card>
-        <Card.Title
-          titleVariant={heading}
-          title="Learning material"
-          style={{ backgroundColor: theme.colors.background }}
-        ></Card.Title>
-      </Card>
+      <Card.Title
+        titleVariant={heading}
+        title="Learning material"
+        style={{ backgroundColor: theme.colors.background }}
+      />
       {fileStatistics.map((item, index) => {
         return (
           <StatisticCategory
@@ -249,14 +246,15 @@ export default function ProjectStatistics() {
           />
         );
       })}
-
-      <Card>
-        <Card.Title
-          titleVariant={heading}
-          title="Leaderboard"
-          style={{ backgroundColor: theme.colors.background }}
-        ></Card.Title>
-      </Card>
+      <Card.Title
+        titleVariant={heading}
+        title="Leaderboard"
+        style={{
+          backgroundColor: theme.colors.background,
+          marginTop: -10,
+          zIndex: -1,
+        }}
+      />
       {ranks.map((item, index) => {
         return (
           <StatisticCategory
@@ -269,14 +267,15 @@ export default function ProjectStatistics() {
           />
         );
       })}
-
-      <Card>
-        <Card.Title
-          titleVariant={heading}
-          title="Game statistics"
-          style={{ backgroundColor: theme.colors.background }}
-        ></Card.Title>
-      </Card>
+      <Card.Title
+        titleVariant={heading}
+        title="Game statistics"
+        style={{
+          backgroundColor: theme.colors.background,
+          marginTop: -10,
+          zIndex: -1,
+        }}
+      />
       <View style={{ gap: 20, marginBottom: 20 }}>
         {leaderboard.map((item, index) => {
           return (
@@ -290,7 +289,7 @@ export default function ProjectStatistics() {
             />
           );
         })}
-        <Divider/>
+        <Divider />
         <HelperText type="info">
           Project statistics will only be tracked if the user is a member of the
           project.
