@@ -133,7 +133,7 @@ export default function ProjectStatistics() {
   }, []);
   const fileStatistics = [
     {
-      title: "CogniCards",
+      title: "Cognicards",
       dataPointCategories: [
         {
           dataPoints: [`Amount of flashcards: ${countFlashcards}`],
@@ -141,15 +141,15 @@ export default function ProjectStatistics() {
       ],
     },
     {
-      title: "CogniCises",
+      title: "Cogniquiz",
       dataPointCategories: [
         {
-          dataPoints: [`Amount of exercises: ${countExercises}`],
+          dataPoints: [`Amount of quizzes: ${countExercises}`],
         },
       ],
     },
     {
-      title: "CogniLinks",
+      title: "Cognilinks",
       dataPointCategories: [
         {
           dataPoints: [`Amount of links: ${countLinks}`],
@@ -161,7 +161,7 @@ export default function ProjectStatistics() {
       dataPointCategories: [
         {
           dataPoints: [
-            `Amount of files: ${countDocuments}`,
+            `Amount of documents: ${countDocuments}`,
             `Amount of photos: ${countPhotos}`,
           ],
         },
@@ -174,17 +174,17 @@ export default function ProjectStatistics() {
       dataPointCategories: [
         {
           dataPoints: [
-            `CogniQuiz: ${series[0]} hours, ${percentExercise} %`,
-            `Amount of CogniQuiz wins: ${countQuizWins}`,
-            `CogniScore - CogniQuiz: ${countQuizScore}`,
+            `Cogniquiz: ${series[0]} hours, ${percentExercise} %`,
+            `Amount of Cogniquiz wins: ${countQuizWins}`,
+            `Score - Cogniquiz: ${countQuizScore}`,
           ],
           textColor: gameColors.quizColor,
         },
         {
           dataPoints: [
-            `CogniCards: ${series[1]} hours, ${percentQuiz} %`,
-            `Amount of CogniCards wins: ${countCardsWins}`,
-            `CogniScore - CogniCards: ${countCardsScore}`,
+            `Cognicards: ${series[1]} hours, ${percentQuiz} %`,
+            `Amount of Cognicards wins: ${countCardsWins}`,
+            `Score - Cognicards: ${countCardsScore}`,
           ],
           textColor: gameColors.cardColor,
         },
@@ -218,7 +218,7 @@ export default function ProjectStatistics() {
       ],
     },
     {
-      title: "Rank under friends:",
+      title: "Rank among friends:",
       dataPointCategories: [
         {
           dataPoints: [`# ${countRankUnderFriends}`],
@@ -234,7 +234,7 @@ export default function ProjectStatistics() {
       <Card>
         <Card.Title
           titleVariant={heading}
-          title="File statistics"
+          title="Learning material"
           style={{ backgroundColor: theme.colors.background }}
         ></Card.Title>
       </Card>

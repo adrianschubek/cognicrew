@@ -116,7 +116,7 @@ export default function GlobalStatistics() {
         {
           dataPoints: [
             `Total amount of learning projects: ${countLearningProjects}`,
-            `Total time spent playing CogniGames: ${(
+            `Total time spent playing games: ${(
               series[0] +
               series[1] +
               series[2]
@@ -126,11 +126,11 @@ export default function GlobalStatistics() {
       ],
     },
     {
-      title: "File statistics",
+      title: "Project statistics",
       dataPointCategories: [
         {
           dataPoints: [
-            `Total amount of exercises: ${countExercises}`,
+            `Total amount of quizzes: ${countExercises}`,
             `Total amount of flashcards: ${countFlashcards}`,
             `Total amount of links: ${countLinks}`,
             `Total amount of documents: ${countDocuments}`,
@@ -143,11 +143,11 @@ export default function GlobalStatistics() {
       title: "Game statistics",
       dataPointCategories: [
         {
-          dataPoints: [`Exercises: ${series[0]} hours, ${percentExercise} %`],
+          dataPoints: [`Cogniquiz: ${series[0]} hours, ${percentExercise} %`],
           textColor: gameColors.quizColor,
         },
         {
-          dataPoints: [`Flashcards: ${series[1]} hours, ${percentQuiz} %`],
+          dataPoints: [`Cognicards: ${series[1]} hours, ${percentQuiz} %`],
           textColor: gameColors.cardColor,
         },
 
