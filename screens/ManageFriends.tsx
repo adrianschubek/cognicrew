@@ -149,7 +149,7 @@ export default function ManageFriends({ navigation }) {
           </View>
         </View>
         {/* Friends list */}
-        <View>
+        <View style={{ paddingBottom: 20 }}>
           <View
             style={{
               flexDirection: "row",
@@ -209,7 +209,6 @@ export default function ManageFriends({ navigation }) {
               }}
             />
           ))}
-          <Divider style={{ height: 1, marginVertical: 8 }} />
         </View>
       </ScrollView>
     </BottomSheetModalProvider>
