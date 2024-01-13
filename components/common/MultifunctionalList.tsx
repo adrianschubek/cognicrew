@@ -74,7 +74,7 @@ export default function MultifunctionalList(props: {
           {(props.creationOption || props.noSetAvailable) && (
             <TextInput
               testID="input-create-new-set"
-              label="create new Set"
+              label="create new set"
               value={creationQuery}
               mode="flat"
               disabled={isMutating}

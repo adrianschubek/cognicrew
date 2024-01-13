@@ -164,7 +164,7 @@ export default function AddExercises({ showAddExercises, close }) {
               marginLeft: 8,
             }}
           >
-            <Text>Add or remove Answers: </Text>
+            <Text>Add or remove answers: </Text>
             <View
               style={{
                 flexDirection: "row",
