@@ -59,6 +59,8 @@ export default function ManageFriends({ navigation }) {
       return e.username.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
+  const [isRequestsModalVisible, setIsRequestsModalVisible] = useState(false);
+
   useEffect(() => {
     const realtimeFriends = supabase
       .channel("friends_all")
@@ -82,8 +84,14 @@ export default function ManageFriends({ navigation }) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   // callbacks
   const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
+    if (isRequestsModalVisible) {
+      bottomSheetModalRef.current?.dismiss();
+    } else {
+      bottomSheetModalRef.current?.present();
+    }
+    setIsRequestsModalVisible(!isRequestsModalVisible);
+  }, [isRequestsModalVisible]);
+
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
     <BottomSheetModalProvider>
@@ -93,6 +101,10 @@ export default function ManageFriends({ navigation }) {
           friendRequestsReceived={friendRequestsReceived}
           friendRequestsSent={friendRequestsSent}
           userId={user.id}
+          onDismiss={() => {
+            setIsRequestsModalVisible(false);
+            console.log("Dismissed!");
+          }}
         />
         <View
           style={{

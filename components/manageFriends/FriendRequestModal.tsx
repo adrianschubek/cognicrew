@@ -19,6 +19,7 @@ export default function FriendRequestModal(props: {
   friendRequestsSent: any[];
   friendRequestsReceived: any[];
   userId: string;
+  onDismiss: () => void;
 }) {
   const theme = useTheme();
   const snapPoints = useMemo(() => ["50%", "87%"], []);
@@ -30,12 +31,14 @@ export default function FriendRequestModal(props: {
   const handleSheetChanges = useCallback((index: number) => {
     //console.log("handleSheetChanges", index);
   }, []);
+
   return (
     <BottomSheetModal
       ref={props.bottomSheetModalRef}
       index={1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
+      onDismiss={props.onDismiss}
       handleStyle={{ backgroundColor: null }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}
       backgroundStyle={{
