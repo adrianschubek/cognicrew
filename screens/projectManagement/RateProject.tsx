@@ -103,7 +103,7 @@ export default function RateProject({
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
-
+  const [isInitialised, setIsInitialised] = useState(false);
   const { data, error, isLoading, mutate } = useProjectRatings(
     projectId,
     user.id,
@@ -111,8 +111,10 @@ export default function RateProject({
 
   useEffect(() => {
     if (!data || isLoading) return;
+    if (!isInitialised) {
+      setRating(data[0]["user_rating"]);
+    }
     setAvg(data[0]["avg_rating"]);
-    setRating(data[0]["user_rating"]);
     setSum(data[0]["count_all_ratings"]);
     const ratingsObject = data[0]["individual_ratings_arr"];
     setArrRatings([
@@ -122,12 +124,8 @@ export default function RateProject({
       ratingsObject["count_four_star"],
       ratingsObject["count_five_star"],
     ]);
+    if (!isInitialised) setIsInitialised(true);
   }, [data]);
-
-  useEffect(() => {
-    mutate();
-  }, []);
-
 
   useFocusEffect(() => {
     const ratingsTracker = supabase
