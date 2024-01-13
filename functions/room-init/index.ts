@@ -58,7 +58,6 @@ serve(async (req) => {
       .single();
     if (error)
       return err(
-        /* TODO: dont error. instead overwrite room (remove old room states first!)) */
         "User is not host of room (#41)",
         400,
       );
