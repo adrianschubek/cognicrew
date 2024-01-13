@@ -176,7 +176,6 @@ export default function FlashcardExerciseManagement({
             icon: "table-settings",
             label: "Create, delete and edit \n" + typeName(false) + " sets",
             onPress: () => {
-              //setShowManageSets(true);
               confirm({
                 icon: "folder",
                 title: "Manage your " + typeName(false) + " sets",
