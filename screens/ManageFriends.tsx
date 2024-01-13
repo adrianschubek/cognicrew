@@ -101,7 +101,14 @@ export default function ManageFriends({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text variant="headlineSmall">Manage Friends</Text>
+          <Text variant="titleLarge">Friends</Text>
+          <Button
+            mode="outlined"
+            onPress={handlePresentModalPress}
+            style={{ marginLeft: 16 }}
+          >
+            Requests
+          </Button>
           <View
             style={{
               flexDirection: "row",
@@ -158,10 +165,6 @@ export default function ManageFriends({ navigation }) {
               paddingBottom: 8,
             }}
           >
-            <Text variant={sectionTitleVariant}>Friends</Text>
-            <Button mode="outlined" onPress={handlePresentModalPress}>
-              Friend Requests
-            </Button>
             {/* {friendRequestsReceived.length > 0 && (
               <Badge>{friendRequestsReceived.length}</Badge>
             )}
