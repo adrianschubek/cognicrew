@@ -118,7 +118,7 @@ export default function LearningProject({ navigation, route }) {
           bottom: 0,
           backgroundColor: theme.colors.secondaryContainer,
         }}
-        label={"Project statistics"}
+        label={"Project Statistics"}
       />
 
       <FAB

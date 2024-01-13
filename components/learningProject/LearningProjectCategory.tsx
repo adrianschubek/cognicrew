@@ -1,20 +1,18 @@
 import * as React from "react";
-import { StatusBar } from "expo-status-bar";
 import {
-  ImageBackground,
   StyleSheet,
   View,
   Image,
   TouchableOpacity,
   ImageSourcePropType,
 } from "react-native";
-import { Button, Text, Divider, useTheme } from "react-native-paper";
-import ImageResizeMode from "react-native/Libraries/Image/ImageResizeMode";
+import { Text, useTheme } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
+import { Fragment } from "react";
 
 function doNothing() {
   return;
@@ -28,25 +26,36 @@ export default function LearningProjectCategory(props: {
 }) {
   const theme = useTheme();
   return (
-    <React.Fragment>
+    <Fragment>
       <TouchableOpacity
         testID="project-category-buttons"
         style={props.style}
         onPress={props.function || doNothing()}
       >
         <View
-          style={[
-            styles.category,
-            {
-              marginTop: 10,
-              width: responsiveWidth(95),
-              borderRadius: 10,
-              backgroundColor: theme.colors.secondaryContainer,
-              flexDirection: props.flexDirection || "row",
-            },
-          ]}
+          style={{
+            marginTop: 10,
+            height: responsiveHeight(13),
+            width: responsiveWidth(95),
+            borderRadius: 10,
+            backgroundColor: theme.colors.secondaryContainer,
+            flexDirection: props.flexDirection || "row",
+            justifyContent: "space-between",
+          }}
         >
-          <Text style={styles.textStyle}> {props.name} </Text>
+          <Text
+            style={{
+              fontSize: responsiveFontSize(3),
+              textAlignVertical: "center",
+              paddingLeft:
+                props.flexDirection !== "row-reverse" ? responsiveWidth(5) : 0,
+              paddingRight:
+                props.flexDirection === "row-reverse" ? responsiveWidth(5) : 0,
+            }}
+          >
+            {" "}
+            {props.name}{" "}
+          </Text>
           <Image
             style={styles.imageStyle}
             resizeMode="contain"
@@ -55,31 +64,15 @@ export default function LearningProjectCategory(props: {
           />
         </View>
       </TouchableOpacity>
-      {/* <Divider style={styles.dividerStyle} /> */}
-    </React.Fragment>
+    </Fragment>
   );
 }
 
 const styles = StyleSheet.create({
-  category: {
-    // width: responsiveWidth(80),
-    height: responsiveHeight(13),
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
   imageStyle: {
     height: responsiveHeight(13),
     width: responsiveWidth(38),
     flex: 0,
     //backgroundColor: "green",
-  },
-  textStyle: {
-    fontSize: responsiveFontSize(3),
-    textAlignVertical: "center",
-    paddingLeft: responsiveWidth(5),
-  },
-  dividerStyle: {
-    width: "100%",
-    marginBottom: responsiveHeight(2),
   },
 });

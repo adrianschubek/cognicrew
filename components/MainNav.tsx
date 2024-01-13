@@ -20,7 +20,6 @@ import InviteFriends from "../screens/projectManagement/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
 import RoomsList from "../screens/RoomsList";
-import { useTheme } from "react-native-paper";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStateStore, useRoomStore } from "../stores/RoomStore";

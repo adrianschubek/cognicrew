@@ -13,9 +13,7 @@ import { useProjectStore } from "../../stores/ProjectStore";
 import { useLoadingStore } from "../../stores/LoadingStore";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { responsiveWidth } from "react-native-responsive-dimensions";
-import { FunctionsHttpError } from "@supabase/supabase-js";
 import { handleEdgeError } from "../../utils/common";
-import { useFocusEffect } from "@react-navigation/native";
 import { RoomClientInit } from "../../functions/rooms";
 
 export default function Lobby({ navigation }) {
@@ -150,6 +148,82 @@ export default function Lobby({ navigation }) {
             />
           </View>
           <View style={{ flex: 6 }}>
+          <LearningProjectCategory
+              style={[styles.learningProjectCategory]}
+              path={require("../../assets/cards_symbol.png")}
+              name={"Cognicards"}
+              flexDirection="row-reverse"
+              function={() => {
+                confirm({
+                  title: "Choose sets",
+                  icon: "cards",
+                  dismissable: false,
+                  okText: "Select",
+                  okAction: (setValues) => {
+                    console.log(setValues);
+                    if (setValues[0].length === 0)
+                      return "Please select at least one set.";
+                    confirm({
+                      title: "Configure game",
+                      icon: "cog",
+                      dismissable: false,
+                      okText: "Start Game",
+                      okAction: async (values) => {
+                        console.log("Round Duration: " + +values[0]);
+                        console.log("Number of Rounds: " + +values[1]);
+                        const { data, error } = await supabase.functions.invoke(
+                          "room-init",
+                          {
+                            body: {
+                              type: ManagementType.FLASHCARD,
+                              sets: toArray(setValues[0], (el) => +el),
+                              roundDuration: +values[0],
+                              numberOfRounds: +values[1],
+                            } as RoomClientInit,
+                          },
+                        );
+                        if (error) return handleEdgeError(error);
+                        setRoom({ ...room, is_ingame: true });
+                      },
+                      fields: [
+                        {
+                          type: "number",
+                          label: "Round duration (seconds)",
+                          helperText: "How long should a round last?",
+                          icon: "timer-sand",
+                          defaultValue: "30",
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 60 * 10,
+                          errorText: "Please enter a value between 0 and 600",
+                          required: true,
+                        },
+                        {
+                          type: "number",
+                          label: "Number of rounds",
+                          helperText: "How many cards should be played?",
+                          icon: "counter",
+                          defaultValue: "10",
+                          validator: (value, allValues) =>
+                            +value > 0 && +value < 100,
+                          errorText: "Please enter a value between 0 and 100",
+                          required: true,
+                        },
+                      ],
+                    });
+                  },
+                  fields: [
+                    {
+                      type: "search-select",
+                      placeholder: "Search cognicard sets",
+                      data: flashcards.map((set) => ({
+                        key: set.name,
+                        value: set.id,
+                      })),
+                    },
+                  ],
+                });
+              }}
+            />
             <LearningProjectCategory
               style={[styles.learningProjectCategory]}
               path={require("../../assets/completed_task_symbol.png")}
@@ -231,83 +305,6 @@ export default function Lobby({ navigation }) {
                 });
               }}
             />
-            <LearningProjectCategory
-              style={[styles.learningProjectCategory]}
-              path={require("../../assets/cards_symbol.png")}
-              name={"Cognicards"}
-              flexDirection="row-reverse"
-              function={() => {
-                confirm({
-                  title: "Choose sets",
-                  icon: "cards",
-                  dismissable: false,
-                  okText: "Select",
-                  okAction: (setValues) => {
-                    console.log(setValues);
-                    if (setValues[0].length === 0)
-                      return "Please select at least one set.";
-                    confirm({
-                      title: "Configure game",
-                      icon: "cog",
-                      dismissable: false,
-                      okText: "Start Game",
-                      okAction: async (values) => {
-                        console.log("Round Duration: " + +values[0]);
-                        console.log("Number of Rounds: " + +values[1]);
-                        const { data, error } = await supabase.functions.invoke(
-                          "room-init",
-                          {
-                            body: {
-                              type: ManagementType.FLASHCARD,
-                              sets: toArray(setValues[0], (el) => +el),
-                              roundDuration: +values[0],
-                              numberOfRounds: +values[1],
-                            } as RoomClientInit,
-                          },
-                        );
-                        if (error) return handleEdgeError(error);
-                        setRoom({ ...room, is_ingame: true });
-                      },
-                      fields: [
-                        {
-                          type: "number",
-                          label: "Round duration (seconds)",
-                          helperText: "How long should a round last?",
-                          icon: "timer-sand",
-                          defaultValue: "30",
-                          validator: (value, allValues) =>
-                            +value > 0 && +value < 60 * 10,
-                          errorText: "Please enter a value between 0 and 600",
-                          required: true,
-                        },
-                        {
-                          type: "number",
-                          label: "Number of rounds",
-                          helperText: "How many cards should be played?",
-                          icon: "counter",
-                          defaultValue: "10",
-                          validator: (value, allValues) =>
-                            +value > 0 && +value < 100,
-                          errorText: "Please enter a value between 0 and 100",
-                          required: true,
-                        },
-                      ],
-                    });
-                  },
-                  fields: [
-                    {
-                      type: "search-select",
-                      placeholder: "Search cognicard sets",
-                      data: flashcards.map((set) => ({
-                        key: set.name,
-                        value: set.id,
-                      })),
-                    },
-                  ],
-                });
-              }}
-            />
-
             <LearningProjectCategory
               style={[styles.learningProjectCategory]}
               path={require("../../assets/teamwork_symbol.png")}

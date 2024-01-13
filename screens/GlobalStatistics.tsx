@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
 import {
-  Divider,
   useTheme,
   MD3LightTheme as LightTheme,
   MD3DarkTheme as DarkTheme,
@@ -13,7 +12,12 @@ import StatisticCategory from "../components/profile/StatisticCategory";
 import { useGlobalStatistics } from "../utils/hooks";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 
-export default function GlobalStatistics() {
+export default function GlobalStatistics({ navigation }) {
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Global Statistics",
+    });
+  }, []);
   const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
   const [totalTimeCards, setTotalTimeSpentCards] = useState(null);
   const [totalTimeBoard, setTotalTimeSpentBoard] = useState(null);

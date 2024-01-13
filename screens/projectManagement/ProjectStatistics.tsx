@@ -16,7 +16,12 @@ import StatisticCategory from "../../components/profile/StatisticCategory";
 import { useProjectStatistics } from "../../utils/hooks";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 
-export default function ProjectStatistics() {
+export default function ProjectStatistics({ navigation }) {
+  useEffect(() => {
+    navigation.setOptions({
+      title: "Project Statistics",
+    });
+  }, []);
   const lightTheme = {
     ...LightTheme,
     colors: {
