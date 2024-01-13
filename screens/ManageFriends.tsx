@@ -105,7 +105,7 @@ export default function ManageFriends({ navigation }) {
           <Button
             mode="outlined"
             onPress={handlePresentModalPress}
-            style={{ marginLeft: 16 }}
+            style={{ marginLeft: 20 }}
           >
             Requests
           </Button>
