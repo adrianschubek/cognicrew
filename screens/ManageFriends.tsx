@@ -113,11 +113,13 @@ export default function ManageFriends({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text variant="titleLarge">Friends</Text>
+          <Text variant="titleLarge" style={{ flex: 1 }}>
+            Friends
+          </Text>
           <Button
             mode="outlined"
             onPress={handlePresentModalPress}
-            style={{ marginLeft: 20 }}
+            style={{ flex: 1 }}
           >
             Requests
           </Button>
@@ -125,6 +127,7 @@ export default function ManageFriends({ navigation }) {
             style={{
               flexDirection: "row",
               alignItems: "center",
+              flex: 1,
             }}
           >
             <IconButton

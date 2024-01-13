@@ -1,8 +1,8 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Divider, Text, useTheme } from "react-native-paper";
-import { StyleSheet, View, SafeAreaView } from "react-native";
+import { Text, useTheme } from "react-native-paper";
+import { StyleSheet, View } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useDeleteProjectRating,
@@ -29,11 +29,6 @@ export default function RateProject({
     };
   };
 }) {
-  const { edit: project } = route.params;
-
-  const username = useUsername(project?.owner_id ?? null);
-  const { confirm } = useAlerts();
-  const theme = useTheme();
 
   useEffect(() => {
     navigation.setOptions({
@@ -78,7 +73,6 @@ export default function RateProject({
         return "star-border";
       }
     };
-
     return (
       <View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
