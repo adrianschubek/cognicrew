@@ -21,7 +21,7 @@ export default function FriendRequestModal(props: {
   userId: string;
 }) {
   const theme = useTheme();
-  const snapPoints = useMemo(() => ["50%", "80%"], []);
+  const snapPoints = useMemo(() => ["50%", "87%"], []);
   const { friendRequestsSent, friendRequestsReceived, userId } = props;
   const { info } = useAlerts();
   const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
