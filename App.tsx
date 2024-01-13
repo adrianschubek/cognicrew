@@ -24,6 +24,7 @@ import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 // import { Appearance, useColorScheme } from "react-native";
 import { Audio } from "expo-av";
 import { useSoundsStore } from "./stores/SoundsStore";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -152,24 +153,26 @@ export default function App() {
   // }, [setDarkmode]);
 
   return (
-    <PreferencesContext.Provider value={preferences}>
-      <PaperProvider theme={theme}>
-        <NavigationContainer theme={theme}>
-          <AuthProvider>
-            <SWRConfig
-              value={{
-                provider: () => new Map(),
-                isVisible: () => true,
-                isOnline: () => true,
-              }}
-            >
-              <AlertContainer />
-              <GlobalLoadingOverlay />
-              <MainNav />
-            </SWRConfig>
-          </AuthProvider>
-        </NavigationContainer>
-      </PaperProvider>
-    </PreferencesContext.Provider>
+    <GestureHandlerRootView style={{flex:1}}>
+      <PreferencesContext.Provider value={preferences}>
+        <PaperProvider theme={theme}>
+          <NavigationContainer theme={theme}>
+            <AuthProvider>
+              <SWRConfig
+                value={{
+                  provider: () => new Map(),
+                  isVisible: () => true,
+                  isOnline: () => true,
+                }}
+              >
+                <AlertContainer />
+                <GlobalLoadingOverlay />
+                <MainNav />
+              </SWRConfig>
+            </AuthProvider>
+          </NavigationContainer>
+        </PaperProvider>
+      </PreferencesContext.Provider>
+    </GestureHandlerRootView>
   );
 }
