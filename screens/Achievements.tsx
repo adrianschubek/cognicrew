@@ -53,7 +53,12 @@ export default function Achievements() {
                   >
                     <List.Item
                       title={achievement.name}
-                      description={achievement.description}
+                      titleStyle={{ marginBottom: 2, marginTop: -2 }}
+                      description={() => (
+                        <Text variant="bodySmall">
+                          {achievement.description}
+                        </Text>
+                      )}
                       left={() => (
                         <Avatar.Image
                           source={{
@@ -88,7 +93,7 @@ export default function Achievements() {
           }}
         >
           <Avatar.Icon icon="lock-question" size={70} />
-          <Text variant="headlineSmall">Secret Feature!!!</Text>
+          <Text variant="headlineSmall">Not yet unlocked!</Text>
         </View>
       )}
     </>

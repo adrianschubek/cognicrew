@@ -22,7 +22,6 @@ export default function AccountSettings() {
       >
         <ScrollView
           style={{
-            flex: 1,
             gap: 10,
             padding: 10,
           }}
@@ -33,10 +32,7 @@ export default function AccountSettings() {
           <Visual
             style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
           />
-          <Divider />
-          <MusicSettings
-            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
-          />
+
           <Divider />
           <TagsSettings
             style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
@@ -56,6 +52,10 @@ export default function AccountSettings() {
               marginTop: 10,
               backgroundColor: theme.colors.surface,
             }}
+          />
+          <Divider />
+          <MusicSettings
+            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
           />
           {/* <Divider />
       <DangerZone
