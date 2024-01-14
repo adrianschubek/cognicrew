@@ -1,12 +1,10 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import ProjectGroups from "../components/learningProjects/ProjectGroups";
 import { Tooltip, IconButton, Icon, useTheme, Text } from "react-native-paper";
 import { NAVIGATION } from "../types/common";
-import { useAlerts } from "react-native-paper-fastalerts";
 import { useEffect } from "react";
 import Discover from "./Discover";
-
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import SearchProjects from "./SearchProjects";
 
@@ -14,9 +12,6 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function LearningProjects({ navigation }) {
   const theme = useTheme();
-
-  const { info } = useAlerts();
-
   useEffect(() => {
     navigation.setOptions({
       headerShadowVisible: false,
@@ -56,6 +51,7 @@ export default function LearningProjects({ navigation }) {
       screenOptions={{
         tabBarLabelStyle: { textTransform: "capitalize" },
         tabBarItemStyle: { flexDirection: "row" },
+        animationEnabled: Platform.OS === "ios",
       }}
     >
       <Tab.Screen

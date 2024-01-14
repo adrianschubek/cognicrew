@@ -19,7 +19,6 @@ import CreateEditProject from "../screens/projectManagement/CreateEditProject";
 import InviteFriends from "../screens/projectManagement/InviteFriends";
 import AccountManage from "../screens/AccountManage";
 import { LogoutButton } from "./settings/AccountInfo";
-import RoomsList from "../screens/RoomsList";
 import Lobby from "../screens/ingame/Lobby";
 import ExerciseGame from "../screens/ExerciseGame";
 import { useRoomStateStore, useRoomStore } from "../stores/RoomStore";
@@ -49,17 +48,11 @@ function MainTab() {
         component={ManageFriends}
       />
       <Stack.Screen name={NAVIGATION.ACHIEVEMENTS} component={Achievements} />
-
       <Stack.Group
         screenOptions={{
           animation: "slide_from_bottom",
         }}
       >
-        <Stack.Screen
-          name={NAVIGATION.ROOMS_LIST}
-          component={RoomsList}
-          options={{ title: "Rooms" }}
-        />
         {/* <Stack.Screen
           name={NAVIGATION.LOBBY}
           component={Lobby}
@@ -69,7 +62,6 @@ function MainTab() {
             },
           }}
         /> */}
-
         <Stack.Screen
           name={NAVIGATION.LEARNING_ROOM}
           component={LearningRoom}
@@ -156,7 +148,7 @@ function MainTabs({ navigation }) {
       else navigation.navigate(NAVIGATION.GUEST_LOBBY);
     } else navigation.navigate(NAVIGATION.HOME);
   }, [room]);
-  const { alert, warning, info } = useAlerts();
+  const { info } = useAlerts();
   useEffect(() => {
     /* let lastUpdate = dayjs().valueOf();
     // Health check for server

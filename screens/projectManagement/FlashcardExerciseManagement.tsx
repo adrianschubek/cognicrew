@@ -30,7 +30,6 @@ export default function FlashcardExerciseManagement({
   const [orderSetItemsBy, setOrderSetItemsBy] =
     useState<orderByPrinciple>("created_at");
   const [showAddItem, setShowAddItem] = useState<boolean>(false);
-  //const [showManageSets, setShowManageSets] = useState<boolean>(false);
   const [noSetAvailable, setNoSetAvailable] = useState<boolean>(false);
   const [FABOpen, setFABOpen] = useState({ open: false });
   const onStateChange = ({ open }) => setFABOpen({ open });
