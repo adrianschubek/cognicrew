@@ -18,8 +18,6 @@ export default function SearchProjects() {
   const [searchQuery, setSearchQuery] = useState<string[]>([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState<string>("");
 
-  const { success, error: errorAlert } = useAlerts();
-
   const { data } = useQuery(supabase.rpc("get_public_projects"), {
     onSuccess(data) {
       //console.log("Data fetched successfully:", data.data);
@@ -35,10 +33,62 @@ export default function SearchProjects() {
 
   const { user } = useAuth();
 
-  const save = async (projectId, newProjectName) => {
-    const { error } = await supabase.rpc("copy_learning_project", {p_source_id: projectId, p_new_owner_id: user.id, p_new_project_name: newProjectName})
+  //Cloning
+
+  const fetchFiles = async (filePath: string, limit?: number) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from("files")
+        .list(filePath, {
+          limit: limit || 100,
+          offset: 0,
+        });
+
+      if (error) {
+        console.error("Error fetching files:", error.message);
+        return null; // Return null or handle the error as needed
+      }
+
+      return data; // Return the list of files
+    } catch (error) {
+      console.error("Error in fetchFiles:", error.message);
+      return null; // Return null or handle the error as needed
+    }
   };
 
+  const { success, error: errorAlert } = useAlerts();
+
+  const save = async (projectId, newProjectName) => {
+    console.log("Test");
+    const { data: upsertedProjectId, error } = await supabase.rpc("copy_learning_project", {
+      p_source_id: projectId,
+      p_new_owner_id: user.id,
+      p_new_project_name: newProjectName,
+    });
+
+    console.log(upsertedProjectId);
+
+    const fileTypes = ["pdf", "photos", "docx", "excel", "miscellaneous"];
+
+    try {
+      for (const fileType of fileTypes) {
+        const files = await fetchFiles(`${projectId}/${fileType}`);
+
+        // Use the copy method to clone files to the destination folder
+        files.map(async (file) => {
+          await supabase.storage
+            .from("files")
+            .copy(
+              `${projectId}/${fileType}/${file.name}`,
+              `${upsertedProjectId}/${fileType}/${file.name}`,
+            );
+        });
+      }
+    } catch (error) {
+      console.error("Error copying files: ", error.message);
+      throw error;
+    }
+};
   if (!data) return null;
   const renderHeader = () => {
     const onChangeSearch = (query) => {
