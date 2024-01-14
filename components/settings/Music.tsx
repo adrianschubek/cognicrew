@@ -16,11 +16,8 @@ export default function MusicSettings(props) {
         <Slider
           step={0.05}
           value={musicVolume}
-          // @ts-ignore
           onSlidingComplete={(v) => {
-            const volumeToSet = Array.isArray(v) ? v[0] : v;
-            setMusicVolume(volumeToSet);
-            console.log(musicVolume);
+            setMusicVolume(v[0]);
           }}
         />
       </Card.Content>

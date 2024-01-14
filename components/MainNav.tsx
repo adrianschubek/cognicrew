@@ -36,6 +36,7 @@ import AchievementAlert from "./alerts/AchievementAlert";
 import { useUserAchievements } from "../utils/hooks";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { usePresenceStore } from "../stores/PresenceStore";
+import MusicPlayer from "./common/MusicPlayer";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -334,6 +335,7 @@ export default function MainNav() {
   ) : (
     <>
       <>
+        <MusicPlayer />
         <SetAchievementIds userId={user.id} />
         <AchievementAlert userId={user.id} />
       </>

@@ -13,7 +13,7 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";
@@ -22,8 +22,6 @@ import { AlertContainer } from "react-native-paper-fastalerts";
 import { SWRConfig } from "swr";
 import GlobalLoadingOverlay from "./components/GlobalLoadingOverlay";
 // import { Appearance, useColorScheme } from "react-native";
-import { Audio } from "expo-av";
-import { useSoundsStore } from "./stores/SoundsStore";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 const { LightTheme, DarkTheme } = adaptNavigationTheme({
   reactNavigationLight: NavigationDefaultTheme,
@@ -52,53 +50,6 @@ const CombinedDarkTheme = {
 };
 
 export default function App() {
-  const music = useRef(new Audio.Sound());
-
-  const {
-    inGame,
-    musicVolume,
-  } = useSoundsStore();
-
-  //MUSIC
-  async function playMusic() {
-    if (music.current._loaded) {
-      await music.current.stopAsync();
-      await music.current.unloadAsync();
-    }
-    try {
-      if (!inGame) {
-        await music.current.loadAsync(
-          require("./assets/sounds/lobby_song.m4a"),
-        );
-      } else {
-        await music.current.loadAsync(require("./assets/sounds/game_song.m4a"));
-      }
-      await music.current.setIsLoopingAsync(true);
-      await music.current.playAsync();
-      await music.current.setVolumeAsync(musicVolume);
-    } catch (error) {
-      console.error("Error playing audio", error);
-    }
-  }
-
-  async function changeMusicVolume() {
-    if (music.current._loaded) {
-      try {
-        await music.current.setVolumeAsync(musicVolume);
-      } catch (error) {
-        console.error("Error changing volume", error);
-      }
-    }
-  }
-
-  useEffect(() => {
-    playMusic();
-  }, [inGame]);
-
-  useEffect(() => {
-    changeMusicVolume();
-  }, [musicVolume]);
-
   // TODO: useColorScheme to detect system theme and set it
   const { darkmode, setDarkmode } = usePreferencesStore();
   let theme = darkmode ? CombinedDarkTheme : CombinedDefaultTheme;
