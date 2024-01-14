@@ -1,11 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSoundsStore } from "../../stores/SoundsStore";
 import { Audio } from "expo-av";
 
 export default function MusicPlayer() {
   const music = useRef(new Audio.Sound());
   const { inGame, musicVolume } = useSoundsStore();
+  const [isLoading, setIsLoading] = useState(false);
   async function playMusic() {
+    if (isLoading) return;
+
+    setIsLoading(true);
     if (music.current._loaded) {
       await music.current.stopAsync();
       await music.current.unloadAsync();
@@ -26,6 +30,7 @@ export default function MusicPlayer() {
     } catch (error) {
       console.error("Error playing audio", error);
     }
+    setIsLoading(false);
   }
 
   async function changeMusicVolume() {
