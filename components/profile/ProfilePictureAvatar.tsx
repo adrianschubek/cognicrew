@@ -58,16 +58,11 @@ export default function ProfilePictureAvatar(props: {
       if (response.ok) {
         setAvatarTimestamp(Date.now());
       } else {
-        //for a very short time, avatarTimestamp is not null without image sometimes. Maybe because of resorting in ManageFriends?
         setAvatarTimestamp(null);
       }
     });
   }, [data]);
-  /*
-  useEffect(() => {
-    console.log("avatarTimestamp: ", username, ": ", avatarTimestamp);
-  }, [username]);
-  */
+  
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   return avatarTimestamp ? (
     <Avatar.Image

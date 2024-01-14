@@ -82,7 +82,7 @@ export default function FileItem({ file, filePath, folder, icon }) {
               await FileSystem.writeAsStringAsync(uri, fileString, {
                 encoding: FileSystem.EncodingType.Base64,
               });
-              alerts.success({ message: "File Downloaded Successfully" });
+              alerts.success({ message: "File downloaded successfully" });
             });
           } catch (e) {
             throw new Error(e);
@@ -112,6 +112,9 @@ export default function FileItem({ file, filePath, folder, icon }) {
           await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
         }
         console.log("File saved to camera roll");
+        alerts.success({
+          message: "File downloaded successfully to your local media library",
+        });
         //console.log("File downloaded to:", uri);
       }
     } catch (error) {

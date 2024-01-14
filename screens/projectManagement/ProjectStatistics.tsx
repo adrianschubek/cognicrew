@@ -52,9 +52,6 @@ export default function ProjectStatistics({ navigation }) {
   const theme = dark ? darkTheme : lightTheme;
 
   const heading = "headlineSmall";
-  const heading2 = "titleLarge";
-  const heading3 = "titleMedium";
-  const heading4 = "labelLarge";
 
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);

@@ -5,7 +5,7 @@
 
 import React, { Fragment } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
-import { Divider, FAB, List } from "react-native-paper";
+import { Divider, FAB, HelperText, List } from "react-native-paper";
 import FileCategory from "../../components/learningProject/FileCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import {
@@ -51,12 +51,17 @@ export default function FilesManagement() {
                   );
                 })}
               </List.Section>
+              <HelperText type="info">
+                Downloading photos and videos will safe them automatically to
+                the media library of your device. Other file formats will be
+                saved to the manually selected location.
+              </HelperText>
               {/*View margin for FAB.Group when scrolling down */}
               <View style={{ marginBottom: 86 }}></View>
             </View>
           );
         }}
-      ></VirtualizedList>
+      />
       <FAB
         style={styles.fab}
         small

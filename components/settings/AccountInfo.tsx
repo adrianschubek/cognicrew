@@ -109,11 +109,8 @@ export const LogoutButton = () => {
 export default function AccountInfo(props) {
   const { user } = useAuth();
   const { data, isLoading } = useUsername();
-
   const navigation = useNavigation<any>();
   
-  const {setPlayButtonSoundEffect} = useSoundsStore();
-
   return (
     <Card {...props} mode="contained">
       <Card.Title title="◀ Change Avatar" left={Account} />
