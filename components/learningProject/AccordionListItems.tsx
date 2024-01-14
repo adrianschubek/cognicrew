@@ -4,7 +4,6 @@ import { List, Divider, useTheme, HelperText } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { ManagementType, orderByPrinciple } from "../../types/common";
 import { useEffect, useState } from "react";

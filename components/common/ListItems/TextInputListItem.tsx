@@ -1,7 +1,6 @@
 import { TextInput } from "react-native-paper";
 import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
 import { useEffect, useRef, useState } from "react";
-import LoadingOverlay from "../../alerts/LoadingOverlay";
 import React from "react";
 import { Keyboard } from "react-native";
 import { useProjectStore } from "../../../stores/ProjectStore";

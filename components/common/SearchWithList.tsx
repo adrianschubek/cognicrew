@@ -1,4 +1,4 @@
-import { Divider, HelperText, Searchbar, useTheme } from "react-native-paper";
+import { Divider, HelperText, Searchbar } from "react-native-paper";
 import { View } from "react-native";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, Mode } from "../../types/common";

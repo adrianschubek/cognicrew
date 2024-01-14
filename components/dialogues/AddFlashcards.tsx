@@ -11,7 +11,6 @@ import {
 import {
   responsiveHeight,
   responsiveWidth,
-  responsiveFontSize,
 } from "react-native-responsive-dimensions";
 import { useState } from "react";
 import SearchWithList from "../common/SearchWithList";
