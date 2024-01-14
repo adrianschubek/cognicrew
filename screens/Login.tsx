@@ -281,8 +281,6 @@ export default function Login({ navigation }) {
                       title: "Account created",
                       message: "Account created successfully!",
                     });
-                    const {error: errorrpc } = await supabase.rpc("insert_achievement", { id: 1 });
-                    console.log("error: ", errorrpc);
                   },
                   fields: [
                     {

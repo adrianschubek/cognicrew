@@ -9,7 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
-
+import { usePreferencesStore } from "../../stores/PreferencesStore";
 
 const Account = (props) => {
   const { confirm } = useAlerts();
@@ -17,6 +17,10 @@ const Account = (props) => {
   const username = user.user_metadata.username as string;
   const filePath = `${user.id}`;
   const icon = "image-edit"; //avatarUrl ? "image-edit" : "image-plus";
+
+  const unlockedAchievementIds = usePreferencesStore(
+    (state) => state.unlockedAchievementIds,
+  );
 
   return (
     <TouchableOpacity
@@ -61,6 +65,13 @@ const Account = (props) => {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
                 });
+                if (!unlockedAchievementIds.includes(9)) {
+                  const { error: errorrpc } = await supabase.rpc(
+                    "insert_achievement",
+                    { id: 1 },
+                  );
+                }
+                console.log("error: ", errorrpc);
               },
               errorText: "Could not upload image",
             },
@@ -109,7 +120,7 @@ export default function AccountInfo(props) {
   const { user } = useAuth();
   const { data, isLoading } = useUsername();
   const navigation = useNavigation<any>();
-  
+
   return (
     <Card {...props} mode="contained">
       <Card.Title title="◀ Change Avatar" left={Account} />
