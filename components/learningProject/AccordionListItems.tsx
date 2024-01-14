@@ -19,16 +19,18 @@ export default function AccordionListItems(props: {
   orderSetItemsBy: orderByPrinciple;
   [name: string]: any;
 }) {
+  const { type, setId, orderSetItemsBy } = props;
   const theme = useTheme();
   const [noSetItemsAvailable, setNoSetItemsAvailable] =
     useState<boolean>(false);
   const typeName = (plural: boolean) =>
-    (props.type === ManagementType.FLASHCARD ? "flashcard" : "exercise") +
-    (plural ? "s" : "");
+    (type === ManagementType.FLASHCARD ? "cognicard" : "cogniquiz") +
+    (plural ? (type === ManagementType.FLASHCARD ? "s" : "zes") : "");
+
   const { data, isLoading, error, mutate } =
-    props.type === ManagementType.FLASHCARD
-      ? useFlashcards(props.setId)
-      : useExercises(props.setId);
+    type === ManagementType.FLASHCARD
+      ? useFlashcards(setId)
+      : useExercises(setId);
 
   useEffect(() => {
     if (!data) return;
@@ -44,10 +46,7 @@ export default function AccordionListItems(props: {
         {
           event: "*",
           schema: "public",
-          table:
-            props.type === ManagementType.FLASHCARD
-              ? "flashcards"
-              : "exercises",
+          table: type === ManagementType.FLASHCARD ? "flashcards" : "exercises",
         },
         (payload) => {
           mutate();
@@ -56,7 +55,7 @@ export default function AccordionListItems(props: {
       .subscribe();
   }, []);
   const [content, setContent] = useState([]);
-  const orderedContent = sortByOrder(content, props.orderSetItemsBy);
+  const orderedContent = sortByOrder(content, orderSetItemsBy);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return noSetItemsAvailable ? (
     <HelperText
@@ -79,12 +78,7 @@ export default function AccordionListItems(props: {
             backgroundColor: theme.colors.secondaryContainer,
           }}
         >
-          {
-            <EditFlashcardExerciseJoinedPart
-              listItem={listItem}
-              type={props.type}
-            />
-          }
+          {<EditFlashcardExerciseJoinedPart listItem={listItem} type={type} />}
         </List.Accordion>
         <Divider />
       </View>

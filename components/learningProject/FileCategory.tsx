@@ -71,7 +71,7 @@ export default function FileCategory({
           type="info"
           style={{ backgroundColor: theme.colors.secondaryContainer }}
         >
-          There are no files in this set. Add some via the buttons on the bottom
+          There are no cognifiles in this set. Add some via the buttons on the bottom
           right
         </HelperText>
       )}
