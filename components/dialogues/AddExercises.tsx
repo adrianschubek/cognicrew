@@ -236,7 +236,7 @@ export default function AddExercises({ showAddExercises, close }) {
             }}
             mode="contained"
           >
-            add new cogniquiz
+            Add new cogniquiz
           </Button>
         </Dialog.Actions>
       </Dialog>
