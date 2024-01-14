@@ -132,6 +132,8 @@ export default function CreateEditProject({
       },
     },
   );
+  
+  
 
   const save = () => {
     upsert({
@@ -141,7 +143,10 @@ export default function CreateEditProject({
       description,
       group,
       is_published: isPublished,
-      tags,
+      tags: tags
+      .split(",")
+      .map(word => word.trim())
+      .join(", "),
     });
   };
 
