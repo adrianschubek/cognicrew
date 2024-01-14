@@ -57,14 +57,9 @@ export default function App() {
   const {
     inGame,
     musicVolume,
-    soundEffectVolume,
-    masterVolume,
-    playButtonSoundEffect,
-    setPlayButtonSoundEffect,
   } = useSoundsStore();
 
   //MUSIC
-
   async function playMusic() {
     if (music.current._loaded) {
       await music.current.stopAsync();
@@ -80,7 +75,7 @@ export default function App() {
       }
       await music.current.setIsLoopingAsync(true);
       await music.current.playAsync();
-      await music.current.setVolumeAsync(musicVolume * masterVolume);
+      await music.current.setVolumeAsync(musicVolume);
     } catch (error) {
       console.error("Error playing audio", error);
     }
@@ -89,7 +84,7 @@ export default function App() {
   async function changeMusicVolume() {
     if (music.current._loaded) {
       try {
-        await music.current.setVolumeAsync(musicVolume * masterVolume);
+        await music.current.setVolumeAsync(musicVolume);
       } catch (error) {
         console.error("Error changing volume", error);
       }
@@ -102,36 +97,7 @@ export default function App() {
 
   useEffect(() => {
     changeMusicVolume();
-  }, [musicVolume, masterVolume]);
-
-  //SOUNDEFFECTS
-
-  const [getSoundEffect, setSoundEffect] = useState(null);
-
-  async function playSoundButton() {
-    const { sound } = await Audio.Sound.createAsync(
-      require("./assets/sounds/button_click_effect.m4a"),
-    );
-    setSoundEffect(sound);
-    await sound.playAsync();
-    await sound.setVolumeAsync(soundEffectVolume * masterVolume);
-  }
-
-  useEffect(() => {
-    return getSoundEffect
-      ? () => {
-          console.log("Unloading Sound");
-          getSoundEffect.unloadAsync();
-        }
-      : undefined;
-  }, [getSoundEffect]);
-
-  useEffect(() => {
-    if (playButtonSoundEffect) {
-      playSoundButton();
-      setPlayButtonSoundEffect(false);
-    }
-  }, [playButtonSoundEffect]);
+  }, [musicVolume]);
 
   // TODO: useColorScheme to detect system theme and set it
   const { darkmode, setDarkmode } = usePreferencesStore();

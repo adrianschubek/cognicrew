@@ -55,7 +55,11 @@ export default function AccountSettings() {
           />
           <Divider />
           <MusicSettings
-            style={{ marginTop: 10, backgroundColor: theme.colors.surface }}
+            style={{
+              marginTop: 10,
+              marginBottom: 20,
+              backgroundColor: theme.colors.surface,
+            }}
           />
           {/* <Divider />
       <DangerZone
