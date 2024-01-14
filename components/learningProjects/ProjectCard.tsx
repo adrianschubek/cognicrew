@@ -147,7 +147,7 @@ export default function ProjectCard(props: {
                       icon: "content-copy",
                       okText: "Clone",
                       okAction: (vars) => {
-                        save(item, vars[0]);
+                        save(item.project_id, vars[0]);
                       },
                       fields: [
                         {
