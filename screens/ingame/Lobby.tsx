@@ -1,36 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAlerts, toArray } from "react-native-paper-fastalerts";
 import { useSets, useUsernamesByRoom } from "../../utils/hooks";
 import { ManagementType, NAVIGATION } from "../../types/common";
 import { useRoomStateStore, useRoomStore } from "../../stores/RoomStore";
-import { FlatList, View } from "react-native";
 import { supabase } from "../../supabase";
 import LearningProjectCategory from "../../components/learningProject/LearningProjectCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
-import { useLoadingStore } from "../../stores/LoadingStore";
 import LoadingOverlay from "../../components/alerts/LoadingOverlay";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { handleEdgeError } from "../../utils/common";
 import { RoomClientInit } from "../../functions/rooms";
+import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
-  const { confirm, alert, info } = useAlerts();
+  const { confirm } = useAlerts();
 
   const room = useRoomStore((state) => state.room);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
   const setRoom = useRoomStore((state) => state.setRoom);
-  const [userList, setUserList] = useState([]);
-  const [showCreateFlashcardGame, setShowCreateFlashcardGame] = useState(false);
-  const setLoading = useLoadingStore((state) => state.setLoading);
+  const [userList, setUserList] = useState<{ id: string; username: string }[]>(
+    [],
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       await useUsernamesByRoom().then((userNames) => {
-        setUserList(userNames.data.map((user) => user.username));
+        setUserList(userNames.data);
       });
     };
     fetchData();
@@ -113,42 +112,37 @@ export default function Lobby({ navigation }) {
         }}
       >
         <View style={{ flex: 1, marginTop: 20, alignItems: "center" }}>
-          <View style={{ flex: 1 }}>
-            <FlatList
-              contentContainerStyle={{
-                marginTop: 3,
-                flexDirection: "column",
-                alignItems: "flex-end",
-                alignSelf: "flex-end",
-              }}
-              data={userList}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({ item }) => (
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  {/* <Image
-                  source={{
-                    uri:
-                      supabase.storage.from("profile-pictures").getPublicUrl("icon").data.publicUrl
-                  }}
+          <View
+            style={{
+              flex: 1,
+              marginHorizontal: 10,
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              flexWrap: "wrap",
+            }}
+          >
+            {userList.slice(0, 12).map((user, index) => {
+              return (
+                <View
+                  key={index}
                   style={{
-                    width: responsiveWidth(10),
-                    height: responsiveHeight(5),
-                    marginRight: 3,
-                    borderRadius: 20,
-                    overflow: "hidden",
-                    alignItems: "flex-end",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    height: "33%",
                   }}
-                /> */}
-                  <View>
-                    {/* Wrap the Text component in a View */}
-                    <Text>{item}</Text>
-                  </View>
+                >
+                  <ProfilePictureAvatar
+                    size={24}
+                    userId={user.id}
+                    username={user.username}
+                  />
+                  <Text style={{ marginHorizontal: 10 }}>{user.username}</Text>
                 </View>
-              )}
-            />
+              );
+            })}
           </View>
           <View style={{ flex: 6 }}>
-          <LearningProjectCategory
+            <LearningProjectCategory
               style={[styles.learningProjectCategory]}
               path={require("../../assets/cards_symbol.png")}
               name={"Cognicards"}
@@ -217,7 +211,7 @@ export default function Lobby({ navigation }) {
                       placeholder: "Search cognicard sets",
                       data: flashcards.map((set) => ({
                         key: set.name,
-                        value: set.id,
+                        value: set.id.toString(),
                       })),
                     },
                   ],
@@ -298,7 +292,7 @@ export default function Lobby({ navigation }) {
                       placeholder: "Search cogniquiz sets",
                       data: quizzes.map((set) => ({
                         key: set.name,
-                        value: set.id,
+                        value: set.id.toString(),
                       })),
                     },
                   ],

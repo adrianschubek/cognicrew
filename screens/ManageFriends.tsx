@@ -65,7 +65,7 @@ export default function ManageFriends({ navigation }) {
         "postgres_changes",
         { event: "*", schema: "public", table: "friends" },
         (payload) => {
-          console.log("refetching friends");
+          //console.log("refetching friends");
           mutate();
         },
       )
@@ -100,7 +100,6 @@ export default function ManageFriends({ navigation }) {
           userId={user.id}
           onDismiss={() => {
             setIsRequestsModalVisible(false);
-            console.log("Dismissed!");
           }}
         />
         <View

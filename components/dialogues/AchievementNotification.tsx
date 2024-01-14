@@ -1,10 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, View, Text, Animated } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme } from "react-native-paper";
 import ConfettiCannon from "react-native-confetti-cannon";
 import { supabase } from "../../supabase";
-import { useAchievement } from "../../utils/hooks";
 
 const AchievementNotification = ({ achievementName, achievementIconName }) => {
   const theme = useTheme();

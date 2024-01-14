@@ -1,10 +1,5 @@
 import * as React from "react";
-import {
-  StyleSheet,
-  View,
-  BackHandler,
-  KeyboardAvoidingView,
-} from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   TextInput,
   Text,
@@ -14,12 +9,7 @@ import {
   Card,
   IconButton,
 } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
 import { useConfirmLeaveLobby } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
@@ -29,7 +19,6 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
-import { useFocusEffect } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 import { useSoundsStore } from "../stores/SoundsStore";
 
@@ -149,6 +138,13 @@ export default function FlashcardGame({ route, navigation }) {
           <TextInput
             mode="outlined"
             autoFocus
+            contentStyle={
+              roomState.screen === ScreenState.ROUND_SOLUTION
+                ? currentPlayer.currentCorrect === true
+                  ? { color: theme.colors.onBackground }
+                  : { color: theme.colors.onErrorContainer }
+                : {}
+            }
             style={[
               {
                 textAlign: "center",
@@ -156,7 +152,7 @@ export default function FlashcardGame({ route, navigation }) {
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
                   ? { backgroundColor: "#4CAF50" }
-                  : { backgroundColor: theme.colors.errorContainer }
+                  : { backgroundColor: theme.colors.backdrop }
                 : {},
             ]}
             value={userInput}
@@ -185,6 +181,7 @@ export default function FlashcardGame({ route, navigation }) {
               justifyContent: "flex-start",
               alignItems: "flex-end",
               paddingTop: 16,
+              gap: 10,
             }}
           >
             {roomState.screen === ScreenState.ROUND_SOLUTION &&
@@ -195,7 +192,7 @@ export default function FlashcardGame({ route, navigation }) {
                   style={[
                     {
                       width: "100%",
-                      height: 70,
+                      height: "auto",
                     },
                   ]}
                 >
@@ -207,37 +204,51 @@ export default function FlashcardGame({ route, navigation }) {
                         : { backgroundColor: theme.colors.elevation.level2 },
                       answer.answer === userInput
                         ? { borderColor: theme.colors.primary }
-                        : { borderColor: null, borderWidth: 0 },
+                        : {
+                            borderColor: theme.colors.onSurfaceDisabled,
+                          },
                     ]}
                   >
                     <Card.Content
                       style={{
+                        marginLeft: 5,
                         flexDirection: "row",
-                        justifyContent: "flex-start",
+                        justifyContent: "space-between",
                         alignItems: "center",
+                        gap: 5,
                       }}
                     >
-                      <View
-                        style={{
-                          marginLeft: 5,
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                          gap: 5,
-                        }}
+                      <Text
+                        variant="titleMedium"
+                        numberOfLines={2}
+                        style={[
+                          {
+                            flex: 6,
+                            textAlign: "left",
+                            textAlignVertical: "center",
+                          },
+                          answer.isCorrect
+                            ? { color: theme.colors.onBackground }
+                            : { color: theme.colors.onErrorContainer },
+                        ]}
                       >
-                        <Text
-                          variant="titleMedium"
-                          key={index}
-                          style={[
-                            answer.isCorrect
-                              ? { color: theme.colors.onBackground }
-                              : { color: theme.colors.onErrorContainer },
-                            { textAlign: "center" },
-                          ]}
-                        >
-                          {answer.answer} {answer.percentage}%
-                        </Text>
-                      </View>
+                        {answer.answer}
+                      </Text>
+                      <Text
+                        variant="titleMedium"
+                        style={[
+                          {
+                            flex: 1,
+                            textAlignVertical: "center",
+                          },
+                          answer.isCorrect
+                            ? { color: theme.colors.onBackground }
+                            : { color: theme.colors.onErrorContainer },
+                        ]}
+                      >
+                        {" "}
+                        {answer.percentage}%
+                      </Text>
                     </Card.Content>
                   </Card>
                 </Animated.View>
@@ -248,16 +259,3 @@ export default function FlashcardGame({ route, navigation }) {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  correctAnswer: {
-    // borderColor: "green",
-    // borderWidth: 3,
-    backgroundColor: "#4CAF50",
-  },
-  wrongAnswer: {
-    // borderColor: "red",
-    // borderWidth: 3,
-    backgroundColor: "red",
-  },
-});

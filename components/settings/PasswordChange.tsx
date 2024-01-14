@@ -4,23 +4,19 @@ import {
   Button,
   Card,
   TextInput,
-  useTheme,
   HelperText,
 } from "react-native-paper";
-import { useAuth } from "../../providers/AuthProvider";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="key" />;
 
 export default function PasswordChange(props) {
-  const theme = useTheme();
   const [pw1, setPw1] = useState("");
   const [pw2, setPw2] = useState("");
 
   const pwLength = pw1.length >= 9 && pw1.length < 64;
   const validator = pw1 === pw2 && pw1.length >= 9 && pw1.length < 64;
-  const { user } = useAuth();
   const { success, error: errorAlert } = useAlerts();
   const update = async () => {
     const { data, error } = await supabase.auth.updateUser({ password: pw1 });

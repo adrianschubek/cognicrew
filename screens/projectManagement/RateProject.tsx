@@ -1,21 +1,19 @@
 import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Text, useTheme } from "react-native-paper";
+import { Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { supabase } from "../../supabase";
 import {
   useDeleteProjectRating,
   useProjectRatings,
   useUpsertProjectRating,
-  useUsername,
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
 import { debounce } from "../../utils/common";
-import { useAlerts } from "react-native-paper-fastalerts";
 import StatisticCategory from "../../components/profile/StatisticCategory";
 
 export default function RateProject({

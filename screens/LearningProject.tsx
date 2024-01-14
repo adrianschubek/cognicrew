@@ -8,7 +8,7 @@ import {
 } from "react-native-responsive-dimensions";
 import LearningProjectCategory from "../components/learningProject/LearningProjectCategory";
 import { ManagementType, NAVIGATION } from "../types/common";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useProjectStore } from "../stores/ProjectStore";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { supabase } from "../supabase";
@@ -18,15 +18,13 @@ import { useRoomStore } from "../stores/RoomStore";
 export default function LearningProject({ navigation, route }) {
   const { user } = useAuth();
   const { project } = route.params;
-  const { confirm, info, error: errorAlert } = useAlerts();
+  const { confirm, error: errorAlert } = useAlerts();
   const theme = useTheme();
   const setRoom = useRoomStore((state) => state.setRoom);
   const reset = useProjectStore((state) => state.reset);
   useEffect(() => navigation.addListener("beforeRemove", reset), [navigation]);
   const setProjectId = useProjectStore((state) => state.setProjectId);
   useEffect(() => setProjectId(project?.id), [project]);
-
-  const projectId = useProjectStore((state) => state.projectId);
 
   useEffect(() => {
     navigation.setOptions({

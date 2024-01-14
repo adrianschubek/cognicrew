@@ -5,7 +5,6 @@ import {
   Card,
   HelperText,
   TextInput,
-  useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAuth } from "../../providers/AuthProvider";
@@ -14,7 +13,6 @@ import { useAlerts } from "react-native-paper-fastalerts";
 const Icon = (props) => <Avatar.Icon {...props} icon="account-edit" />;
 
 export default function NameChange(props) {
-  const theme = useTheme();
   const { success, error: errorAlert } = useAlerts();
   const [name, setName] = useState("");
 

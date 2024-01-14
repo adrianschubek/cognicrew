@@ -6,7 +6,6 @@ import { useFocusEffect } from "@react-navigation/native";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import React, { Fragment, useEffect, useState } from "react";
 import { DotIndicator as LoadingAnimation } from "react-native-indicators";
-import { useUsername } from "../utils/hooks";
 import { useRoomStore } from "../stores/RoomStore";
 import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -15,7 +14,6 @@ import { PulseIndicator } from "react-native-indicators";
 
 function Room({ room }) {
   const theme = useTheme();
-  const { data: username } = useUsername();
   const user = useAuth().user;
   const { confirm, info } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
@@ -35,13 +33,14 @@ function Room({ room }) {
             okText: "Join",
             okAction: async (vars) => {
               const { data, error } = await supabase.rpc("join_room", {
-                p_room_code: vars[0] ?? null,
+                p_room_code: +vars[0] ?? null,
                 p_room_id: room.id,
               });
 
               if (error) return error.message;
               if (!data?.id) return "Something went wrong";
               console.log(data);
+              //@ts-ignore it works, database function is just to lazy to specify the return type
               setRoom(data);
             },
             fields: room.protected && [
@@ -161,17 +160,6 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
   if (isLoading) return <LoadingOverlay visible />;
   return (
     <View style={[props.style, { gap: 5 }]}>
-      {/* <Searchbar
-        style={{
-          marginTop: 10,
-          marginBottom: 5,
-          elevation: 0,
-          borderRadius: 10,
-        }}
-        placeholder="Search"
-        value={""}
-      />
-      */}
       {roomTypes.map((roomType, index) => (
         <Fragment key={index}>
           <View

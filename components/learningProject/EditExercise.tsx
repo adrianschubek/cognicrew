@@ -122,7 +122,7 @@ export default function EditExercise(props: {
           marginLeft: 8,
         }}
       >
-        <Text>Add or remove Answers: </Text>
+        <Text>Add or remove answers: </Text>
         <View
           style={{
             flexDirection: "row",

@@ -1,52 +1,25 @@
 import { Slider } from "@miblanchard/react-native-slider";
-import { Fragment } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
-import { usePreferencesStore } from "../../stores/PreferencesStore";
 import { useSoundsStore } from "../../stores/SoundsStore";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
 export default function MusicSettings(props) {
-
-
-  const {musicVolume, setMusicVolume, soundEffectVolume, setSoundEffectVolume, masterVolume, setMasterVolume} = useSoundsStore();
-
-  const soundCategories = [
-    {
-      title: "Master",
-      volume: masterVolume,
-      setVolume: setMasterVolume,
-    },
-    {
-      title: "Music",
-      volume: musicVolume,
-      setVolume: setMusicVolume,
-    },
-    {
-      title: "Effects",
-      volume: soundEffectVolume,
-      setVolume: setSoundEffectVolume,
-    },
-  ] as { title: string; volume: number; setVolume: (v: number) => void }[];
+  const { musicVolume, setMusicVolume } = useSoundsStore();
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
       <Card.Content>
-        {soundCategories.map((category, index) => {
-          return (
-            <Fragment key={index}>
-              <Text variant="bodyMedium">
-                {category.title} ({(category.volume * 100).toFixed(0) + "%"})
-              </Text>
-              <Slider
-                step={0.05}
-                value={category.volume}
-                // @ts-ignore
-                onSlidingComplete={(v) => { const volumeToSet = Array.isArray(v) ? v[0] : v; category.setVolume(volumeToSet); console.log(category.volume)}}
-              ></Slider>
-            </Fragment>
-          );
-        })}
+        <Text variant="bodyMedium">
+          {"Music"} ({(musicVolume * 100).toFixed(0) + "%"})
+        </Text>
+        <Slider
+          step={0.05}
+          value={musicVolume}
+          onSlidingComplete={(v) => {
+            setMusicVolume(v[0]);
+          }}
+        />
       </Card.Content>
     </Card>
   );

@@ -76,12 +76,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     });
     console.log("error: ", error);
     return data;
-    /* for (const e of deletionArray) {
-      await deleteAnswersExercise({
-        exercise: e.exercise,
-        order_position: e.order_position,
-      });
-    }*/
   }
   //Flashcard hooks
   const { trigger: upsertFlashcard } = useUpsertFlashcard();

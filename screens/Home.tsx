@@ -15,7 +15,6 @@ export default function HomeScreen({ navigation }) {
   const { user } = useAuth();
   useEffect(() => {
     navigation.setOptions({
-      title: "CogniCrew",
       headerRight: () => (
         <Image
           source={require("../assets/icon.png")}

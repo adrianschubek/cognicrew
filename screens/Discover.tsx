@@ -1,12 +1,9 @@
-import {
-  useUpsertMutation,
-} from "@supabase-cache-helpers/postgrest-swr";
+import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
-import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
@@ -16,8 +13,6 @@ import { useRecommendations } from "../utils/hooks";
 
 export default function Discover() {
   const theme = useTheme();
-  const { data: ownName } = useUsername();
-
   const { user } = useAuth();
 
   //Recommendation system
@@ -52,9 +47,8 @@ export default function Discover() {
     return (
       <View>
         <Text
+          variant="headlineSmall"
           style={{
-            fontSize: 25,
-            fontWeight: "bold",
             marginLeft: 10,
             margin: 10,
             color: theme.colors.primary,
@@ -69,13 +63,8 @@ export default function Discover() {
   const renderFooter = () => (
     <View style={{ flexDirection: "row", marginBottom: 10 }}>
       <Divider />
-      <Button
-        mode="contained-tonal"
-        icon="autorenew"
-        labelStyle={{ fontSize: 18 }}
-        onPress={reScramble}
-      >
-        Re-scramble
+      <Button mode="contained-tonal" icon="autorenew" onPress={reScramble}>
+        <Text variant="titleMedium">Re-scramble</Text>
       </Button>
     </View>
   );

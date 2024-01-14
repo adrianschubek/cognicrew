@@ -1,7 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useState, useEffect, useMemo } from "react";
 import { ProgressBar } from "react-native-paper";
-import LoadingOverlay from "../alerts/LoadingOverlay";
 
 export default function Timer(props: {
   roundEndsAt: number;

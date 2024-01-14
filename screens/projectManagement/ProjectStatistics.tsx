@@ -50,21 +50,19 @@ export default function ProjectStatistics({ navigation }) {
 
   const { dark } = useTheme();
   const theme = dark ? darkTheme : lightTheme;
-
   const heading = "headlineSmall";
-
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-
+  
+  const { data, error, isLoading, mutate } = useProjectStatistics(
+    projectId,
+    user.id,
+  );
   const [countExercises, setCountExercises] = useState(0);
   const [countFlashcards, setCountFlashcards] = useState(0);
   const [countLinks, setCountLinks] = useState(0);
   const [countDocuments, setCountDocuments] = useState(0);
   const [countPhotos, setCountPhotos] = useState(0);
-  const { data, error, isLoading, mutate } = useProjectStatistics(
-    projectId,
-    user.id,
-  );
 
   const [countQuizWins, setQuizWins] = useState(null);
   const [countQuizScore, setQuizScore] = useState(null);
@@ -117,10 +115,8 @@ export default function ProjectStatistics({ navigation }) {
     setCountLinks(data[0]["count_links"]);
     setCountFlashcards(data[0]["count_flashcards"]);
     setCountExercises(data[0]["count_exercises"]);
-
     setRankGlobal(data[0]["global_rank"]);
     setRankUnderFriends(data[0]["friends_rank"]);
-
     setCardsScore(data[0]["project_stats"]["scoreFlashcards"]);
     setQuizScore(data[0]["project_stats"]["scoreQuiz"]);
     setCardsWins(data[0]["project_stats"]["winsFlashcards"]);

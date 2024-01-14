@@ -1,9 +1,7 @@
-import { TextInput } from "react-native-paper";
+import { HelperText, TextInput } from "react-native-paper";
 import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
-import { useEffect, useRef, useState } from "react";
-import LoadingOverlay from "../../alerts/LoadingOverlay";
+import { Fragment, useEffect, useRef, useState } from "react";
 import React from "react";
-import { Keyboard } from "react-native";
 import { useProjectStore } from "../../../stores/ProjectStore";
 
 export default function TextInputListItem({ item }) {
@@ -12,6 +10,9 @@ export default function TextInputListItem({ item }) {
   const [title, setTitle] = useState(item.name);
   const projectId = useProjectStore((state) => state.projectId);
   const save = () => {
+    if (title === "") {
+      return;
+    }
     upsertSet({
       //@ts-expect-error
       id: item.id,
@@ -20,20 +21,20 @@ export default function TextInputListItem({ item }) {
       project_id: projectId,
     });
   };
+  const saveRef = useRef(save);
   const shouldSaveRef = useRef(true);
-  const createSetRef = useRef(() => {
-    if (shouldSaveRef.current) {
-      save();
-    }
-  });
+  useEffect(() => {
+    saveRef.current = save;
+  }, [save]);
+
   useEffect(() => {
     //save Set when unmounted
     return () => {
-      createSetRef.current();
+      if (shouldSaveRef.current) saveRef.current();
     };
-  }, []);
+  }, [shouldSaveRef]);
   return (
-    <React.Fragment>
+    <Fragment>
       <TextInput
         testID="flashcard-sets-list-adjust-button"
         value={title}
@@ -58,10 +59,13 @@ export default function TextInputListItem({ item }) {
         onEndEditing={save}
         onSubmitEditing={() => {
           save();
-          Keyboard.dismiss();
-          //console.log(item.name);
         }}
       />
-    </React.Fragment>
+      {title === "" && (
+        <HelperText type="error" visible={title === ""}>
+          Set title cannot be empty!
+        </HelperText>
+      )}
+    </Fragment>
   );
 }

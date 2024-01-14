@@ -3,7 +3,6 @@ import { Avatar, Button, Card, HelperText, TextInput } from "react-native-paper"
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../../providers/AuthProvider";
-import { useFocusEffect } from "@react-navigation/native";
 import { usePersonalTags } from "../../utils/hooks";
 
 const Tags = (props) => <Avatar.Icon {...props} icon="tag-multiple" />;
