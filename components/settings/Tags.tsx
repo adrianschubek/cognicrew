@@ -16,8 +16,15 @@ export default function TagsSettings(props) {
 
   useEffect(() => {
     if (!data || isLoading) return;
-      setTags(data[0]["user_tags"])
-  }, [data]);
+  
+    const tagsWithSpaces = data[0]["user_tags"]
+      .split(',')
+      .map(word => word.trim())
+      .join(', ');
+  
+    setTags(tagsWithSpaces);
+  }, [data, isLoading]);
+  
 
   useEffect(() => {
     mutate();
@@ -25,22 +32,31 @@ export default function TagsSettings(props) {
 
 
   const updateTags = async () => {
-    const { data, error } = await supabase
-    .from("profiles")
-    .update(({user_tags: tags }) as { [key: string]: any }) 
-    .eq("id", user.id)
-    .select();
 
-    if (error)
+    const cleanedTags = tags
+      .split(',')
+      .map(word => word.trim())
+      .join(',');
+  
+    const { data, error } = await supabase
+      .from("profiles")
+      .update({ user_tags: cleanedTags }) 
+      .eq("id", user.id)
+      .select();
+  
+    if (error) {
       errorAlert({
         message: error.message,
       });
-    else
+    } else {
       success({
-        message:
-          "Tags updated successfully.",
+        message: "Tags updated successfully.",
       });
-  }
+    }
+  };
+  
+  
+  
 
   return (
     <Card {...props} mode="contained">
@@ -54,7 +70,7 @@ export default function TagsSettings(props) {
           onChangeText={(text) => setTags(text)}
         />
         <HelperText type="info">
-          Add tags separated by commas that match your interests to get a
+          Add tags separatd by commas that match your interests to get a
           personalized discovery page
         </HelperText>
       </Card.Content>
