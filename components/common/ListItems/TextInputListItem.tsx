@@ -20,8 +20,12 @@ export default function TextInputListItem({ item }) {
       project_id: projectId,
     });
   };
-  const createSetRef = useRef(save);
-  createSetRef.current = save;
+  const shouldSaveRef = useRef(true);
+  const createSetRef = useRef(() => {
+    if (shouldSaveRef.current) {
+      save();
+    }
+  });
   useEffect(() => {
     //save Set when unmounted
     return () => {
@@ -43,6 +47,7 @@ export default function TextInputListItem({ item }) {
             icon="close"
             disabled={isMutating || isMutating2}
             onPress={() => {
+              shouldSaveRef.current = false;
               deleteSet({ id: item.id });
             }}
           />
