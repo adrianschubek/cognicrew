@@ -42,7 +42,11 @@ const Stack = createNativeStackNavigator();
 function MainTab() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name={NAVIGATION.HOME} component={HomeScreen} />
+      <Stack.Screen
+        name={NAVIGATION.HOME}
+        component={HomeScreen}
+        options={{ title: "Home" }}
+      />
       <Stack.Screen
         name={NAVIGATION.MANAGE_FRIENDS}
         component={ManageFriends}

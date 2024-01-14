@@ -1,6 +1,4 @@
-import {
-  useUpsertMutation,
-} from "@supabase-cache-helpers/postgrest-swr";
+import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
@@ -125,7 +123,11 @@ export default function Discover() {
   };
 
   const save = async (project, newProjectName) => {
-    await supabase.rpc("copy_learning_project", {p_source_id: 1141, p_new_owner_id: user.id, p_new_project_name: "BigTest"})
+    await supabase.rpc("copy_learning_project", {
+      p_source_id: 1141,
+      p_new_owner_id: user.id,
+      p_new_project_name: "BigTest",
+    });
     /*
     try {
       const projectName = newProjectName ? newProjectName : project.name;
@@ -323,9 +325,8 @@ export default function Discover() {
     return (
       <View>
         <Text
+          variant="headlineSmall"
           style={{
-            fontSize: 25,
-            fontWeight: "bold",
             marginLeft: 10,
             margin: 10,
             color: theme.colors.primary,
@@ -340,13 +341,8 @@ export default function Discover() {
   const renderFooter = () => (
     <View style={{ flexDirection: "row", marginBottom: 10 }}>
       <Divider />
-      <Button
-        mode="contained-tonal"
-        icon="autorenew"
-        labelStyle={{ fontSize: 18 }}
-        onPress={reScramble}
-      >
-        Re-scramble
+      <Button mode="contained-tonal" icon="autorenew" onPress={reScramble}>
+        <Text variant="titleMedium">Re-scramble</Text>
       </Button>
     </View>
   );
