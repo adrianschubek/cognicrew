@@ -65,7 +65,7 @@ const Account = (props) => {
                   bucketName: "profile-pictures",
                   fileName: "avatar",
                 });
-                if (!unlockedAchievementIds.includes(9)) {
+                if (!unlockedAchievementIds.includes(1)) {
                   const { error: errorrpc } = await supabase.rpc(
                     "insert_achievement",
                     { id: 1 },
