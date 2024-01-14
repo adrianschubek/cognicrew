@@ -70,8 +70,8 @@ const Account = (props) => {
                     "insert_achievement",
                     { id: 1 },
                   );
+                  console.log("error: ", errorrpc);
                 }
-                console.log("error: ", errorrpc);
               },
               errorText: "Could not upload image",
             },
