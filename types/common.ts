@@ -44,3 +44,21 @@ export type orderByPrinciple =
   | "reverse_created_at"
   | "priority"
   | "reverse_priority";
+
+  export type PathType = {
+    path: string[];
+    color: string;
+    stroke: number;
+    size: number;
+    type: "path";
+  };
+  
+  export type TextType = {
+    x: number;
+    y: number;
+    text: string;
+    color: string;
+    type: "text";
+  };
+  
+  export type Action = PathType | TextType;

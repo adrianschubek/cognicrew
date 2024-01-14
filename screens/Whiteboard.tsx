@@ -13,7 +13,7 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import { Fragment, useEffect, useState } from "react";
-import { Canvas } from "../components/learningRoom/Canvas";
+import Canvas from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useConfirmLeaveLobby } from "../utils/hooks";
@@ -24,28 +24,59 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
+import { Action } from "../types/common";
 
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { error: errrorAlert, confirm } = useAlerts();
-  const {
-    addAction,
-    undoLastAction,
-    redoLastAction,
-    setSelectedShape,
-    resetActions,
-    color,
-  } = useWhiteboardStore();
+  const { setSelectedShape, color } = useWhiteboardStore();
   useConfirmLeaveLobby();
   const unlockedAchievementIds = usePreferencesStore(
     (state) => state.unlockedAchievementIds,
   );
   const { setInGame } = useSoundsStore();
-  const [isTextToolSelected, setTextToolSelected] = useState(false);
+  const [isTextToolSelected, setTextToolSelected] = useState<boolean>(false);
+  const [actions, setActions] = useState<Action[]>([]);
+  const [undoActions, setUndoActions] = useState<Action[]>([]);
   const [plusMenu, setPlusMenu] = useState({ open: false });
   const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
   const { open } = plusMenu;
 
+  function addAction(action: Action) {
+    setActions((actions) => [...actions, action]);
+    setUndoActions([]);
+  }
+  function resetActions() {
+    setActions([]);
+    setUndoActions([]);
+  }
+  function undoLastAction() {
+    if (actions.length > 0) {
+      const lastAction = actions[actions.length - 1];
+      setActions(actions.slice(0, -1));
+      setUndoActions([...undoActions, lastAction]);
+    }
+  }
+  function redoLastAction() {
+    if (undoActions.length > 0) {
+      const lastUndoAction = undoActions[undoActions.length - 1];
+      setActions([...actions, lastUndoAction]);
+      setUndoActions(undoActions.slice(0, -1));
+    }
+  }
+  function updatePath(x: number, y: number) {
+    if (actions.length > 0) {
+      const lastAction = actions[actions.length - 1];
+      if (lastAction.type === "path") {
+        const newPath = [...lastAction.path, `L${x} ${y}`];
+        const newActions: Action[] = [
+          ...actions.slice(0, -1),
+          { ...lastAction, path: newPath },
+        ];
+        setActions(newActions);
+      }
+    }
+  }
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {
     if (isTextToolSelected) {
@@ -85,7 +116,6 @@ export default function Whiteboard({ navigation }) {
   }, []);
 
   return (
-    <Fragment>
       <SafeAreaView
         style={{
           flexDirection: "column",
@@ -168,6 +198,10 @@ export default function Whiteboard({ navigation }) {
           <Canvas
             onClick={handleCanvasClick}
             isTextToolSelected={isTextToolSelected}
+            actions={actions}
+            undoActions={undoActions}
+            addAction={addAction}
+            updatePath={updatePath}
           />
         </View>
 
@@ -261,7 +295,6 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
       </SafeAreaView>
-    </Fragment>
   );
 }
 

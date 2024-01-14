@@ -1,24 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { View } from "react-native";
-import Svg, { Path, Circle, Text as SvgText } from "react-native-svg";
+import Svg, { Path, Text as SvgText } from "react-native-svg";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
+import { Action } from "../../types/common";
 
-export const Canvas = ({ onClick, isTextToolSelected }) => {
+export default function Canvas(props: {
+  onClick: (x, y) => void;
+  isTextToolSelected;
+  actions;
+  undoActions;
+  addAction;
+  updatePath;
+}) {
   const {
+    onClick,
+    isTextToolSelected,
     actions,
-    color,
-    stroke,
+    undoActions,
     addAction,
-    selectedShape,
-    shapeSize,
-    setIsDrawing,
-    isDrawing,
     updatePath,
-  } = useWhiteboardStore();
-
-  const setNewPath = (x, y) => {
-    // moved to handleResponderStart
-  };
+  } = props;
+  const [isDrawing, setIsDrawing] = useState<boolean>(false);
+  const { color, stroke, selectedShape, shapeSize } = useWhiteboardStore();
 
   // Function to draw a selected shape
   const drawShape = (x, y) => {
@@ -57,7 +60,6 @@ export const Canvas = ({ onClick, isTextToolSelected }) => {
     onClick(x, y);
     if (!isTextToolSelected) {
       if (selectedShape === "none") {
-        setNewPath(x, y);
         addAction({
           type: "path",
           path: [`M${x} ${y}`],
@@ -71,6 +73,7 @@ export const Canvas = ({ onClick, isTextToolSelected }) => {
       }
     }
   };
+
   const handleResponderMove = (e) => {
     if (!isTextToolSelected && isDrawing) {
       updatePath(e.nativeEvent.locationX, e.nativeEvent.locationY);
@@ -119,4 +122,4 @@ export const Canvas = ({ onClick, isTextToolSelected }) => {
       </Svg>
     </View>
   );
-};
+}
