@@ -37,6 +37,7 @@ import { useUserAchievements } from "../utils/hooks";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { usePresenceStore } from "../stores/PresenceStore";
 import MusicPlayer from "./common/MusicPlayer";
+import { useSoundsStore } from "../stores/SoundsStore";
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -325,6 +326,7 @@ export default function MainNav() {
       });
   }, [user]);
 
+  const { loaded } = useSoundsStore();
   return !session || !user ? (
     <Stack.Navigator
       initialRouteName="Login"
@@ -335,7 +337,7 @@ export default function MainNav() {
   ) : (
     <>
       <>
-        <MusicPlayer />
+        {loaded && <MusicPlayer />}
         <SetAchievementIds userId={user.id} />
         <AchievementAlert userId={user.id} />
       </>
