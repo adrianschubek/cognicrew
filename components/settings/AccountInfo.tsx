@@ -6,10 +6,9 @@ import { useUsername } from "../../utils/hooks";
 import { mutate } from "swr";
 import { NAVIGATION } from "../../types/common";
 import { useNavigation } from "@react-navigation/native";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { selectAndUploadImage } from "../../utils/FileFunctions";
 import ProfilePictureAvatar from "../profile/ProfilePictureAvatar";
-import { useSoundsStore } from "../../stores/SoundsStore";
 
 
 const Account = (props) => {
@@ -125,7 +124,6 @@ export default function AccountInfo(props) {
         </Text>
         <Button
           onPress={() => {
-            //setPlayButtonSoundEffect(true); //Will later be added to new Button component
             navigation.navigate(NAVIGATION.GLOBAL_STATISTICS);
           }}
           icon={"chart-bar"}

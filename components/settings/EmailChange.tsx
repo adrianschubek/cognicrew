@@ -1,13 +1,10 @@
-import { Slider } from "@miblanchard/react-native-slider";
 import { useState } from "react";
 import {
   Avatar,
   Button,
   Card,
   HelperText,
-  Text,
   TextInput,
-  useTheme,
 } from "react-native-paper";
 import { supabase } from "../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
@@ -15,7 +12,6 @@ import { useAlerts } from "react-native-paper-fastalerts";
 const Icon = (props) => <Avatar.Icon {...props} icon="email" />;
 
 export default function EmailChange(props) {
-  const theme = useTheme();
   const [mail, setMail] = useState("");
 
   const validator = mail.includes("@");

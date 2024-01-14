@@ -28,7 +28,7 @@ import { Action } from "../types/common";
 
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
-  const { error: errrorAlert, confirm } = useAlerts();
+  const { confirm } = useAlerts();
   const { setSelectedShape, color } = useWhiteboardStore();
   useConfirmLeaveLobby();
   const unlockedAchievementIds = usePreferencesStore(

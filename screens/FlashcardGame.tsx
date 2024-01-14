@@ -2,8 +2,6 @@ import * as React from "react";
 import {
   StyleSheet,
   View,
-  BackHandler,
-  KeyboardAvoidingView,
 } from "react-native";
 import {
   TextInput,
@@ -14,12 +12,7 @@ import {
   Card,
   IconButton,
 } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
 import { useEffect, useMemo, useState } from "react";
-import { ScrollView } from "react-native";
 import { useConfirmLeaveLobby } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
@@ -29,7 +22,6 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
-import { useFocusEffect } from "@react-navigation/native";
 import Animated from "react-native-reanimated";
 import { useSoundsStore } from "../stores/SoundsStore";
 

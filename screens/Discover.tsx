@@ -4,7 +4,6 @@ import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { supabase } from "../supabase";
-import { useUsername } from "../utils/hooks";
 import { ManagementType } from "../types/common";
 import { useAlerts } from "react-native-paper-fastalerts";
 import ProjectCard from "../components/learningProjects/ProjectCard";
@@ -14,8 +13,6 @@ import { useRecommendations } from "../utils/hooks";
 
 export default function Discover() {
   const theme = useTheme();
-  const { data: ownName } = useUsername();
-
   const { user } = useAuth();
 
   //Recommendation system

@@ -267,16 +267,6 @@ export function usePersonalTags() {
 
 
 //Achievements
-export function useAchievementsOld() {
-  return handleErrors(
-    useQuery(
-      supabase
-        .from("achievements")
-        .select("id,name,icon_name,description")
-        .order("id"),
-    ),
-  );
-}
 export function useUserAchievements(userId: string) {
   return handleErrors(
     useQuery(

@@ -1,5 +1,4 @@
 import { Slider } from "@miblanchard/react-native-slider";
-import { Fragment } from "react";
 import { Avatar, Card, Text } from "react-native-paper";
 import { useSoundsStore } from "../../stores/SoundsStore";
 

@@ -2,7 +2,6 @@ import * as React from "react";
 import { StyleSheet } from "react-native";
 import { List, Divider } from "react-native-paper";
 import {
-  responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import AccordionListItems from "./AccordionListItems";
@@ -68,4 +67,3 @@ export default function AccordionSection(props: {
     </List.Section>
   );
 }
-const styles = StyleSheet.create({});

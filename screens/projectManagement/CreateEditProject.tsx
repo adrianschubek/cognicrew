@@ -1,6 +1,6 @@
 import { useUpsertMutation } from "@supabase-cache-helpers/postgrest-swr";
 import { StatusBar } from "expo-status-bar";
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, StyleSheet } from "react-native";
 import {
   Button,

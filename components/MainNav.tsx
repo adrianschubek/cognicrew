@@ -57,15 +57,6 @@ function MainTab() {
           animation: "slide_from_bottom",
         }}
       >
-        {/* <Stack.Screen
-          name={NAVIGATION.LOBBY}
-          component={Lobby}
-          options={{
-            headerStyle: {
-              backgroundColor: theme.colors.primaryContainer,
-            },
-          }}
-        /> */}
         <Stack.Screen
           name={NAVIGATION.LEARNING_ROOM}
           component={LearningRoom}

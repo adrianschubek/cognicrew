@@ -11,7 +11,6 @@ export default function Visual(props: { [name: string]: any }) {
   const unlockedAchievementIds = usePreferencesStore(
     (state) => state.unlockedAchievementIds,
   );
-  //const unlockAchievement = useUnlockAchievement();
   const handleToggleTheme = async () => {
     toggleTheme();
     if (!darkmode) {

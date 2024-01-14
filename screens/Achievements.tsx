@@ -2,10 +2,9 @@ import { ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import {
-  responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useAchievements, useUnlockAchievement } from "../utils/hooks";
+import { useAchievements} from "../utils/hooks";
 import { Avatar, Divider, List, Text } from "react-native-paper";
 import { supabase } from "../supabase";
 import { StatusBar } from "expo-status-bar";

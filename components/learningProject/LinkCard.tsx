@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import {
   responsiveWidth,
-  responsiveHeight,
 } from "react-native-responsive-dimensions";
 import { useDeleteLink } from "../../utils/hooks";
 

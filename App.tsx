@@ -13,7 +13,7 @@ import {
 } from "@react-navigation/native";
 import { colors as lightColors } from "./theme-light.json";
 import { colors as darkColors } from "./theme-dark.json";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { PreferencesContext } from "./stores/PreferencesContext";
 import { usePreferencesStore } from "./stores/PreferencesStore";
 import { AuthProvider } from "./providers/AuthProvider";

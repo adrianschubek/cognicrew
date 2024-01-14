@@ -8,7 +8,7 @@ import { useRoomStore } from "../../stores/RoomStore";
 
 export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
   const [joinCode, setJoinCode] = useState("#");
-  const { alert, error: errorAlert, info } = useAlerts();
+  const { error: errorAlert } = useAlerts();
   const setRoom = useRoomStore((state) => state.setRoom);
   const join = async () => {
     const { data, error } = await supabase.rpc("quick_join_room", {
@@ -16,6 +16,7 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
     });
     if (!data?.id)
       return errorAlert({ title: "Error", message: "Room not found." });
+    //@ts-ignore it works, database function is just to lazy to specify the return type
     setRoom(data);
   };
   return (
