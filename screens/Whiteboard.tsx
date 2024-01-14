@@ -12,7 +12,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Canvas from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useSoundsStore } from "../stores/SoundsStore";
@@ -199,7 +199,6 @@ export default function Whiteboard({ navigation }) {
             onClick={handleCanvasClick}
             isTextToolSelected={isTextToolSelected}
             actions={actions}
-            undoActions={undoActions}
             addAction={addAction}
             updatePath={updatePath}
           />

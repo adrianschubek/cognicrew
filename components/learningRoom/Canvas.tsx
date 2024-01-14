@@ -2,13 +2,11 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import Svg, { Path, Text as SvgText } from "react-native-svg";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
-import { Action } from "../../types/common";
 
 export default function Canvas(props: {
   onClick: (x, y) => void;
   isTextToolSelected;
   actions;
-  undoActions;
   addAction;
   updatePath;
 }) {
@@ -16,7 +14,6 @@ export default function Canvas(props: {
     onClick,
     isTextToolSelected,
     actions,
-    undoActions,
     addAction,
     updatePath,
   } = props;
