@@ -108,8 +108,9 @@ serve(async (req) => {
                     publicState.round - 1
                   ].correct.includes(e),
                 )
-              : body.answer ===
-                privateState.gameData.flashcards[publicState.round - 1].answer,
+              : privateState.gameData.flashcards[publicState.round - 1].answer
+                  .split(",")
+                  .some((e) => body.answer === e),
           answered_at: dayjs().valueOf(),
           answer_time: dayjs().valueOf() - publicState.roundBeganAt,
           answer:
