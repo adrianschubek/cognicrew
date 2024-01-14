@@ -12,24 +12,21 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Canvas } from "../components/learningRoom/Canvas";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useSoundsStore } from "../stores/SoundsStore";
-import {
-  useAchievementsOld,
-  useConfirmLeaveLobby,
-  useUnlockAchievement,
-} from "../utils/hooks";
-import AchievementNotification from "../components/dialogues/AchievementNotification";
+import { useConfirmLeaveLobby } from "../utils/hooks";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { supabase } from "../supabase";
-import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { RoomClientUpdate } from "../functions/rooms";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
+import { usePreferencesStore } from "../stores/PreferencesStore";
 
 export default function Whiteboard({ navigation }) {
+  const theme = useTheme();
   const { error: errrorAlert, confirm } = useAlerts();
   const {
     addAction,
@@ -38,17 +35,16 @@ export default function Whiteboard({ navigation }) {
     setSelectedShape,
     resetActions,
     color,
-    selectedShape,
   } = useWhiteboardStore();
   useConfirmLeaveLobby();
-
+  const unlockedAchievementIds = usePreferencesStore(
+    (state) => state.unlockedAchievementIds,
+  );
   const { setInGame } = useSoundsStore();
-  const unlockAchievement = useUnlockAchievement();
-  const [achievementVisible, setAchievementVisible] = useState(false);
-  const [achievementName, setAchievementName] = useState("");
-  const [achievementIcon, setAchievementIcon] = useState("");
   const [isTextToolSelected, setTextToolSelected] = useState(false);
-  const { data: achievementsData } = useAchievementsOld();
+  const [plusMenu, setPlusMenu] = useState({ open: false });
+  const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
+  const { open } = plusMenu;
 
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {
@@ -72,42 +68,24 @@ export default function Whiteboard({ navigation }) {
       });
     }
   };
-
-  const unlockFirstTimeAchievement = async () => {
-    const achievementId = 12; // ID for the 'first time whiteboard open' achievement
-    const { success } = await unlockAchievement(achievementId);
-    if (success) {
-      const achievement = achievementsData?.find(
-        (ach) => ach.id === achievementId,
-      );
-      if (achievement) {
-        setAchievementName(achievement.name);
-        setAchievementIcon(achievement.icon_name);
-        setAchievementVisible(true);
-        setTimeout(() => setAchievementVisible(false), 5500);
-      }
-    } else {
-      console.error("Failed to unlock achievement");
+  //is this achievement supposed to be triggered in the frontend?
+  const unlockAchievement = async () => {
+    if (!unlockedAchievementIds.includes(12)) {
+      const error = await supabase.rpc("insert_achievement", { id: 12 });
+      console.log("error: ", error);
     }
   };
 
   useEffect(() => {
     setInGame(true);
-    unlockFirstTimeAchievement();
+    unlockAchievement();
     return () => {
       setInGame(false);
     };
   }, []);
 
-  const [plusMenu, setPlusMenu] = useState({ open: false });
-
-  const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
-
-  const { open } = plusMenu;
-
-  const theme = useTheme();
   return (
-    <React.Fragment>
+    <Fragment>
       <SafeAreaView
         style={{
           flexDirection: "column",
@@ -115,8 +93,8 @@ export default function Whiteboard({ navigation }) {
           flex: 1,
         }}
       >
-        <View style={styles.top}>
-          <View style={styles.topleft}>
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", flex: 1 }}>
             <IconButton
               mode="contained"
               style={{
@@ -162,7 +140,7 @@ export default function Whiteboard({ navigation }) {
               onPress={redoLastAction}
             />
           </View>
-          <View style={styles.topright}>
+          <View style={{ flexDirection: "row" }}>
             <Image
               source={{
                 uri: supabase.storage
@@ -186,7 +164,7 @@ export default function Whiteboard({ navigation }) {
 
         <Divider style={styles.divider} />
 
-        <View style={styles.mid}>
+        <View style={{ flex: 1 }}>
           <Canvas
             onClick={handleCanvasClick}
             isTextToolSelected={isTextToolSelected}
@@ -195,8 +173,14 @@ export default function Whiteboard({ navigation }) {
 
         <Divider style={styles.divider} />
 
-        <View style={styles.bottomLeft}>
-          <View style={styles.iconRow}>
+        <View
+          style={{
+            flexDirection: "column",
+            flex: 0.125,
+            alignItems: "flex-start",
+          }}
+        >
+          <View style={{ flexDirection: "row" }}>
             <IconButton
               icon="delete"
               iconColor={theme.colors.primary}
@@ -277,29 +261,11 @@ export default function Whiteboard({ navigation }) {
           </View>
         </View>
       </SafeAreaView>
-      <AchievementNotification
-        isVisible={achievementVisible}
-        achievementName={achievementName}
-        achievementIconName={achievementIcon}
-      />
-    </React.Fragment>
+    </Fragment>
   );
 }
 
 const styles = StyleSheet.create({
-  top: {
-    flexDirection: "row",
-  },
-  topleft: {
-    flexDirection: "row",
-    flex: 1,
-  },
-  topright: {
-    flexDirection: "row",
-  },
-  mid: {
-    flex: 1,
-  },
   divider: {
     height: 1,
     backgroundColor: "black",
@@ -311,53 +277,5 @@ const styles = StyleSheet.create({
     marginRight: 3,
     borderRadius: 35,
     overflow: "hidden",
-  },
-  bottomLeft: {
-    flexDirection: "column",
-    flex: 0.125,
-    alignItems: "flex-start",
-  },
-  iconRow: {
-    flexDirection: "row",
-  },
-  sliderRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  slider: {
-    width: 200,
-    height: 40,
-    marginLeft: 10,
-  },
-  sliderLabel: {
-    marginRight: 10,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  textInput: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    width: 200,
   },
 });

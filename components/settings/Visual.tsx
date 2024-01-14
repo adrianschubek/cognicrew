@@ -1,14 +1,12 @@
 import React, { useContext } from "react";
 import { Card, Button, Avatar } from "react-native-paper";
 import { PreferencesContext } from "../../stores/PreferencesContext";
-import { useAuth } from "../../providers/AuthProvider";
 import { usePreferencesStore } from "../../stores/PreferencesStore";
 import { supabase } from "../../supabase";
 
 const Icon = (props) => <Avatar.Icon {...props} icon="palette" />;
 
 export default function Visual(props: { [name: string]: any }) {
-  const { user } = useAuth();
   const { toggleTheme, darkmode } = useContext(PreferencesContext);
   const unlockedAchievementIds = usePreferencesStore(
     (state) => state.unlockedAchievementIds,
