@@ -13,7 +13,7 @@ type WhiteboardStoreType = {
 
 export const useWhiteboardStore = create<WhiteboardStoreType>((set) => ({
   color: "#FF0000",
-  stroke: 12,
+  stroke: 4,
   selectedShape: "none",
   shapeSize: 50,
   setShapeSize: (size) => set({ shapeSize: size }),

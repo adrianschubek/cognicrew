@@ -9,6 +9,6 @@ export const COLORS = [
     '#FFF000',
   ];
   
-  export const STROKE_SIZE = [3, 6, 9, 12];
+  export const STROKE_SIZE = [1, 4, 7, 10];
   
   export const WIDTH = Dimensions.get('screen').width;
