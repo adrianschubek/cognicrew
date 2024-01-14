@@ -122,6 +122,14 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
               {errorText}
             </HelperText>
           )}
+          <HelperText
+            style={{ paddingHorizontal: 0 }}
+            type="info"
+            visible={true}
+          >
+            You can add multiple correct answers by separating them with a
+            comma!
+          </HelperText>
         </View>
         <Dialog.Actions>
           <Button
@@ -133,7 +141,7 @@ export default function AddFlashcards({ showAddingFlashcards, close }) {
             }}
             mode="contained"
           >
-            add new cognicard
+            Add new cognicard
           </Button>
         </Dialog.Actions>
       </Dialog>
