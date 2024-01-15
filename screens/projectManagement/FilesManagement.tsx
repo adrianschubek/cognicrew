@@ -52,7 +52,7 @@ export default function FilesManagement() {
                 })}
               </List.Section>
               <HelperText type="info">
-                Downloading photos and videos will safe them automatically to
+                Downloading photos and videos will save them automatically to
                 the media library of your device. Other file formats will be
                 saved to the manually selected location.
               </HelperText>
