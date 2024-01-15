@@ -8,12 +8,10 @@ import { StrokeView } from "./StrokeView";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
 import Slider from "@react-native-community/slider";
 
-export const StrokeSettings = (props: {color, sendColor}) => {
-
-  const {color, sendColor} = props;
-
-  const { stroke, shapeSize, setColor, setStroke, setShapeSize } =
-    useWhiteboardStore();
+export const StrokeSettings = (props: { color; sendColor }) => {
+  const { sendColor } = props;
+  const [color, setColor] = useState<string>(props.color);
+  const { stroke, shapeSize, setStroke, setShapeSize } = useWhiteboardStore();
 
   const [openColor, setOpenColor] = useState(false);
   const [openStroke, setOpenStroke] = useState(false);
@@ -36,6 +34,7 @@ export const StrokeSettings = (props: {color, sendColor}) => {
   });
   // handling the selection of each container
   const handleColorSelector = (c: string) => {
+    setColor(c);
     sendColor(c);
     setOpenColor(false);
   };
@@ -66,7 +65,6 @@ export const StrokeSettings = (props: {color, sendColor}) => {
           {
             flexDirection: "row",
             justifyContent: "space-around",
-            //backgroundColor: "yellow",
             paddingVertical: 10,
           },
           settingsType === "stroke" && { marginLeft: 10 },

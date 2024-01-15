@@ -46,22 +46,16 @@ export default function Whiteboard({ navigation }) {
   const { open } = plusMenu;
 
   //REALTIME START
-    
+
   const chan = supabase.channel("room-1");
 
   chan.on("broadcast", { event: "test" }, (payload) => {
-    console.log(payload)
-    
-    setColor(payload["payload"]["message"]["color"]);
-    //setShapeSize(payload["payload"]["message"]["size"]);
-    //setStroke(payload["payload"]["message"]["stroke"]);
-
+    console.log(payload);
 
     addAction(payload["payload"]["message"]);
     const components = payload["payload"]["message"]["path"][0].split(" ");
     const x = components[0].substring(1);
     const y = components[1];
-    updatePath(x, y);
   });
 
   chan.subscribe((status) => {
@@ -73,10 +67,10 @@ export default function Whiteboard({ navigation }) {
   //REALTIME END
 
   function addAction(action: Action) {
+    console.log(action);
     setActions((actions) => [...actions, action]);
     setUndoActions([]);
 
-    
     chan.send({
       type: "broadcast",
       event: "test",
@@ -272,9 +266,14 @@ export default function Whiteboard({ navigation }) {
                   {
                     type: "custom",
                     render() {
-                      return <StrokeSettings 
-                      color={color} sendColor={(color) => {setColor(color)}}
-                      />;
+                      return (
+                        <StrokeSettings
+                          color={color}
+                          sendColor={(color) => {
+                            setColor(color);
+                          }}
+                        />
+                      );
                     },
                   },
                 ],
