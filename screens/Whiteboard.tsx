@@ -29,7 +29,7 @@ import { SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { confirm } = useAlerts();
-  const { setSelectedShape, setShapeSize, setStroke, stroke } = useWhiteboardStore();
+  const { stroke } = useWhiteboardStore();
   const canvasRef = useRef<SketchCanvasRef>(null);
   const [color, setColor] = useState("#00FF00");
 
@@ -38,12 +38,6 @@ export default function Whiteboard({ navigation }) {
     (state) => state.unlockedAchievementIds,
   );
   const { setInGame } = useSoundsStore();
-  const [isTextToolSelected, setTextToolSelected] = useState<boolean>(false);
-  const [actions, setActions] = useState<Action[]>([]);
-  const [undoActions, setUndoActions] = useState<Action[]>([]);
-  const [plusMenu, setPlusMenu] = useState({ open: false });
-  const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
-  const { open } = plusMenu;
 
   //REALTIME START
 
@@ -51,11 +45,6 @@ export default function Whiteboard({ navigation }) {
 
   chan.on("broadcast", { event: "test" }, (payload) => {
     console.log(payload);
-
-    addAction(payload["payload"]["message"]);
-    const components = payload["payload"]["message"]["path"][0].split(" ");
-    const x = components[0].substring(1);
-    const y = components[1];
   });
 
   chan.subscribe((status) => {
@@ -64,45 +53,15 @@ export default function Whiteboard({ navigation }) {
     }
   });
 
+  chan.send({
+    type: "broadcast",
+    event: "test",
+    payload: { message: "a"},
+  });
+
+
   //REALTIME END
 
-  function addAction(action: Action) {
-    console.log(action);
-    setActions((actions) => [...actions, action]);
-    setUndoActions([]);
-
-    chan.send({
-      type: "broadcast",
-      event: "test",
-      payload: { message: action },
-    });
-  }
-  function updatePath(action: Action) {
-    setActions([...actions, action]);
-  }
-  // Function to handle canvas click when text tool is selected
-  const handleCanvasClick = (x: number, y: number) => {
-    if (isTextToolSelected) {
-      confirm({
-        title: "Enter yout Text",
-        icon: "keyboard",
-        okText: "OK",
-        okAction: (values) => {
-          let text = values[0] as string;
-          if (text.trim().length === 0) return;
-          addAction({ x, y, text, color, type: "text" });
-        },
-        fields: [
-          {
-            placeholder: "Enter your text here",
-            type: "text",
-            required: true,
-          },
-        ],
-      });
-    }
-  };
-  //is this achievement supposed to be triggered in the frontend?
   const unlockAchievement = async () => {
     if (!unlockedAchievementIds.includes(12)) {
       const error = await supabase.rpc("insert_achievement", { id: 12 });
