@@ -2,22 +2,18 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type SoundsStoreType = {
-  inGame: boolean;
+type PersistingSoundsStoreType = {
   musicVolume: number;
   loaded: boolean;
-  setInGame: (audioSource: any) => void;
   setMusicVolume: (volume: number) => void;
   setLoaded: (loaded: boolean) => void;
 };
 
-export const useSoundsStore = create<SoundsStoreType>()(
+export const usePersistingSoundsStore = create<PersistingSoundsStoreType>()(
   persist(
     (set, get) => ({
-      inGame: false,
       musicVolume: 0,
       loaded: false,
-      setInGame: (inGame) => set({ inGame }),
       setMusicVolume: (volume: number) => set({ musicVolume: volume }),
       setLoaded: (loaded: boolean) => set({ loaded }),
     }),
@@ -28,3 +24,13 @@ export const useSoundsStore = create<SoundsStoreType>()(
     },
   ),
 );
+
+type SoundsStoreType = {
+  inGame: boolean;
+  setInGame: (audioSource: any) => void;
+};
+
+export const useSoundsStore = create<SoundsStoreType>()((set, get) => ({
+  inGame: false,
+  setInGame: (inGame) => set({ inGame }),
+}));

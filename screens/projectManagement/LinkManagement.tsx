@@ -77,6 +77,7 @@ export default function LinkManagement() {
   };
   function openAddEditLinkDialog(link?: any) {
     link = link || null;
+    //console.log("link", link);
     confirm({
       icon: link ? "link" : "link-plus", //"link-edit" isn't working ;/
       title: (link ? "Edit" : "Add new") + " cognilink",
@@ -188,7 +189,9 @@ export default function LinkManagement() {
           {
             icon: "plus",
             label: "Add new cognilink",
-            onPress: openAddEditLinkDialog,
+            onPress: () => {
+              openAddEditLinkDialog(null);
+            },
           },
         ]}
         onStateChange={onStateChange}

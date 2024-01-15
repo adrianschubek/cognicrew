@@ -212,8 +212,4 @@ export type RoomClientInit =
        * 4 = whiteboard
        */
       type: 4;
-      /**
-       * save cogniboard as... in project
-       */
-      name: string;
     };
