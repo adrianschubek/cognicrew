@@ -26,12 +26,10 @@ import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
 
-import { supabase as client } from "../supabase";
-
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { confirm } = useAlerts();
-  const { setSelectedShape, color } = useWhiteboardStore();
+  const { setSelectedShape, color, setColor, setShapeSize, setStroke } = useWhiteboardStore();
   useConfirmLeaveLobby();
   const unlockedAchievementIds = usePreferencesStore(
     (state) => state.unlockedAchievementIds,
@@ -50,6 +48,10 @@ export default function Whiteboard({ navigation }) {
 
   chan.on("broadcast", { event: "test" }, (payload) => {
     console.log(payload);
+    setColor(payload["payload"]["message"]["color"]);
+    setShapeSize(payload["payload"]["message"]["size"]);
+    setStroke(payload["payload"]["message"]["stroke"]);
+
     addAction(payload["payload"]["message"]);
     const components = payload["payload"]["message"]["path"][0].split(" ");
     const x = components[0].substring(1);
