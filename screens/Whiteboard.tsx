@@ -24,7 +24,7 @@ import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/StrokeSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
-import { Point, SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
+import { Point, SketchCanvas, SketchCanvasRef } from "../localLibrary/rn-perfect-sketch-canvas";
 //import { Points, point } from "@shopify/react-native-skia";
 
 export default function Whiteboard({ navigation }) {
@@ -176,6 +176,9 @@ export default function Whiteboard({ navigation }) {
           strokeColor={color}
           strokeWidth={stroke}
           containerStyle={{ flex: 1 }}
+          onTouchEnd={() => {
+            console.log("touch end");
+          }}
         />
       </View>
 

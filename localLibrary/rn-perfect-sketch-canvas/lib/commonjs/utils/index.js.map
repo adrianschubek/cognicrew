@@ -1,0 +1,1 @@
+{"version":3,"names":[],"sources":["index.ts"],"sourcesContent":["export { default as createHistoryStack } from './create-history-stack';\nexport { default as createSvgFromPaths } from './create-svg-from-paths';\nexport { default as getSvgPathFromStroke } from './get-svg-path-from-stroke';\n"],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;AAAA;;AACA;;AACA"}
