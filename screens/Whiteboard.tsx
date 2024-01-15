@@ -55,21 +55,6 @@ export default function Whiteboard({ navigation }) {
   };
 
   useEffect(() => {
-
-    console.log("current changed")
-
-    chan.send({
-      type: "broadcast",
-      event: "test",
-      payload: { message: canvasRef.current.toPoints() },
-    });
-  
-  }, [canvasRef.current])
-
-  useEffect(() => {
-    console.log("Test")
-    console.log(canvasRef.current.toPoints())
-
     chan.on("broadcast", { event: "test" }, (payload) => {
       console.log(payload);
       //canvasRef.current.addPoints(payload["message"])
@@ -80,8 +65,6 @@ export default function Whiteboard({ navigation }) {
         return;
       }
     });
-
-    
 
     //const myPoint: Point = [3, 7];
     //const myPoint2: Point = [4,9];
@@ -178,6 +161,11 @@ export default function Whiteboard({ navigation }) {
           containerStyle={{ flex: 1 }}
           onTouchEnd={() => {
             console.log("touch end");
+            chan.send({
+              type: "broadcast",
+              event: "test",
+              payload: { message: canvasRef.current.toPoints() },
+            });
           }}
         />
       </View>
