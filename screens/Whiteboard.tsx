@@ -96,19 +96,9 @@ export default function Whiteboard({ navigation }) {
       setUndoActions(undoActions.slice(0, -1));
     }
   }
-  function updatePath(x: number, y: number) {
-    if (actions.length > 0) {
-      const lastAction = actions[actions.length - 1];
-      if (lastAction.type === "path") {
-        const newPath = [...lastAction.path, `L${x} ${y}`];
-        const newActions: Action[] = [
-          ...actions.slice(0, -1),
-          { ...lastAction, path: newPath },
-        ];
-        setActions(newActions);
+  function updatePath(action: Action) {
+        setActions([...actions, action]);
       }
-    }
-  }
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {
     if (isTextToolSelected) {

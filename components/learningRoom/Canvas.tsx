@@ -11,14 +11,8 @@ export default function Canvas(props: {
   updatePath;
   color;
 }) {
-  const {
-    onClick,
-    isTextToolSelected,
-    actions,
-    addAction,
-    updatePath,
-    color,
-  } = props;
+  const { onClick, isTextToolSelected, actions, addAction, updatePath, color } =
+    props;
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const { stroke, selectedShape, shapeSize } = useWhiteboardStore();
 
@@ -52,7 +46,6 @@ export default function Canvas(props: {
         return "";
     }
   };
-  
 
   const handleResponderStart = (e) => {
     const x = e.nativeEvent.locationX;
@@ -76,7 +69,11 @@ export default function Canvas(props: {
 
   const handleResponderMove = (e) => {
     if (!isTextToolSelected && isDrawing) {
-      updatePath(e.nativeEvent.locationX, e.nativeEvent.locationY);
+      const x = e.nativeEvent.locationX;
+      const y = e.nativeEvent.locationY;
+      const lastAction = actions[actions.length - 1];
+      lastAction.path = [...lastAction.path, `L${x} ${y}`];
+      updatePath(lastAction);
     }
   };
 
