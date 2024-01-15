@@ -249,56 +249,6 @@ export default function Whiteboard({ navigation }) {
               });
             }}
           />
-          <Portal>
-            <FAB.Group
-              open={open}
-              visible
-              icon={open ? "minus" : "drawing"}
-              actions={[
-                {
-                  icon: "pen",
-                  label: "Pen",
-                  onPress: () => {
-                    setSelectedShape("none");
-                    setTextToolSelected(false);
-                  },
-                },
-                {
-                  icon: "keyboard",
-                  label: "Keyboard",
-                  onPress: () => {
-                    setSelectedShape("none");
-                    setTextToolSelected(!isTextToolSelected);
-                  },
-                },
-                {
-                  icon: "triangle-outline",
-                  label: "Triangle",
-                  onPress: () => {
-                    setSelectedShape("triangle");
-                    setTextToolSelected(false);
-                  },
-                },
-                {
-                  icon: "square-outline",
-                  label: "Square",
-                  onPress: () => {
-                    setSelectedShape("square");
-                    setTextToolSelected(false);
-                  },
-                },
-                {
-                  icon: "circle-outline",
-                  label: "Circle",
-                  onPress: () => {
-                    setSelectedShape("circle");
-                    setTextToolSelected(false);
-                  },
-                },
-              ]}
-              onStateChange={onPlusMenuChange}
-            />
-          </Portal>
         </View>
       </View>
     </SafeAreaView>
