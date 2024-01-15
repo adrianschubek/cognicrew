@@ -9,6 +9,7 @@ export default function Canvas(props: {
   actions;
   addAction;
   updatePath;
+  color;
 }) {
   const {
     onClick,
@@ -16,9 +17,10 @@ export default function Canvas(props: {
     actions,
     addAction,
     updatePath,
+    color,
   } = props;
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
-  const { color, stroke, selectedShape, shapeSize } = useWhiteboardStore();
+  const { stroke, selectedShape, shapeSize } = useWhiteboardStore();
 
   // Function to draw a selected shape
   const drawShape = (x, y) => {
@@ -50,6 +52,7 @@ export default function Canvas(props: {
         return "";
     }
   };
+  
 
   const handleResponderStart = (e) => {
     const x = e.nativeEvent.locationX;

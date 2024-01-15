@@ -22,14 +22,17 @@ import { supabase } from "../supabase";
 import { RoomClientUpdate } from "../functions/rooms";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { handleEdgeError } from "../utils/common";
-import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
+import { StrokeSettings } from "../components/learningRoom/StrokeSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
 
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { confirm } = useAlerts();
-  const { setSelectedShape, color, setColor, setShapeSize, setStroke } = useWhiteboardStore();
+  const { setSelectedShape, setShapeSize, setStroke } = useWhiteboardStore();
+
+  const [color, setColor] = useState("#00FF00");
+
   useConfirmLeaveLobby();
   const unlockedAchievementIds = usePreferencesStore(
     (state) => state.unlockedAchievementIds,
@@ -43,14 +46,16 @@ export default function Whiteboard({ navigation }) {
   const { open } = plusMenu;
 
   //REALTIME START
-
+    
   const chan = supabase.channel("room-1");
 
   chan.on("broadcast", { event: "test" }, (payload) => {
-    console.log(payload);
+    console.log(payload)
+    
     setColor(payload["payload"]["message"]["color"]);
-    setShapeSize(payload["payload"]["message"]["size"]);
-    setStroke(payload["payload"]["message"]["stroke"]);
+    //setShapeSize(payload["payload"]["message"]["size"]);
+    //setStroke(payload["payload"]["message"]["stroke"]);
+
 
     addAction(payload["payload"]["message"]);
     const components = payload["payload"]["message"]["path"][0].split(" ");
@@ -71,6 +76,7 @@ export default function Whiteboard({ navigation }) {
     setActions((actions) => [...actions, action]);
     setUndoActions([]);
 
+    
     chan.send({
       type: "broadcast",
       event: "test",
@@ -232,6 +238,7 @@ export default function Whiteboard({ navigation }) {
           actions={actions}
           addAction={addAction}
           updatePath={updatePath}
+          color={color}
         />
       </View>
 
@@ -265,7 +272,9 @@ export default function Whiteboard({ navigation }) {
                   {
                     type: "custom",
                     render() {
-                      return <StrokeSettings />;
+                      return <StrokeSettings 
+                      color={color} sendColor={(color) => {setColor(color)}}
+                      />;
                     },
                   },
                 ],
