@@ -24,7 +24,8 @@ import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/StrokeSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
-import { SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
+import { Point, SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
+//import { Points, point } from "@shopify/react-native-skia";
 
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
@@ -45,6 +46,7 @@ export default function Whiteboard({ navigation }) {
 
   chan.on("broadcast", { event: "test" }, (payload) => {
     console.log(payload);
+    canvasRef.current.addPoints(payload["message"])
   });
 
   chan.subscribe((status) => {
@@ -56,9 +58,8 @@ export default function Whiteboard({ navigation }) {
   chan.send({
     type: "broadcast",
     event: "test",
-    payload: { message: "a"},
+    payload: { message: canvasRef.current.toPoints() },
   });
-
 
   //REALTIME END
 
@@ -69,7 +70,15 @@ export default function Whiteboard({ navigation }) {
     }
   };
 
+  
+
   useEffect(() => {
+    console.log("Tes")
+    console.log(canvasRef.current.toPoints())
+    const myPoint: Point = [3, 7];
+    const myPoint2: Point = [4,9];
+    const pointsArray: Point[][] = [[myPoint], [myPoint2]];
+    //canvasRef.current.addPoints(pointsArray)
     setInGame(true);
     unlockAchievement();
     return () => {
@@ -90,13 +99,11 @@ export default function Whiteboard({ navigation }) {
           <IconButton
             mode="contained"
             style={{
-              //backgroundColor: theme.colors.error,
               borderRadius: 10,
               backgroundColor: theme.colors.background,
               transform: [{ rotateZ: "180deg" }],
             }}
             icon="logout"
-            //iconColor={theme.colors.onErrorContainer}
             onPress={() => {
               confirm({
                 key: "leaveroom",
