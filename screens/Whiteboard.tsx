@@ -26,6 +26,8 @@ import { StrokeSettings } from "../components/learningRoom/DrawingSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
 
+import { supabase as client } from "../supabase";
+
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { confirm } = useAlerts();
@@ -42,10 +44,39 @@ export default function Whiteboard({ navigation }) {
   const onPlusMenuChange = ({ open }) => setPlusMenu({ open });
   const { open } = plusMenu;
 
+  //REALTIME START
+
+  const chan = supabase.channel('room-1')
+
+  chan.on(
+    'broadcast',
+    { event: 'test' },
+    (payload) => addAction(payload["payload"]["message"])
+  )
+
+  chan.subscribe((status) => {
+    if (status !== 'SUBSCRIBED') { return }
+  })
+
+
+  //REALTIME END
+
+
   function addAction(action: Action) {
+    //DRAWING STUFF HAPPENS HERE
+    //console.log("Drawing");
+    //console.log(action);
+
     setActions((actions) => [...actions, action]);
     setUndoActions([]);
+
+    chan.send({
+      type: "broadcast",
+      event: "test",
+      payload: { message: action },
+    });
   }
+  
   function resetActions() {
     setActions([]);
     setUndoActions([]);
@@ -116,184 +147,183 @@ export default function Whiteboard({ navigation }) {
   }, []);
 
   return (
-      <SafeAreaView
+    <SafeAreaView
+      style={{
+        flexDirection: "column",
+        justifyContent: "space-between",
+        flex: 1,
+      }}
+    >
+      <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", flex: 1 }}>
+          <IconButton
+            mode="contained"
+            style={{
+              //backgroundColor: theme.colors.error,
+              borderRadius: 10,
+              backgroundColor: theme.colors.background,
+              transform: [{ rotateZ: "180deg" }],
+            }}
+            icon="logout"
+            //iconColor={theme.colors.onErrorContainer}
+            onPress={() => {
+              confirm({
+                key: "leaveroom",
+                title: "Leave game?",
+                message: "Do you want to leave this game and return to lobby?",
+                icon: "location-exit",
+                okText: "Leave",
+                okAction: async () => {
+                  const { error } = await supabase.functions.invoke(
+                    "room-update",
+                    {
+                      body: {
+                        type: "reset_room",
+                      } as RoomClientUpdate,
+                    },
+                  );
+                  if (error) return await handleEdgeError(error);
+                },
+              });
+            }}
+          />
+          <IconButton
+            icon="undo"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={undoLastAction}
+          />
+          <IconButton
+            icon="redo"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={redoLastAction}
+          />
+        </View>
+        <View style={{ flexDirection: "row" }}>
+          <Image
+            source={{
+              uri: supabase.storage
+                .from("profile-pictures")
+                .getPublicUrl("icon").data.publicUrl,
+            }}
+            style={styles.image}
+          />
+          <Text>User 1</Text>
+          <Image
+            source={{
+              uri: supabase.storage
+                .from("profile-pictures")
+                .getPublicUrl("icon").data.publicUrl,
+            }}
+            style={styles.image}
+          />
+          <Text>User 2</Text>
+        </View>
+      </View>
+
+      <Divider style={styles.divider} />
+
+      <View style={{ flex: 1 }}>
+        <Canvas
+          onClick={handleCanvasClick}
+          isTextToolSelected={isTextToolSelected}
+          actions={actions}
+          addAction={addAction}
+          updatePath={updatePath}
+        />
+      </View>
+
+      <Divider style={styles.divider} />
+
+      <View
         style={{
           flexDirection: "column",
-          justifyContent: "space-between",
-          flex: 1,
+          flex: 0.125,
+          alignItems: "flex-start",
         }}
       >
         <View style={{ flexDirection: "row" }}>
-          <View style={{ flexDirection: "row", flex: 1 }}>
-            <IconButton
-              mode="contained"
-              style={{
-                //backgroundColor: theme.colors.error,
-                borderRadius: 10,
-                backgroundColor: theme.colors.background,
-                transform: [{ rotateZ: "180deg" }],
-              }}
-              icon="logout"
-              //iconColor={theme.colors.onErrorContainer}
-              onPress={() => {
-                confirm({
-                  key: "leaveroom",
-                  title: "Leave game?",
-                  message:
-                    "Do you want to leave this game and return to lobby?",
-                  icon: "location-exit",
-                  okText: "Leave",
-                  okAction: async () => {
-                    const { error } = await supabase.functions.invoke(
-                      "room-update",
-                      {
-                        body: {
-                          type: "reset_room",
-                        } as RoomClientUpdate,
-                      },
-                    );
-                    if (error) return await handleEdgeError(error);
-                  },
-                });
-              }}
-            />
-            <IconButton
-              icon="undo"
-              iconColor={theme.colors.primary}
-              size={40}
-              onPress={undoLastAction}
-            />
-            <IconButton
-              icon="redo"
-              iconColor={theme.colors.primary}
-              size={40}
-              onPress={redoLastAction}
-            />
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <Image
-              source={{
-                uri: supabase.storage
-                  .from("profile-pictures")
-                  .getPublicUrl("icon").data.publicUrl,
-              }}
-              style={styles.image}
-            />
-            <Text>User 1</Text>
-            <Image
-              source={{
-                uri: supabase.storage
-                  .from("profile-pictures")
-                  .getPublicUrl("icon").data.publicUrl,
-              }}
-              style={styles.image}
-            />
-            <Text>User 2</Text>
-          </View>
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <View style={{ flex: 1 }}>
-          <Canvas
-            onClick={handleCanvasClick}
-            isTextToolSelected={isTextToolSelected}
-            actions={actions}
-            addAction={addAction}
-            updatePath={updatePath}
+          <IconButton
+            icon="delete"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={resetActions}
           />
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <View
-          style={{
-            flexDirection: "column",
-            flex: 0.125,
-            alignItems: "flex-start",
-          }}
-        >
-          <View style={{ flexDirection: "row" }}>
-            <IconButton
-              icon="delete"
-              iconColor={theme.colors.primary}
-              size={40}
-              onPress={resetActions}
+          <IconButton
+            icon="cog"
+            iconColor={theme.colors.primary}
+            size={40}
+            onPress={() => {
+              confirm({
+                title: "Drawing",
+                icon: "pencil",
+                okText: "Done",
+                cancelText: "",
+                fields: [
+                  {
+                    type: "custom",
+                    render() {
+                      return <StrokeSettings />;
+                    },
+                  },
+                ],
+              });
+            }}
+          />
+          <Portal>
+            <FAB.Group
+              open={open}
+              visible
+              icon={open ? "minus" : "drawing"}
+              actions={[
+                {
+                  icon: "pen",
+                  label: "Pen",
+                  onPress: () => {
+                    setSelectedShape("none");
+                    setTextToolSelected(false);
+                  },
+                },
+                {
+                  icon: "keyboard",
+                  label: "Keyboard",
+                  onPress: () => {
+                    setSelectedShape("none");
+                    setTextToolSelected(!isTextToolSelected);
+                  },
+                },
+                {
+                  icon: "triangle-outline",
+                  label: "Triangle",
+                  onPress: () => {
+                    setSelectedShape("triangle");
+                    setTextToolSelected(false);
+                  },
+                },
+                {
+                  icon: "square-outline",
+                  label: "Square",
+                  onPress: () => {
+                    setSelectedShape("square");
+                    setTextToolSelected(false);
+                  },
+                },
+                {
+                  icon: "circle-outline",
+                  label: "Circle",
+                  onPress: () => {
+                    setSelectedShape("circle");
+                    setTextToolSelected(false);
+                  },
+                },
+              ]}
+              onStateChange={onPlusMenuChange}
             />
-            <IconButton
-              icon="cog"
-              iconColor={theme.colors.primary}
-              size={40}
-              onPress={() => {
-                confirm({
-                  title: "Drawing",
-                  icon: "pencil",
-                  okText: "Done",
-                  cancelText: "",
-                  fields: [
-                    {
-                      type: "custom",
-                      render() {
-                        return <StrokeSettings />;
-                      },
-                    },
-                  ],
-                });
-              }}
-            />
-            <Portal>
-              <FAB.Group
-                open={open}
-                visible
-                icon={open ? "minus" : "drawing"}
-                actions={[
-                  {
-                    icon: "pen",
-                    label: "Pen",
-                    onPress: () => {
-                      setSelectedShape("none");
-                      setTextToolSelected(false);
-                    },
-                  },
-                  {
-                    icon: "keyboard",
-                    label: "Keyboard",
-                    onPress: () => {
-                      setSelectedShape("none");
-                      setTextToolSelected(!isTextToolSelected);
-                    },
-                  },
-                  {
-                    icon: "triangle-outline",
-                    label: "Triangle",
-                    onPress: () => {
-                      setSelectedShape("triangle");
-                      setTextToolSelected(false);
-                    },
-                  },
-                  {
-                    icon: "square-outline",
-                    label: "Square",
-                    onPress: () => {
-                      setSelectedShape("square");
-                      setTextToolSelected(false);
-                    },
-                  },
-                  {
-                    icon: "circle-outline",
-                    label: "Circle",
-                    onPress: () => {
-                      setSelectedShape("circle");
-                      setTextToolSelected(false);
-                    },
-                  },
-                ]}
-                onStateChange={onPlusMenuChange}
-              />
-            </Portal>
-          </View>
+          </Portal>
         </View>
-      </SafeAreaView>
+      </View>
+    </SafeAreaView>
   );
 }
 
