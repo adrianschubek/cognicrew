@@ -44,22 +44,6 @@ export default function Whiteboard({ navigation }) {
 
   const chan = supabase.channel("room-1");
 
-  chan.on("broadcast", { event: "test" }, (payload) => {
-    console.log(payload);
-    canvasRef.current.addPoints(payload["message"])
-  });
-
-  chan.subscribe((status) => {
-    if (status !== "SUBSCRIBED") {
-      return;
-    }
-  });
-
-  chan.send({
-    type: "broadcast",
-    event: "test",
-    payload: { message: canvasRef.current.toPoints() },
-  });
 
   //REALTIME END
 
@@ -70,14 +54,38 @@ export default function Whiteboard({ navigation }) {
     }
   };
 
+  useEffect(() => {
+
+    console.log("current changed")
+
+    chan.send({
+      type: "broadcast",
+      event: "test",
+      payload: { message: canvasRef.current.toPoints() },
+    });
   
+  }, [canvasRef.current])
 
   useEffect(() => {
-    console.log("Tes")
+    console.log("Test")
     console.log(canvasRef.current.toPoints())
-    const myPoint: Point = [3, 7];
-    const myPoint2: Point = [4,9];
-    const pointsArray: Point[][] = [[myPoint], [myPoint2]];
+
+    chan.on("broadcast", { event: "test" }, (payload) => {
+      console.log(payload);
+      //canvasRef.current.addPoints(payload["message"])
+    });
+  
+    chan.subscribe((status) => {
+      if (status !== "SUBSCRIBED") {
+        return;
+      }
+    });
+
+    
+
+    //const myPoint: Point = [3, 7];
+    //const myPoint2: Point = [4,9];
+    //const pointsArray: Point[][] = [[myPoint], [myPoint2]];
     //canvasRef.current.addPoints(pointsArray)
     setInGame(true);
     unlockAchievement();
