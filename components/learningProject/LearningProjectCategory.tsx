@@ -12,59 +12,64 @@ import {
   responsiveWidth,
   responsiveFontSize,
 } from "react-native-responsive-dimensions";
-import { Fragment } from "react";
+import { useState } from "react";
 
-function doNothing() {
-  return;
-}
 export default function LearningProjectCategory(props: {
   name: string;
   path: ImageSourcePropType;
   function?: any;
   flexDirection?: any;
+  disableAfterPress?: boolean;
   [name: string]: any;
 }) {
   const theme = useTheme();
+  const [disabled, setDisabled] = useState(false);
+  console.log(disabled);
+  const { name, path, flexDirection, disableAfterPress } = props;
   return (
-    <Fragment>
-      <TouchableOpacity
-        testID="project-category-buttons"
-        style={props.style}
-        onPress={props.function || doNothing()}
+    <TouchableOpacity
+      testID="project-category-buttons"
+      style={props.style}
+      disabled={disabled}
+      onPress={() => {
+        if (props.function) {
+          disableAfterPress && setDisabled(true);
+          props.function();
+        }
+      }}
+    >
+      <View
+        style={{
+          marginTop: 10,
+          height: responsiveHeight(13),
+          width: responsiveWidth(95),
+          borderRadius: 10,
+          backgroundColor: theme.colors.secondaryContainer,
+          flexDirection: flexDirection || "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        <View
+        <Text
           style={{
-            marginTop: 10,
-            height: responsiveHeight(13),
-            width: responsiveWidth(95),
-            borderRadius: 10,
-            backgroundColor: theme.colors.secondaryContainer,
-            flexDirection: props.flexDirection || "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            fontSize: responsiveFontSize(3),
+            paddingLeft:
+              flexDirection !== "row-reverse" ? responsiveWidth(5) : 0,
+            paddingRight:
+              flexDirection === "row-reverse" ? responsiveWidth(5) : 0,
           }}
         >
-          <Text
-            style={{
-              fontSize: responsiveFontSize(3),
-              paddingLeft:
-                props.flexDirection !== "row-reverse" ? responsiveWidth(5) : 0,
-              paddingRight:
-                props.flexDirection === "row-reverse" ? responsiveWidth(5) : 0,
-            }}
-          >
-            {" "}
-            {props.name}{" "}
-          </Text>
-          <Image
-            style={styles.imageStyle}
-            resizeMode="contain"
-            //"../assets/cards_symbol.png"
-            source={props.path}
-          />
-        </View>
-      </TouchableOpacity>
-    </Fragment>
+          {" "}
+          {name}{" "}
+        </Text>
+        <Image
+          style={styles.imageStyle}
+          resizeMode="contain"
+          //"../assets/cards_symbol.png"
+          source={path}
+        />
+      </View>
+    </TouchableOpacity>
   );
 }
 
