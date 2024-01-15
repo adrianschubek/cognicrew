@@ -46,27 +46,26 @@ export default function Whiteboard({ navigation }) {
 
   //REALTIME START
 
-  const chan = supabase.channel('room-1')
+  const chan = supabase.channel("room-1");
 
-  chan.on(
-    'broadcast',
-    { event: 'test' },
-    (payload) => addAction(payload["payload"]["message"])
-  )
+  chan.on("broadcast", { event: "test" }, (payload) => {
+    console.log(payload);
+    addAction(payload["payload"]["message"]);
+    const components = payload["payload"]["message"]["path"][0].split(" ");
+    const x = components[0].substring(1);
+    const y = components[1];
+    updatePath(x, y);
+  });
 
   chan.subscribe((status) => {
-    if (status !== 'SUBSCRIBED') { return }
-  })
-
+    if (status !== "SUBSCRIBED") {
+      return;
+    }
+  });
 
   //REALTIME END
 
-
   function addAction(action: Action) {
-    //DRAWING STUFF HAPPENS HERE
-    //console.log("Drawing");
-    //console.log(action);
-
     setActions((actions) => [...actions, action]);
     setUndoActions([]);
 
@@ -76,7 +75,7 @@ export default function Whiteboard({ navigation }) {
       payload: { message: action },
     });
   }
-  
+
   function resetActions() {
     setActions([]);
     setUndoActions([]);
