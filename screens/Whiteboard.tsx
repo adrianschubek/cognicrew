@@ -12,8 +12,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useEffect, useState } from "react";
-import Canvas from "../components/learningRoom/Canvas";
+import { useEffect, useRef, useState } from "react";
 import { useWhiteboardStore } from "../stores/WhiteboardStore";
 import { useSoundsStore } from "../stores/SoundsStore";
 import { useConfirmLeaveLobby } from "../utils/hooks";
@@ -25,12 +24,13 @@ import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/StrokeSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
+import { SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
 
 export default function Whiteboard({ navigation }) {
   const theme = useTheme();
   const { confirm } = useAlerts();
-  const { setSelectedShape, setShapeSize, setStroke } = useWhiteboardStore();
-
+  const { setSelectedShape, setShapeSize, setStroke, stroke } = useWhiteboardStore();
+  const canvasRef = useRef<SketchCanvasRef>(null);
   const [color, setColor] = useState("#00FF00");
 
   useConfirmLeaveLobby();
@@ -77,28 +77,9 @@ export default function Whiteboard({ navigation }) {
       payload: { message: action },
     });
   }
-
-  function resetActions() {
-    setActions([]);
-    setUndoActions([]);
-  }
-  function undoLastAction() {
-    if (actions.length > 0) {
-      const lastAction = actions[actions.length - 1];
-      setActions(actions.slice(0, -1));
-      setUndoActions([...undoActions, lastAction]);
-    }
-  }
-  function redoLastAction() {
-    if (undoActions.length > 0) {
-      const lastUndoAction = undoActions[undoActions.length - 1];
-      setActions([...actions, lastUndoAction]);
-      setUndoActions(undoActions.slice(0, -1));
-    }
-  }
   function updatePath(action: Action) {
-        setActions([...actions, action]);
-      }
+    setActions([...actions, action]);
+  }
   // Function to handle canvas click when text tool is selected
   const handleCanvasClick = (x: number, y: number) => {
     if (isTextToolSelected) {
@@ -182,13 +163,13 @@ export default function Whiteboard({ navigation }) {
             icon="undo"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={undoLastAction}
+            onPress={canvasRef.current?.undo}
           />
           <IconButton
             icon="redo"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={redoLastAction}
+            onPress={canvasRef.current?.redo}
           />
         </View>
         <View style={{ flexDirection: "row" }}>
@@ -216,13 +197,11 @@ export default function Whiteboard({ navigation }) {
       <Divider style={styles.divider} />
 
       <View style={{ flex: 1 }}>
-        <Canvas
-          onClick={handleCanvasClick}
-          isTextToolSelected={isTextToolSelected}
-          actions={actions}
-          addAction={addAction}
-          updatePath={updatePath}
-          color={color}
+        <SketchCanvas
+          ref={canvasRef}
+          strokeColor={color}
+          strokeWidth={stroke}
+          containerStyle={{ flex: 1 }}
         />
       </View>
 
@@ -240,7 +219,7 @@ export default function Whiteboard({ navigation }) {
             icon="delete"
             iconColor={theme.colors.primary}
             size={40}
-            onPress={resetActions}
+            onPress={canvasRef.current?.reset}
           />
           <IconButton
             icon="cog"
