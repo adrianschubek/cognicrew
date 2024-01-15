@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import { View } from "react-native";
+import React, { useRef, useState } from "react";
+import { SafeAreaView, View } from "react-native";
 import Svg, { Path, Text as SvgText } from "react-native-svg";
 import { useWhiteboardStore } from "../../stores/WhiteboardStore";
+import { SketchCanvas, SketchCanvasRef } from "rn-perfect-sketch-canvas";
+import { Button } from "react-native-paper";
 
 export default function Canvas(props: {
   onClick: (x, y) => void;
@@ -80,43 +82,16 @@ export default function Canvas(props: {
   const handleResponderEnd = () => {
     setIsDrawing(false);
   };
-
+  const canvasRef = useRef<SketchCanvasRef>(null);
   return (
-    <View
-      onStartShouldSetResponder={() => true}
-      onMoveShouldSetResponder={() => true}
-      onResponderStart={handleResponderStart}
-      onResponderMove={handleResponderMove}
-      onResponderEnd={handleResponderEnd}
-    >
-      <Svg>
-        {actions.map((action, i) => {
-          if (action.type === "path") {
-            return (
-              <Path
-                key={i}
-                d={action.path.join(" ")}
-                fill="none"
-                strokeWidth={`${action.stroke}px`}
-                stroke={action.color}
-              />
-            );
-          } else if (action.type === "text") {
-            return (
-              <SvgText
-                key={i}
-                x={action.x}
-                y={action.y}
-                fill={action.color}
-                fontSize="20"
-                fontWeight="bold"
-              >
-                {action.text}
-              </SvgText>
-            );
-          }
-        })}
-      </Svg>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <SketchCanvas
+        ref={canvasRef}
+        strokeColor={"black"}
+        strokeWidth={8}
+        containerStyle={{ flex: 1 }}
+      />
+      <Button onPress={canvasRef.current?.reset}>Reset</Button>
+    </SafeAreaView>
   );
 }
