@@ -41,12 +41,12 @@ export default function LearningProjectCategory(props: {
             backgroundColor: theme.colors.secondaryContainer,
             flexDirection: props.flexDirection || "row",
             justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
           <Text
             style={{
               fontSize: responsiveFontSize(3),
-              textAlignVertical: "center",
               paddingLeft:
                 props.flexDirection !== "row-reverse" ? responsiveWidth(5) : 0,
               paddingRight:

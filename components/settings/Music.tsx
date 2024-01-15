@@ -1,11 +1,11 @@
 import { Slider } from "@miblanchard/react-native-slider";
 import { Avatar, Card, Text } from "react-native-paper";
-import { useSoundsStore } from "../../stores/SoundsStore";
+import { usePersistingSoundsStore } from "../../stores/SoundsStore";
 
 const Music = (props) => <Avatar.Icon {...props} icon="music" />;
 
 export default function MusicSettings(props) {
-  const { musicVolume, setMusicVolume } = useSoundsStore();
+  const { musicVolume, setMusicVolume } = usePersistingSoundsStore();
   return (
     <Card {...props} mode="contained">
       <Card.Title title="Sounds" left={Music} />
