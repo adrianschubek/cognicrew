@@ -88,7 +88,6 @@ enum ScreenState {
 enum GameState {
   EXERCISES = "exercises",
   FLASHCARDS = "flashcards",
-  WHITEBOARD = "whiteboard",
 }
 
 const enum State {
@@ -349,8 +348,6 @@ async function stateRoundSolution(
       }
       break;
     }
-    case GameState.WHITEBOARD:
-      break;
     default:
       console.error("invalid game type (#0)");
   }
@@ -618,7 +615,6 @@ async function updateStats(
       winsFlashcards: 0,
       timeSpentQuiz: 0,
       timeSpentFlashcards: 0,
-      timeSpentWhiteboard: 0,
     };
 
     stats.scoreQuiz +=
@@ -646,8 +642,6 @@ async function updateStats(
       publicState.game == GameState.EXERCISES ? timeSpentSeconds : 0;
     stats.timeSpentFlashcards +=
       publicState.game == GameState.FLASHCARDS ? timeSpentSeconds : 0;
-    stats.timeSpentWhiteboard +=
-      publicState.game == GameState.WHITEBOARD ? timeSpentSeconds : 0;
 
     const { error: errUpdate } = await supabase
       .from("user_learning_projects")

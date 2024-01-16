@@ -5,7 +5,6 @@ export const enum NAVIGATION {
   MANAGE_FRIENDS = "ManageFriends",
   ACHIEVEMENTS = "Achievements",
   LEARNING_ROOM = "LearningRoom",
-  WHITEBOARD = "Whiteboard",
   SETTINGS = "Settings",
   LEARNING_PROJECT = "LearningProject",
   LEARNING_PROJECTS = "LearningProjects",

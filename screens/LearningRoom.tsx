@@ -30,15 +30,6 @@ export default function LearningRoom({ navigation }) {
             console.log("Flashcard Game Pressed");
           }}
         />
-
-        <LearningProjectCategory
-          path={require("../assets/teamwork_symbol.png")}
-          name={"Cogniboard"}
-          function={() => {
-            navigation.navigate(NAVIGATION.WHITEBOARD);
-            console.log("Whiteboard pressed");
-          }}
-        />
       </View>
     </>
   );

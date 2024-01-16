@@ -10,7 +10,6 @@ export enum ScreenState {
 export enum GameState {
   EXERCISES = "exercises",
   FLASHCARDS = "flashcards",
-  WHITEBOARD = "whiteboard",
 }
 /**
  * (Realtime enabled) [visible to client, SELECT only]
@@ -142,7 +141,6 @@ export type PrivateRoomState = {
      * // TODO: REMOVE THIS. use direct realtime client to client and skip database/function! https://supabase.com/docs/guides/realtime/broadcast
      * @deprecated
      */
-    // whiteboard: {};
   };
 };
 
@@ -153,7 +151,6 @@ export type UserProjectStats = {
   winsFlashcards: number;
   timeSpentQuiz: number;
   timeSpentFlashcards: number;
-  timeSpentWhiteboard: number;
 };
 
 /**
@@ -206,10 +203,4 @@ export type RoomClientInit =
       sets: number[];
       roundDuration: number;
       numberOfRounds: number;
-    }
-  | {
-      /**
-       * 4 = whiteboard
-       */
-      type: 4;
     };

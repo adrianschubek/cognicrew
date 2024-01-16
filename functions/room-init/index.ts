@@ -224,37 +224,6 @@ serve(async (req) => {
         // console.log(publicState);
         break;
       }
-      case 4:
-        publicState = {
-          players: users.map((user) => ({
-            id: user.id,
-            username: user.username,
-            isHost: user.id === data.host,
-            score: 0,
-            correctQuestions: 0,
-            currentCorrect: null,
-            currentTimeNeeded: null,
-          })),
-          screen: ScreenState.INGAME,
-          game: GameState.WHITEBOARD,
-          totalRounds: 1,
-          round: 1,
-          question: "",
-          possibleAnswers: [],
-          userAnswers: null,
-          gameBeganAt: dayjs().valueOf(),
-          roundBeganAt: dayjs().valueOf(),
-          roundEndsAt: dayjs().add(1, "day").valueOf(),
-        };
-        privateState = {
-          projectId: pid,
-          gameData: {
-            exercises: [],
-            flashcards: [],
-          },
-          roundDuration: 86400 /* 1 day */,
-        };
-        break;
       default:
         return err("Unknown game type (#47)", 400);
     }

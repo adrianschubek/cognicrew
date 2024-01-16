@@ -71,7 +71,6 @@ export default function ProjectStatistics({ navigation }) {
 
   const [timeQuiz, setTimeSpentQuiz] = useState(null);
   const [timeCards, setTimeSpentCards] = useState(null);
-  const [timeBoard, setTimeSpentBoard] = useState(null);
 
   const [countRankUnderFriends, setRankUnderFriends] = useState(null);
   const [countRankGlobal, setRankGlobal] = useState(null);
@@ -80,7 +79,6 @@ export default function ProjectStatistics({ navigation }) {
   const series = [
     parseFloat(formatTimeSpent(timeQuiz)),
     parseFloat(formatTimeSpent(timeCards)),
-    parseFloat(formatTimeSpent(timeBoard)),
   ];
   const filteredSeries = series.filter((value) => value !== 0);
   const sumTimeGames = filteredSeries.reduce(
@@ -91,21 +89,15 @@ export default function ProjectStatistics({ navigation }) {
     series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
   const percentQuiz =
     series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard =
-    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
   function formatTimeSpent(seconds: number) {
     return (seconds / 60 / 60).toFixed(2);
   }
   const quizGotTime = series[0] === 0 ? false : true;
   const cardsGotTime = series[1] === 0 ? false : true;
-  const whiteboardGotTime = series[2] === 0 ? false : true;
   const gameColors = {
     quizColor: quizGotTime ? theme.colors.pieChartFirst : theme.colors.isZero,
     cardColor: cardsGotTime ? theme.colors.pieChartSecond : theme.colors.isZero,
-    witheboardColor: whiteboardGotTime
-      ? theme.colors.pieChartThird
-      : theme.colors.isZero,
   };
 
   useEffect(() => {
@@ -123,7 +115,6 @@ export default function ProjectStatistics({ navigation }) {
     setQuizWins(data[0]["project_stats"]["winsQuiz"]);
     setTimeSpentQuiz(data[0]["project_stats"]["timeSpentQuiz"]);
     setTimeSpentCards(data[0]["project_stats"]["timeSpentFlashcards"]);
-    setTimeSpentBoard(data[0]["project_stats"]["timeSpentWhiteboard"]);
   }, [data]);
   useEffect(() => {
     mutate();
@@ -184,13 +175,6 @@ export default function ProjectStatistics({ navigation }) {
             `Score - Cognicards: ${countCardsScore}`,
           ],
           textColor: gameColors.cardColor,
-        },
-
-        {
-          dataPoints: [
-            `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
-          ],
-          textColor: gameColors.witheboardColor,
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {

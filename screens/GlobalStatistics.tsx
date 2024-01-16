@@ -20,7 +20,6 @@ export default function GlobalStatistics({ navigation }) {
   }, []);
   const [totalTimeQuiz, setTotalTimeSpentQuiz] = useState(null);
   const [totalTimeCards, setTotalTimeSpentCards] = useState(null);
-  const [totalTimeBoard, setTotalTimeSpentBoard] = useState(null);
 
   const lightTheme = {
     ...LightTheme,
@@ -55,7 +54,6 @@ export default function GlobalStatistics({ navigation }) {
   const series = [
     parseFloat(formatTimeSpent(totalTimeQuiz)),
     parseFloat(formatTimeSpent(totalTimeCards)),
-    parseFloat(formatTimeSpent(totalTimeBoard)),
   ];
   const filteredSeries = series.filter((value) => value !== 0);
   const sumTimeGames = filteredSeries.reduce(
@@ -66,21 +64,15 @@ export default function GlobalStatistics({ navigation }) {
     series[0] === 0 ? 0 : ((series[0] / sumTimeGames) * 100).toFixed(2);
   const percentQuiz =
     series[1] === 0 ? 0 : ((series[1] / sumTimeGames) * 100).toFixed(2);
-  const percentWhiteboard =
-    series[2] === 0 ? 0 : ((series[2] / sumTimeGames) * 100).toFixed(2);
 
   function formatTimeSpent(seconds: number) {
     return (seconds / 60 / 60).toFixed(2);
   }
   const quizGotTime = series[0] === 0 ? false : true;
   const cardsGotTime = series[1] === 0 ? false : true;
-  const whiteboardGotTime = series[2] === 0 ? false : true;
   const gameColors = {
     quizColor: quizGotTime ? theme.colors.pieChartFirst : theme.colors.isZero,
     cardColor: cardsGotTime ? theme.colors.pieChartSecond : theme.colors.isZero,
-    witheboardColor: whiteboardGotTime
-      ? theme.colors.pieChartThird
-      : theme.colors.isZero,
   };
 
   const [countExercises, setCountExercises] = useState(null);
@@ -107,7 +99,6 @@ export default function GlobalStatistics({ navigation }) {
 
     setTotalTimeSpentQuiz(data[0]["total_time_spent_quiz"]);
     setTotalTimeSpentCards(data[0]["total_time_spent_flashcards"]);
-    setTotalTimeSpentBoard(data[0]["total_time_spent_whiteboard"]);
   }, [data]);
   useEffect(() => {
     mutate();
@@ -122,8 +113,7 @@ export default function GlobalStatistics({ navigation }) {
             `Total amount of learning projects: ${countLearningProjects}`,
             `Total time spent playing games: ${(
               series[0] +
-              series[1] +
-              series[2]
+              series[1]
             ).toFixed(2)} hours`,
           ],
         },
@@ -153,13 +143,6 @@ export default function GlobalStatistics({ navigation }) {
         {
           dataPoints: [`Cognicards: ${series[1]} hours, ${percentQuiz} %`],
           textColor: gameColors.cardColor,
-        },
-
-        {
-          dataPoints: [
-            `Whiteboard: ${series[2]} hours, ${percentWhiteboard} %`,
-          ],
-          textColor: gameColors.witheboardColor,
         },
       ],
       ...(filteredSeries.reduce((sum, value) => sum + value, 0) > 0 && {

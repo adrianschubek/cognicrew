@@ -291,24 +291,6 @@ export default function Lobby({ navigation }) {
                 });
               }}
             />
-            <LearningProjectCategory
-              style={[styles.learningProjectCategory]}
-              path={require("../../assets/teamwork_symbol.png")}
-              name={"Cogniboard"}
-              disableAfterPress={true}
-              function={async () => {
-                const { data, error } = await supabase.functions.invoke(
-                  "room-init",
-                  {
-                    body: {
-                      type: ManagementType.BOARD,
-                    } as RoomClientInit,
-                  },
-                );
-                if (error) return handleEdgeError(error);
-                setRoom({ ...room, is_ingame: true });
-              }}
-            />
           </View>
 
           <View style={{ alignItems: "center", marginBottom: 10 }}>

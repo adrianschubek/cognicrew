@@ -11,7 +11,6 @@ import FlashcardExerciseManagement from "../screens/projectManagement/FlashcardE
 import FilesManagement from "../screens/projectManagement/FilesManagement";
 import LinkManagement from "../screens/projectManagement/LinkManagement";
 import Achievements from "../screens/Achievements";
-import Whiteboard from "../screens/Whiteboard";
 import { useAuth } from "../providers/AuthProvider";
 import FlashcardGame from "../screens/FlashcardGame";
 import { NAVIGATION } from "../types/common";
@@ -206,9 +205,6 @@ function MainTabs({ navigation }) {
                     case GameState.FLASHCARDS:
                       navigation.navigate(NAVIGATION.FLASHCARD_GAME);
                       break;
-                    case GameState.WHITEBOARD:
-                      navigation.navigate(NAVIGATION.WHITEBOARD);
-                      break;
                   }
                   break;
                 case ScreenState.ROUND_RESULTS:
@@ -345,11 +341,6 @@ export default function MainNav() {
         <Stack.Screen name={"_main_"} component={MainTabs} />
         <Stack.Screen name={NAVIGATION.LOBBY} component={Lobby} />
         <Stack.Screen name={NAVIGATION.GUEST_LOBBY} component={GuestLobby} />
-        <Stack.Screen
-          name={NAVIGATION.WHITEBOARD}
-          component={Whiteboard}
-          options={{ gestureEnabled: false }}
-        />
         <Stack.Screen
           name={NAVIGATION.EXERCISE_GAME}
           component={ExerciseGame}

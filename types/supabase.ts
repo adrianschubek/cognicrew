@@ -653,6 +653,10 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
+      big_test: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       check_user_achievements: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -667,7 +671,7 @@ export interface Database {
           p_new_owner_id: string
           p_new_project_name: string
         }
-        Returns: undefined
+        Returns: number
       }
       create_room: {
         Args: {
@@ -726,7 +730,6 @@ export interface Database {
           count_photos: number
           total_time_spent_quiz: number
           total_time_spent_flashcards: number
-          total_time_spent_whiteboard: number
         }[]
       }
       get_project_ratings: {
