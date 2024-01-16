@@ -56,11 +56,7 @@ serve(async (req) => {
       .eq("host", user?.id)
       .eq("id", rid)
       .single();
-    if (error)
-      return err(
-        "User is not host of room (#41)",
-        400,
-      );
+    if (error) return err("User is not host of room (#41)", 400);
 
     const pid: number = data.project_id;
     // console.log(data);
@@ -137,6 +133,15 @@ serve(async (req) => {
             } (#45)`,
             400,
           );
+
+        // all flashcards must have an answer not null
+        if (
+          body.type === 0 &&
+          gamedata.sets
+            .flatMap((set) => set.flashcards)
+            .some((flashcard) => flashcard.answer === null)
+        )
+          return err("Some flashcards do not have an answer (#49)", 400);
 
         privateState = {
           projectId: pid,
