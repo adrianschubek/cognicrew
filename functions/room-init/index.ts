@@ -192,7 +192,10 @@ serve(async (req) => {
                           [] as number[],
                         ),
                       }))
-                      .sort((a, b) => a.priority - b.priority) // FIXME: use math random
+                      .sort(
+                        (a, b) =>
+                          a.priority - b.priority + (Math.random() - 0.5),
+                      )
                       .slice(0, body.numberOfRounds),
                   )
                 : [],
@@ -208,7 +211,10 @@ serve(async (req) => {
                         answer: flashcard.answer,
                         explanation: null,
                       }))
-                      .sort((a, b) => a.priority - b.priority)
+                      .sort(
+                        (a, b) =>
+                          a.priority - b.priority + (Math.random() - 0.5),
+                      )
                       .slice(0, body.numberOfRounds),
                   )
                 : [],
