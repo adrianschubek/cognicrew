@@ -283,10 +283,10 @@ async function stateRoundSolution(
       publicState.userAnswers = answersWithCountWithIsCorrect.map(
         ([answer, count, isCorrect]) => ({
           answer,
-          percentage: Math.max(
-            0,
-            Math.min(100, Math.floor((count / submittedAnswers) * 100)),
-          ),
+          /**
+           * This is the actual count instead of percentage. Name is kept the same for backwards compatibility.
+           */
+          percentage: count,
           isCorrect,
         }),
       );
@@ -338,10 +338,10 @@ async function stateRoundSolution(
         publicState.userAnswers = answersWithCountWithIsCorrect.map(
           ([answer, count, isCorrect]) => ({
             answer,
-            percentage: Math.max(
-              0,
-              Math.min(100, Math.floor((count / submittedAnswers) * 100)),
-            ),
+            /**
+             * This is the actual count instead of percentage. Name is kept the same for backwards compatibility.
+             */
+            percentage: count,
             isCorrect,
           }),
         );
