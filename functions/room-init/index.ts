@@ -173,8 +173,7 @@ serve(async (req) => {
               body.type === 1
                 ? shuffle(
                     gamedata.sets
-                      .map((set) => set.exercises)
-                      .flat()
+                      .flatMap((set) => set.exercises)
                       .map((exercise) => ({
                         id: exercise.id,
                         question: exercise.question,
@@ -193,7 +192,10 @@ serve(async (req) => {
                           [] as number[],
                         ),
                       }))
-                      .sort((a, b) => a.priority - b.priority) // FIXME: use math random
+                      .sort(
+                        (a, b) =>
+                          a.priority - b.priority + (Math.random() - 0.5),
+                      )
                       .slice(0, body.numberOfRounds),
                   )
                 : [],
@@ -201,8 +203,7 @@ serve(async (req) => {
               body.type === 0
                 ? shuffle(
                     gamedata.sets
-                      .map((set) => set.flashcards)
-                      .flat()
+                      .flatMap((set) => set.flashcards)
                       .map((flashcard) => ({
                         id: flashcard.id,
                         question: flashcard.question,
@@ -210,7 +211,10 @@ serve(async (req) => {
                         answer: flashcard.answer,
                         explanation: null,
                       }))
-                      .sort((a, b) => a.priority - b.priority)
+                      .sort(
+                        (a, b) =>
+                          a.priority - b.priority + (Math.random() - 0.5),
+                      )
                       .slice(0, body.numberOfRounds),
                   )
                 : [],
