@@ -11,9 +11,7 @@ import dayjs from "dayjs";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useAuth } from "../../providers/AuthProvider";
 
-export default function ProjectCard(props: {
-  item: any;
-}) {
+export default function ProjectCard(props: { item: any }) {
   const theme = useTheme();
   const { user } = useAuth();
   const navigation = useNavigation();
@@ -53,7 +51,7 @@ export default function ProjectCard(props: {
         p_new_project_name: newProjectName,
       },
     );
-    
+
     console.log(upsertedProjectId);
     const fileTypes = ["pdf", "photos", "docx", "excel", "miscellaneous"];
 
@@ -77,15 +75,17 @@ export default function ProjectCard(props: {
     }
   };
 
-  const hiddenInfo = [{ title: "Description", data: item.project_description }];
+  const hiddenInfo = [
+    { title: "Description", data: item.project_description },
+  ];
   const extraInfo = [
     {
-      title: "Owner",
+      title: "🛠️",
       data: item.project_owner_name /*+ "xxxxxxxx"*/,
     },
     {
-      title: "Created",
-      data: dayjs(item.project_created_at).format("DD.MM.YYYY HH:mm"),
+      title: "📆",
+      data: item.project_group,
     },
   ];
   const ratingStats = {
@@ -136,7 +136,7 @@ export default function ProjectCard(props: {
               textMaxWidth="65%"
               numberOfLines={1}
               extraInfoTexts={extraInfo.map((item) => {
-                return item.title + ": " + item.data;
+                return item.title + " " + item.data;
               })}
             />
             <View
@@ -188,7 +188,14 @@ export default function ProjectCard(props: {
                     variant="bodyMedium"
                     style={{
                       fontStyle: "italic",
-                      //marginRight: "auto",
+                    }}
+                  >
+                    Created: {dayjs(item.project_created_at).format("DD.MM.YYYY HH:mm")}
+                  </Text>
+                  <Text
+                    variant="bodyMedium"
+                    style={{
+                      fontStyle: "italic",
                     }}
                   >
                     Tags: {item.project_tags}
