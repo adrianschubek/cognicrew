@@ -80,7 +80,7 @@ export default function ProjectCard(props: { item: any }) {
   ];
   const extraInfo = [
     {
-      title: "🛠️",
+      title: "✨",
       data: item.project_owner_name /*+ "xxxxxxxx"*/,
     },
     {
