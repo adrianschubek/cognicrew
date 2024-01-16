@@ -1,17 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList } from "react-native";
 import { Divider, HelperText, Searchbar } from "react-native-paper";
 import ProjectCard from "../components/learningProjects/ProjectCard";
 import { usePublicProjects } from "../utils/hooks";
+import { supabase } from "../supabase";
 
 //TODO realtime updating
 
 export default function SearchProjects() {
+  const { data, error, isLoading, mutate } = usePublicProjects();
+  const [projects, setProjects] = useState(null);
   const [searchQuery, setSearchQuery] = useState<string[]>([""]);
   const [searchQueryDisplay, setSearchQueryDisplay] = useState<string>("");
-  const { data, error, isLoading } = usePublicProjects();
+  useEffect(() => {
+    if (!data) return;
+    setProjects(data);
+  }, [data]);
 
-  if (!data) return null;
+  useEffect(() => {
+    const realtimeProjects = supabase
+      .channel("projects_public")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "learning_projects",
+          filter: "is_published=eq.true",
+        },
+        (payload) => {
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
+
   const renderHeader = () => {
     const onChangeSearch = (query) => {
       const tokens = query.split(",");
@@ -44,12 +67,12 @@ export default function SearchProjects() {
       </>
     );
   };
-
+  if (!projects) return null;
   return (
     <SafeAreaView style={{ flex: 1, marginTop: 15 }}>
       {renderHeader()}
       <FlatList
-        data={data.filter((project) =>
+        data={projects.filter((project) =>
           searchQuery.some(
             (query) =>
               project.project_name

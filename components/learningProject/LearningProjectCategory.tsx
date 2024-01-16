@@ -24,7 +24,6 @@ export default function LearningProjectCategory(props: {
 }) {
   const theme = useTheme();
   const [disabled, setDisabled] = useState(false);
-  console.log(disabled);
   const { name, path, flexDirection, disableAfterPress } = props;
   return (
     <TouchableOpacity
