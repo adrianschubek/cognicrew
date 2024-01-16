@@ -170,6 +170,7 @@ export default function Lobby({ navigation }) {
                           {
                             body: {
                               type: ManagementType.FLASHCARD,
+                              projectId,
                               sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],
@@ -243,6 +244,7 @@ export default function Lobby({ navigation }) {
                           {
                             body: {
                               type: ManagementType.EXERCISE,
+                              projectId,
                               sets: toArray(setValues[0], (el) => +el),
                               roundDuration: +values[0],
                               numberOfRounds: +values[1],

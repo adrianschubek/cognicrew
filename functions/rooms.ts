@@ -200,6 +200,7 @@ export type RoomClientInit =
        * 0 = flashcard, 1 = quiz
        */
       type: 0 | 1;
+      projectId: number;
       sets: number[];
       roundDuration: number;
       numberOfRounds: number;

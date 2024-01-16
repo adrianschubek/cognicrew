@@ -71,7 +71,28 @@ serve(async (req) => {
     const body = (await req.json()) as RoomClientInit;
     // console.log(body);
 
-    // FIXME: validate if user ahs access to project (member or is_published)
+    if (!body.projectId) return err("No project id provided (#39)");
+    if (!Array.isArray(body.sets)) return err("No sets provided (#38)");
+
+    // validate if user has access to project (member or is_published)
+    const { data: projectData, error: projectError } = await supabase
+      .from("learning_projects")
+      .select("is_published")
+      .eq("id", pid)
+      .single();
+
+    const { data: memberData, error: memberError } = await supabase
+      .from("user_learning_projects")
+      .select()
+      .eq("learning_project_id", pid)
+      .eq("user_id", user?.id);
+
+    if (
+      projectError ||
+      memberError ||
+      (!projectData.is_published && !memberData)
+    )
+      return err("User does not have access to project (#37)");
 
     let privateState: PrivateRoomState | undefined;
     let publicState: PublicRoomState | undefined;
