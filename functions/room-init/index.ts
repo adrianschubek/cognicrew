@@ -71,6 +71,8 @@ serve(async (req) => {
     const body = (await req.json()) as RoomClientInit;
     // console.log(body);
 
+    // FIXME: validate if user ahs access to project (member or is_published)
+
     let privateState: PrivateRoomState | undefined;
     let publicState: PublicRoomState | undefined;
 
@@ -170,7 +172,7 @@ serve(async (req) => {
                           [] as number[],
                         ),
                       }))
-                      .sort((a, b) => a.priority - b.priority)
+                      .sort((a, b) => a.priority - b.priority) // FIXME: use math random
                       .slice(0, body.numberOfRounds),
                   )
                 : [],

@@ -869,6 +869,32 @@ export interface Database {
           type: number
         }[]
       }
+      list_sets_for:
+        | {
+            Args: {
+              p_project_id: number
+            }
+            Returns: {
+              created_at: string
+              id: number
+              name: string
+              project_id: number
+              type: number
+            }[]
+          }
+        | {
+            Args: {
+              p_project_id: number
+              p_type: number
+            }
+            Returns: {
+              created_at: string
+              id: number
+              name: string
+              project_id: number
+              type: number
+            }[]
+          }
       project_members: {
         Args: {
           p_project_id: number

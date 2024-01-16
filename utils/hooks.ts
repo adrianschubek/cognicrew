@@ -348,11 +348,7 @@ export function useSets(
   projectId: number,
   refetchIndex?: number,
 ) {
-  const query = supabase
-    .from("sets")
-    .select("id,name,type,project_id,created_at")
-    .eq("type", type)
-    .eq("project_id", projectId);
+  const query = supabase.rpc("list_sets_for", { p_project_id: projectId, p_type: type });
 
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
