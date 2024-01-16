@@ -214,9 +214,7 @@ export function useProjectStatistics(projectId: number, userId: string) {
     p_user_id: userId,
     p_project_id: projectId,
   });
-
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
-
   useEffect(() => {
     mutate();
   }, []);
@@ -228,6 +226,12 @@ export function useProjectStatistics(projectId: number, userId: string) {
   };
 }
 
+export function usePublicProjects() {
+  const { data, error, isLoading, mutate } = handleErrors(
+    useQuery(supabase.rpc("get_public_projects")),
+  );
+  return { data, error, isLoading, mutate };
+}
 //Global statistics
 export function useGlobalStatistics(userId: string) {
   const query = supabase.rpc("get_global_statistics", {
@@ -263,8 +267,6 @@ export function usePersonalTags() {
     mutate,
   };
 }
-
-
 
 //Achievements
 export function useUserAchievements(userId: string) {
