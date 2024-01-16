@@ -247,7 +247,7 @@ export default function FlashcardGame({ route, navigation }) {
                         ]}
                       >
                         {" "}
-                        {answer.percentage}%
+                        {answer.percentage}
                       </Text>
                     </Card.Content>
                   </Card>

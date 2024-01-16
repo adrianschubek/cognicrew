@@ -151,7 +151,7 @@ export default function ExerciseGame({ navigation }) {
             key={index}
             label={`${String.fromCharCode(65 + index)}) ${option[0]} ${
               roomState.screen === ScreenState.ROUND_SOLUTION
-                ? " (" + roomState.userAnswers[option[1]].percentage + "%)"
+                ? roomState.userAnswers[option[1]].percentage 
                 : ""
             }`}
             labelStyle={{
