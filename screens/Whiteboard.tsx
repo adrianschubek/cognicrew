@@ -24,7 +24,11 @@ import { handleEdgeError } from "../utils/common";
 import { StrokeSettings } from "../components/learningRoom/StrokeSettings";
 import { usePreferencesStore } from "../stores/PreferencesStore";
 import { Action } from "../types/common";
-import { Point, SketchCanvas, SketchCanvasRef } from "../localLibrary/rn-perfect-sketch-canvas";
+import {
+  Point,
+  SketchCanvas,
+  SketchCanvasRef,
+} from "../localLibrary/rn-perfect-sketch-canvas";
 //import { Points, point } from "@shopify/react-native-skia";
 
 export default function Whiteboard({ navigation }) {
@@ -53,11 +57,10 @@ export default function Whiteboard({ navigation }) {
 
   useEffect(() => {
     chan.on("broadcast", { event: "test" }, (payload) => {
-      console.log(payload);
-      console.log(payload["payload"]["message"])
-      canvasRef.current.addPoints(payload["payload"]["message"])
+      const point: Point[] = JSON.parse(payload["payload"]["message"]);
+      canvasRef.current.addPoints([point]);
     });
-  
+
     chan.subscribe((status) => {
       if (status !== "SUBSCRIBED") {
         return;
@@ -159,8 +162,10 @@ export default function Whiteboard({ navigation }) {
           containerStyle={{ flex: 1 }}
           onTouchEnd={() => {
             console.log("touch end");
-            let lastIndex = canvasRef.current.toPoints().length - 1;
-            let lastArr = canvasRef.current.toPoints()[lastIndex];
+            let lastArr = canvasRef.current
+              .toPoints()
+              .at(-1)
+              .map((p) => JSON.stringify(p));
             chan.send({
               type: "broadcast",
               event: "test",
