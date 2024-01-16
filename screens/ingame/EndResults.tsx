@@ -11,12 +11,13 @@ import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
+import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
 
   const roomState = useRoomStateStore((state) => state.roomState);
- 
+
   const theme = useTheme();
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
@@ -128,13 +129,18 @@ export default function EndResults({ navigation }) {
                 }}
               >
                 <Animated.View style={[animatedAvatarStyles]}>
-                  <Avatar.Icon
+                  <ProfilePictureAvatar
+                    userId={player.id}
+                    username={player.username}
+                    size={35}
+                  />
+                  {/*<Avatar.Icon
                     icon="account"
                     size={35}
                     theme={{
                       colors: { primary: getRandomColor(player.username) },
                     }}
-                  />
+                  />*/}
                 </Animated.View>
                 <Animated.View
                   key={index}
@@ -226,13 +232,18 @@ export default function EndResults({ navigation }) {
                       ? "rd"
                       : "th"}{" "}
                   </Text>
-                  <Avatar.Icon
+                  <ProfilePictureAvatar
+                    userId={player.id}
+                    username={player.username}
+                    size={35}
+                  />
+                  {/*<Avatar.Icon
                     icon="account"
                     size={35}
                     theme={{
                       colors: { primary: getRandomColor(player.username) },
                     }}
-                  />
+                  />*/}
                   <View
                     style={{
                       marginLeft: 5,
