@@ -41,10 +41,7 @@ export default function Whiteboard({ navigation }) {
   const { setInGame } = useSoundsStore();
 
   //REALTIME START
-
   const chan = supabase.channel("room-1");
-
-
   //REALTIME END
 
   const unlockAchievement = async () => {
