@@ -54,7 +54,8 @@ export default function Whiteboard({ navigation }) {
   useEffect(() => {
     chan.on("broadcast", { event: "test" }, (payload) => {
       console.log(payload);
-      //canvasRef.current.addPoints(payload["message"])
+      console.log(payload["payload"]["message"])
+      canvasRef.current.addPoints(payload["payload"]["message"])
     });
   
     chan.subscribe((status) => {
@@ -158,10 +159,12 @@ export default function Whiteboard({ navigation }) {
           containerStyle={{ flex: 1 }}
           onTouchEnd={() => {
             console.log("touch end");
+            let lastIndex = canvasRef.current.toPoints().length - 1;
+            let lastArr = canvasRef.current.toPoints()[lastIndex];
             chan.send({
               type: "broadcast",
               event: "test",
-              payload: { message: canvasRef.current.toPoints() },
+              payload: { message: lastArr },
             });
           }}
         />
