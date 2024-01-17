@@ -70,7 +70,6 @@ export default function LearningProjectAvatarWithTitle(props: {
             {
               textAlign: textAlign ?? "center",
               marginHorizontal: titleMarginHorizontal,
-              fontWeight: "bold",
             },
           ]}
         >
@@ -81,7 +80,7 @@ export default function LearningProjectAvatarWithTitle(props: {
             return (
               <Text
                 key={index}
-                variant="labelSmall"
+                variant="bodySmall"
                 numberOfLines={1}
                 onLayout={(event) => {
                   const { width } = event.nativeEvent.layout;
@@ -89,7 +88,7 @@ export default function LearningProjectAvatarWithTitle(props: {
                 }}
                 style={{
                   textAlign: textAlign ?? "center",
-                  // fontStyle: "italic",
+                  //fontStyle: "italic",
                 }}
               >
                 {infoText} {width >= textMaxWidth && "..."}

@@ -15,9 +15,7 @@ import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar"
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
-
   const roomState = useRoomStateStore((state) => state.roomState);
-
   const theme = useTheme();
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
@@ -114,7 +112,6 @@ export default function EndResults({ navigation }) {
                   400 + 400 * (sortedPlayers.length - player.position),
                   withTiming(opacity.value, {
                     duration: 1000,
-                    //easing: Easing.inOut(Easing.cubic),
                   }),
                 ),
               };
@@ -134,13 +131,6 @@ export default function EndResults({ navigation }) {
                     username={player.username}
                     size={35}
                   />
-                  {/*<Avatar.Icon
-                    icon="account"
-                    size={35}
-                    theme={{
-                      colors: { primary: getRandomColor(player.username) },
-                    }}
-                  />*/}
                 </Animated.View>
                 <Animated.View
                   key={index}
@@ -173,7 +163,6 @@ export default function EndResults({ navigation }) {
           })}
         </View>
         <Divider
-          //bold={true}
           style={{ backgroundColor: theme.colors.primary }}
         />
       </View>
@@ -237,13 +226,6 @@ export default function EndResults({ navigation }) {
                     username={player.username}
                     size={35}
                   />
-                  {/*<Avatar.Icon
-                    icon="account"
-                    size={35}
-                    theme={{
-                      colors: { primary: getRandomColor(player.username) },
-                    }}
-                  />*/}
                   <View
                     style={{
                       marginLeft: 5,
