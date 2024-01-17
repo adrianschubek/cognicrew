@@ -12,11 +12,16 @@ import { useRoomStateStore } from "../../stores/RoomStore";
 import { getRandomColor } from "../../utils/common";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
 import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
+import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
+import { useAuth } from "../../providers/AuthProvider";
+import { useProjectStore } from "../../stores/ProjectStore";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
+  const userId = useAuth().user.id;
+  const projectId = useProjectStore((state) => state.projectId);
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
   //lowest to highest and only the first five  players
@@ -162,9 +167,7 @@ export default function EndResults({ navigation }) {
             );
           })}
         </View>
-        <Divider
-          style={{ backgroundColor: theme.colors.primary }}
-        />
+        <Divider style={{ backgroundColor: theme.colors.primary }} />
       </View>
       <ScrollView style={{ flexDirection: "column", marginTop: 30 }}>
         {sortedPlayers.reverse().map((player, index) => {
@@ -245,17 +248,26 @@ export default function EndResults({ navigation }) {
             </Animated.View>
           );
         })}
-        <Text
-          variant="bodySmall"
-          style={{
-            textAlign: "center",
-            color: theme.colors.onSecondaryContainer,
-            marginTop: 20,
-          }}
-        >
-          {roomState.round === roomState.totalRounds &&
-            "Returning to lobby after 10s..."}
-        </Text>
+        {roomState.round === roomState.totalRounds && (
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <View
+              style={{ flexDirection: "row", gap: 5, alignItems: "center" }}
+            >
+              <Text variant="bodySmall">Rate this project:</Text>
+              <RateProjectComponent projectId={projectId} userId={userId} />
+            </View>
+            <Text
+              variant="bodySmall"
+              style={{
+                textAlign: "center",
+                color: theme.colors.onSecondaryContainer,
+                marginTop: 10,
+              }}
+            >
+              Returning to lobby after 10s...
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </View>
   );
