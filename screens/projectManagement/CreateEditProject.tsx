@@ -45,7 +45,7 @@ export default function CreateEditProject({
   const { edit: project } = route.params;
   const showDiscardPopUp = useRef<boolean>(true);
   const username = useUsername(project?.owner_id ?? null);
-  const { success, error: errorAlert, info, confirm } = useAlerts();
+  const { success, error: errorAlert, confirm } = useAlerts();
   const theme = useTheme();
 
   const myId = useAuth().user.id;
@@ -132,8 +132,6 @@ export default function CreateEditProject({
       },
     },
   );
-  
-  
 
   const save = () => {
     upsert({
@@ -144,9 +142,9 @@ export default function CreateEditProject({
       group,
       is_published: isPublished,
       tags: tags
-      .split(",")
-      .map(word => word.trim())
-      .join(", "),
+        .split(",")
+        .map((word) => word.trim())
+        .join(", "),
     });
   };
 
@@ -295,7 +293,19 @@ export default function CreateEditProject({
                     <Switch
                       testID="input-project-visibility"
                       value={isPublished}
-                      onValueChange={() => setIsPublished((old) => !old)}
+                      onValueChange={() => {
+                        if (!isPublished) {
+                          confirm({
+                            title: "Publish project?",
+                            message:"Other users will be able to find and clone this project including all its content. They will NOT be able to edit THIS project.",
+                            icon: "lock-open-outline",
+                            okText: "Make public",
+                            okAction: () => setIsPublished((old) => !old),
+                          });
+                        } else {
+                          setIsPublished((old) => !old);
+                        }
+                      }}
                     />
                   )}
                 />
