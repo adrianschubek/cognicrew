@@ -9,9 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
+import { responsiveWidth } from "react-native-responsive-dimensions";
 import { useDeleteLink } from "../../../utils/hooks";
 
 export default function LinkCard({ link, onEdit }) {
@@ -23,7 +21,7 @@ export default function LinkCard({ link, onEdit }) {
     const youtubePatterns = ["youtube.com", "youtu.be"];
     const youtubeIcon =
       "https://www.iconpacks.net/icons/2/free-youtube-logo-icon-2431-thumb.png";
-    const defaultIcon = url.protocol + url.hostname + "/favicon.ico";
+    const defaultIcon = `https://www.google.com/s2/favicons?domain=${url.hostname}`;
     const isYouTubeURL = youtubePatterns.some((pattern) =>
       u.toLowerCase().includes(pattern),
     );
@@ -31,7 +29,7 @@ export default function LinkCard({ link, onEdit }) {
   };
 
   const { isMutating, trigger: deleteLink } = useDeleteLink();
-
+  
   const openLink = (url) => {
     if (!url) {
       console.error("URL is not provided for link.");
@@ -64,7 +62,7 @@ export default function LinkCard({ link, onEdit }) {
     <Card
       testID="link-card"
       elevation={1}
-      style={styles.cardStyle}
+      style={{ flex: 1, width: responsiveWidth(90), marginBottom: 16 }}
       key={link.id}
       onPress={() => openLink(link.link_url)}
       accessible
@@ -92,8 +90,8 @@ export default function LinkCard({ link, onEdit }) {
             >
               <Image
                 source={{ uri: getIconForLink(link.link_url) }}
-                style={{ height: 30 }}
                 width={30}
+                height={30}
               />
             </TouchableOpacity>
             <IconButton
@@ -167,13 +165,3 @@ export default function LinkCard({ link, onEdit }) {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    flex: 1,
-    width: responsiveWidth(90),
-    marginBottom: 16,
-    //paddingBottom: 8,
-    //backgroundColor:"green"
-  },
-});
