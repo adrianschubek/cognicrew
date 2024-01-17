@@ -23,25 +23,16 @@ export default function SearchWithList(props: {
   const projectId = useProjectStore((state) => state.projectId);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [setId, setSetId] = useState(null);
+  const [sets, setSets] = useState([]);
   const { data, isLoading, error, mutate } = useSets(props.type, projectId);
-  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   useEffect(() => {
     if (!data) return;
-    //console.log(data);
-    setFiltered(data);
+    setSets(data);
   }, [data]);
-  useEffect(() => {
-    mutate();
-  }, [refetchIndex]);
-  const [filtered, setFiltered] = useState([]);
-  //const [isSearching, setIsSearching] = useState(false);
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    const filteredItems = data.filter((item) =>
-      item.name.toLowerCase().match(query.toLowerCase()),
-    );
-    setFiltered(filteredItems);
-  };
+
+  const filteredSets = sets.filter((item) =>
+    item.name.toLowerCase().match(searchQuery.toLowerCase()),
+  );
   if (error) return <LoadingOverlay visible={isLoading} />;
   const getSetId = (setId) => {
     props.sendSetId(setId);
@@ -60,20 +51,23 @@ export default function SearchWithList(props: {
         value={searchQuery}
         style={{ elevation: 1 }}
         placeholder={props.searchPlaceholder || "Search"}
-        //onTouchStart={() => setIsSearching(true)}
-        //onBlur={() => setIsSearching(false)}
-        onChangeText={handleSearch}
+        onChangeText={(query) => setSearchQuery(query)}
       />
       <Divider style={{}} bold={true} />
-      {/*isSearching && (*/}
       <MultifunctionalList
         mode={props.mode}
-        dataSource={filtered}
+        dataSource={filteredSets}
         creationOption={props.creationOption}
         type={props.type}
         sendSetId={getSetId}
         noSetAvailable={data?.length === 0 ? true : false}
         creationOptionFocused={props.creationOptionFocused}
+        sendSetDeleted={(itemId) => {
+          setSets(sets.filter((e) => e.id !== itemId));
+        }}
+        sendSetCreated={() => {
+          mutate();
+        }}
       />
       {props.noSetSelected &&
         !setId /*!setId does that the error message is only shown when the user has not selected a set, 

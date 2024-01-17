@@ -1,11 +1,7 @@
 import * as React from "react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { View, ScrollView, Keyboard } from "react-native";
-import {
-  HelperText,
-  RadioButton,
-  TextInput,
-} from "react-native-paper";
+import { HelperText, RadioButton, TextInput } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
@@ -14,7 +10,7 @@ import { ManagementType, Mode } from "../../types/common";
 import { useUpsertSet } from "../../utils/hooks";
 import TextInputListItem from "./ListItems/TextInputListItem";
 import { useProjectStore } from "../../stores/ProjectStore";
-import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
+import { supabase } from "../../supabase";
 
 export default function MultifunctionalList(props: {
   dataSource: any[];
@@ -24,16 +20,33 @@ export default function MultifunctionalList(props: {
   type?: ManagementType;
   sendSetId?: any;
   noSetAvailable: boolean;
+  sendSetDeleted: (itemId: number) => void;
+  sendSetCreated: () => void;
   [name: string]: any;
 }) {
+  const { sendSetDeleted, sendSetCreated } = props;
   const [creationQuery, setCreationQuery] = useState("");
   const [creationError, setCreationError] = useState<string>("");
   const [value, setValue] = useState("");
   const { isMutating, trigger: upsertSet } = useUpsertSet();
   const projectId = useProjectStore((state) => state.projectId);
-  const incrementRefetchIndex = useRefetchIndexStore(
-    (state) => state.incrementRefetchIndex,
-  );
+  useEffect(() => {
+    const realtimeFriends = supabase
+      .channel("friends_all")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "sets",
+          filter: `project_id=eq.${projectId}`,
+        },
+        (payload) => {
+          sendSetCreated();
+        },
+      )
+      .subscribe();
+  }, []);
   const createSet = () => {
     if (creationQuery === "") {
       setCreationError("Please enter a name for the set.");
@@ -44,8 +57,6 @@ export default function MultifunctionalList(props: {
       name: creationQuery,
       type: props.type,
       project_id: projectId,
-    }).then(() => {
-      incrementRefetchIndex();
     });
     setCreationQuery("");
     setCreationError("");
@@ -118,7 +129,13 @@ export default function MultifunctionalList(props: {
           )}
           {props.mode == "edit" ? (
             props.dataSource.map((item) => (
-              <TextInputListItem item={item} key={item.id} />
+              <TextInputListItem
+                item={item}
+                key={item.id}
+                sendSetDeleted={(itemId) => {
+                  sendSetDeleted(itemId);
+                }}
+              />
             ))
           ) : (
             <RadioButton.Group

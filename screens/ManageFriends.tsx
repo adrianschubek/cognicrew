@@ -176,19 +176,6 @@ export default function ManageFriends({ navigation }) {
               paddingBottom: 8,
             }}
           >
-            {/* {friendRequestsReceived.length > 0 && (
-              <Badge>{friendRequestsReceived.length}</Badge>
-            )}
-            {friendRequestsSent.length > 0 && (
-              <Badge
-                style={{
-                  backgroundColor: theme.colors.primary,
-                  color: theme.colors.onPrimary,
-                }}
-              >
-                {friendRequestsSent.length}
-              </Badge>
-            )} */}
           </View>
           <Searchbar
             style={{
