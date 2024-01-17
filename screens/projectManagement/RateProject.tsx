@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Platform, ScrollView, TouchableOpacity } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
@@ -13,8 +13,9 @@ import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import { useFocusEffect } from "@react-navigation/native";
-import { debounce } from "../../utils/common";
 import StatisticCategory from "../../components/profile/StatisticCategory";
+import Star from "../../components/learningProject/rating/Star";
+import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
 
 export default function RateProject({
   navigation,
@@ -27,7 +28,6 @@ export default function RateProject({
     };
   };
 }) {
-
   useEffect(() => {
     navigation.setOptions({
       title: "Rate Project",
@@ -40,16 +40,7 @@ export default function RateProject({
       <View>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           {starsArray.map((index) => (
-            <MaterialIcons
-              key={index}
-              name={index - 1 < numStars ? "star" : "star-border"}
-              size={32}
-              style={
-                index - 1 < numStars
-                  ? styles.starSelected
-                  : styles.starUnselected
-              }
-            />
+            <Star key={index} starSelected={index <= numStars} size={32} />
           ))}
           <Text style={{ marginLeft: 10 }}>{arrRatings[numStars - 1]}</Text>
         </View>
@@ -87,14 +78,12 @@ export default function RateProject({
     );
   };
 
-  const { trigger: upsertProjectRating } = useUpsertProjectRating();
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
   const [rating, setRating] = useState(null);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
-  const { trigger: deleteProjectRating } = useDeleteProjectRating();
   const [isInitialised, setIsInitialised] = useState(false);
   const { data, error, isLoading, mutate } = useProjectRatings(
     projectId,
@@ -140,65 +129,22 @@ export default function RateProject({
     };
   });
 
-  const handleStarPress = (newRating) => {
-    if (newRating === rating) {
-      setRating(0);
-    } else {
-      setRating(newRating);
-    }
-  };
-
-  const debouncedDeleteOrUpsert = debounce((pId, uId, r) => {
-    if (r === 0) {
-      deleteProjectRating({
-        project_id: pId,
-        user_id: uId,
-      });
-    } else
-      upsertProjectRating({
-        //@ts-expect-error
-        project_id: pId,
-        user_id: uId,
-        rating: r,
-      });
-  }, 500);
-  const debouncedBackendCall = useCallback(debouncedDeleteOrUpsert, []);
-
-  useEffect(() => {
-    if (rating === null) return;
-    // Call the debounced function
-    debouncedBackendCall(projectId, user.id, rating);
-  }, [rating, debouncedBackendCall]);
-
-  const rateProjectComponent = (
-    <View style={{ flexDirection: "row", alignItems: "center" }}>
-      {starsArray.map((number) => {
-        return (
-          <TouchableOpacity
-            key={number}
-            onPress={() => {
-              handleStarPress(number);
-            }}
-          >
-            <MaterialIcons
-              name={rating >= number ? "star" : "star-border"}
-              size={32}
-              style={
-                rating >= number ? styles.starSelected : styles.starUnselected
-              }
-            />
-          </TouchableOpacity>
-        );
-      })}
-    </View>
-  );
-
   const ratingStatistics = [
     {
       title: "Tap to rate:",
       dataPointCategories: [
         {
-          dataPoints: [{ customNode: rateProjectComponent }],
+          dataPoints: [
+            {
+              customNode: (
+                <RateProjectComponent
+                  projectId={projectId}
+                  userId={user.id}
+                  rating={rating}
+                />
+              ),
+            },
+          ],
         },
       ],
     },
@@ -271,9 +217,6 @@ const styles = StyleSheet.create({
     }),
   },
 
-  starUnselected: {
-    color: "#aaa",
-  },
   starSelected: {
     color: "#ffb300",
   },

@@ -207,6 +207,15 @@ export function useProjectRatings(projectId: number, userId: string) {
     mutate,
   };
 }
+export function useProjectRating(projectId: number, userId: string) {
+  const query = supabase
+    .from("project_ratings")
+    .select("rating")
+    .eq("user_id", userId)
+    .eq("project_id", projectId);
+  const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
+  return { data, error, isLoading, mutate };
+}
 
 //Project statistics
 export function useProjectStatistics(projectId: number, userId: string) {
@@ -348,7 +357,10 @@ export function useSets(
   projectId: number,
   refetchIndex?: number,
 ) {
-  const query = supabase.rpc("list_sets_for", { p_project_id: projectId, p_type: type });
+  const query = supabase.rpc("list_sets_for", {
+    p_project_id: projectId,
+    p_type: type,
+  });
 
   const { data, isLoading, error, mutate } = handleErrors(useQuery(query));
   useEffect(() => {
