@@ -1,13 +1,11 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { Platform, ScrollView, TouchableOpacity } from "react-native";
+import { Platform, ScrollView } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { supabase } from "../../supabase";
 import {
-  useDeleteProjectRating,
   useProjectRatings,
-  useUpsertProjectRating,
 } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";

@@ -8,7 +8,7 @@ import {
   useUpsertProjectRating,
 } from "../../../utils/hooks";
 
-export default function rateProjectComponent(props: {
+export default function RateProjectComponent(props: {
   projectId: number;
   userId: string;
   rating?: number;
