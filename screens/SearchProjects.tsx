@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, View, FlatList } from "react-native";
 import { Divider, HelperText, Searchbar } from "react-native-paper";
-import ProjectCard from "../components/learningProjects/ProjectCard";
+import ProjectCard from "../components/learningProject/ProjectCard";
 import { usePublicProjects } from "../utils/hooks";
 import { supabase } from "../supabase";
 

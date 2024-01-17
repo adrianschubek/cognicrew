@@ -12,9 +12,9 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import PrioritySelector from "./PrioritySelector";
-import { checkForLineBreak, debounce } from "../../utils/common";
-import { ManagementType } from "../../types/common";
+import PrioritySelector from "./PrioritySelector"
+import { checkForLineBreak, debounce } from "../../../utils/common";
+import { ManagementType } from "../../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import {
@@ -25,11 +25,11 @@ import {
   useUpsertExercise,
   useUpsertFlashcard,
   useUsername,
-} from "../../utils/hooks";
-import { supabase } from "../../supabase";
+} from "../../../utils/hooks";
+import { supabase } from "../../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useAuth } from "../../providers/AuthProvider";
-import { usePresenceStore } from "../../stores/PresenceStore";
+import { useAuth } from "../../../providers/AuthProvider";
+import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
 
 export default function EditFlashcardExerciseJoinedPart(props: {

@@ -4,13 +4,13 @@ import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
 import AccordionListItems from "./AccordionListItems";
-import { ManagementType, orderByPrinciple } from "../../types/common";
-import { useProjectStore } from "../../stores/ProjectStore";
-import { useSets } from "../../utils/hooks";
+import { ManagementType, orderByPrinciple } from "../../../types/common";
+import { useProjectStore } from "../../../stores/ProjectStore";
+import { useSets } from "../../../utils/hooks";
 import { Fragment, useEffect, useState } from "react";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { supabase } from "../../supabase";
-import { sortByOrder } from "../../utils/common";
+import LoadingOverlay from "../../alerts/LoadingOverlay";
+import { supabase } from "../../../supabase";
+import { sortByOrder } from "../../../utils/common";
 
 export default function AccordionSection(props: {
   type: ManagementType;

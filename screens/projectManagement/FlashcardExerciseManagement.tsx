@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { FAB, Text } from "react-native-paper";
-import AccordionSection from "../../components/learningProject/AccordionSection";
+import AccordionSection from "../../components/learningProject/flashcardExercise/AccordionSection";
 import { useEffect, useState } from "react";
 import AddFlashcards from "../../components/dialogues/AddFlashcards";
 import { ManagementType, orderByPrinciple } from "../../types/common";

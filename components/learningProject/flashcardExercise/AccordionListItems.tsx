@@ -5,12 +5,12 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { ManagementType, orderByPrinciple } from "../../types/common";
+import { ManagementType, orderByPrinciple } from "../../../types/common";
 import { useEffect, useState } from "react";
-import LoadingOverlay from "../alerts/LoadingOverlay";
-import { useExercises, useFlashcards } from "../../utils/hooks";
-import { supabase } from "../../supabase";
-import { sortByOrder } from "../../utils/common";
+import LoadingOverlay from "../../alerts/LoadingOverlay";
+import { useExercises, useFlashcards } from "../../../utils/hooks";
+import { supabase } from "../../../supabase";
+import { sortByOrder } from "../../../utils/common";
 import EditFlashcardExerciseJoinedPart from "./EditFlashcardExerciseJoinedPart";
 
 export default function AccordionListItems(props: {

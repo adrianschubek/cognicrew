@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, SafeAreaView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { Button } from "react-native-paper";
-import ProjectCard from "../components/learningProjects/ProjectCard";
+import ProjectCard from "../components/learningProject/ProjectCard";
 import { useAuth } from "../providers/AuthProvider";
 
 import { useRecommendations } from "../utils/hooks";

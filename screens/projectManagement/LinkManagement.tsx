@@ -10,7 +10,7 @@ import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import LinkCard from "../../components/learningProject/LinkCard";
+import LinkCard from "../../components/learningProject/link/LinkCard";
 import { useLinks, useUpsertLink } from "../../utils/hooks";
 import { useEffect, useState } from "react";
 import { useProjectStore } from "../../stores/ProjectStore";

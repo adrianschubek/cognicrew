@@ -12,7 +12,7 @@ import {
 import {
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import { useDeleteLink } from "../../utils/hooks";
+import { useDeleteLink } from "../../../utils/hooks";
 
 export default function LinkCard({ link, onEdit }) {
   const [expandedId, setExpandedId] = useState(null);

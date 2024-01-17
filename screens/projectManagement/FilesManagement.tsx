@@ -6,7 +6,7 @@
 import React, { Fragment } from "react";
 import { View, StyleSheet, VirtualizedList } from "react-native";
 import { Divider, FAB, HelperText, List } from "react-native-paper";
-import FileCategory from "../../components/learningProject/FileCategory";
+import FileCategory from "../../components/learningProject/file/FileCategory";
 import { useProjectStore } from "../../stores/ProjectStore";
 import {
   selectAndUploadFile,

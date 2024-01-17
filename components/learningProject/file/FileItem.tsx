@@ -7,13 +7,13 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { IconButton, List, useTheme } from "react-native-paper";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
-import { supabase } from "../../supabase";
+import { supabase } from "../../../supabase";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import { useAlerts } from "react-native-paper-fastalerts";
 //import { useDeleteFile } from "../../utils/hooks";
-import { usePrivateFileUrl } from "../../utils/hooks";
-import LoadingOverlay from "../alerts/LoadingOverlay";
+import { usePrivateFileUrl } from "../../../utils/hooks";
+import LoadingOverlay from "../../alerts/LoadingOverlay";
 import * as Sharing from "expo-sharing";
 
 export default function FileItem({ file, filePath, folder, icon }) {

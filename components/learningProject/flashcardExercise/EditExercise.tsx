@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import TextInputWithCheckbox from "../common/TextInputWithCheckbox";
-import { useAnswersExercises } from "../../utils/hooks";
-import LoadingOverlay from "../alerts/LoadingOverlay";
+import TextInputWithCheckbox from "../../common/TextInputWithCheckbox";
+import { useAnswersExercises } from "../../../utils/hooks";
+import LoadingOverlay from "../../alerts/LoadingOverlay";
 import { HelperText, IconButton, Text, useTheme } from "react-native-paper";
 import { View } from "react-native";
-import { supabase } from "../../supabase";
+import { supabase } from "../../../supabase";
 
 export default function EditExercise(props: {
   listItem: any;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Button, Card, Icon, Text, useTheme } from "react-native-paper";
 import { useAlerts } from "react-native-paper-fastalerts";
-import LearningProjectAvatarWithTitle from "../learningProject/LearningProjectAvatarWithTitle";
+import LearningProjectAvatarWithTitle from "./LearningProjectAvatarWithTitle";
 import { supabase } from "../../supabase";
 import { useNavigation } from "@react-navigation/native";
 import { NAVIGATION } from "../../types/common";
