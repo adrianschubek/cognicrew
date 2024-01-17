@@ -3,12 +3,16 @@ import { useDeleteSet, useUpsertSet } from "../../../utils/hooks";
 import { Fragment, useEffect, useRef, useState } from "react";
 import React from "react";
 import { useProjectStore } from "../../../stores/ProjectStore";
+import { useRefetchIndexStore } from "../../../stores/BackendCommunicationStore";
 
 export default function TextInputListItem({ item }) {
   const { isMutating, trigger: deleteSet } = useDeleteSet();
   const { isMutating: isMutating2, trigger: upsertSet } = useUpsertSet();
   const [title, setTitle] = useState(item.name);
   const projectId = useProjectStore((state) => state.projectId);
+  const incrementRefetchIndex = useRefetchIndexStore(
+    (state) => state.incrementRefetchIndex,
+  );
   const save = () => {
     if (title === "") {
       return;
@@ -19,6 +23,8 @@ export default function TextInputListItem({ item }) {
       name: title,
       type: item.type,
       project_id: projectId,
+    }).then(() => {
+      incrementRefetchIndex();
     });
   };
   const saveRef = useRef(save);
@@ -49,7 +55,9 @@ export default function TextInputListItem({ item }) {
             disabled={isMutating || isMutating2}
             onPress={() => {
               shouldSaveRef.current = false;
-              deleteSet({ id: item.id });
+              deleteSet({ id: item.id }).then(() => {
+                incrementRefetchIndex();
+              });
             }}
           />
         }

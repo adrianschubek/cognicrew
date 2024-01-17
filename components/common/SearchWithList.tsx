@@ -7,6 +7,7 @@ import MultifunctionalList from "./MultifunctionalList";
 import LoadingOverlay from "../alerts/LoadingOverlay";
 import { useSets } from "../../utils/hooks";
 import { useProjectStore } from "../../stores/ProjectStore";
+import { useRefetchIndexStore } from "../../stores/BackendCommunicationStore";
 
 export default function SearchWithList(props: {
   type: ManagementType;
@@ -22,12 +23,16 @@ export default function SearchWithList(props: {
   const projectId = useProjectStore((state) => state.projectId);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [setId, setSetId] = useState(null);
-  const { data, isLoading, error } = useSets(props.type, projectId);
+  const { data, isLoading, error, mutate } = useSets(props.type, projectId);
+  const refetchIndex = useRefetchIndexStore((state) => state.refetchIndex);
   useEffect(() => {
     if (!data) return;
     //console.log(data);
     setFiltered(data);
   }, [data]);
+  useEffect(() => {
+    mutate();
+  }, [refetchIndex]);
   const [filtered, setFiltered] = useState([]);
   //const [isSearching, setIsSearching] = useState(false);
   const handleSearch = (query) => {
