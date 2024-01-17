@@ -48,8 +48,7 @@ export default function RateProjectComponent(props: {
     debouncedBackendCall(projectId, userId, rating);
   }, [rating, debouncedBackendCall]);
 
-  //this component is basically a way to get the rating conditionally from the backend, because 
-  //god forbid we make two backend calls for RateProject when we can do it with only one! @Alex 
+
   function GetRating(props: {
     sendRating: (rating: number) => void;
     sendIsInitialized?: (isInitialized: boolean) => void;
