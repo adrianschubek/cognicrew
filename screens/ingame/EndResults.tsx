@@ -1,15 +1,8 @@
 import { ScrollView, View } from "react-native";
-import { Card, Divider, Text, useTheme } from "react-native-paper";
-import { useEffect, useMemo } from "react";
-import Animated, {
-  useAnimatedStyle,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated";
-import { useSharedValue } from "react-native-reanimated";
+import { Divider, Text, useTheme } from "react-native-paper";
+import { useMemo } from "react";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
-import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
 import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
