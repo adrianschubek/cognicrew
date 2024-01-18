@@ -334,9 +334,8 @@ export default function MainNav() {
     <>
       <>
         {loaded && <MusicPlayer />}
-        {/*<SetAchievementIds userId={user.id} />
-        <AchievementAlert userId={user.id} />*/}
-        {/* for hiding achievements */}
+        <SetAchievementIds userId={user.id} />
+        <AchievementAlert userId={user.id} />
       </>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={"_main_"} component={MainTabs} />

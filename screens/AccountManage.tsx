@@ -31,9 +31,7 @@ export default function AccountManage({ navigation }) {
             <Icon
               color={focused ? theme.colors.primary : theme.colors.secondary}
               source={
-                /*unlockedAchievementIds.length > 0*/ false
-                  ? "trophy"
-                  : "lock-question" //hiding achievements
+                unlockedAchievementIds.length > 0 ? "trophy" : "lock-question"
               }
               size={24}
             />
@@ -45,11 +43,7 @@ export default function AccountManage({ navigation }) {
                 color: focused ? theme.colors.primary : theme.colors.secondary,
               }}
             >
-              {
-                /*unlockedAchievementIds.length > 0*/ false
-                  ? "Achievements"
-                  : " ??? " //hiding achievements
-              }
+              {unlockedAchievementIds.length > 0 ? "Achievements" : " ??? "}
             </Text>
           ),
         }}
