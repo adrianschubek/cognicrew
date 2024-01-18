@@ -81,13 +81,15 @@ export default function ManageFriends({ navigation }) {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   // callbacks
   const handlePresentModalPress = useCallback(() => {
-    if (isRequestsModalVisible) {
-      bottomSheetModalRef.current?.dismiss();
-    } else {
-      bottomSheetModalRef.current?.present();
-    }
-    setIsRequestsModalVisible(!isRequestsModalVisible);
-  }, [isRequestsModalVisible]);
+    setIsRequestsModalVisible((prevState) => {
+      if (prevState) {
+        bottomSheetModalRef.current?.dismiss();
+      } else {
+        bottomSheetModalRef.current?.present();
+      }
+      return !prevState;
+    });
+  }, []);
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -175,8 +177,7 @@ export default function ManageFriends({ navigation }) {
               alignItems: "flex-end",
               paddingBottom: 8,
             }}
-          >
-          </View>
+          ></View>
           <Searchbar
             style={{
               marginBottom: 8,

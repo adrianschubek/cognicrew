@@ -1,16 +1,8 @@
-import {
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useCallback, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
-import {
-  Divider,
-  Icon,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { Divider, Icon, Text, useTheme } from "react-native-paper";
 import FriendItem from "./FriendItem";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useDeleteFriendRequest, useInsertFriend } from "../../utils/hooks";
@@ -23,7 +15,13 @@ export default function FriendRequestModal(props: {
 }) {
   const theme = useTheme();
   const snapPoints = useMemo(() => ["50%", "87%"], []);
-  const { friendRequestsSent, friendRequestsReceived, userId } = props;
+  const {
+    bottomSheetModalRef,
+    friendRequestsSent,
+    friendRequestsReceived,
+    userId,
+    onDismiss,
+  } = props;
   const { info } = useAlerts();
   const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
@@ -31,14 +29,13 @@ export default function FriendRequestModal(props: {
   const handleSheetChanges = useCallback((index: number) => {
     //console.log("handleSheetChanges", index);
   }, []);
-
   return (
     <BottomSheetModal
-      ref={props.bottomSheetModalRef}
+      ref={bottomSheetModalRef}
       index={1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
-      onDismiss={props.onDismiss}
+      onDismiss={onDismiss}
       handleStyle={{ backgroundColor: null }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}
       backgroundStyle={{
@@ -100,7 +97,7 @@ export default function FriendRequestModal(props: {
                 />
               ))}
               {friendRequestsSent.length > 0 && (
-                <Divider style={styles.divider} />
+                <Divider style={{ height: 1, marginVertical: 8 }} />
               )}
             </View>
           )}
@@ -139,10 +136,6 @@ export default function FriendRequestModal(props: {
   );
 }
 const styles = StyleSheet.create({
-  divider: {
-    height: 1,
-    marginVertical: 8,
-  },
   section: {
     gap: 8,
   },
