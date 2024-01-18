@@ -1,6 +1,6 @@
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { View, StyleSheet } from "react-native";
 import { Divider, Icon, Text, useTheme } from "react-native-paper";
 import FriendItem from "./FriendItem";
@@ -11,7 +11,7 @@ export default function FriendRequestModal(props: {
   friendRequestsSent: any[];
   friendRequestsReceived: any[];
   userId: string;
-  onDismiss: () => void;
+  onChange: () => void;
 }) {
   const theme = useTheme();
   const snapPoints = useMemo(() => ["50%", "87%"], []);
@@ -20,14 +20,14 @@ export default function FriendRequestModal(props: {
     friendRequestsSent,
     friendRequestsReceived,
     userId,
-    onDismiss,
+    onChange,
   } = props;
   const { info } = useAlerts();
   const { trigger: deleteFriendRequest } = useDeleteFriendRequest();
   const { trigger: addFriend } = useInsertFriend();
   const sectionTitleVariant = "titleMedium";
   const handleSheetChanges = useCallback((index: number) => {
-    //console.log("handleSheetChanges", index);
+    onChange();
   }, []);
   return (
     <BottomSheetModal
@@ -35,7 +35,6 @@ export default function FriendRequestModal(props: {
       index={1}
       snapPoints={snapPoints}
       onChange={handleSheetChanges}
-      onDismiss={onDismiss}
       handleStyle={{ backgroundColor: null }}
       handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}
       backgroundStyle={{
