@@ -14,7 +14,7 @@ import { useConfirmLeaveLobby } from "../utils/hooks";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../providers/AuthProvider";
 import { useRoomStateStore } from "../stores/RoomStore";
-import Timer from "../components/IngameComponents/Timer";
+import Timer from "../components/ingameComponents/Timer";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";

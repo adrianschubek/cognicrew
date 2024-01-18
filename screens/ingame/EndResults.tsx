@@ -1,20 +1,19 @@
 import { ScrollView, View } from "react-native";
-import { Avatar, Card, Divider, Text, useTheme } from "react-native-paper";
+import { Card, Divider, Text, useTheme } from "react-native-paper";
 import { useEffect, useMemo } from "react";
 import Animated, {
-  Easing,
   useAnimatedStyle,
   withDelay,
   withTiming,
 } from "react-native-reanimated";
 import { useSharedValue } from "react-native-reanimated";
 import { useRoomStateStore } from "../../stores/RoomStore";
-import { getRandomColor } from "../../utils/common";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
 import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
 import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
+import ScorePedestal from "../../components/ingameComponents/ScorePedestal";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
@@ -93,77 +92,13 @@ export default function EndResults({ navigation }) {
           }}
         >
           {reSortedPlayers.map((player, index) => {
-            const height = useSharedValue(0);
-            const opacity = useSharedValue(0);
-            useEffect(() => {
-              opacity.value = 1;
-              height.value =
-                (player.score < 10 ? 10 : player.score) * 2 * maxheight;
-            }, []);
-            const animatedStyles = useAnimatedStyle(() => {
-              return {
-                height: withDelay(
-                  400 * (sortedPlayers.length - player.position),
-                  withTiming(height.value, {
-                    duration: 1200,
-                    easing: Easing.inOut(Easing.poly(3)),
-                  }),
-                ),
-              };
-            });
-            const animatedAvatarStyles = useAnimatedStyle(() => {
-              return {
-                opacity: withDelay(
-                  400 + 400 * (sortedPlayers.length - player.position),
-                  withTiming(opacity.value, {
-                    duration: 1000,
-                  }),
-                ),
-              };
-            });
             return (
-              <View
-                key={player.id}
-                style={{
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <Animated.View style={[animatedAvatarStyles]}>
-                  <ProfilePictureAvatar
-                    userId={player.id}
-                    username={player.username}
-                    size={35}
-                  />
-                </Animated.View>
-                <Animated.View
-                  key={index}
-                  style={[
-                    {
-                      width: 65,
-                      backgroundColor: getRandomColor(player.username),
-                      justifyContent: "flex-end",
-                      alignItems: "center",
-                    },
-                    animatedStyles,
-                  ]}
-                >
-                  <Text
-                    variant="bodyMedium"
-                    style={{ color: theme.colors.background, paddingBottom: 4 }}
-                  >
-                    {player.position}
-                    {player.position === 1
-                      ? "st"
-                      : player.position === 2
-                      ? "nd"
-                      : player.position === 3
-                      ? "rd"
-                      : "th"}
-                  </Text>
-                </Animated.View>
-              </View>
+              <ScorePedestal
+                key={index}
+                player={player}
+                playerAmount={sortedPlayers.length}
+                maxheight={maxheight}
+              />
             );
           })}
         </View>

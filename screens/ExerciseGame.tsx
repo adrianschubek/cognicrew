@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
-import Timer from "../components/IngameComponents/Timer";
+import Timer from "../components/ingameComponents/Timer";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useSoundsStore } from "../stores/SoundsStore";
