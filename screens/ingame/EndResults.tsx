@@ -14,6 +14,7 @@ import RateProjectComponent from "../../components/learningProject/rating/RatePr
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
 import ScorePedestal from "../../components/ingameComponents/ScorePedestal";
+import ScoreCard from "../../components/ingameComponents/ScoreCard";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
@@ -106,81 +107,12 @@ export default function EndResults({ navigation }) {
       </View>
       <ScrollView style={{ flexDirection: "column", marginTop: 30 }}>
         {sortedPlayers.reverse().map((player, index) => {
-          const translateY = useSharedValue(-70);
-          const opacity = useSharedValue(0);
-          useEffect(() => {
-            (translateY.value += 70), (opacity.value = 1);
-          }, []);
-          const animatedStyles = useAnimatedStyle(() => ({
-            opacity: withDelay(
-              400 * (sortedPlayers.length - (index + 1)),
-              withTiming(opacity.value, { duration: 2000 }),
-            ),
-            transform: [
-              {
-                translateY: withDelay(
-                  400 * (sortedPlayers.length - (index + 1)),
-                  withTiming(translateY.value * 2, { duration: 1000 }),
-                ),
-              },
-            ],
-          }));
           return (
-            <Animated.View
+            <ScoreCard
               key={index}
-              style={[
-                {
-                  width: 350,
-                  height: 70,
-                  marginBottom: 10,
-                },
-                animatedStyles,
-              ]}
-            >
-              <Card
-                mode="outlined"
-                style={[{ borderColor: theme.colors.primary }]}
-              >
-                <Card.Content
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    gap: 5,
-                  }}
-                >
-                  <Text style={{ textAlign: "center" }}>
-                    {index + 1}
-                    {index === 0
-                      ? "st"
-                      : index === 1
-                      ? "nd"
-                      : index === 2
-                      ? "rd"
-                      : "th"}{" "}
-                  </Text>
-                  <ProfilePictureAvatar
-                    userId={player.id}
-                    username={player.username}
-                    size={35}
-                  />
-                  <View
-                    style={{
-                      marginLeft: 5,
-                      justifyContent: "flex-start",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Text style={{ textAlign: "center" }}>
-                      {player.username}
-                    </Text>
-                    <Text style={{ textAlign: "center" }}>
-                      Score: {player.score}
-                    </Text>
-                  </View>
-                </Card.Content>
-              </Card>
-            </Animated.View>
+              player={player}
+              playerAmount={sortedPlayers.length}
+            />
           );
         })}
         {roomState.round === roomState.totalRounds && (
