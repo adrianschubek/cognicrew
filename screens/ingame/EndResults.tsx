@@ -5,7 +5,6 @@ import { useRoomStateStore } from "../../stores/RoomStore";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
 import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
 import { useAuth } from "../../providers/AuthProvider";
-import { useProjectStore } from "../../stores/ProjectStore";
 import ScorePedestal from "../../components/ingameComponents/ScorePedestal";
 import ScoreCard from "../../components/ingameComponents/ScoreCard";
 
@@ -14,7 +13,7 @@ export default function EndResults({ navigation }) {
   const roomState = useRoomStateStore((state) => state.roomState);
   const theme = useTheme();
   const userId = useAuth().user.id;
-  const projectId = useProjectStore((state) => state.projectId);
+  const projectId = roomState.projectId;
   const allPlayers = roomState.players;
   //const allPlayers = [...otherPlayers, self];
   //lowest to highest and only the first five  players
