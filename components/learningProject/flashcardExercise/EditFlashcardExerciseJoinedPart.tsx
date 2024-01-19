@@ -29,7 +29,7 @@ import { supabase } from "../../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
-import LivePresenceFunctionality from "./livePresenceFunctionality";
+import LivePresenceFunctionality from "./LivePresenceFunctionality";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -96,8 +96,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //answers need to be updated
-          //console.log("initialAnswersLength: ", initialLength);
-          //console.log("answerOrAnswers ", answerOrAnswers);
           deleteAnswers(initialLength, answerOrAnswers);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
@@ -216,7 +214,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  console.log("isEditing: ", isEditing);
   return (
     <>
       <Card
