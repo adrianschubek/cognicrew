@@ -665,6 +665,12 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      close_room_when_host_left: {
+        Args: {
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       copy_learning_project: {
         Args: {
           p_source_id: number
@@ -767,6 +773,7 @@ export interface Database {
           project_name: string
           project_description: string
           project_created_at: string
+          project_group: string
           project_tags: string
           project_owner_id: string
           project_is_published: boolean
@@ -783,6 +790,7 @@ export interface Database {
           project_name: string
           project_description: string
           project_created_at: string
+          project_group: string
           project_tags: string
           project_owner_id: string
           project_is_published: boolean

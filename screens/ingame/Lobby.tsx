@@ -14,6 +14,7 @@ import { responsiveWidth } from "react-native-responsive-dimensions";
 import { handleEdgeError } from "../../utils/common";
 import { RoomClientInit } from "../../functions/rooms";
 import ProfilePictureAvatar from "../../components/profile/ProfilePictureAvatar";
+import { useAuth } from "../../providers/AuthProvider";
 
 export default function Lobby({ navigation }) {
   const theme = useTheme();
@@ -21,10 +22,27 @@ export default function Lobby({ navigation }) {
 
   const room = useRoomStore((state) => state.room);
   const setRoomState = useRoomStateStore((state) => state.setRoomState);
+  const getRoomState = useRoomStateStore();
   const setRoom = useRoomStore((state) => state.setRoom);
   const [userList, setUserList] = useState<{ id: string; username: string }[]>(
     [],
   );
+
+  const { user } = useAuth();
+  const players = getRoomState.roomState.players
+  if (players.find(player => player.id === user.id)["isHost"] === true) {
+    const roomHosted = supabase.channel("rooms");
+    const userStatus = {
+      userId: user.id,
+    };
+    roomHosted.subscribe(async (status) => {
+      if (status !== "SUBSCRIBED") {
+        return;
+      }
+      const presenceTrackStatus = await roomHosted.track(userStatus);
+      console.log(presenceTrackStatus);
+    });
+  }
 
   useEffect(() => {
     const fetchData = async () => {

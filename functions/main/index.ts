@@ -38,6 +38,7 @@ async function verifyJWT(jwt: string): Promise<boolean> {
   return true;
 }
 
+
 /**
  * Game Loop interval helpers
  */
@@ -76,6 +77,7 @@ const supabase = createClient<Database>(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
+
 // @ from rooms.ts
 enum ScreenState {
   LOBBY = "lobby",
@@ -100,6 +102,21 @@ const enum State {
 const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
+
+//Handle removal of room if host left the room
+const rooms = supabase.channel('rooms')
+const hosts = new Map();
+rooms
+  .on('presence', { event: 'join' }, ({ key, newPresence }) => {
+    hosts.set(key, newPresence.userId)
+  })
+  .on('presence', { event: 'leave' }, ({ key, leftPresence }) => {
+    console.log('leave', key, leftPresence)
+    supabase.rpc("close_room_when_host_left", {p_user_id: hosts.get(key)})
+    hosts.delete(key)
+  })
+  .subscribe()
+//Handle removal of room if host left the room
 
 async function mainLoop() {
   const start = performance.now();
