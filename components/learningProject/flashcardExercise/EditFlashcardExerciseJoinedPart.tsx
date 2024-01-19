@@ -31,6 +31,7 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import { useAuth } from "../../../providers/AuthProvider";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
+import LivePresenceFunctionality from "./livePresenceFunctionality";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
@@ -40,7 +41,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [listItem, setListItem] = useState(initialListItem);
   useEffect(() => {
     setListItem(initialListItem);
-    console.log("initialListItem: ", listItem);
   }, [initialListItem]);
   const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
@@ -217,181 +217,141 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   }, [answerOrAnswers, priority, question]);
 
   const theme = useTheme();
-  const { user } = useAuth();
-  const username = useUsername();
-
-  const updateEditedBy = usePresenceStore(
-    (state) => state.updateCardQuizEditing,
-  );
-
-  const realtime = useRef(
-    supabase.channel(`cardquiz:edit:${listItem.id}`, {
-      config: { presence: { key: user.id } },
-    }),
-  );
-
-  useEffect(() => {
-    realtime.current
-      .on("presence", { event: "sync" }, () => {
-        const newState = realtime.current.presenceState();
-        // console.log(
-        //   `sync cardquiz:edit:${listItem.id}`,
-        //   newState,
-        //   Object.values(newState).flatMap((e: any) => e[0].user_name),
-        // );
-        updateEditedBy(
-          listItem.id,
-          Object.values(newState)
-            // @ts-expect-error user_name not defined
-            .filter((u) => u[0].user_name !== username.data)
-            .flatMap((e: any) => e[0].user_name as string),
-        );
-      })
-      .subscribe();
-  }, []);
-
-  const startEditing = async () => {
-    const presenceTrackStatus = await realtime.current.track({
-      user_name: username.data,
-    });
-    // console.log(presenceTrackStatus);
-  };
-
-  const endEditing = async () => {
-    const presenceTrackStatus = await realtime.current.untrack();
-    // console.log(presenceTrackStatus);
-  };
-
   const liveEditBy =
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
-  // console.log("liveEditBy: ", liveEditBy);
-
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   return (
-    <Card
-      elevation={1}
-      style={[
-        {
-          width: responsiveWidth(100) - responsiveHeight(2),
-          marginTop: 8,
-          marginBottom: 8,
-          alignSelf: "center",
-        },
-        liveEditBy.length > 0 && {
-          backgroundColor: theme.colors.primaryContainer,
-          borderColor: theme.colors.primary,
-          borderWidth: 2,
-        },
-      ]}
-    >
-      <Card.Title
-        title="Edit question"
-        titleStyle={{
-          color: theme.colors.primary,
-        }}
-        right={() => (
-          <Fragment>
-            <View
+    <>
+      <LivePresenceFunctionality
+        listItemId={listItem.id}
+        isEditing={isEditing}
+      />
+      <Card
+        elevation={1}
+        style={[
+          {
+            width: responsiveWidth(100) - responsiveHeight(2),
+            marginTop: 8,
+            marginBottom: 8,
+            alignSelf: "center",
+          },
+          liveEditBy.length > 0 && {
+            backgroundColor: theme.colors.primaryContainer,
+            borderColor: theme.colors.primary,
+            borderWidth: 2,
+          },
+        ]}
+      >
+        <Card.Title
+          title="Edit question"
+          titleStyle={{
+            color: theme.colors.primary,
+          }}
+          right={() => (
+            <Fragment>
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginBottom: 8,
+                  marginTop: 8,
+                  justifyContent: "flex-end",
+                }}
+              >
+                <PrioritySelector
+                  priority={priority}
+                  setPriority={(val) => {
+                    setPriority(val);
+                  }}
+                />
+                <IconButton
+                  testID="delete-flashcard-button"
+                  icon="delete"
+                  onPress={() => {
+                    alerts.confirm({
+                      icon: "delete",
+                      message: "Are you sure you want to delete this question?",
+                      okText: "Delete",
+                      okAction(values) {
+                        deleteFlashcardOrExercise();
+                      },
+                    });
+                  }}
+                  style={{ alignSelf: "center" }}
+                />
+              </View>
+            </Fragment>
+          )}
+        />
+        <Card.Content>
+          {liveEditBy.length > 0 && (
+            <Text
               style={{
-                flexDirection: "row",
+                width: "auto",
+                textAlign: "center",
+                verticalAlign: "middle",
+                paddingVertical: 4,
                 marginBottom: 8,
-                marginTop: 8,
-                justifyContent: "flex-end",
+                marginLeft: -16,
+                marginRight: -16,
+                color: theme.colors.onPrimary,
+                backgroundColor: theme.colors.onPrimaryContainer,
               }}
             >
-              <PrioritySelector
-                priority={priority}
-                setPriority={(val) => {
-                  setPriority(val);
-                }}
+              {liveEditBy.length === 1
+                ? `${liveEditBy[0]} is`
+                : liveEditBy.length === 2
+                ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
+                : "Multiple people are"}{" "}
+              editing this question{" "}
+              <Icon
+                color={theme.colors.onPrimary}
+                source={"account-multiple"}
+                size={16}
               />
-              <IconButton
-                testID="delete-flashcard-button"
-                icon="delete"
-                onPress={() => {
-                  alerts.confirm({
-                    icon: "delete",
-                    message: "Are you sure you want to delete this question?",
-                    okText: "Delete",
-                    okAction(values) {
-                      deleteFlashcardOrExercise();
-                    },
-                  });
-                }}
-                style={{ alignSelf: "center" }}
-              />
-            </View>
-          </Fragment>
-        )}
-      />
-      <Card.Content>
-        {liveEditBy.length > 0 && (
-          <Text
-            style={{
-              width: "auto",
-              textAlign: "center",
-              verticalAlign: "middle",
-              paddingVertical: 4,
-              marginBottom: 8,
-              marginLeft: -16,
-              marginRight: -16,
-              color: theme.colors.onPrimary,
-              backgroundColor: theme.colors.onPrimaryContainer,
+            </Text>
+          )}
+          <TextInput
+            testID="input-edit-flashcard-question"
+            style={{ marginBottom: 8 }}
+            multiline={true}
+            label="Question"
+            value={question}
+            onFocus={() => setIsEditing(true)}
+            onBlur={() => setIsEditing(false)}
+            onChangeText={(question) => {
+              setQuestion(question);
             }}
-          >
-            {liveEditBy.length === 1
-              ? `${liveEditBy[0]} is`
-              : liveEditBy.length === 2
-              ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
-              : "Multiple people are"}{" "}
-            editing this question{" "}
-            <Icon
-              color={theme.colors.onPrimary}
-              source={"account-multiple"}
-              size={16}
+          />
+          {type === ManagementType.EXERCISE ? (
+            <EditExercise
+              listItem={listItem}
+              sendAnswers={(val) => setAnswerOrAnswers(val)}
+              sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
+              updateCacheTrigger={updateCache}
+              onStartEditing={() => setIsEditing(true)}
+              onFinishEditing={() => setIsEditing(false)}
             />
-          </Text>
-        )}
-        <TextInput
-          testID="input-edit-flashcard-question"
-          style={{ marginBottom: 8 }}
-          multiline={true}
-          label="Question"
-          value={question}
-          onFocus={startEditing}
-          onBlur={endEditing}
-          onChangeText={(question) => {
-            setQuestion(question);
-          }}
-        />
-        {type === ManagementType.EXERCISE ? (
-          <EditExercise
-            listItem={listItem}
-            sendAnswers={(val) => setAnswerOrAnswers(val)}
-            sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
-            updateCacheTrigger={updateCache}
-            onStartEditing={startEditing}
-            onFinishEditing={endEditing}
-          />
-        ) : (
-          <EditFlashcard
-            listItem={listItem}
-            sendAnswer={(val) => setAnswerOrAnswers(val)}
-            onStartEditing={startEditing}
-            onFinishEditing={endEditing}
-          />
-        )}
-        {showErrorUpload && errorText !== "" && (
-          <HelperText
-            style={{ paddingHorizontal: 0 }}
-            type="error"
-            visible={showErrorUpload}
-          >
-            {errorText}
-          </HelperText>
-        )}
-      </Card.Content>
-    </Card>
+          ) : (
+            <EditFlashcard
+              listItem={listItem}
+              sendAnswer={(val) => setAnswerOrAnswers(val)}
+              onStartEditing={() => setIsEditing(true)}
+              onFinishEditing={() => setIsEditing(false)}
+            />
+          )}
+          {showErrorUpload && errorText !== "" && (
+            <HelperText
+              style={{ paddingHorizontal: 0 }}
+              type="error"
+              visible={showErrorUpload}
+            >
+              {errorText}
+            </HelperText>
+          )}
+        </Card.Content>
+      </Card>
+    </>
   );
 }
