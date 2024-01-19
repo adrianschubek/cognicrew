@@ -29,20 +29,18 @@ export default function Lobby({ navigation }) {
   );
 
   const { user } = useAuth();
-  const players = getRoomState.roomState.players
-  if (players.find(player => player.id === user.id)["isHost"] === true) {
-    const roomHosted = supabase.channel("rooms");
-    const userStatus = {
-      userId: user.id,
-    };
-    roomHosted.subscribe(async (status) => {
-      if (status !== "SUBSCRIBED") {
-        return;
-      }
-      const presenceTrackStatus = await roomHosted.track(userStatus);
-      console.log(presenceTrackStatus);
-    });
-  }
+
+  const roomHosted = supabase.channel("rooms");
+  const userStatus = {
+    userId: user.id,
+  };
+  roomHosted.subscribe(async (status) => {
+    if (status !== "SUBSCRIBED") {
+      return;
+    }
+    const presenceTrackStatus = await roomHosted.track(userStatus);
+    console.log(presenceTrackStatus);
+  });
 
   useEffect(() => {
     const fetchData = async () => {

@@ -38,7 +38,6 @@ async function verifyJWT(jwt: string): Promise<boolean> {
   return true;
 }
 
-
 /**
  * Game Loop interval helpers
  */
@@ -77,7 +76,6 @@ const supabase = createClient<Database>(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
 );
 
-
 // @ from rooms.ts
 enum ScreenState {
   LOBBY = "lobby",
@@ -104,18 +102,41 @@ const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
 //Handle removal of room if host left the room
-const rooms = supabase.channel('rooms')
+const rooms = supabase.channel("rooms");
 const hosts = new Map();
 rooms
-  .on('presence', { event: 'join' }, ({ key, newPresence }) => {
-    hosts.set(key, newPresence.userId)
+  .on("presence", { event: "join" }, ({ key, newPresence }) => {
+    const { data: publicRoomStates } = supabase
+      .from("public_room_states")
+      .select("data,room_id");
+      for (const room of publicRoomStates) {
+        const publicState = room.data as PublicRoomState;
+        for (const playerId in publicState.players) {
+          const player = publicState.players[playerId];
+          if (newPresence.userId === player.id && player.isHost) {
+            hosts.set(key, newPresence.userId);
+          }
+        }
+      }
   })
-  .on('presence', { event: 'leave' }, ({ key, leftPresence }) => {
-    console.log('leave', key, leftPresence)
-    supabase.rpc("close_room_when_host_left", {p_user_id: hosts.get(key)})
-    hosts.delete(key)
+  .on("presence", { event: "leave" }, ({ key, leftPresence }) => {
+    console.log("leave", key, leftPresence);
+    const { data: publicRoomStates } = supabase
+      .from("public_room_states")
+      .select("data,room_id");
+    for (const room of publicRoomStates) {
+      const publicState = room.data as PublicRoomState;
+      const hostPlayer = publicState.players.find(
+        (player) =>
+          player.isHost === true && hosts.get(key) == player.id,
+      );
+      supabase.rpc("close_room_when_host_left", {
+        p_user_id: hostPlayer,
+      });
+      hosts.delete(key);
+    }
   })
-  .subscribe()
+  .subscribe();
 //Handle removal of room if host left the room
 
 async function mainLoop() {
@@ -143,6 +164,7 @@ async function mainLoop() {
     const privateState = privateRoomStates.find(
       (prs) => prs.room_id === room.room_id,
     )?.data as PrivateRoomState;
+
     // safeguard for unexpected desync
     if (!privateState) continue;
 
