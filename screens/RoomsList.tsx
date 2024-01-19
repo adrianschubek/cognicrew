@@ -108,7 +108,6 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
 
   useEffect(() => {
     if (!data || isLoading) return;
-    console.log(data);
     setRooms(data.rooms);
     setFriends(data.friends);
   }, [data]);
