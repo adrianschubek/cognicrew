@@ -252,6 +252,7 @@ serve(async (req) => {
           gameBeganAt: dayjs().valueOf(),
           roundBeganAt: dayjs().valueOf(),
           roundEndsAt: dayjs().add(body.roundDuration, "second").valueOf(),
+          projectId: pid,
         };
         // console.log(publicState);
         break;

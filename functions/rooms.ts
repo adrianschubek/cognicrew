@@ -103,6 +103,10 @@ export type PublicRoomState = {
    * Round ends at timestamp milliseconds
    */
   roundEndsAt: number;
+   /**
+   * Learning project id
+   */
+   projectId: number;
 };
 
 /**
