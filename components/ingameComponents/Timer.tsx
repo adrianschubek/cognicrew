@@ -24,7 +24,6 @@ export default function Timer(props: {
         onTimeUp={onTimeUp}
         sendUpdate={(remainingTime) => {
           setRemainingTime(remainingTime);
-          console.log(remainingTime);
         }}
       />
       <ProgressBar

@@ -15,7 +15,7 @@ export default function TimingFunction(props: {
       () => setRemainingTime((prevTime) => prevTime - intervall / 1000),
       intervall,
     );
-    
+
     remainingTime <= 0 && clearInterval(sec);
     return () => {
       clearInterval(sec);

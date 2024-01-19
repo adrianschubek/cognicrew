@@ -1,12 +1,13 @@
 import { ScrollView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
 import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";
 import { useAuth } from "../../providers/AuthProvider";
 import ScorePedestal from "../../components/ingameComponents/ScorePedestal";
 import ScoreCard from "../../components/ingameComponents/ScoreCard";
+import TimingFunction from "../../components/common/TimingFunction";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
@@ -58,7 +59,32 @@ export default function EndResults({ navigation }) {
   if (highestScore > 250) {
     maxheight = 250 / highestScore;
   }
-
+  const MemoTimer = useMemo(() => <BottomTimer />, [roomState?.roundEndsAt]);
+  function BottomTimer() {
+    const amountOfSeconds = useMemo(() => 10, [roomState.roundEndsAt]);
+    const [remainingTime, setRemainingTime] = useState<number>(amountOfSeconds);
+    return (
+      <>
+        <TimingFunction
+          amountOfSeconds={amountOfSeconds}
+          intervall={1000}
+          sendUpdate={(newTime) => {
+            setRemainingTime(newTime);
+          }}
+        />
+        <Text
+          variant="bodySmall"
+          style={{
+            textAlign: "center",
+            color: theme.colors.onSecondaryContainer,
+            marginTop: 10,
+          }}
+        >
+          Returning to lobby after {remainingTime}s...
+        </Text>
+      </>
+    );
+  }
   return (
     <View
       style={{
@@ -113,16 +139,7 @@ export default function EndResults({ navigation }) {
               <Text variant="bodySmall">Rate this project:</Text>
               <RateProjectComponent projectId={projectId} userId={userId} />
             </View>
-            <Text
-              variant="bodySmall"
-              style={{
-                textAlign: "center",
-                color: theme.colors.onSecondaryContainer,
-                marginTop: 10,
-              }}
-            >
-              Returning to lobby after 10s...
-            </Text>
+            {MemoTimer}
           </View>
         )}
       </ScrollView>
