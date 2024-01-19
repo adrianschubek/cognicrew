@@ -1,6 +1,6 @@
 import { ScrollView, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRoomStateStore } from "../../stores/RoomStore";
 import { useConfirmLeaveLobby } from "../../utils/hooks";
 import RateProjectComponent from "../../components/learningProject/rating/RateProjectComponent";

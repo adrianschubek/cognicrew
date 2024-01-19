@@ -18,7 +18,6 @@ import { ManagementType } from "../../../types/common";
 import EditFlashcard from "./EditFlashcard";
 import EditExercise from "./EditExercise";
 import {
-  useDeleteAnswersExercise,
   useDeleteExercise,
   useDeleteFlashcard,
   useUpsertAnswersExercise,
@@ -50,7 +49,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
-  const { trigger: deleteAnswersExercise } = useDeleteAnswersExercise();
   //exercise specific
   async function deleteAnswers(
     initialLength: number,
