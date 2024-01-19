@@ -127,14 +127,13 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
   // Cheating: check for updates on room_tracker then refetch rooms
   useFocusEffect(() => {
     const roomsTracker = supabase
-      .channel("list-rooms-tracker")
+      .channel("list-rooms")
       .on(
         "postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: "tracker",
-          filter: "key=eq.rooms",
+          table: "rooms",
         },
         (payload) => {
           mutate();
@@ -142,9 +141,6 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
         },
       )
       .subscribe();
-    return () => {
-      roomsTracker.unsubscribe();
-    };
   });
 
   const friendRooms = (rooms ?? []).filter((room) =>
