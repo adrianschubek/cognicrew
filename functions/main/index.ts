@@ -107,6 +107,7 @@ const rooms = supabase.channel("rooms");
 const hosts = new Map();
 rooms
   .on("presence", { event: "join" }, async ({ key, newPresence }) => {
+    console.log("join", key, newPresence);
     const { data: publicRoomStates } = await supabase
       .from("public_room_states")
       .select("data,room_id");
@@ -116,14 +117,14 @@ rooms
         for (const playerId in publicState.players) {
           const player = publicState.players[playerId];
           if (newPresence.userId === player.id && player.isHost) {
-            hosts.set(key, newPresence.userId);
+            hosts.set(key, newPresence.userId); 
           }
         }
       }
     }
   })
   .on("presence", { event: "leave" }, async ({ key, leftPresence }) => {
-    console.log("leave", key, leftPresence);
+    console.log("leave", key, leftPresence.userId);
     const { data: publicRoomStates } = await supabase
       .from("public_room_states")
       .select("data,room_id");
