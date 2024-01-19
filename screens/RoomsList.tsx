@@ -11,6 +11,7 @@ import { useAuth } from "../providers/AuthProvider";
 import { useAlerts } from "react-native-paper-fastalerts";
 import { usePresenceStore } from "../stores/PresenceStore";
 import { PulseIndicator } from "react-native-indicators";
+import { useRoomsListData } from "../utils/hooks";
 
 function Room({ room }) {
   const theme = useTheme();
@@ -101,31 +102,21 @@ function Room({ room }) {
 
 export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
   const theme = useTheme();
-  const {
-    data: rooms,
-    isLoading,
-    mutate,
-  } = useQuery(supabase.rpc("list_rooms"), {});
+  const [rooms, setRooms] = useState([]);
   const [friends, setFriends] = useState([]);
-  const getFriends = async () => {
-    const { data, error } = await supabase.rpc("list_friends_ids_and_names");
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-    //console.log(data);
-    setFriends(data.map((friend) => friend.id));
-  };
+  const { data, mutate, isLoading } = useRoomsListData();
 
   useEffect(() => {
-    getFriends();
-  }, []);
+    if (!data || isLoading) return;
+    console.log(data);
+    setRooms(data.rooms);
+    setFriends(data.friends);
+  }, [data]);
 
   const online = usePresenceStore((state) => state.online);
 
   // Cheating: check for updates on room_tracker then refetch rooms
-  useFocusEffect(() => {
+  useEffect(() => {
     const roomsTracker = supabase
       .channel("list-rooms")
       .on(
@@ -137,18 +128,13 @@ export default function RoomsList(props: { style?: StyleProp<ViewStyle> }) {
         },
         (payload) => {
           mutate();
-          getFriends();
         },
       )
       .subscribe();
   });
 
-  const friendRooms = (rooms ?? []).filter((room) =>
-    friends.includes(room.host),
-  );
-  const otherRooms = (rooms ?? []).filter(
-    (room) => !friends.includes(room.host),
-  );
+  const friendRooms = rooms.filter((room) => friends.includes(room.host));
+  const otherRooms = rooms.filter((room) => !friends.includes(room.host));
   const roomTypes = [
     { title: "Friend Rooms", rooms: friendRooms },
     { title: "Other Rooms", rooms: otherRooms },

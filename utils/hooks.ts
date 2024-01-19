@@ -629,3 +629,35 @@ export function useConfirmLeaveLobby() {
     return () => listener.remove();
   });
 }
+
+export function useRooms() {
+  const { data, error, isLoading, mutate } = useQuery(
+    supabase.rpc("list_rooms"),
+  );
+  return { data, error, isLoading, mutate };
+}
+
+export function useRoomsListData() {
+  const {
+    data: rooms,
+    error: roomsError,
+    isLoading: roomsIsLoading,
+    mutate: mutateRooms,
+  } = useRooms();
+  const {
+    data: friends,
+    error: friendsError,
+    isLoading: friendsIsLoading,
+    mutate: mutateFriends,
+  } = useFriendIdsAndNames();
+  function mutate() {
+    mutateRooms();
+    mutateFriends();
+  }
+  return {
+    data: { rooms: rooms, friends: friends },
+    error: roomsError || friendsError,
+    isLoading: roomsIsLoading || friendsIsLoading,
+    mutate,
+  };
+}
