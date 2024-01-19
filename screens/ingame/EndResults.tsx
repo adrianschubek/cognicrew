@@ -14,10 +14,8 @@ export default function EndResults({ navigation }) {
   const theme = useTheme();
   const userId = useAuth().user.id;
   const projectId = roomState.projectId;
-  const allPlayers = roomState.players;
-  //const allPlayers = [...otherPlayers, self];
   //lowest to highest and only the first five  players
-  const sortedPlayers = allPlayers
+  const sortedPlayers = roomState.players
     .sort((p1, p2) => p1.score - p2.score)
     .slice(-5) as {
     id: string;
