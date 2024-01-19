@@ -77,21 +77,13 @@ export default function ManageFriends({ navigation }) {
     setFriendIdsAndNamesData(data[0]?.friend_array ?? []);
   }, [data]);
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const [isRequestsModalVisible, setIsRequestsModalVisible] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const isRequestsModalVisibleRef = useRef<boolean>(false);
 
   const handlePresentModalPress = useCallback(() => {
-    if (isTransitioning) return; // Prevent double-clicks
-    setIsTransitioning(true);
-    setIsRequestsModalVisible((prevState) => {
-      if (prevState) {
-        bottomSheetModalRef.current?.dismiss();
-      } else {
-        bottomSheetModalRef.current?.present();
-      }
-      return !prevState;
-    });
-  }, [isTransitioning]);
+    isRequestsModalVisibleRef.current
+      ? bottomSheetModalRef.current?.dismiss()
+      : bottomSheetModalRef.current?.present();
+  }, [isRequestsModalVisibleRef]);
 
   if (error || isLoading) return <LoadingOverlay visible={isLoading} />;
   return (
@@ -102,7 +94,10 @@ export default function ManageFriends({ navigation }) {
           friendRequestsReceived={friendRequestsReceived}
           friendRequestsSent={friendRequestsSent}
           userId={user.id}
-          onChange={() => setIsTransitioning(false)}
+          onChange={() => {
+            isRequestsModalVisibleRef.current =
+              !isRequestsModalVisibleRef.current;
+          }}
         />
         <View
           style={{
