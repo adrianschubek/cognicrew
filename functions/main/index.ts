@@ -108,8 +108,9 @@ const hosts = new Map();
 rooms
   .on("presence", { event: "join" }, async ({ key, newPresence }) => {
     const { data: publicRoomStates } = await supabase
-    .from("public_room_states")
-    .select("data,room_id");
+      .from("public_room_states")
+      .select("data,room_id");
+    if (publicRoomStates != null) {
       for (const room of publicRoomStates) {
         const publicState = room.data as PublicRoomState;
         for (const playerId in publicState.players) {
@@ -119,22 +120,24 @@ rooms
           }
         }
       }
+    }
   })
   .on("presence", { event: "leave" }, async ({ key, leftPresence }) => {
     console.log("leave", key, leftPresence);
     const { data: publicRoomStates } = await supabase
       .from("public_room_states")
       .select("data,room_id");
-    for (const room of publicRoomStates) {
-      const publicState = room.data as PublicRoomState;
-      const hostPlayer = publicState.players.find(
-        (player) =>
-          player.isHost === true && hosts.get(key) == player.id,
-      );
-      supabase.rpc("close_room_when_host_left", {
-        p_user_id: hostPlayer,
-      });
-      hosts.delete(key);
+    if (publicRoomStates != null) {
+      for (const room of publicRoomStates) {
+        const publicState = room.data as PublicRoomState;
+        const hostPlayer = publicState.players.find(
+          (player) => player.isHost === true && hosts.get(key) == player.id,
+        );
+        supabase.rpc("close_room_when_host_left", {
+          p_user_id: hostPlayer,
+        });
+        hosts.delete(key);
+      }
     }
   })
   .subscribe();
