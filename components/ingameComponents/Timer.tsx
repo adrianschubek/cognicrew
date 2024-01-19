@@ -1,35 +1,36 @@
-import { useFocusEffect } from "@react-navigation/native";
 import { useState, useEffect, useMemo } from "react";
 import { ProgressBar } from "react-native-paper";
+import TimingFunction from "../common/TimingFunction";
 
 export default function Timer(props: {
   roundEndsAt: number;
   onTimeUp: () => void;
 }) {
-  const initialRemainingTime = useMemo(
-    () => +(props.roundEndsAt - Date.now()) / 1000,
-    [props.roundEndsAt],
+  const { roundEndsAt, onTimeUp } = props;
+  const amountOfSeconds = useMemo(
+    () => (roundEndsAt - Date.now()) / 1000,
+    [roundEndsAt],
   );
-  const [remainingTime, setRemainingTime] = useState(initialRemainingTime);
-  useFocusEffect(() => {
-    const sec = setInterval(
-      () => setRemainingTime(+(props.roundEndsAt - Date.now()) / 1000),
-      1000,
-    );
-    remainingTime <= 0 && clearInterval(sec);
-    return () => {
-      clearInterval(sec);
-      props.onTimeUp();
-    };
-  });
-
+  const [remainingTime, setRemainingTime] = useState<number>(amountOfSeconds);
   useEffect(() => {
-    setRemainingTime(+(props.roundEndsAt - Date.now()) / 1000);
-  }, [props.roundEndsAt]);
+    setRemainingTime((roundEndsAt - Date.now()) / 1000);
+  }, [roundEndsAt]);
   return (
-    <ProgressBar
-      progress={remainingTime / initialRemainingTime}
-      color={"#6200ee"}
-    />
+    <>
+      <TimingFunction
+        key={amountOfSeconds} //remounts component when amountOfSeconds changes
+        amountOfSeconds={amountOfSeconds}
+        intervall={1000}
+        onTimeUp={onTimeUp}
+        sendUpdate={(remainingTime) => {
+          setRemainingTime(remainingTime);
+          console.log(remainingTime);
+        }}
+      />
+      <ProgressBar
+        progress={remainingTime / amountOfSeconds}
+        color={"#6200ee"}
+      />
+    </>
   );
 }

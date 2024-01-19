@@ -26,7 +26,7 @@ export default function ManageFriends({ navigation }) {
   const theme = useTheme();
   const user = useAuth().user;
   const { confirm, info } = useAlerts();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [friendRequestsSent, setFriendRequestsSent] = useState([]);
   const [friendRequestsReceived, setFriendRequestsReceived] = useState([]);
   const [friendIdsAndNamesData, setFriendIdsAndNamesData] = useState([]);
