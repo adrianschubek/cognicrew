@@ -36,7 +36,12 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
   type: ManagementType;
 }) {
-  const { listItem, type } = props;
+  const { listItem: initialListItem, type } = props;
+  const [listItem, setListItem] = useState(initialListItem);
+  useEffect(() => {
+    setListItem(initialListItem);
+    console.log("initialListItem: ", listItem);
+  }, [initialListItem]);
   const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
@@ -259,7 +264,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
 
   const liveEditBy =
     usePresenceStore(
-      useShallow((state) => state.cardQuizEditing[props.listItem.id]),
+      useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
   // console.log("liveEditBy: ", liveEditBy);
 
@@ -345,7 +350,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               color={theme.colors.onPrimary}
               source={"account-multiple"}
               size={16}
-            ></Icon>
+            />
           </Text>
         )}
         <TextInput

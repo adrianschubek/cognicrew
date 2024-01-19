@@ -18,6 +18,7 @@ export default function AccordionListItems(props: {
 }) {
   const { type, setId, orderSetItemsBy } = props;
   const theme = useTheme();
+  const timestamp = Date.now();
   const [noSetItemsAvailable, setNoSetItemsAvailable] =
     useState<boolean>(false);
   const typeName = (plural: boolean) =>
@@ -75,7 +76,13 @@ export default function AccordionListItems(props: {
             backgroundColor: theme.colors.secondaryContainer,
           }}
         >
-          {<EditFlashcardExerciseJoinedPart listItem={listItem} type={type} />}
+          {
+            <EditFlashcardExerciseJoinedPart
+              key={`${listItem.id}-${timestamp}`}
+              listItem={listItem}
+              type={type}
+            />
+          }
         </List.Accordion>
         <Divider />
       </View>
