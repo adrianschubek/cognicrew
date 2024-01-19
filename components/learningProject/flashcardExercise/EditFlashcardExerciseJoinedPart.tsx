@@ -216,12 +216,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  console.log("isEditing: ", isEditing);
   return (
     <>
-      <LivePresenceFunctionality
-        listItemId={listItem.id}
-        isEditing={isEditing}
-      />
       <Card
         elevation={1}
         style={[
@@ -306,6 +303,10 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               />
             </Text>
           )}
+          <LivePresenceFunctionality
+            listItemId={listItem.id}
+            isEditing={isEditing}
+          />
           <TextInput
             testID="input-edit-flashcard-question"
             style={{ marginBottom: 8 }}
