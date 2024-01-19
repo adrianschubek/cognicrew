@@ -102,13 +102,14 @@ const ROUND_RESULTS_DURATION = 4000;
 const END_RESULTS_DURATION = 10000;
 
 //Handle removal of room if host left the room
+
 const rooms = supabase.channel("rooms");
 const hosts = new Map();
 rooms
-  .on("presence", { event: "join" }, ({ key, newPresence }) => {
-    const { data: publicRoomStates } = supabase
-      .from("public_room_states")
-      .select("data,room_id");
+  .on("presence", { event: "join" }, async ({ key, newPresence }) => {
+    const { data: publicRoomStates } = await supabase
+    .from("public_room_states")
+    .select("data,room_id");
       for (const room of publicRoomStates) {
         const publicState = room.data as PublicRoomState;
         for (const playerId in publicState.players) {
@@ -119,9 +120,9 @@ rooms
         }
       }
   })
-  .on("presence", { event: "leave" }, ({ key, leftPresence }) => {
+  .on("presence", { event: "leave" }, async ({ key, leftPresence }) => {
     console.log("leave", key, leftPresence);
-    const { data: publicRoomStates } = supabase
+    const { data: publicRoomStates } = await supabase
       .from("public_room_states")
       .select("data,room_id");
     for (const room of publicRoomStates) {
