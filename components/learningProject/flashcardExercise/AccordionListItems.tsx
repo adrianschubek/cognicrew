@@ -1,10 +1,7 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { List, Divider, useTheme, HelperText } from "react-native-paper";
-import {
-  responsiveHeight,
-  responsiveWidth,
-} from "react-native-responsive-dimensions";
+import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, orderByPrinciple } from "../../../types/common";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../../alerts/LoadingOverlay";
@@ -85,14 +82,3 @@ export default function AccordionListItems(props: {
     ))
   );
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    width: responsiveWidth(100) - responsiveHeight(2),
-    marginTop: responsiveHeight(1),
-    marginBottom: responsiveHeight(1),
-    alignSelf: "center",
-  },
-  cardContentStyle: {},
-  textInputStyle: {},
-});

@@ -5,14 +5,15 @@ import {
   Text,
   TextInput,
   IconButton,
-  HelperText, useTheme,
-  Icon
+  HelperText,
+  useTheme,
+  Icon,
 } from "react-native-paper";
 import {
   responsiveHeight,
   responsiveWidth,
 } from "react-native-responsive-dimensions";
-import PrioritySelector from "./PrioritySelector"
+import PrioritySelector from "./PrioritySelector";
 import { checkForLineBreak, debounce } from "../../../utils/common";
 import { ManagementType } from "../../../types/common";
 import EditFlashcard from "./EditFlashcard";
@@ -266,7 +267,12 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     <Card
       elevation={1}
       style={[
-        styles.cardStyle,
+        {
+          width: responsiveWidth(100) - responsiveHeight(2),
+          marginTop: 8,
+          marginBottom: 8,
+          alignSelf: "center",
+        },
         liveEditBy.length > 0 && {
           backgroundColor: theme.colors.primaryContainer,
           borderColor: theme.colors.primary,
@@ -384,12 +390,3 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     </Card>
   );
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    width: responsiveWidth(100) - responsiveHeight(2),
-    marginTop: 8,
-    marginBottom: 8,
-    alignSelf: "center",
-  },
-});
