@@ -1,5 +1,5 @@
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
 import {
   Card,
   Text,
@@ -24,11 +24,9 @@ import {
   useUpsertAnswersExercise,
   useUpsertExercise,
   useUpsertFlashcard,
-  useUsername,
 } from "../../../utils/hooks";
 import { supabase } from "../../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { useAuth } from "../../../providers/AuthProvider";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
 import LivePresenceFunctionality from "./livePresenceFunctionality";
@@ -37,11 +35,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
   type: ManagementType;
 }) {
-  const { listItem: initialListItem, type } = props;
-  const [listItem, setListItem] = useState(initialListItem);
-  useEffect(() => {
-    setListItem(initialListItem);
-  }, [initialListItem]);
+  const { listItem, type } = props;
   const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");

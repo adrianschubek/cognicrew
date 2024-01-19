@@ -39,17 +39,17 @@ export default function LivePresenceFunctionality(props: {
     if (isEditing) startEditing();
     else endEditing();
   }, [isEditing]);
-  
+
   const startEditing = async () => {
     const presenceTrackStatus = await realtime.current.track({
       user_name: username.data,
     });
-    // console.log(presenceTrackStatus);
+    console.log(presenceTrackStatus);
   };
 
   const endEditing = async () => {
     const presenceTrackStatus = await realtime.current.untrack();
-    // console.log(presenceTrackStatus);
+    console.log(presenceTrackStatus);
   };
   return null;
 }
