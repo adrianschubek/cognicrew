@@ -576,7 +576,7 @@ async function updateStats(
         achieve(7, player.id);
       }
       if (
-        publicState.gameBeganAt / 1000 < 60 &&
+        publicState.gameBeganAt / 1000 < 120 &&
         publicState.totalRounds == player.correctQuestions &&
         publicState.totalRounds >= 20 &&
         publicState.game == GameState.FLASHCARDS
