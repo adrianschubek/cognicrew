@@ -4,9 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Text } from "react-native-paper";
 import { StyleSheet, View } from "react-native";
 import { supabase } from "../../supabase";
-import {
-  useProjectRatings,
-} from "../../utils/hooks";
+import { useProjectRatings } from "../../utils/hooks";
 import { Database } from "../../types/supabase";
 import { useAuth } from "../../providers/AuthProvider";
 import { useProjectStore } from "../../stores/ProjectStore";
@@ -136,6 +134,7 @@ export default function RateProject({
             {
               customNode: (
                 <RateProjectComponent
+                  key={rating} //component doesnt rerender without key
                   projectId={projectId}
                   userId={user.id}
                   rating={rating}
