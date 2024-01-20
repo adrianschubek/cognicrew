@@ -21,6 +21,7 @@ import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import Animated from "react-native-reanimated";
 import { useSoundsStore } from "../stores/SoundsStore";
+import AnswerCard from "../components/ingameComponents/AnswerCard";
 
 export default function FlashcardGame({ route, navigation }) {
   const { setInGame } = useSoundsStore();
@@ -147,7 +148,6 @@ export default function FlashcardGame({ route, navigation }) {
             }
             style={[
               {
-                alignItems:"center",
                 textAlign: "center",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
@@ -188,71 +188,12 @@ export default function FlashcardGame({ route, navigation }) {
             {roomState.screen === ScreenState.ROUND_SOLUTION &&
               roomState.userAnswers &&
               roomState.userAnswers.map((answer, index) => (
-                <Animated.View
+                <AnswerCard
                   key={index}
-                  style={[
-                    {
-                      width: "100%",
-                      height: "auto",
-                    },
-                  ]}
-                >
-                  <Card
-                    mode="outlined"
-                    style={[
-                      answer.isCorrect
-                        ? { backgroundColor: "#4CAF50" }
-                        : { backgroundColor: theme.colors.elevation.level2 },
-                      answer.answer === userInput
-                        ? { borderColor: theme.colors.primary }
-                        : {
-                            borderColor: theme.colors.onSurfaceDisabled,
-                          },
-                    ]}
-                  >
-                    <Card.Content
-                      style={{
-                        marginLeft: 5,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: 5,
-                      }}
-                    >
-                      <Text
-                        variant="titleMedium"
-                        numberOfLines={2}
-                        style={[
-                          {
-                            flex: 6,
-                            textAlign: "left",
-                            textAlignVertical: "center",
-                          },
-                          answer.isCorrect
-                            ? { color: theme.colors.onBackground }
-                            : { color: theme.colors.onErrorContainer },
-                        ]}
-                      >
-                        {answer.answer}
-                      </Text>
-                      <Text
-                        variant="titleMedium"
-                        style={[
-                          {
-                            flex: 1,
-                            textAlignVertical: "center",
-                          },
-                          answer.isCorrect
-                            ? { color: theme.colors.onBackground }
-                            : { color: theme.colors.onErrorContainer },
-                        ]}
-                      >
-                        {" "}
-                        {answer.percentage}
-                      </Text>
-                    </Card.Content>
-                  </Card>
-                </Animated.View>
+                  numberOfLines={2}
+                  userInput={userInput}
+                  answer={answer}
+                />
               ))}
           </View>
         </View>
