@@ -123,11 +123,14 @@ export default function ExerciseGame({ navigation }) {
               icon: "location-exit",
               okText: "Leave",
               okAction: async () => {
-                const { error } = await supabase.functions.invoke("room-update", {
-                  body: {
-                    type: "reset_room",
-                  } as RoomClientUpdate,
-                });
+                const { error } = await supabase.functions.invoke(
+                  "room-update",
+                  {
+                    body: {
+                      type: "reset_room",
+                    } as RoomClientUpdate,
+                  },
+                );
                 if (error) return await handleEdgeError(error);
               },
             });
@@ -151,7 +154,7 @@ export default function ExerciseGame({ navigation }) {
             key={index}
             label={`${String.fromCharCode(65 + index)}) ${option[0]} ${
               roomState.screen === ScreenState.ROUND_SOLUTION
-                ? roomState.userAnswers[option[1]].percentage 
+                ? roomState.userAnswers[option[1]].percentage
                 : ""
             }`}
             labelStyle={{
@@ -226,12 +229,7 @@ export default function ExerciseGame({ navigation }) {
             paddingTop: 16,
             paddingRight: 16,
           }}
-        >
-          {/* Host only */}
-          {/*   <Button disabled={isInvoking} onPress={skipQuestion}>
-            Skip question
-          </Button> */}
-        </View>
+        ></View>
       </ScrollView>
     </>
   );

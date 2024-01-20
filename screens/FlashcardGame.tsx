@@ -147,12 +147,13 @@ export default function FlashcardGame({ route, navigation }) {
             }
             style={[
               {
+                alignItems:"center",
                 textAlign: "center",
               },
               roomState.screen === ScreenState.ROUND_SOLUTION
                 ? currentPlayer.currentCorrect === true
                   ? { backgroundColor: "#4CAF50" }
-                  : { backgroundColor: theme.colors.backdrop }
+                  : { backgroundColor: theme.colors.elevation.level2 }
                 : {},
             ]}
             value={userInput}
