@@ -34,8 +34,9 @@ import LivePresenceFunctionality from "./LivePresenceFunctionality";
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: any;
   type: ManagementType;
+  liveEditBy: string[];
 }) {
-  const { listItem, type } = props;
+  const { listItem, type, liveEditBy } = props;
   const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
@@ -209,10 +210,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   }, [answerOrAnswers, priority, question]);
 
   const theme = useTheme();
-  const liveEditBy =
-    usePresenceStore(
-      useShallow((state) => state.cardQuizEditing[listItem.id]),
-    ) ?? [];
   const [isEditing, setIsEditing] = useState<boolean>(false);
   return (
     <>

@@ -9,6 +9,8 @@ import { useExercises, useFlashcards } from "../../../utils/hooks";
 import { supabase } from "../../../supabase";
 import { sortByOrder } from "../../../utils/common";
 import EditFlashcardExerciseJoinedPart from "./EditFlashcardExerciseJoinedPart";
+import { usePresenceStore } from "../../../stores/PresenceStore";
+import { useShallow } from "zustand/react/shallow";
 
 export default function AccordionListItems(props: {
   type: ManagementType;
@@ -76,7 +78,7 @@ export default function AccordionListItems(props: {
           }}
         >
           {
-            <EditFlashcardExerciseJoinedPart
+            <EditFlashcardExerciseJoinedPartWrapper
               listItem={listItem}
               type={type}
             />
@@ -85,5 +87,34 @@ export default function AccordionListItems(props: {
         <Divider />
       </View>
     ))
+  );
+}
+
+function EditFlashcardExerciseJoinedPartWrapper({ listItem, type }) {
+  const liveEditBy =
+    usePresenceStore(
+      useShallow((state) => state.cardQuizEditing[listItem.id]),
+    ) ?? [];
+  const [key, setKey] = useState(listItem.id);
+  const [prevLiveEditByLength, setPrevLiveEditByLength] = useState(
+    liveEditBy.length,
+  );
+
+  useEffect(() => {
+    if (
+      liveEditBy.length < prevLiveEditByLength &&
+      prevLiveEditByLength === 1 //the last one gets the actual edit
+    ) {
+      setKey(liveEditBy.length === 0 ? listItem.id : Date.now());
+    }
+    setPrevLiveEditByLength(liveEditBy.length);
+  }, [liveEditBy.length, listItem.id]);
+  return (
+    <EditFlashcardExerciseJoinedPart
+      key={key}
+      listItem={listItem}
+      type={type}
+      liveEditBy={liveEditBy}
+    />
   );
 }
