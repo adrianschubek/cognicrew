@@ -44,8 +44,12 @@ export default function TextInputWithCheckbox(props: {
             <Checkbox
               status={answerIsCorrect ? "checked" : "unchecked"}
               onPress={() => {
+                onStartEditing();
                 setAnswerIsCorrect(!answerIsCorrect);
                 sendAnswer([answerText, !answerIsCorrect]);
+                setTimeout(() => {
+                  onFinishEditing();
+                }, 100);
               }}
             />
           )}
