@@ -99,7 +99,7 @@ const enum State {
 
 const ROUND_SOLUTION_DURATION = 3000; // ms
 const ROUND_RESULTS_DURATION = 4000;
-const END_RESULTS_DURATION = 10000;
+const END_RESULTS_DURATION = 6000;
 
 async function mainLoop() {
   const start = performance.now();
