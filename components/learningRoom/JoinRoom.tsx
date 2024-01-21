@@ -38,7 +38,12 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
           maxLength={7}
           inputMode="numeric"
           mode="outlined"
-          style={{ height: 40, textAlign: "center", flex: 1 }}
+          style={{
+            height: 40,
+            textAlign: "center",
+            textAlignVertical: "center",
+            flex: 1,
+          }}
           onChangeText={(text) => {
             if (text === "") {
               text = "#";
