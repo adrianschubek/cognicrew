@@ -85,12 +85,6 @@ export default function RateProject({
     projectId,
     user.id,
   );
-  useFocusEffect(() => {
-    return () => {
-      setIsInitialised(false);
-      setRating(null);
-    };
-  });
   useEffect(() => {
     if (!data || isLoading) return;
     if (!isInitialised) {
@@ -142,7 +136,7 @@ export default function RateProject({
                   key={rating} //component doesnt rerender without key
                   projectId={projectId}
                   userId={user.id}
-                  rating={rating}
+                  //rating={rating}
                 />
               ),
             },
