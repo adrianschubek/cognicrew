@@ -165,10 +165,10 @@ export default function FlashcardGame({ route, navigation }) {
             style={{
               marginTop: 25,
               marginHorizontal: 10,
-              paddingVertical: 5,
               borderRadius: 10,
               display: alreadySubmitted ? "none" : undefined,
             }}
+            contentStyle={{ paddingVertical: 5 }}
             mode="contained"
             disabled={isInvoking || userInput.length === 0}
             onPress={answer}

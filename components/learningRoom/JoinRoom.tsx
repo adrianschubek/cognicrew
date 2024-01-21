@@ -34,12 +34,12 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
           editable
           placeholder="#"
           value={joinCode}
-          error={joinCode.length > 1 && joinCode.length !== 7}
+          //error={joinCode.length > 1 && joinCode.length !== 7}
           maxLength={7}
           inputMode="numeric"
           mode="outlined"
+          dense={true}
           style={{
-            height: 40,
             textAlign: "center",
             textAlignVertical: "center",
             flex: 1,
@@ -58,7 +58,18 @@ export default function JoinRoom(props: { style?: StyleProp<ViewStyle> }) {
           }}
           onSubmitEditing={join}
         />
-        <Button mode="contained-tonal" onPress={join}>
+        <Button
+          mode="contained-tonal"
+          onPress={join}
+          contentStyle={{
+            //hardcoded, because react native paper button is weird and not working as one might expect.
+            //Docu lies, TextInput height in this config is 48, not 40
+            height: 48,
+          }}
+          style={{
+            height: "100%",
+          }}
+        >
           Join
         </Button>
       </View>

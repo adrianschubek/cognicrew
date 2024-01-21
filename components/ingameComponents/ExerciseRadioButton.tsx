@@ -1,4 +1,4 @@
-import { StyleProp, Touchable, View, ViewStyle } from "react-native";
+import { StyleProp, View, ViewStyle } from "react-native";
 import { Card, Icon, Text, useTheme } from "react-native-paper";
 import { ScreenState } from "../../functions/rooms";
 import { PublicRoomState } from "../../functions/rooms";
