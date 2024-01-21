@@ -1,6 +1,5 @@
-import { StyleProp, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle, View } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
-import Animated from "react-native-reanimated";
 
 export default function AnswerCard(props: {
   answer: {
@@ -16,7 +15,7 @@ export default function AnswerCard(props: {
   const theme = useTheme();
   const { answer, userInput, numberOfLines, style } = props;
   return (
-    <Animated.View
+    <View
       style={[
         {
           width: "100%",
@@ -80,6 +79,6 @@ export default function AnswerCard(props: {
           </Text>
         </Card.Content>
       </Card>
-    </Animated.View>
+    </View>
   );
 }

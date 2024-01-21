@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import {
   TextInput,
   Text,
@@ -19,9 +19,8 @@ import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
-import Animated from "react-native-reanimated";
 import { useSoundsStore } from "../stores/SoundsStore";
-import AnswerCard from "../components/ingameComponents/AnswerCard";
+import FlashcardAnswerCard from "../components/ingameComponents/FlashcardAnswerCard";
 
 export default function FlashcardGame({ route, navigation }) {
   const { setInGame } = useSoundsStore();
@@ -188,7 +187,7 @@ export default function FlashcardGame({ route, navigation }) {
             {roomState.screen === ScreenState.ROUND_SOLUTION &&
               roomState.userAnswers &&
               roomState.userAnswers.map((answer, index) => (
-                <AnswerCard
+                <FlashcardAnswerCard
                   key={index}
                   numberOfLines={2}
                   userInput={userInput}

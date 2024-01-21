@@ -16,10 +16,12 @@ export default function TimingFunction(props: {
       intervall,
     );
 
-    remainingTime <= 0 && clearInterval(sec);
-    return () => {
+    if (remainingTime <= 0) {
       clearInterval(sec);
       onTimeUp && onTimeUp();
+    }
+    return () => {
+      clearInterval(sec);
     };
   });
 
