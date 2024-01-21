@@ -248,7 +248,6 @@ export default function ProjectCard(props: { item: any }) {
                         if (error) return error.message;
                         setProjectId(item.project_id);
                         setRoom(data as any);
-                        navigation.navigate(NAVIGATION.LOBBY as never);
                       },
                       fields: [
                         {

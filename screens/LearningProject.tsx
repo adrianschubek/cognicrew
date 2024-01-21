@@ -135,7 +135,6 @@ export default function LearningProject({ navigation, route }) {
                 p_private: !!params[3],
                 p_size: parseInt(params[4]) ?? null,
               });
-              navigation.navigate(NAVIGATION.LOBBY);
               if (error) return error.message;
               setRoom(data as any);
             },
