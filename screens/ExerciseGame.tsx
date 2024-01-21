@@ -18,6 +18,7 @@ import Timer from "../components/ingameComponents/Timer";
 import { RoomClientUpdate, ScreenState } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useSoundsStore } from "../stores/SoundsStore";
+import ExerciseRadioButton from "../components/ingameComponents/ExerciseRadioButton";
 
 export default function ExerciseGame({ navigation }) {
   useConfirmLeaveLobby();
@@ -91,7 +92,14 @@ export default function ExerciseGame({ navigation }) {
   }
 
   const MemoTimer = useMemo(
-    () => <Timer roundEndsAt={roomState?.roundEndsAt} onTimeUp={() => {}} />,
+    () => (
+      <Timer
+        roundEndsAt={roomState?.roundEndsAt}
+        onTimeUp={() => {
+          setAlreadySubmitted(true);
+        }}
+      />
+    ),
     [roomState?.roundEndsAt],
   );
 
@@ -146,60 +154,23 @@ export default function ExerciseGame({ navigation }) {
         </Dialog.Title>
 
         {MemoTimer}
-        <Text style={{ fontSize: 20, textAlign: "center", marginVertical: 20 }}>
+        <Text
+          variant="headlineSmall"
+          style={{ textAlign: "center", marginVertical: 20 }}
+        >
           {roomState.question}
         </Text>
         {shuffledAnswers.map((option, index) => (
-          <RadioButton.Item
+          <ExerciseRadioButton
             key={index}
-            label={`${String.fromCharCode(65 + index)}) ${option[0]} ${
-              roomState.screen === ScreenState.ROUND_SOLUTION
-                ? roomState.userAnswers[option[1]].percentage
-                : ""
-            }`}
-            labelStyle={{
-              color:
-                roomState.screen === ScreenState.ROUND_SOLUTION
-                  ? roomState.userAnswers[option[1]].isCorrect === true
-                    ? theme.colors.onPrimaryContainer
-                    : theme.colors.onErrorContainer
-                  : checked.includes(option[1])
-                  ? theme.colors.onPrimary
-                  : theme.colors.onSecondaryContainer,
-            }}
-            value={option[1].toString()}
+            option={option}
             disabled={alreadySubmitted}
-            status={checked.includes(option[1]) ? "checked" : "unchecked"}
+            index={index}
+            checked={checked}
+            roomState={roomState}
             onPress={() => {
               handleValueChange(option[1]);
             }}
-            mode="ios"
-            // uncheckedColor="white"
-            color={theme.colors.onPrimary}
-            style={[
-              {
-                margin: 10,
-                marginVertical: 5,
-                borderRadius: 10,
-                paddingVertical: 15,
-              },
-              roomState.screen === ScreenState.ROUND_SOLUTION
-                ? {
-                    borderColor: checked.includes(option[1])
-                      ? theme.colors.primary
-                      : undefined,
-                    borderWidth: checked.includes(option[1]) ? 3 : 0,
-                    backgroundColor:
-                      roomState.userAnswers[option[1]].isCorrect === true
-                        ? /* theme.colors.primaryContainer */ "#4CAF50" /* theme.colors.primaryContainer */
-                        : theme.colors.elevation.level2,
-                  }
-                : {
-                    backgroundColor: checked.includes(option[1])
-                      ? theme.colors.primary
-                      : theme.colors.secondaryContainer,
-                  },
-            ]}
           />
         ))}
         <View
