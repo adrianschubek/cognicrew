@@ -118,7 +118,11 @@ export default function ExerciseRadioButton(props: {
             <Icon
               size={28}
               source={checked.includes(option[1]) ? "check" : ""}
-              color={theme.colors.onPrimaryContainer}
+              color={
+                roomState.screen === ScreenState.ROUND_SOLUTION
+                  ? theme.colors.onPrimaryContainer
+                  : theme.colors.primaryContainer
+              }
             />
           </View>
         </Card.Content>
