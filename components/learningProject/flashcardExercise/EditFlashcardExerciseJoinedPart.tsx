@@ -27,8 +27,6 @@ import {
 } from "../../../utils/hooks";
 import { supabase } from "../../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
-import { usePresenceStore } from "../../../stores/PresenceStore";
-import { useShallow } from "zustand/react/shallow";
 import LivePresenceFunctionality from "./LivePresenceFunctionality";
 
 export default function EditFlashcardExerciseJoinedPart(props: {

@@ -2,7 +2,6 @@ import * as React from "react";
 import { ScrollView, View } from "react-native";
 import {
   Dialog,
-  RadioButton,
   Button,
   Text,
   useTheme,
@@ -15,7 +14,7 @@ import { useRoomStateStore } from "../stores/RoomStore";
 import LoadingOverlay from "../components/alerts/LoadingOverlay";
 import { supabase } from "../supabase";
 import Timer from "../components/ingameComponents/Timer";
-import { RoomClientUpdate, ScreenState } from "../functions/rooms";
+import { RoomClientUpdate } from "../functions/rooms";
 import { handleEdgeError } from "../utils/common";
 import { useSoundsStore } from "../stores/SoundsStore";
 import ExerciseRadioButton from "../components/ingameComponents/ExerciseRadioButton";

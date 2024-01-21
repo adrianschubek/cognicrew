@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { useMemo, useState } from "react";
 import { useRoomStateStore } from "../../stores/RoomStore";
@@ -8,6 +8,9 @@ import { useAuth } from "../../providers/AuthProvider";
 import ScorePedestal from "../../components/ingameComponents/ScorePedestal";
 import ScoreCard from "../../components/ingameComponents/ScoreCard";
 import TimingFunction from "../../components/common/TimingFunction";
+import { handleEdgeError } from "../../utils/common";
+import { RoomClientUpdate } from "../../functions/rooms";
+import { supabase } from "../../supabase";
 
 export default function EndResults({ navigation }) {
   useConfirmLeaveLobby();
@@ -72,16 +75,41 @@ export default function EndResults({ navigation }) {
             setRemainingTime(newTime);
           }}
         />
-        <Text
-          variant="bodySmall"
-          style={{
-            textAlign: "center",
-            color: theme.colors.onSecondaryContainer,
-            marginTop: 10,
-          }}
+        <View
+          style={{ marginTop: 10, flexDirection: "row", alignItems: "center" }}
         >
-          Returning to lobby after {remainingTime}s...
-        </Text>
+          <TouchableOpacity
+            onPress={async () => {
+              const { error } = await supabase.functions.invoke("room-update", {
+                body: {
+                  type: "reset_room",
+                } as RoomClientUpdate,
+              });
+              if (error) return await handleEdgeError(error);
+            }}
+          >
+            <Text
+              variant="bodySmall"
+              style={{
+                textAlign: "center",
+                color: theme.colors.primary,
+                textDecorationLine: "underline",
+              }}
+            >
+              Return
+            </Text>
+          </TouchableOpacity>
+          <Text
+            variant="bodySmall"
+            style={{
+              textAlign: "center",
+              color: theme.colors.onSecondaryContainer,
+            }}
+          >
+            {" "}
+            to lobby after {remainingTime}s...
+          </Text>
+        </View>
       </>
     );
   }
