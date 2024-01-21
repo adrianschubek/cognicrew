@@ -77,16 +77,16 @@ export default function SearchProjects() {
             (query) =>
               project.project_name
                 .toLowerCase()
-                .includes(query.toLowerCase()) ||
+                .includes(query.trim().toLowerCase()) ||
               project.project_tags
                 .split(",")
                 .map((tag) => tag.trim())
                 .some((tag) =>
-                  tag.toLowerCase().includes(query.toLowerCase()),
+                  tag.toLowerCase().includes(query.trim().toLowerCase()),
                 ) ||
               project.project_description
                 .toLowerCase()
-                .includes(query.toLowerCase()),
+                .includes(query.trim().toLowerCase()),
           ),
         )}
         renderItem={({ item }) => {
