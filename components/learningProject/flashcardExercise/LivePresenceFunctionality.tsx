@@ -34,8 +34,12 @@ export default function LivePresenceFunctionality(props: {
         );
       })
       .subscribe();
+    return () => {
+      endEditing();
+    };
   }, []);
   useEffect(() => {
+    console.log("isEditing: ", isEditing);
     if (isEditing) {
       startEditing();
     } else if (!isEditing && isInitialized) endEditing();

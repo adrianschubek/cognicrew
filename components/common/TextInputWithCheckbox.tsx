@@ -14,22 +14,30 @@ export default function TextInputWithCheckbox(props: {
 }) {
   const [answerText, setAnswerText] = useState<string>("");
   const [answerIsCorrect, setAnswerIsCorrect] = useState<boolean>(false);
-
+  const {
+    width,
+    number,
+    sendAnswer,
+    listItemAnswer,
+    flex,
+    onStartEditing,
+    onFinishEditing,
+  } = props;
   useEffect(() => {
-    if (!props.listItemAnswer) return;
-    setAnswerText(props.listItemAnswer[0]);
-    setAnswerIsCorrect(props.listItemAnswer[1]);
-  }, [props.listItemAnswer]);
+    if (!listItemAnswer) return;
+    setAnswerText(listItemAnswer[0]);
+    setAnswerIsCorrect(listItemAnswer[1]);
+  }, [listItemAnswer]);
 
   return (
     <TextInput
       style={{
         marginBottom: 8,
-        flex: props.flex || 0,
-        width: props.width || "auto",
+        flex: flex || 0,
+        width: width || "auto",
       }}
-      onFocus={props.onStartEditing}
-      onBlur={props.onFinishEditing}
+      onFocus={onStartEditing}
+      onBlur={onFinishEditing}
       right={
         <TextInput.Icon
           icon={() => (
@@ -37,19 +45,19 @@ export default function TextInputWithCheckbox(props: {
               status={answerIsCorrect ? "checked" : "unchecked"}
               onPress={() => {
                 setAnswerIsCorrect(!answerIsCorrect);
-                props.sendAnswer([answerText, !answerIsCorrect]);
+                sendAnswer([answerText, !answerIsCorrect]);
               }}
             />
           )}
         />
       }
-      label={"Answer " + props.number}
+      label={"Answer " + number}
       //multiline={true}
       blurOnSubmit={true}
       value={answerText}
       onChangeText={(text) => {
         setAnswerText(text);
-        props.sendAnswer([text, answerIsCorrect]);
+        sendAnswer([text, answerIsCorrect]);
       }}
     />
   );

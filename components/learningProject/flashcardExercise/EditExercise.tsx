@@ -19,6 +19,8 @@ export default function EditExercise(props: {
     sendAnswers,
     sendInitialAnswersLength,
     updateCacheTrigger,
+    onStartEditing,
+    onFinishEditing,
   } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
@@ -28,7 +30,6 @@ export default function EditExercise(props: {
   const { data, error, isLoading, mutate } = useAnswersExercises(listItem.id);
   const [showAnswerDeletionOptions, setShowAnswerDeletionOptions] =
     useState<boolean>(false);
-  const theme = useTheme();
 
   useEffect(() => {
     if (!data) return;
@@ -170,13 +171,13 @@ export default function EditExercise(props: {
               sendAnswer={getAnswer(index + 1)}
               number={index + 1}
               flex={1}
-              onStartEditing={props.onStartEditing}
-              onFinishEditing={props.onFinishEditing}
+              onStartEditing={onStartEditing}
+              onFinishEditing={onFinishEditing}
             />
             {showAnswerDeletionOptions && (
               <IconButton
                 icon="close"
-                onPressIn={props.onStartEditing}
+                onPressIn={onStartEditing}
                 onPress={() => {
                   if (answers.length <= 2) {
                     setShowErrorAnswerBoundaries(true);
@@ -191,7 +192,7 @@ export default function EditExercise(props: {
                   setAnswers(newAnswers);
                   sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);
-                  props.onFinishEditing();
+                  onFinishEditing();
                 }}
               />
             )}
