@@ -11,6 +11,7 @@ import { sortByOrder } from "../../../utils/common";
 import EditFlashcardExerciseJoinedPart from "./EditFlashcardExerciseJoinedPart";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
+import { set } from "cypress/types/lodash";
 
 export default function AccordionListItems(props: {
   type: ManagementType;
@@ -20,7 +21,10 @@ export default function AccordionListItems(props: {
 }) {
   const { type, setId, orderSetItemsBy } = props;
   const theme = useTheme();
-  const mutationRef = useRef(0);
+  const [mutated, setMutated] = useState<boolean>(false);
+  const [mutationSignal, setMutationSignal] = useState<boolean>(false);
+  const [content, setContent] = useState([]);
+  const orderedContent = sortByOrder(content, orderSetItemsBy);
   const [noSetItemsAvailable, setNoSetItemsAvailable] =
     useState<boolean>(false);
   const typeName = (plural: boolean) =>
@@ -39,6 +43,11 @@ export default function AccordionListItems(props: {
   }, [data]);
 
   useEffect(() => {
+    if (!mutated || !content) return;
+    setMutationSignal(true);
+    setMutated(false);
+  }, [mutated, content]);
+  useEffect(() => {
     const realtimeFlashcardsOrExercises = supabase
       .channel("flashcards_or_exercises_all")
       .on(
@@ -46,19 +55,20 @@ export default function AccordionListItems(props: {
         {
           event: "*",
           schema: "public",
-          table: type === ManagementType.FLASHCARD ? "flashcards" : "exercises",
+          table:
+            type === ManagementType.FLASHCARD
+              ? "flashcards"
+              : "answers_exercises",
         },
         (payload) => {
-          console.log("realtimeFlashcardsOrExercises: ", payload);
+          //console.log("realtimeFlashcardsOrExercises: ", payload);
           mutate().then(() => {
-            mutationRef.current++;
+            setMutated(true);
           });
         },
       )
       .subscribe();
   }, []);
-  const [content, setContent] = useState([]);
-  const orderedContent = sortByOrder(content, orderSetItemsBy);
   if (error) return <LoadingOverlay visible={isLoading} />;
   return noSetItemsAvailable ? (
     <HelperText
@@ -84,8 +94,9 @@ export default function AccordionListItems(props: {
           {
             <EditFlashcardExerciseJoinedPartWrapper
               listItem={listItem}
-              mutationRef={mutationRef}
+              mutationSignal={mutationSignal}
               type={type}
+              resetMutationSignal={() => setMutationSignal(false)}
             />
           }
         </List.Accordion>
@@ -95,11 +106,13 @@ export default function AccordionListItems(props: {
   );
 }
 
-function EditFlashcardExerciseJoinedPartWrapper({
-  listItem,
-  type,
-  mutationRef,
+function EditFlashcardExerciseJoinedPartWrapper(props: {
+  listItem;
+  type: ManagementType;
+  mutationSignal: boolean;
+  resetMutationSignal: () => void;
 }) {
+  const { listItem, type, mutationSignal, resetMutationSignal } = props;
   const liveEditBy =
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[listItem.id]),
@@ -117,16 +130,21 @@ function EditFlashcardExerciseJoinedPartWrapper({
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
+      console.log("EMPTIED: ", true);
       setLiveEditByEmptied(true);
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length]);
   useEffect(() => {
-    if (mutationRef.current > 0) {
+    if (mutationSignal) {
+      console.log("MUTATION HAPPENED: ", mutationSignal);
       setMutationHappened(true);
+      resetMutationSignal();
     }
-  }, [mutationRef.current]);
+  }, [mutationSignal]);
   useEffect(() => {
+    console.log("1", liveEditByEmptied);
+    console.log("2", mutationHappened);
     if (!liveEditByEmptied || !mutationHappened) return;
     setKey(Date.now());
     console.log("liveEditByEmptied: ", liveEditByEmptied);

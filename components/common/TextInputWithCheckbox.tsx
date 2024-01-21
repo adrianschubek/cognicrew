@@ -27,6 +27,7 @@ export default function TextInputWithCheckbox(props: {
     if (!listItemAnswer) return;
     setAnswerText(listItemAnswer[0]);
     setAnswerIsCorrect(listItemAnswer[1]);
+    console.log("listItemAnswer: ", listItemAnswer);
   }, [listItemAnswer]);
 
   return (
@@ -36,19 +37,23 @@ export default function TextInputWithCheckbox(props: {
         flex: flex || 0,
         width: width || "auto",
       }}
-      onFocus={onStartEditing}
-      onBlur={onFinishEditing}
+      onFocus={() => {
+        onStartEditing && onStartEditing();
+      }}
+      onBlur={() => {
+        onFinishEditing && onFinishEditing();
+      }}
       right={
         <TextInput.Icon
           icon={() => (
             <Checkbox
               status={answerIsCorrect ? "checked" : "unchecked"}
               onPress={() => {
-                onStartEditing();
+                onStartEditing && onStartEditing();
                 setAnswerIsCorrect(!answerIsCorrect);
                 sendAnswer([answerText, !answerIsCorrect]);
                 setTimeout(() => {
-                  onFinishEditing();
+                  onFinishEditing && onFinishEditing();
                 }, 100);
               }}
             />
