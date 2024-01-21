@@ -462,7 +462,7 @@ async function achieve(achievementId: number, userId: string) {
   const { error } = await supabase
     .from("user_achievements")
     .insert([{ achievement_id: achievementId, user_id: userId }]);
-  if (error) console.error("Achievement Error: " + error);
+  if (error) console.error("Achievement Error: ", error);
 }
 
 /**
