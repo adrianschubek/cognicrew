@@ -296,6 +296,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             </Text>
           )}
           <LivePresenceFunctionality
+            isInitialized={isInitialized}
             listItemId={listItem.id}
             isEditing={isEditing}
           />

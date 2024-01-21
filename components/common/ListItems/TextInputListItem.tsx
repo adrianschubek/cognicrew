@@ -17,6 +17,7 @@ export default function TextInputListItem(props: {
     if (title === "") {
       return;
     }
+    console.log("title", title);
     upsertSet({
       //@ts-expect-error
       id: item.id,

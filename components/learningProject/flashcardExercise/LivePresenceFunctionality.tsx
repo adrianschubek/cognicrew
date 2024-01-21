@@ -5,10 +5,11 @@ import { useAuth } from "../../../providers/AuthProvider";
 import { useUsername } from "../../../utils/hooks";
 
 export default function LivePresenceFunctionality(props: {
+  isInitialized: boolean;
   listItemId: any;
   isEditing: boolean;
 }) {
-  const { listItemId, isEditing } = props;
+  const { isInitialized, listItemId, isEditing } = props;
   const { user } = useAuth();
   const username = useUsername();
   const updateEditedBy = usePresenceStore(
@@ -37,18 +38,20 @@ export default function LivePresenceFunctionality(props: {
   useEffect(() => {
     if (isEditing) {
       startEditing();
-    } else endEditing();
+    } else if (!isEditing && isInitialized) endEditing();
   }, [isEditing]);
 
   const startEditing = async () => {
     const presenceTrackStatus = await realtime.current.track({
       user_name: username.data,
     });
+    console.log("startEditing");
     //console.log(presenceTrackStatus);
   };
 
   const endEditing = async () => {
     const presenceTrackStatus = await realtime.current.untrack();
+    console.log("endEditing");
     //console.log(presenceTrackStatus);
   };
   return null;

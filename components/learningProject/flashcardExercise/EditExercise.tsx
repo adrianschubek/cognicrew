@@ -176,6 +176,7 @@ export default function EditExercise(props: {
             {showAnswerDeletionOptions && (
               <IconButton
                 icon="close"
+                onPressIn={props.onStartEditing}
                 onPress={() => {
                   if (answers.length <= 2) {
                     setShowErrorAnswerBoundaries(true);
@@ -190,6 +191,7 @@ export default function EditExercise(props: {
                   setAnswers(newAnswers);
                   sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);
+                  props.onFinishEditing();
                 }}
               />
             )}

@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { List, Divider, useTheme, HelperText } from "react-native-paper";
 import { responsiveWidth } from "react-native-responsive-dimensions";
 import { ManagementType, orderByPrinciple } from "../../../types/common";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import LoadingOverlay from "../../alerts/LoadingOverlay";
 import { useExercises, useFlashcards } from "../../../utils/hooks";
 import { supabase } from "../../../supabase";
@@ -20,6 +20,7 @@ export default function AccordionListItems(props: {
 }) {
   const { type, setId, orderSetItemsBy } = props;
   const theme = useTheme();
+  const mutationRef = useRef(0);
   const [noSetItemsAvailable, setNoSetItemsAvailable] =
     useState<boolean>(false);
   const typeName = (plural: boolean) =>
@@ -48,7 +49,10 @@ export default function AccordionListItems(props: {
           table: type === ManagementType.FLASHCARD ? "flashcards" : "exercises",
         },
         (payload) => {
-          mutate();
+          console.log("realtimeFlashcardsOrExercises: ", payload);
+          mutate().then(() => {
+            mutationRef.current++;
+          });
         },
       )
       .subscribe();
@@ -80,6 +84,7 @@ export default function AccordionListItems(props: {
           {
             <EditFlashcardExerciseJoinedPartWrapper
               listItem={listItem}
+              mutationRef={mutationRef}
               type={type}
             />
           }
@@ -90,28 +95,44 @@ export default function AccordionListItems(props: {
   );
 }
 
-function EditFlashcardExerciseJoinedPartWrapper({ listItem, type }) {
+function EditFlashcardExerciseJoinedPartWrapper({
+  listItem,
+  type,
+  mutationRef,
+}) {
   const liveEditBy =
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
-  const [key, setKey] = useState(listItem.id);
+  const [key, setKey] = useState<number[]>([listItem.id, listItem.id]);
+  const [rerender, setRerender] = useState(0);
   const [prevLiveEditByLength, setPrevLiveEditByLength] = useState(
     liveEditBy.length,
   );
 
   useEffect(() => {
+    console.log("liveEditBy: ", liveEditBy);
     if (
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
-      setKey(Date.now());
+      setKey([Date.now(), key[1]]);
     }
     setPrevLiveEditByLength(liveEditBy.length);
-  }, [liveEditBy.length, listItem.id]);
+  }, [liveEditBy.length]);
+  useEffect(() => {
+    if (mutationRef.current > 0) {
+      setKey([key[0], Date.now()]);
+    }
+  }, [mutationRef.current]);
+  useEffect(() => {
+    if (key[0] === listItem.id || key[1] === listItem.id) return;
+    setRerender(rerender + 1);
+    setKey([listItem.id, listItem.id]);
+  }, [key]);
   return (
     <EditFlashcardExerciseJoinedPart
-      key={key}
+      key={rerender}
       listItem={listItem}
       type={type}
       liveEditBy={liveEditBy}
