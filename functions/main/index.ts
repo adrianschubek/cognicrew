@@ -461,7 +461,7 @@ function nextState(publicState: PublicRoomState): State | false {
 async function achieve(achievementId: number, userId: string) {
   const { error } = await supabase
     .from("user_achievements")
-    .insert([{ achievement_id: achievementId, user_id: userId }]);
+    .upsert([{ achievement_id: achievementId, user_id: userId }]);
   if (error) console.error("Achievement Error: ", error);
 }
 
