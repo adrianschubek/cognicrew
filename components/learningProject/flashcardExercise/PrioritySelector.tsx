@@ -5,8 +5,11 @@ import { TextInput, useTheme } from "react-native-paper";
 export default function PrioritySelector(props: {
   priority: number;
   setPriority: (priority: number) => void;
+  onStartEditing: () => any;
+  onFinishEditing: () => any;
 }) {
   const theme = useTheme();
+  const { priority, setPriority, onStartEditing, onFinishEditing } = props;
   const [priorityStringified, setPriorityStringified] = useState<string>("00");
   function isBetweenZeroAndTen(number: number) {
     return number >= 0 && number <= 10;
@@ -18,12 +21,12 @@ export default function PrioritySelector(props: {
     return number < 10 ? "0" + number : number.toString();
   };
   useEffect(() => {
-    if (!props.priority) return;
-    props.setPriority(props.priority);
-    props.priority < 10
-      ? setPriorityStringified("0" + props.priority.toString())
-      : setPriorityStringified(props.priority.toString());
-  }, [props.priority]);
+    if (!priority) return;
+    setPriority(priority);
+    priority < 10
+      ? setPriorityStringified("0" + priority.toString())
+      : setPriorityStringified(priority.toString());
+  }, [priority]);
   return (
     <>
       <View
@@ -66,16 +69,18 @@ export default function PrioritySelector(props: {
         onChangeText={(prio) => {
           setPriorityStringified(prio);
         }}
+        onFocus={onStartEditing}
         onBlur={() => {
           let prioNumber = parseInt(priorityStringified);
           priorityStringified !== "" && !isInvalid(prioNumber)
             ? priorityStringified.length === 2 && prioNumber < 10
-              ? props.setPriority(parseInt(priorityStringified[1]))
-              : props.setPriority(prioNumber)
-            : setPriorityStringified(addZeroWhenNecessary(props.priority));
+              ? setPriority(parseInt(priorityStringified[1]))
+              : setPriority(prioNumber)
+            : setPriorityStringified(addZeroWhenNecessary(priority));
 
           !isInvalid(prioNumber) &&
             setPriorityStringified(addZeroWhenNecessary(prioNumber));
+          onFinishEditing();
         }}
       />
     </>

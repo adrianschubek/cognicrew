@@ -247,6 +247,8 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                   setPriority={(val) => {
                     setPriority(val);
                   }}
+                  onStartEditing={() => setIsEditing(true)}
+                  onFinishEditing={() => setIsEditing(false)}
                 />
                 <IconButton
                   testID="delete-flashcard-button"
