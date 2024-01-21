@@ -554,7 +554,7 @@ async function updateStats(
 
   //Check for achievements 5,6,7,8,11
   for (const player of publicState.players) {
-    if (publicState.round != publicState.totalRounds) {
+    if (publicState.round == publicState.totalRounds) {
       //only let users achieve these if the game has been played until the end
       if (player.correctQuestions == 0) {
         //achievement 5
