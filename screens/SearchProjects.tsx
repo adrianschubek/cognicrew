@@ -59,8 +59,8 @@ export default function SearchProjects() {
             value={searchQueryDisplay}
           />
           <HelperText type="info" style={{ marginHorizontal: 10 }}>
-            Search for title and tags separated by commas in all learning
-            projects
+            Search all learning projects for title, description, and tags,
+            separated by commas
           </HelperText>
         </View>
         <Divider style={{ marginBottom: 10, marginTop: 10 }} />
