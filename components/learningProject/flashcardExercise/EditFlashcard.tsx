@@ -8,9 +8,10 @@ export default function EditFlashcard(props: {
   onStartEditing?: () => any;
   onFinishEditing?: () => any;
 }) {
-  const [answer, setAnswer] = useState(props.listItem.answer);
+  const { listItem, sendAnswer, onStartEditing, onFinishEditing } = props;
+  const [answer, setAnswer] = useState(listItem.answer);
   useEffect(() => {
-    props.sendAnswer(answer);
+    sendAnswer(answer);
   }, []);
   return (
     <TextInput
@@ -18,11 +19,11 @@ export default function EditFlashcard(props: {
       testID="input-edit-flashcard-answer"
       multiline={true}
       value={answer}
-      onFocus={props.onStartEditing}
-      onBlur={props.onFinishEditing}
+      onFocus={onStartEditing}
+      onBlur={onFinishEditing}
       onChangeText={(answer) => {
         setAnswer(answer);
-        props.sendAnswer(answer);
+        sendAnswer(answer);
       }}
     />
   );

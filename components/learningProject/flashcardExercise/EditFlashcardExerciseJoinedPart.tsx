@@ -233,40 +233,38 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             color: theme.colors.primary,
           }}
           right={() => (
-            <Fragment>
-              <View
-                style={{
-                  flexDirection: "row",
-                  marginBottom: 8,
-                  marginTop: 8,
-                  justifyContent: "flex-end",
+            <View
+              style={{
+                flexDirection: "row",
+                marginBottom: 8,
+                marginTop: 8,
+                justifyContent: "flex-end",
+              }}
+            >
+              <PrioritySelector
+                priority={priority}
+                sendPriority={(val) => {
+                  setPriority(val);
                 }}
-              >
-                <PrioritySelector
-                  priority={priority}
-                  setPriority={(val) => {
-                    setPriority(val);
-                  }}
-                  onStartEditing={() => setIsEditing(true)}
-                  onFinishEditing={() => setIsEditing(false)}
-                />
-                <IconButton
-                  testID="delete-flashcard-button"
-                  icon="delete"
-                  onPress={() => {
-                    alerts.confirm({
-                      icon: "delete",
-                      message: "Are you sure you want to delete this question?",
-                      okText: "Delete",
-                      okAction(values) {
-                        deleteFlashcardOrExercise();
-                      },
-                    });
-                  }}
-                  style={{ alignSelf: "center" }}
-                />
-              </View>
-            </Fragment>
+                onStartEditing={() => setIsEditing(true)}
+                onFinishEditing={() => setIsEditing(false)}
+              />
+              <IconButton
+                testID="delete-flashcard-button"
+                icon="delete"
+                onPress={() => {
+                  alerts.confirm({
+                    icon: "delete",
+                    message: "Are you sure you want to delete this question?",
+                    okText: "Delete",
+                    okAction(values) {
+                      deleteFlashcardOrExercise();
+                    },
+                  });
+                }}
+                style={{ alignSelf: "center" }}
+              />
+            </View>
           )}
         />
         <Card.Content>

@@ -4,29 +4,18 @@ import { TextInput, useTheme } from "react-native-paper";
 
 export default function PrioritySelector(props: {
   priority: number;
-  setPriority: (priority: number) => void;
+  sendPriority: (priority: number) => void;
   onStartEditing: () => any;
   onFinishEditing: () => any;
 }) {
   const theme = useTheme();
-  const { priority, setPriority, onStartEditing, onFinishEditing } = props;
-  const [priorityStringified, setPriorityStringified] = useState<string>("00");
-  function isBetweenZeroAndTen(number: number) {
-    return number >= 0 && number <= 10;
-  }
+  const { priority, sendPriority, onStartEditing, onFinishEditing } = props;
+  const [priorityStringified, setPriorityStringified] = useState<string>(
+    priority < 10 ? "0" + priority : priority.toString(),
+  );
   const isInvalid = (number: number) => {
-    return !isBetweenZeroAndTen(number);
+    return number < 0 || number > 10;
   };
-  const addZeroWhenNecessary = (number: number) => {
-    return number < 10 ? "0" + number : number.toString();
-  };
-  useEffect(() => {
-    if (!priority) return;
-    setPriority(priority);
-    priority < 10
-      ? setPriorityStringified("0" + priority.toString())
-      : setPriorityStringified(priority.toString());
-  }, [priority]);
   return (
     <>
       <View
@@ -67,19 +56,19 @@ export default function PrioritySelector(props: {
         style={{ backgroundColor: null, width: 50, flex: 0 }}
         contentStyle={{}}
         onChangeText={(prio) => {
+          let prioNumber = parseInt(prio);
+          if (!isInvalid(prioNumber)) {
+            prio !== "" && sendPriority(prioNumber);
+          }
           setPriorityStringified(prio);
         }}
         onFocus={onStartEditing}
         onBlur={() => {
-          let prioNumber = parseInt(priorityStringified);
-          priorityStringified !== "" && !isInvalid(prioNumber)
-            ? priorityStringified.length === 2 && prioNumber < 10
-              ? setPriority(parseInt(priorityStringified[1]))
-              : setPriority(prioNumber)
-            : setPriorityStringified(addZeroWhenNecessary(priority));
-
-          !isInvalid(prioNumber) &&
-            setPriorityStringified(addZeroWhenNecessary(prioNumber));
+          setPriorityStringified(
+            priorityStringified.length === 1
+              ? "0" + priorityStringified
+              : priorityStringified,
+          );
           onFinishEditing();
         }}
       />

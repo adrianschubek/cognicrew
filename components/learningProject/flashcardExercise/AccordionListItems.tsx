@@ -117,20 +117,20 @@ function EditFlashcardExerciseJoinedPartWrapper({
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
-      console.log("liveEditByEmptied: ", liveEditByEmptied);
       setLiveEditByEmptied(true);
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length]);
   useEffect(() => {
     if (mutationRef.current > 0) {
-      console.log("mutationHappened: ", mutationHappened);
       setMutationHappened(true);
     }
   }, [mutationRef.current]);
   useEffect(() => {
     if (!liveEditByEmptied || !mutationHappened) return;
     setKey(Date.now());
+    console.log("liveEditByEmptied: ", liveEditByEmptied);
+    console.log("mutationHappened: ", mutationHappened);
     setLiveEditByEmptied(false);
     setMutationHappened(false);
   }, [liveEditByEmptied, mutationHappened]);
