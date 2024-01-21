@@ -105,7 +105,7 @@ function EditFlashcardExerciseJoinedPartWrapper({ listItem, type }) {
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
-      setKey(liveEditBy.length === 0 ? listItem.id : Date.now());
+      setKey(Date.now());
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length, listItem.id]);

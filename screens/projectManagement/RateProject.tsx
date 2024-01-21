@@ -85,7 +85,12 @@ export default function RateProject({
     projectId,
     user.id,
   );
-
+  useFocusEffect(() => {
+    return () => {
+      setIsInitialised(false);
+      setRating(null);
+    };
+  });
   useEffect(() => {
     if (!data || isLoading) return;
     if (!isInitialised) {
