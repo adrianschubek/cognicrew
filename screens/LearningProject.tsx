@@ -104,91 +104,99 @@ export default function LearningProject({ navigation, route }) {
           navigation.navigate(NAVIGATION.FILES_MANAGEMENT);
         }}
       />
-
-      <FAB
-        icon={"chart-bar"}
-        onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
-        color={theme.colors.onSecondaryContainer}
-        style={{
-          position: "absolute",
-          margin: 16,
-          right: 180,
-          bottom: 0,
-          backgroundColor: theme.colors.secondaryContainer,
-        }}
-        label={"Project Statistics"}
-      />
-
-      <FAB
-        icon={"play"}
-        onPress={() => {
-          confirm({
-            icon: "play",
-            title: "Create Room",
-            okText: "Create",
-            okAction: async (params) => {
-              const { data, error } = await supabase.rpc("create_room", {
-                p_project_id: parseInt(project.id),
-                p_name: params[0] ?? null,
-                p_code: parseInt(params[1]) ?? null,
-                p_share_code: parseInt(params[2]) ?? null,
-                p_private: !!params[3],
-                p_size: parseInt(params[4]) ?? null,
-              });
-              if (error) return error.message;
-              setRoom(data as any);
-            },
-            fields: [
-              {
-                label: "Name",
-                icon: "tag-text",
-                defaultValue: project.name,
-              },
-              {
-                label: "Password",
-                type: "number",
-                icon: "key",
-                helperText: "A password required to join. Optional.",
-                validator: (value) => /^[0-9]{0,6}$/.test(value),
-                errorText: "Room code must be between 0 and 6 digits",
-              },
-              {
-                label: "Join Code",
-                type: "number",
-                icon: "share-circle",
-                helperText:
-                  "A code to enter this room directly. This also bypasses the password. Optional.",
-                validator: (value) => /^[0-9]{0,6}$/.test(value),
-                errorText: "Room code must be between 0 and 6 digits",
-              },
-              {
-                label: "Friends only",
-                icon: "account-heart",
-                type: "checkbox",
-                helperText: "Only friends can join this room.",
-              },
-              {
-                label: "Size (1-1000)",
-                type: "number",
-                helperText: "The maximum amount of players in this room.",
-                icon: "account-group",
-                defaultValue: "10",
-                validator: (value) => +value >= 1 && +value <= 1000,
-                errorText: "Size must be between 1 and 1000",
-              },
-            ],
-          });
-        }}
-        color={theme.colors.onPrimary}
+      <View
         style={{
           position: "absolute",
           margin: 16,
           right: 0,
+          left: 0,
           bottom: 0,
-          backgroundColor: theme.colors.primary,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          flex: 1,
         }}
-        label={"Create Room"}
-      />
+      >
+        <FAB
+          icon={"chart-bar"}
+          onPress={() => navigation.navigate(NAVIGATION.PROJECT_STATISTICS)}
+          color={theme.colors.onSecondaryContainer}
+          style={{
+            maxWidth: responsiveWidth(45),
+            flex: 0.5,
+            marginRight: 16,
+            backgroundColor: theme.colors.secondaryContainer,
+          }}
+          label={"Project Statistics"}
+        />
+        <FAB
+          icon={"play"}
+          onPress={() => {
+            confirm({
+              icon: "play",
+              title: "Create Room",
+              okText: "Create",
+              okAction: async (params) => {
+                const { data, error } = await supabase.rpc("create_room", {
+                  p_project_id: parseInt(project.id),
+                  p_name: params[0] ?? null,
+                  p_code: parseInt(params[1]) ?? null,
+                  p_share_code: parseInt(params[2]) ?? null,
+                  p_private: !!params[3],
+                  p_size: parseInt(params[4]) ?? null,
+                });
+                if (error) return error.message;
+                setRoom(data as any);
+              },
+              fields: [
+                {
+                  label: "Name",
+                  icon: "tag-text",
+                  defaultValue: project.name,
+                },
+                {
+                  label: "Password",
+                  type: "number",
+                  icon: "key",
+                  helperText: "A password required to join. Optional.",
+                  validator: (value) => /^[0-9]{0,6}$/.test(value),
+                  errorText: "Room code must be between 0 and 6 digits",
+                },
+                {
+                  label: "Join Code",
+                  type: "number",
+                  icon: "share-circle",
+                  helperText:
+                    "A code to enter this room directly. This also bypasses the password. Optional.",
+                  validator: (value) => /^[0-9]{0,6}$/.test(value),
+                  errorText: "Room code must be between 0 and 6 digits",
+                },
+                {
+                  label: "Friends only",
+                  icon: "account-heart",
+                  type: "checkbox",
+                  helperText: "Only friends can join this room.",
+                },
+                {
+                  label: "Size (1-1000)",
+                  type: "number",
+                  helperText: "The maximum amount of players in this room.",
+                  icon: "account-group",
+                  defaultValue: "10",
+                  validator: (value) => +value >= 1 && +value <= 1000,
+                  errorText: "Size must be between 1 and 1000",
+                },
+              ],
+            });
+          }}
+          color={theme.colors.onPrimary}
+          style={{
+            flex: 0.5,
+            maxWidth: responsiveWidth(45),
+            backgroundColor: theme.colors.primary,
+          }}
+          label={"Create Room"}
+        />
+      </View>
     </View>
   );
 }
