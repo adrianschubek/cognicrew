@@ -51,19 +51,6 @@ export default function EditExercise(props: {
     setOldData(data);
     setIsInitialized(true);
   }, [data]);
-  useEffect(() => {
-    const realtimeAnswers = supabase
-      .channel("answers_exercises_all")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "answers_exercises" },
-        (payload) => {
-          //console.log("realtimeAnswers: ", payload);
-          mutate();
-        },
-      )
-      .subscribe();
-  }, []);
 
   useEffect(() => {
     if (!isInitialized) return;
