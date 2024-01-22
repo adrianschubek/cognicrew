@@ -62,8 +62,8 @@ export default function SearchWithList(props: {
         sendSetId={getSetId}
         noSetAvailable={data?.length === 0 ? true : false}
         creationOptionFocused={props.creationOptionFocused}
-        sendSetDeleted={(itemId) => {
-          setSets(sets.filter((e) => e.id !== itemId));
+        sendSetDeleted={() => {
+          mutate();
         }}
         sendSetCreated={() => {
           mutate();

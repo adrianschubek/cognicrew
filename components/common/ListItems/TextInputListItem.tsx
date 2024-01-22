@@ -6,7 +6,7 @@ import { useProjectStore } from "../../../stores/ProjectStore";
 
 export default function TextInputListItem(props: {
   item;
-  sendSetDeleted: (itemId: number) => void;
+  sendSetDeleted: () => void;
 }) {
   const { item, sendSetDeleted } = props;
   const { isMutating, trigger: deleteSet } = useDeleteSet();
@@ -37,7 +37,7 @@ export default function TextInputListItem(props: {
     return () => {
       if (shouldSaveRef.current) saveRef.current();
     };
-  }, [shouldSaveRef]);
+  }, []);
   return (
     <Fragment>
       <TextInput
@@ -54,8 +54,9 @@ export default function TextInputListItem(props: {
             disabled={isMutating || isMutating2}
             onPress={() => {
               shouldSaveRef.current = false;
-              deleteSet({ id: item.id });
-              sendSetDeleted(item.id);
+              deleteSet({ id: item.id }).then(() => {
+                sendSetDeleted();
+              });
             }}
           />
         }

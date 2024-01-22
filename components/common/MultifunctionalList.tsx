@@ -20,7 +20,7 @@ export default function MultifunctionalList(props: {
   type?: ManagementType;
   sendSetId?: any;
   noSetAvailable: boolean;
-  sendSetDeleted: (itemId: number) => void;
+  sendSetDeleted: () => void;
   sendSetCreated: () => void;
   [name: string]: any;
 }) {
@@ -132,8 +132,8 @@ export default function MultifunctionalList(props: {
               <TextInputListItem
                 item={item}
                 key={item.id}
-                sendSetDeleted={(itemId) => {
-                  sendSetDeleted(itemId);
+                sendSetDeleted={() => {
+                  sendSetDeleted();
                 }}
               />
             ))
