@@ -107,8 +107,8 @@ export default function EditExercise(props: {
   function filterAnswers(answers: [string, boolean, number][]) {
     return answers
       .filter((e) => e[0] !== "")
-      .map((e) => {
-        return [e[0], e[1], e[2]];
+      .map((e, index) => {
+        return [e[0], e[1], index + 1];
       }) as [string, boolean, number][];
   }
 

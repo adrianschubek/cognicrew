@@ -130,21 +130,21 @@ function EditFlashcardExerciseJoinedPartWrapper(props: {
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
-      console.log("EMPTIED: ", true);
+      //console.log("EMPTIED: ", true);
       setLiveEditByEmptied(true);
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length]);
   useEffect(() => {
     if (mutationSignal) {
-      console.log("MUTATION HAPPENED: ", mutationSignal);
+      //console.log("MUTATION HAPPENED: ", mutationSignal);
       setMutationHappened(true);
       resetMutationSignal();
     }
   }, [mutationSignal]);
   useEffect(() => {
-    console.log("1", liveEditByEmptied);
-    console.log("2", mutationHappened);
+    //console.log("1", liveEditByEmptied);
+    //console.log("2", mutationHappened);
     if (!liveEditByEmptied || !mutationHappened) return;
     setKey(Date.now());
     console.log("liveEditByEmptied: ", liveEditByEmptied);
