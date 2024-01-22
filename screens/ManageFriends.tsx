@@ -47,9 +47,6 @@ export default function ManageFriends({ navigation }) {
     //console.log(data)
     return data;
   }
-  const icon = (props) => (
-    <Avatar.Icon {...props} icon="account-group" size={40} />
-  );
   const searchFilterFriends =
     friendIdsAndNamesData &&
     friendIdsAndNamesData.filter((e) => {
@@ -104,29 +101,28 @@ export default function ManageFriends({ navigation }) {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
+            width: "100%",
           }}
         >
           <Text variant="titleLarge" style={{ flex: 1 }}>
             Friends
           </Text>
-          <Button
-            mode="outlined"
-            onPress={handlePresentModalPress}
-            style={{ flex: 1 }}
-          >
-            Requests
-          </Button>
+          <View style={{ flex: 2 }}>
+            <Button mode="outlined" onPress={handlePresentModalPress}>
+              Requests
+            </Button>
+          </View>
           <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
               flex: 1,
+              flexDirection: "row",
+              justifyContent: "center",
             }}
           >
             <IconButton
               testID="plus-add-friend-button"
-              size={28}
-              icon="plus"
+              size={30}
+              icon="account-multiple-plus"
               iconColor={theme.colors.primary}
               onPress={() =>
                 confirm({
@@ -160,7 +156,6 @@ export default function ManageFriends({ navigation }) {
                 })
               }
             />
-            {icon({})}
           </View>
         </View>
         {/* Friends list */}
