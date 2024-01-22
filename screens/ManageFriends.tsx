@@ -100,23 +100,20 @@ export default function ManageFriends({ navigation }) {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "space-around",
             width: "100%",
           }}
         >
-          <Text variant="titleLarge" style={{ flex: 1 }}>
-            Friends
-          </Text>
-          <View style={{ flex: 2 }}>
+          <View style={{ flex: 4 }}>
             <Button mode="outlined" onPress={handlePresentModalPress}>
-              Requests
+              Friend requests
             </Button>
           </View>
           <View
             style={{
               flex: 1,
               flexDirection: "row",
-              justifyContent: "center",
+              justifyContent: "flex-end",
             }}
           >
             <IconButton
