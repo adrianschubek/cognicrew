@@ -11,7 +11,6 @@ import { sortByOrder } from "../../../utils/common";
 import EditFlashcardExerciseJoinedPart from "./EditFlashcardExerciseJoinedPart";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
-import { set } from "cypress/types/lodash";
 
 export default function AccordionListItems(props: {
   type: ManagementType;
@@ -21,7 +20,6 @@ export default function AccordionListItems(props: {
 }) {
   const { type, setId, orderSetItemsBy } = props;
   const theme = useTheme();
-  const [mutated, setMutated] = useState<boolean>(false);
   const [mutationSignal, setMutationSignal] = useState<boolean>(false);
   const [content, setContent] = useState([]);
   const orderedContent = sortByOrder(content, orderSetItemsBy);
@@ -43,11 +41,6 @@ export default function AccordionListItems(props: {
   }, [data]);
 
   useEffect(() => {
-    if (!mutated || !content) return;
-    setMutationSignal(true);
-    setMutated(false);
-  }, [mutated, content]);
-  useEffect(() => {
     const realtimeFlashcardsOrExercises = supabase
       .channel("flashcards_or_exercises_all")
       .on(
@@ -55,15 +48,12 @@ export default function AccordionListItems(props: {
         {
           event: "*",
           schema: "public",
-          table:
-            type === ManagementType.FLASHCARD
-              ? "flashcards"
-              : "answers_exercises",
+          table: type === ManagementType.FLASHCARD ? "flashcards" : "exercises",
         },
         (payload) => {
           //console.log("realtimeFlashcardsOrExercises: ", payload);
           mutate().then(() => {
-            setMutated(true);
+            setMutationSignal((prevMutationSignal) => !prevMutationSignal);
           });
         },
       )
@@ -96,7 +86,6 @@ export default function AccordionListItems(props: {
               listItem={listItem}
               mutationSignal={mutationSignal}
               type={type}
-              resetMutationSignal={() => setMutationSignal(false)}
             />
           }
         </List.Accordion>
@@ -110,48 +99,37 @@ function EditFlashcardExerciseJoinedPartWrapper(props: {
   listItem;
   type: ManagementType;
   mutationSignal: boolean;
-  resetMutationSignal: () => void;
 }) {
-  const { listItem, type, mutationSignal, resetMutationSignal } = props;
+  const { listItem, type, mutationSignal } = props;
   const liveEditBy =
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[listItem.id]),
     ) ?? [];
   const [key, setKey] = useState<number>(listItem.id);
   const [liveEditByEmptied, setLiveEditByEmptied] = useState<boolean>(false);
-  const [mutationHappened, setMutationHappened] = useState<boolean>(false);
   const [prevLiveEditByLength, setPrevLiveEditByLength] = useState(
     liveEditBy.length,
   );
-
+  console.log(mutationSignal, "mutationSignal");
   useEffect(() => {
-    console.log("liveEditBy: ", liveEditBy);
+    //console.log("liveEditBy: ", liveEditBy);
     if (
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
     ) {
-      //console.log("EMPTIED: ", true);
+      console.log("EMPTIED: ", true);
       setLiveEditByEmptied(true);
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length]);
   useEffect(() => {
-    if (mutationSignal) {
-      //console.log("MUTATION HAPPENED: ", mutationSignal);
-      setMutationHappened(true);
-      resetMutationSignal();
+    console.log("liveEditByEmptied: ", liveEditByEmptied);
+    if (liveEditByEmptied) {
+      setKey(Date.now());
+      setLiveEditByEmptied(false);
     }
   }, [mutationSignal]);
-  useEffect(() => {
-    //console.log("1", liveEditByEmptied);
-    //console.log("2", mutationHappened);
-    if (!liveEditByEmptied || !mutationHappened) return;
-    setKey(Date.now());
-    console.log("liveEditByEmptied: ", liveEditByEmptied);
-    console.log("mutationHappened: ", mutationHappened);
-    setLiveEditByEmptied(false);
-    setMutationHappened(false);
-  }, [liveEditByEmptied, mutationHappened]);
+
   return (
     <EditFlashcardExerciseJoinedPart
       key={key}
