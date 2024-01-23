@@ -44,10 +44,14 @@ export default function CreateEditProject({
 
   const { edit: project } = route.params;
   const showDiscardPopUp = useRef<boolean>(true);
-  const username = useUsername(project?.owner_id ?? null);
+  const ogOwner = useUsername(project?.owner_id ?? null);
   const { success, error: errorAlert, confirm } = useAlerts();
   const theme = useTheme();
-
+  useEffect(() => {
+    if (!ogOwner) return;
+    setOwner(ogOwner.data);
+  }, [ogOwner]);
+  const [owner, setOwner] = useState<string>("owner");
   const myId = useAuth().user.id;
 
   useEffect(() => {
@@ -98,7 +102,7 @@ export default function CreateEditProject({
   const [isPublished, setIsPublished] = useState(
     project?.is_published ?? false,
   );
-  const [owner, setOwner] = useState(username.data);
+
   const [tags, setTags] = useState(project?.tags ?? "");
 
   const { isMutating, trigger: upsert } = useUpsertMutation(
@@ -297,7 +301,8 @@ export default function CreateEditProject({
                         if (!isPublished) {
                           confirm({
                             title: "Publish project?",
-                            message:"Other users will be able to find and clone this project including all its content. They will NOT be able to edit THIS project.",
+                            message:
+                              "Other users will be able to find and clone this project including all its content. They will NOT be able to edit THIS project.",
                             icon: "lock-open-outline",
                             okText: "Make public",
                             okAction: () => setIsPublished((old) => !old),
@@ -329,6 +334,7 @@ export default function CreateEditProject({
           right={
             <TextInput.Icon
               /* TODO */
+              disabled={project?.owner_id !== myId}
               onPress={() => {
                 showDiscardPopUp.current = false;
                 confirm({
