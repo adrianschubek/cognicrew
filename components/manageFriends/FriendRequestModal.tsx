@@ -11,7 +11,7 @@ export default function FriendRequestModal(props: {
   friendRequestsSent: any[];
   friendRequestsReceived: any[];
   userId: string;
-  onChange: () => void;
+  onChange: (index: number) => void;
 }) {
   const theme = useTheme();
   const snapPoints = useMemo(() => ["50%", "87%"], []);
@@ -27,8 +27,8 @@ export default function FriendRequestModal(props: {
   const { trigger: addFriend } = useInsertFriend();
   const sectionTitleVariant = "titleMedium";
   const handleSheetChanges = useCallback((index: number) => {
-    console.log("handleSheetChanges", index)
-    onChange();
+    console.log("handleSheetChanges", index);
+    onChange(index);
   }, []);
   return (
     <BottomSheetModal

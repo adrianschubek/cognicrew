@@ -91,9 +91,11 @@ export default function ManageFriends({ navigation }) {
           friendRequestsReceived={friendRequestsReceived}
           friendRequestsSent={friendRequestsSent}
           userId={user.id}
-          onChange={() => {
-            isRequestsModalVisibleRef.current =
-              !isRequestsModalVisibleRef.current;
+          onChange={(index) => {
+            if (index === 1 || index === -1) {
+              isRequestsModalVisibleRef.current =
+                !isRequestsModalVisibleRef.current;
+            }
           }}
         />
         <View
