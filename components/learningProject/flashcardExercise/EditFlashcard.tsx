@@ -7,9 +7,23 @@ export default function EditFlashcard(props: {
   sendAnswer: (answer: string) => any;
   onStartEditing?: () => any;
   onFinishEditing?: () => any;
+  liveEditByEmptied: boolean;
+  onUpdate: () => void;
 }) {
-  const { listItem, sendAnswer, onStartEditing, onFinishEditing } = props;
+  const {
+    listItem,
+    sendAnswer,
+    onStartEditing,
+    onFinishEditing,
+    liveEditByEmptied,
+    onUpdate,
+  } = props;
   const [answer, setAnswer] = useState(listItem.answer);
+  useEffect(() => {
+    if (!liveEditByEmptied) return;
+    setAnswer(listItem.answer);
+    onUpdate();
+  }, [listItem.answer]);
   useEffect(() => {
     sendAnswer(answer);
   }, []);

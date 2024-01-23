@@ -7,15 +7,30 @@ export default function PrioritySelector(props: {
   sendPriority: (priority: number) => void;
   onStartEditing: () => any;
   onFinishEditing: () => any;
+  refetchedPrio: number;
 }) {
   const theme = useTheme();
-  const { priority, sendPriority, onStartEditing, onFinishEditing } = props;
+  const {
+    priority,
+    sendPriority,
+    onStartEditing,
+    onFinishEditing,
+    refetchedPrio,
+  } = props;
   const [priorityStringified, setPriorityStringified] = useState<string>(
     priority < 10 ? "0" + priority : priority.toString(),
   );
+  function stringyfyPriority(priority: number) {
+    return priority < 10 ? "0" + priority : priority.toString();
+  }
   const isInvalid = (number: number) => {
     return number < 0 || number > 10;
   };
+  useEffect(() => {
+    if (refetchedPrio === null) return;
+    setPriorityStringified(stringyfyPriority(refetchedPrio));
+  }, [refetchedPrio]);
+
   return (
     <>
       <View

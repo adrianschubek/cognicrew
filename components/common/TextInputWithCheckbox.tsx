@@ -27,7 +27,7 @@ export default function TextInputWithCheckbox(props: {
     if (!listItemAnswer) return;
     setAnswerText(listItemAnswer[0]);
     setAnswerIsCorrect(listItemAnswer[1]);
-    console.log("listItemAnswer: ", listItemAnswer);
+    //console.log("listItemAnswer: ", listItemAnswer);
   }, [listItemAnswer]);
 
   return (

@@ -13,6 +13,8 @@ export default function EditExercise(props: {
   updateCacheTrigger: boolean;
   onStartEditing?: () => any;
   onFinishEditing?: () => any;
+  liveEditByEmptied: boolean;
+  onUpdate: () => void;
 }) {
   const {
     listItem,
@@ -21,6 +23,8 @@ export default function EditExercise(props: {
     updateCacheTrigger,
     onStartEditing,
     onFinishEditing,
+    liveEditByEmptied,
+    onUpdate,
   } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
@@ -32,6 +36,20 @@ export default function EditExercise(props: {
     useState<boolean>(false);
 
   useEffect(() => {
+    const realtimeAnswers = supabase
+      .channel("answers_exercises_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "answers_exercises" },
+        (payload) => {
+          console.log("realtimeAnswers: ", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
     if (!data) return;
     const initializingAnswers: [string, boolean, number][] = [];
     data.forEach((answerItem) => {
@@ -41,12 +59,10 @@ export default function EditExercise(props: {
         answerItem.order_position,
       ]);
     });
-    if (!isInitialized) {
+    if (!isInitialized || liveEditByEmptied) {
       setAnswers(initializingAnswers);
       sendAnswers(initializingAnswers);
       sendInitialAnswersLength(initializingAnswers.length);
-    } else {
-      replaceInitialElements(answers, initializingAnswers);
     }
     setOldData(data);
     setIsInitialized(true);
@@ -72,13 +88,7 @@ export default function EditExercise(props: {
 
     await mutate(updatedData, false);
   }
-  function replaceInitialElements(
-    array: [string, boolean, number][],
-    replacementArray: [string, boolean, number][],
-  ) {
-    const remainingAnswers = array.slice(replacementArray.length);
-    return [...replacementArray, ...remainingAnswers];
-  }
+  
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
