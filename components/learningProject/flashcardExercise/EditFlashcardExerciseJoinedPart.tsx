@@ -223,6 +223,9 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [refetchedPrio, setRefetchedPrio] = useState<number>(null);
   const [updateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const [liveEditByEmptied, setLiveEditByEmptied] = useState<boolean>(false);
+  const [initialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
+  const [someoneAlreadyEditing, setSomeoneAlreadyEditing] =
+    useState<boolean>(null);
   const liveEditBy =
     usePresenceStore(
       useShallow((state) => state.cardQuizEditing[listItem.id]),
@@ -254,16 +257,27 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
   }, [listItem.question, liveEditByEmptied]);
-  const [intialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
+
   useFocusEffect(
     useCallback(() => {
+      if (!isInitialized) return;
       setInitialLiveEditBy(liveEditBy);
+      setSomeoneAlreadyEditing(liveEditBy.length > 0);
+      console.log("initialLiveEditBy: ", liveEditBy.length);
       setIsEditing(true);
       return () => {
         setInitialLiveEditBy([]);
       };
     }, [isInitialized]),
   );
+  useEffect(() => {
+    if (initialLiveEditBy.length === 0) return;
+    //console.log("initialLiveEditBy: ", initialLiveEditBy);
+    setSomeoneAlreadyEditing(
+      initialLiveEditBy.length > 0 &&
+        initialLiveEditBy.some((item) => liveEditBy.includes(item)),
+    );
+  }, [liveEditBy]);
   return (
     <>
       <Card
@@ -275,12 +289,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             marginBottom: 8,
             alignSelf: "center",
           },
-          intialLiveEditBy.length > 0 &&
-            liveEditBy.length > 0 && {
-              backgroundColor: theme.colors.primaryContainer,
-              borderColor: theme.colors.primary,
-              borderWidth: 2,
-            },
+          initialLiveEditBy.length > 0 && {
+            backgroundColor: theme.colors.primaryContainer,
+            borderColor: theme.colors.primary,
+            borderWidth: 2,
+          },
         ]}
       >
         <Card.Title
@@ -322,34 +335,54 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             </View>
           )}
         />
-        <Card.Content>
-          {intialLiveEditBy.length > 0 && liveEditBy.length > 0 && (
+        {liveEditBy.length > 0 && someoneAlreadyEditing !== null && (
+          <View
+            style={{
+              gap: 4,
+              paddingVertical: 4,
+              flexDirection: "row",
+              alignSelf: "center",
+              justifyContent: "center",
+              width: "100%",
+              alignItems: "center",
+              marginBottom: 8,
+              backgroundColor: someoneAlreadyEditing
+                ? theme.colors.onPrimaryContainer
+                : theme.colors.errorContainer,
+            }}
+          >
+            {!someoneAlreadyEditing && (
+              <Icon color={theme.colors.error} source={"alert"} size={14} />
+            )}
             <Text
+              variant="bodySmall"
               style={{
-                width: "auto",
                 textAlign: "center",
-                verticalAlign: "middle",
-                paddingVertical: 4,
-                marginBottom: 8,
-                marginLeft: -16,
-                marginRight: -16,
-                color: theme.colors.onPrimary,
-                backgroundColor: theme.colors.onPrimaryContainer,
+                color: someoneAlreadyEditing
+                  ? theme.colors.onPrimary
+                  : theme.colors.error,
               }}
             >
               {liveEditBy.length === 1
                 ? `${liveEditBy[0]} is`
-                : liveEditBy.length === 2
-                ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
                 : "Multiple people are"}{" "}
-              already editing this question{" "}
-              <Icon
-                color={theme.colors.onPrimary}
-                source={"account-multiple"}
-                size={16}
-              />
+              {someoneAlreadyEditing
+                ? "already editing"
+                : "also starting to edit"}{" "}
+              this question{" "}
             </Text>
-          )}
+            <Icon
+              color={
+                someoneAlreadyEditing
+                  ? theme.colors.onPrimary
+                  : theme.colors.error
+              }
+              source={"account-multiple"}
+              size={14}
+            />
+          </View>
+        )}
+        <Card.Content>
           <LivePresenceFunctionality
             isInitialized={isInitialized}
             listItemId={listItem.id}
