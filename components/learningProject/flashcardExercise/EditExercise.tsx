@@ -46,7 +46,7 @@ export default function EditExercise(props: {
   }, []);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || (isInitialized && !liveEditByEmptied)) return;
     const initializingAnswers: [string, boolean, number][] = [];
     data.forEach((answerItem) => {
       initializingAnswers.push([
@@ -63,7 +63,7 @@ export default function EditExercise(props: {
     }
     setOldData(data);
     setIsInitialized(true);
-  }, [data]);
+  }, [data, liveEditByEmptied]);
 
   useEffect(() => {
     if (!isInitialized) return;

@@ -247,13 +247,13 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setRefetchedPrio(listItem.priority);
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
-  }, [listItem.priority]);
+  }, [listItem.priority, liveEditByEmptied]);
   useEffect(() => {
     if (!liveEditByEmptied) return;
     setQuestion(listItem.question);
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
-  }, [listItem.question]);
+  }, [listItem.question, liveEditByEmptied]);
   const [intialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
   useFocusEffect(
     useCallback(() => {
@@ -262,7 +262,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       return () => {
         setInitialLiveEditBy([]);
       };
-    }, []),
+    }, [isInitialized]),
   );
   return (
     <>
