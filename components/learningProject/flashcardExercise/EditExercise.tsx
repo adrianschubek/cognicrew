@@ -63,6 +63,7 @@ export default function EditExercise(props: {
       setAnswers(initializingAnswers);
       sendAnswers(initializingAnswers);
       sendInitialAnswersLength(initializingAnswers.length);
+      liveEditByEmptied && onUpdate();
     }
     setOldData(data);
     setIsInitialized(true);
@@ -88,7 +89,7 @@ export default function EditExercise(props: {
 
     await mutate(updatedData, false);
   }
-  
+
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
