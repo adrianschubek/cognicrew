@@ -38,7 +38,7 @@ export default function EditExercise(props: {
         "postgres_changes",
         { event: "*", schema: "public", table: "answers_exercises" },
         (payload) => {
-          console.log("realtimeAnswers: ", payload);
+          //console.log("realtimeAnswers: ", payload);
           mutate();
         },
       )
@@ -179,7 +179,6 @@ export default function EditExercise(props: {
                     .map((e, index) => {
                       return [e[0], e[1], index + 1];
                     }) as [string, boolean, number][];
-                  //console.log("when Minus pressed: ", newAnswers);
                   setAnswers(newAnswers);
                   sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);

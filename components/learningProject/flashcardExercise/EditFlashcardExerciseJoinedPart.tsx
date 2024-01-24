@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import {
   Card,
@@ -263,7 +263,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       if (!isInitialized) return;
       setInitialLiveEditBy(liveEditBy);
       setSomeoneAlreadyEditing(liveEditBy.length > 0);
-      console.log("initialLiveEditBy: ", liveEditBy.length);
       setIsEditing(true);
       return () => {
         setInitialLiveEditBy([]);
@@ -272,7 +271,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   useEffect(() => {
     if (initialLiveEditBy.length === 0) return;
-    //console.log("initialLiveEditBy: ", initialLiveEditBy);
     setSomeoneAlreadyEditing(
       initialLiveEditBy.length > 0 &&
         initialLiveEditBy.some((item) => liveEditBy.includes(item)),
