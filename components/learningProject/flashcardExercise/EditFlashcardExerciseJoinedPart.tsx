@@ -287,12 +287,11 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             marginBottom: 8,
             alignSelf: "center",
           },
-          initialLiveEditBy.length > 0 &&
-            someoneAlreadyEditing !== null && {
-              backgroundColor: theme.colors.primaryContainer,
-              borderColor: theme.colors.primary,
-              borderWidth: 2,
-            },
+          initialLiveEditBy.length > 0 && {
+            backgroundColor: theme.colors.primaryContainer,
+            borderColor: theme.colors.primary,
+            borderWidth: 2,
+          },
         ]}
       >
         <Card.Title
