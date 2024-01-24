@@ -5,16 +5,12 @@ import { TextInput, useTheme } from "react-native-paper";
 export default function PrioritySelector(props: {
   priority: number;
   sendPriority: (priority: number) => void;
-  onStartEditing: () => any;
-  onFinishEditing: () => any;
   refetchedPrio: number;
 }) {
   const theme = useTheme();
   const {
     priority,
     sendPriority,
-    onStartEditing,
-    onFinishEditing,
     refetchedPrio,
   } = props;
   const [priorityStringified, setPriorityStringified] = useState<string>(
@@ -77,14 +73,12 @@ export default function PrioritySelector(props: {
           }
           setPriorityStringified(prio);
         }}
-        onFocus={onStartEditing}
         onBlur={() => {
           setPriorityStringified(
             priorityStringified.length === 1
               ? "0" + priorityStringified
               : priorityStringified,
           );
-          onFinishEditing();
         }}
       />
     </>

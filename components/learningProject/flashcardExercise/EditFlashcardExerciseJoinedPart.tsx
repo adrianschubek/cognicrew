@@ -30,6 +30,7 @@ import { useAlerts } from "react-native-paper-fastalerts";
 import LivePresenceFunctionality from "./LivePresenceFunctionality";
 import { usePresenceStore } from "../../../stores/PresenceStore";
 import { useShallow } from "zustand/react/shallow";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
   listItem: {
@@ -59,10 +60,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   //exercise specific
-  async function deleteAnswers(
-    initialLength: number,
-    answersLength: number,
-  ) {
+  async function deleteAnswers(initialLength: number, answersLength: number) {
     const numberOfAnswersToDelete = initialLength - answersLength;
     if (numberOfAnswersToDelete <= 0) return;
     const initialLenghtArray = Array.from(
@@ -240,6 +238,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     ) {
       //console.log("EMPTIED: ", true);
       setLiveEditByEmptied(true);
+      setInitialLiveEditBy([]);
     }
     setPrevLiveEditByLength(liveEditBy.length);
   }, [liveEditBy.length]);
@@ -255,6 +254,16 @@ export default function EditFlashcardExerciseJoinedPart(props: {
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
   }, [listItem.question]);
+  const [intialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
+  useFocusEffect(
+    useCallback(() => {
+      setInitialLiveEditBy(liveEditBy);
+      setIsEditing(true);
+      return () => {
+        setInitialLiveEditBy([]);
+      };
+    }, []),
+  );
   return (
     <>
       <Card
@@ -266,11 +275,12 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             marginBottom: 8,
             alignSelf: "center",
           },
-          liveEditBy.length > 0 && {
-            backgroundColor: theme.colors.primaryContainer,
-            borderColor: theme.colors.primary,
-            borderWidth: 2,
-          },
+          intialLiveEditBy.length > 0 &&
+            liveEditBy.length > 0 && {
+              backgroundColor: theme.colors.primaryContainer,
+              borderColor: theme.colors.primary,
+              borderWidth: 2,
+            },
         ]}
       >
         <Card.Title
@@ -292,8 +302,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                 sendPriority={(val) => {
                   setPriority(val);
                 }}
-                onStartEditing={() => setIsEditing(true)}
-                onFinishEditing={() => setIsEditing(false)}
                 refetchedPrio={refetchedPrio}
               />
               <IconButton
@@ -315,7 +323,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           )}
         />
         <Card.Content>
-          {liveEditBy.length > 0 && (
+          {intialLiveEditBy.length > 0 && liveEditBy.length > 0 && (
             <Text
               style={{
                 width: "auto",
@@ -334,7 +342,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                 : liveEditBy.length === 2
                 ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
                 : "Multiple people are"}{" "}
-              editing this question{" "}
+              already editing this question{" "}
               <Icon
                 color={theme.colors.onPrimary}
                 source={"account-multiple"}
@@ -353,8 +361,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             multiline={true}
             label="Question"
             value={question}
-            onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
             onChangeText={(question) => {
               setQuestion(question);
             }}
@@ -365,8 +371,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               sendAnswers={(val) => setAnswerOrAnswers(val)}
               sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
               updateCacheTrigger={updateCache}
-              onStartEditing={() => setIsEditing(true)}
-              onFinishEditing={() => setIsEditing(false)}
               liveEditByEmptied={liveEditByEmptied}
               onUpdate={() => {
                 setLiveEditByEmptied(false);
@@ -377,8 +381,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             <EditFlashcard
               listItem={listItem}
               sendAnswer={(val) => setAnswerOrAnswers(val)}
-              onStartEditing={() => setIsEditing(true)}
-              onFinishEditing={() => setIsEditing(false)}
               liveEditByEmptied={liveEditByEmptied}
               onUpdate={() => {
                 setLiveEditByEmptied(false);

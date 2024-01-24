@@ -5,16 +5,12 @@ import { TextInput } from "react-native-paper";
 export default function EditFlashcard(props: {
   listItem: any;
   sendAnswer: (answer: string) => any;
-  onStartEditing?: () => any;
-  onFinishEditing?: () => any;
   liveEditByEmptied: boolean;
   onUpdate: () => void;
 }) {
   const {
     listItem,
     sendAnswer,
-    onStartEditing,
-    onFinishEditing,
     liveEditByEmptied,
     onUpdate,
   } = props;
@@ -33,8 +29,6 @@ export default function EditFlashcard(props: {
       testID="input-edit-flashcard-answer"
       multiline={true}
       value={answer}
-      onFocus={onStartEditing}
-      onBlur={onFinishEditing}
       onChangeText={(answer) => {
         setAnswer(answer);
         sendAnswer(answer);

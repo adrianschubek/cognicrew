@@ -11,8 +11,6 @@ export default function EditExercise(props: {
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswersLength: (InitialAnswersLength: number) => any;
   updateCacheTrigger: boolean;
-  onStartEditing?: () => any;
-  onFinishEditing?: () => any;
   liveEditByEmptied: boolean;
   onUpdate: () => void;
 }) {
@@ -21,8 +19,6 @@ export default function EditExercise(props: {
     sendAnswers,
     sendInitialAnswersLength,
     updateCacheTrigger,
-    onStartEditing,
-    onFinishEditing,
     liveEditByEmptied,
     onUpdate,
   } = props;
@@ -169,13 +165,10 @@ export default function EditExercise(props: {
               sendAnswer={getAnswer(index + 1)}
               number={index + 1}
               flex={1}
-              onStartEditing={onStartEditing}
-              onFinishEditing={onFinishEditing}
             />
             {showAnswerDeletionOptions && (
               <IconButton
                 icon="close"
-                onPressIn={onStartEditing}
                 onPress={() => {
                   if (answers.length <= 2) {
                     setShowErrorAnswerBoundaries(true);
@@ -190,7 +183,6 @@ export default function EditExercise(props: {
                   setAnswers(newAnswers);
                   sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);
-                  onFinishEditing();
                 }}
               />
             )}
