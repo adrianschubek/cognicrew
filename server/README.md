@@ -5,8 +5,6 @@ Also use this `docker-compose.yml` instead of the one provided in the guide for 
 
 Then run `docker-compose up -d` to start the server.
 
-The \*.sql files contain the DDL of the entire `public` scheme (= our code).
+The \*.sql files contain the DDL of the entire database.
 
 You can restore the latest scheme dump with `psql -U postgres -d postgres -f <file>`.
-
-fulldumps contain the entire database (including all data) and can be restored with `pg_restore --disable-triggers -U postgres -d postgres <file>`.
