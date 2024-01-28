@@ -11,16 +11,16 @@ export default function EditExercise(props: {
   sendAnswers: (answers: [string, boolean, number][]) => any;
   sendInitialAnswersLength: (InitialAnswersLength: number) => any;
   updateCacheTrigger: boolean;
-  onStartEditing?: () => any;
-  onFinishEditing?: () => any;
+  liveEditByEmptied: boolean;
+  onUpdate: () => void;
 }) {
   const {
     listItem,
     sendAnswers,
     sendInitialAnswersLength,
     updateCacheTrigger,
-    onStartEditing,
-    onFinishEditing,
+    liveEditByEmptied,
+    onUpdate,
   } = props;
   const [showErrorAnswerBoundaries, setShowErrorAnswerBoundaries] =
     useState<boolean>(false);
@@ -32,7 +32,21 @@ export default function EditExercise(props: {
     useState<boolean>(false);
 
   useEffect(() => {
-    if (!data) return;
+    const realtimeAnswers = supabase
+      .channel("answers_exercises_all")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "answers_exercises" },
+        (payload) => {
+          //console.log("realtimeAnswers: ", payload);
+          mutate();
+        },
+      )
+      .subscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!data || (isInitialized && !liveEditByEmptied)) return;
     const initializingAnswers: [string, boolean, number][] = [];
     data.forEach((answerItem) => {
       initializingAnswers.push([
@@ -41,16 +55,15 @@ export default function EditExercise(props: {
         answerItem.order_position,
       ]);
     });
-    if (!isInitialized) {
+    if (!isInitialized || liveEditByEmptied) {
       setAnswers(initializingAnswers);
       sendAnswers(initializingAnswers);
       sendInitialAnswersLength(initializingAnswers.length);
-    } else {
-      replaceInitialElements(answers, initializingAnswers);
+      liveEditByEmptied && onUpdate();
     }
     setOldData(data);
     setIsInitialized(true);
-  }, [data]);
+  }, [data, liveEditByEmptied]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -72,13 +85,7 @@ export default function EditExercise(props: {
 
     await mutate(updatedData, false);
   }
-  function replaceInitialElements(
-    array: [string, boolean, number][],
-    replacementArray: [string, boolean, number][],
-  ) {
-    const remainingAnswers = array.slice(replacementArray.length);
-    return [...replacementArray, ...remainingAnswers];
-  }
+
   function getAnswer(number: number) {
     return ([text, checked]: [string, boolean]) => {
       let newAnswers = [...answers];
@@ -158,13 +165,10 @@ export default function EditExercise(props: {
               sendAnswer={getAnswer(index + 1)}
               number={index + 1}
               flex={1}
-              onStartEditing={onStartEditing}
-              onFinishEditing={onFinishEditing}
             />
             {showAnswerDeletionOptions && (
               <IconButton
                 icon="close"
-                onPressIn={onStartEditing}
                 onPress={() => {
                   if (answers.length <= 2) {
                     setShowErrorAnswerBoundaries(true);
@@ -175,11 +179,9 @@ export default function EditExercise(props: {
                     .map((e, index) => {
                       return [e[0], e[1], index + 1];
                     }) as [string, boolean, number][];
-                  //console.log("when Minus pressed: ", newAnswers);
                   setAnswers(newAnswers);
                   sendfilteredAnswers(newAnswers);
                   setShowErrorAnswerBoundaries(false);
-                  onFinishEditing();
                 }}
               />
             )}

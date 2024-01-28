@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import {
   Card,
@@ -28,13 +28,22 @@ import {
 import { supabase } from "../../../supabase";
 import { useAlerts } from "react-native-paper-fastalerts";
 import LivePresenceFunctionality from "./LivePresenceFunctionality";
+import { usePresenceStore } from "../../../stores/PresenceStore";
+import { useShallow } from "zustand/react/shallow";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function EditFlashcardExerciseJoinedPart(props: {
-  listItem: any;
+  listItem: {
+    id: number;
+    question: string;
+    priority: number;
+    set_id: number;
+    created_at: string;
+  };
   type: ManagementType;
-  liveEditBy: string[];
 }) {
-  const { listItem, type, liveEditBy } = props;
+  const { listItem, type } = props;
+  const theme = useTheme();
   const alerts = useAlerts();
   const [showErrorUpload, setShowErrorUpload] = useState<boolean>(false);
   const [errorText, setErrorText] = useState<string>("");
@@ -44,16 +53,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [question, setQuestion] = useState<string>(listItem.question as string);
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [updateCache, setUpdateCache] = useState<boolean>(false);
+
+  //DELETION AND UPSERTING
   //Exercise hooks
   const { trigger: upsertExercise } = useUpsertExercise();
   const { trigger: deleteExercise } = useDeleteExercise();
   const { trigger: upsertAnswersExercise } = useUpsertAnswersExercise();
   //exercise specific
-  async function deleteAnswers(
-    initialLength: number,
-    answers: [string, boolean, number][],
-  ) {
-    const numberOfAnswersToDelete = initialLength - answers.length;
+  async function deleteAnswers(initialLength: number, answersLength: number) {
+    const numberOfAnswersToDelete = initialLength - answersLength;
     if (numberOfAnswersToDelete <= 0) return;
     const initialLenghtArray = Array.from(
       { length: initialLength },
@@ -95,7 +103,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
           set_id: listItem.set_id,
         }).then((res) => {
           //answers need to be updated
-          deleteAnswers(initialLength, answerOrAnswers);
+          deleteAnswers(initialLength, answerOrAnswers.length);
           answerOrAnswers.forEach((e) => {
             upsertAnswersExercise({
               //@ts-expect-error
@@ -191,24 +199,83 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   );
   const debouncedUpdate = useCallback(updateDebounceApplied, []);
   useEffect(() => {
-    // Call the debounced function
-    if (isInitialized) {
-      debouncedUpdate(
-        question,
-        answerOrAnswers,
-        priority,
-        initialAnswersLength,
-        updateCache,
-      );
+    if (!isInitialized) return;
+    if (updateDisabled) {
+      setUpdateDisabled(false);
+      return;
     }
+    debouncedUpdate(
+      question,
+      answerOrAnswers,
+      priority,
+      initialAnswersLength,
+      updateCache,
+    );
   }, [question, answerOrAnswers, priority, debouncedUpdate]);
   useEffect(() => {
     if (!answerOrAnswers) return;
     setIsInitialized(true);
   }, [answerOrAnswers, priority, question]);
+  //END DELETION AND UPSERTING
 
-  const theme = useTheme();
+  //LIVE EDITING RERENDERING
   const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [refetchedPrio, setRefetchedPrio] = useState<number>(null);
+  const [updateDisabled, setUpdateDisabled] = useState<boolean>(false);
+  const [liveEditByEmptied, setLiveEditByEmptied] = useState<boolean>(false);
+  const [initialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
+  const [someoneAlreadyEditing, setSomeoneAlreadyEditing] =
+    useState<boolean>(null);
+  const liveEditBy =
+    usePresenceStore(
+      useShallow((state) => state.cardQuizEditing[listItem.id]),
+    ) ?? [];
+  const [prevLiveEditByLength, setPrevLiveEditByLength] = useState(
+    liveEditBy.length,
+  );
+  useEffect(() => {
+    //console.log("liveEditBy: ", liveEditBy);
+    if (
+      liveEditBy.length < prevLiveEditByLength &&
+      prevLiveEditByLength === 1 //the last one gets the actual edit
+    ) {
+      //console.log("EMPTIED: ", true);
+      setLiveEditByEmptied(true);
+      setInitialLiveEditBy([]);
+    }
+    setPrevLiveEditByLength(liveEditBy.length);
+  }, [liveEditBy.length]);
+  useEffect(() => {
+    if (!liveEditByEmptied) return;
+    setRefetchedPrio(listItem.priority);
+    setUpdateDisabled(true);
+    setLiveEditByEmptied(false);
+  }, [listItem.priority, liveEditByEmptied]);
+  useEffect(() => {
+    if (!liveEditByEmptied) return;
+    setQuestion(listItem.question);
+    setUpdateDisabled(true);
+    setLiveEditByEmptied(false);
+  }, [listItem.question, liveEditByEmptied]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!isInitialized) return;
+      setInitialLiveEditBy(liveEditBy);
+      setSomeoneAlreadyEditing(liveEditBy.length > 0);
+      setIsEditing(true);
+      return () => {
+        setInitialLiveEditBy([]);
+      };
+    }, [isInitialized]),
+  );
+  useEffect(() => {
+    if (initialLiveEditBy.length === 0) return;
+    setSomeoneAlreadyEditing(
+      initialLiveEditBy.length > 0 &&
+        initialLiveEditBy.some((item) => liveEditBy.includes(item)),
+    );
+  }, [liveEditBy]);
   return (
     <>
       <Card
@@ -220,7 +287,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             marginBottom: 8,
             alignSelf: "center",
           },
-          liveEditBy.length > 0 && {
+          initialLiveEditBy.length > 0 && {
             backgroundColor: theme.colors.primaryContainer,
             borderColor: theme.colors.primary,
             borderWidth: 2,
@@ -246,8 +313,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                 sendPriority={(val) => {
                   setPriority(val);
                 }}
-                onStartEditing={() => setIsEditing(true)}
-                onFinishEditing={() => setIsEditing(false)}
+                refetchedPrio={refetchedPrio}
               />
               <IconButton
                 testID="delete-flashcard-button"
@@ -267,34 +333,54 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             </View>
           )}
         />
-        <Card.Content>
-          {liveEditBy.length > 0 && (
+        {liveEditBy.length > 0 && someoneAlreadyEditing !== null && (
+          <View
+            style={{
+              gap: 4,
+              paddingVertical: 4,
+              flexDirection: "row",
+              alignSelf: "center",
+              justifyContent: "center",
+              width: "100%",
+              alignItems: "center",
+              marginBottom: 8,
+              backgroundColor: someoneAlreadyEditing
+                ? theme.colors.onPrimaryContainer
+                : theme.colors.errorContainer,
+            }}
+          >
+            {!someoneAlreadyEditing && (
+              <Icon color={theme.colors.error} source={"alert"} size={14} />
+            )}
             <Text
+              variant="bodySmall"
               style={{
-                width: "auto",
                 textAlign: "center",
-                verticalAlign: "middle",
-                paddingVertical: 4,
-                marginBottom: 8,
-                marginLeft: -16,
-                marginRight: -16,
-                color: theme.colors.onPrimary,
-                backgroundColor: theme.colors.onPrimaryContainer,
+                color: someoneAlreadyEditing
+                  ? theme.colors.onPrimary
+                  : theme.colors.error,
               }}
             >
               {liveEditBy.length === 1
                 ? `${liveEditBy[0]} is`
-                : liveEditBy.length === 2
-                ? `${liveEditBy[0]} and ${liveEditBy[1]} are`
                 : "Multiple people are"}{" "}
-              editing this question{" "}
-              <Icon
-                color={theme.colors.onPrimary}
-                source={"account-multiple"}
-                size={16}
-              />
+              {someoneAlreadyEditing
+                ? "already editing"
+                : "also starting to edit"}{" "}
+              this question{" "}
             </Text>
-          )}
+            <Icon
+              color={
+                someoneAlreadyEditing
+                  ? theme.colors.onPrimary
+                  : theme.colors.error
+              }
+              source={"account-multiple"}
+              size={14}
+            />
+          </View>
+        )}
+        <Card.Content>
           <LivePresenceFunctionality
             isInitialized={isInitialized}
             listItemId={listItem.id}
@@ -306,8 +392,6 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             multiline={true}
             label="Question"
             value={question}
-            onFocus={() => setIsEditing(true)}
-            onBlur={() => setIsEditing(false)}
             onChangeText={(question) => {
               setQuestion(question);
             }}
@@ -318,15 +402,20 @@ export default function EditFlashcardExerciseJoinedPart(props: {
               sendAnswers={(val) => setAnswerOrAnswers(val)}
               sendInitialAnswersLength={(num) => setInitialAnswersLength(num)}
               updateCacheTrigger={updateCache}
-              onStartEditing={() => setIsEditing(true)}
-              onFinishEditing={() => setIsEditing(false)}
+              liveEditByEmptied={liveEditByEmptied}
+              onUpdate={() => {
+                setLiveEditByEmptied(false);
+                setUpdateDisabled(true);
+              }}
             />
           ) : (
             <EditFlashcard
               listItem={listItem}
               sendAnswer={(val) => setAnswerOrAnswers(val)}
-              onStartEditing={() => setIsEditing(true)}
-              onFinishEditing={() => setIsEditing(false)}
+              liveEditByEmptied={liveEditByEmptied}
+              onUpdate={() => {
+                setLiveEditByEmptied(false);
+              }}
             />
           )}
           {showErrorUpload && errorText !== "" && (
