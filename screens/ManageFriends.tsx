@@ -92,9 +92,10 @@ export default function ManageFriends({ navigation }) {
           friendRequestsSent={friendRequestsSent}
           userId={user.id}
           onChange={(index) => {
-            if (index === 1 || index === -1) {
-              isRequestsModalVisibleRef.current =
-                !isRequestsModalVisibleRef.current;
+            if (index > 0) {
+              isRequestsModalVisibleRef.current = true;
+            } else {
+              isRequestsModalVisibleRef.current = false;
             }
           }}
         />
