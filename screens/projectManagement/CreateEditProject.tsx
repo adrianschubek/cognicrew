@@ -410,7 +410,7 @@ export default function CreateEditProject({
             </Button>
           </>
         )}
-        {!project && <View style={{ marginBottom: 60 }}></View>}
+        {!project && <View style={{ height: 88 }}/>}
       </ScrollView>
       {project && project?.owner_id !== myId && (
         <Button
