@@ -224,17 +224,18 @@ export default function EditFlashcardExerciseJoinedPart(props: {
   const [updateDisabled, setUpdateDisabled] = useState<boolean>(false);
   const [liveEditByEmptied, setLiveEditByEmptied] = useState<boolean>(false);
   const [initialLiveEditBy, setInitialLiveEditBy] = useState<string[]>([]);
+  const [liveEditByInitialized, setLiveEditByInitialized] =
+    useState<boolean>(false);
   const [someoneAlreadyEditing, setSomeoneAlreadyEditing] =
     useState<boolean>(null);
-  const liveEditBy =
-    usePresenceStore(
-      useShallow((state) => state.cardQuizEditing[listItem.id]),
-    ) ?? [];
+  const liveEditBy = usePresenceStore(
+    useShallow((state) => state.cardQuizEditing[listItem.id]),
+  );
   const [prevLiveEditByLength, setPrevLiveEditByLength] = useState(
-    liveEditBy.length,
+    liveEditBy?.length,
   );
   useEffect(() => {
-    //console.log("liveEditBy: ", liveEditBy);
+    if (!liveEditBy) return;
     if (
       liveEditBy.length < prevLiveEditByLength &&
       prevLiveEditByLength === 1 //the last one gets the actual edit
@@ -244,15 +245,15 @@ export default function EditFlashcardExerciseJoinedPart(props: {
       setInitialLiveEditBy([]);
     }
     setPrevLiveEditByLength(liveEditBy.length);
-  }, [liveEditBy.length]);
+  }, [liveEditBy?.length]);
   useEffect(() => {
-    if (!liveEditByEmptied) return;
+    if (!liveEditByEmptied || !liveEditBy) return;
     setRefetchedPrio(listItem.priority);
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
   }, [listItem.priority, liveEditByEmptied]);
   useEffect(() => {
-    if (!liveEditByEmptied) return;
+    if (!liveEditByEmptied || !liveEditBy) return;
     setQuestion(listItem.question);
     setUpdateDisabled(true);
     setLiveEditByEmptied(false);
@@ -260,17 +261,19 @@ export default function EditFlashcardExerciseJoinedPart(props: {
 
   useFocusEffect(
     useCallback(() => {
-      if (!isInitialized) return;
+      if (!liveEditBy || liveEditByInitialized) return;
       setInitialLiveEditBy(liveEditBy);
       setSomeoneAlreadyEditing(liveEditBy.length > 0);
       setIsEditing(true);
+      setLiveEditByInitialized(true);
       return () => {
         setInitialLiveEditBy([]);
       };
-    }, [isInitialized]),
+    }, [liveEditBy]),
   );
   useEffect(() => {
-    if (initialLiveEditBy.length === 0) return;
+    //console.log("liveEditBy: ", liveEditBy);
+    if (!liveEditBy || initialLiveEditBy.length === 0) return;
     setSomeoneAlreadyEditing(
       initialLiveEditBy.length > 0 &&
         initialLiveEditBy.some((item) => liveEditBy.includes(item)),
@@ -333,7 +336,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
             </View>
           )}
         />
-        {liveEditBy.length > 0 && someoneAlreadyEditing !== null && (
+        {liveEditBy?.length > 0 && someoneAlreadyEditing !== null && (
           <View
             style={{
               gap: 4,
@@ -361,7 +364,7 @@ export default function EditFlashcardExerciseJoinedPart(props: {
                   : theme.colors.error,
               }}
             >
-              {liveEditBy.length === 1
+              {liveEditBy?.length === 1
                 ? `${liveEditBy[0]} is`
                 : "Multiple people are"}{" "}
               {someoneAlreadyEditing
