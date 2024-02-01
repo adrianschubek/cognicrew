@@ -189,9 +189,8 @@ export function useRecommendations(userId: string) {
 //Search projects
 
 //Rate projects
-export function useProjectRatings(projectId: number, userId: string) {
+export function useProjectRatings(projectId: number) {
   const query = supabase.rpc("get_project_ratings", {
-    p_user_id: userId,
     p_project_id: projectId,
   });
 
@@ -207,16 +206,16 @@ export function useProjectRatings(projectId: number, userId: string) {
     mutate,
   };
 }
-/*export function useProjectRating(projectId: number, userId: string) {
+export function useProjectRating(projectId: number, userId: string) {
   const query = supabase
     .from("project_ratings")
-    .select("rating")
+    .select("project_id,user_id,created_at,rating")
     .eq("user_id", userId)
     .eq("project_id", projectId);
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
   return { data, error, isLoading, mutate };
 }
-*/
+
 //Project statistics
 export function useProjectStatistics(projectId: number, userId: string) {
   const query = supabase.rpc("get_project_statistics", {

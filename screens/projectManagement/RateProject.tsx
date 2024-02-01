@@ -81,10 +81,7 @@ export default function RateProject({
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
-  const { data, error, isLoading, mutate } = useProjectRatings(
-    projectId,
-    user.id,
-  );
+  const { data, error, isLoading, mutate } = useProjectRatings(projectId);
   useEffect(() => {
     if (!data || isLoading) return;
     /* if (!isInitialised) {
@@ -132,10 +129,7 @@ export default function RateProject({
           dataPoints: [
             {
               customNode: (
-                <RateProjectComponent
-                  projectId={projectId}
-                  userId={user.id}
-                />
+                <RateProjectComponent projectId={projectId} userId={user.id} />
               ),
             },
           ],
