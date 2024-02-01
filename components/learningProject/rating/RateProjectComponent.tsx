@@ -4,18 +4,17 @@ import { useCallback, useEffect, useState } from "react";
 import { debounce } from "../../../utils/common";
 import {
   useDeleteProjectRating,
-  useProjectRating,
   useUpsertProjectRating,
 } from "../../../utils/hooks";
+import { supabase } from "../../../supabase";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function RateProjectComponent(props: {
   projectId: number;
   userId: string;
-  rating?: number;
 }) {
   const { projectId, userId } = props;
-  const [rating, setRating] = useState<number>(props.rating ?? null);
-  const [isInitialized, setIsInitialized] = useState<boolean>(false);
+  const [rating, setRating] = useState<number>(null);
   const { trigger: upsertProjectRating } = useUpsertProjectRating();
   const { trigger: deleteProjectRating } = useDeleteProjectRating();
   const starsArray = Array.from({ length: 5 }, (_, index) => index + 1);
@@ -48,37 +47,26 @@ export default function RateProjectComponent(props: {
     debouncedBackendCall(projectId, userId, rating);
   }, [rating, debouncedBackendCall]);
 
-
-  function GetRating(props: {
-    sendRating: (rating: number) => void;
-    sendIsInitialized?: (isInitialized: boolean) => void;
-    projectId: number;
-    userId: string;
-    isInitialized?: boolean;
-  }) {
-    const { data } = useProjectRating(props.projectId, props.userId);
-    useEffect(() => {
-      if (props.isInitialized || !data) return;
-      props.sendRating(data[0]?.rating);
-      props.sendIsInitialized(true);
-    }, [data]);
-    return null;
-  }
+  useFocusEffect(() => {
+    async function fetchData() {
+      try {
+        const result = await supabase
+          .from("project_ratings")
+          .select("rating")
+          .eq("user_id", userId)
+          .eq("project_id", projectId);
+        return result;
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    }
+    fetchData().then((data) => {
+      console.log("result: ", data);
+      setRating(data.data[0]?.rating);
+    });
+  });
   return (
     <>
-      {!props.rating ? (
-        <GetRating
-          projectId={projectId}
-          userId={userId}
-          isInitialized={isInitialized}
-          sendRating={(rating) => {
-            setRating(rating);
-          }}
-          sendIsInitialized={(isInitialized) => {
-            setIsInitialized(isInitialized);
-          }}
-        />
-      ) : null}
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         {starsArray.map((number) => {
           return (

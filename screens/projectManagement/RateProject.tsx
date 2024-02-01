@@ -76,20 +76,20 @@ export default function RateProject({
 
   const { user } = useAuth();
   const projectId = useProjectStore((state) => state.projectId);
-  const [rating, setRating] = useState(null);
+  //const [rating, setRating] = useState(null);
+  //const [isInitialised, setIsInitialised] = useState(false);
   const [sum, setSum] = useState(null);
   const [avg, setAvg] = useState(null);
   const [arrRatings, setArrRatings] = useState([]);
-  const [isInitialised, setIsInitialised] = useState(false);
   const { data, error, isLoading, mutate } = useProjectRatings(
     projectId,
     user.id,
   );
   useEffect(() => {
     if (!data || isLoading) return;
-    if (!isInitialised) {
+    /* if (!isInitialised) {
       setRating(data[0]["user_rating"]);
-    }
+    }*/
     setAvg(data[0]["avg_rating"]);
     setSum(data[0]["count_all_ratings"]);
     const ratingsObject = data[0]["individual_ratings_arr"];
@@ -100,7 +100,7 @@ export default function RateProject({
       ratingsObject["count_four_star"],
       ratingsObject["count_five_star"],
     ]);
-    if (!isInitialised) setIsInitialised(true);
+    //if (!isInitialised) setIsInitialised(true);
   }, [data]);
 
   useFocusEffect(() => {
@@ -133,10 +133,8 @@ export default function RateProject({
             {
               customNode: (
                 <RateProjectComponent
-                  key={rating} //component doesnt rerender without key
                   projectId={projectId}
                   userId={user.id}
-                  //rating={rating}
                 />
               ),
             },

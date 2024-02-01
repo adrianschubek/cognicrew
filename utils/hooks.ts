@@ -207,7 +207,7 @@ export function useProjectRatings(projectId: number, userId: string) {
     mutate,
   };
 }
-export function useProjectRating(projectId: number, userId: string) {
+/*export function useProjectRating(projectId: number, userId: string) {
   const query = supabase
     .from("project_ratings")
     .select("rating")
@@ -216,7 +216,7 @@ export function useProjectRating(projectId: number, userId: string) {
   const { data, error, isLoading, mutate } = handleErrors(useQuery(query));
   return { data, error, isLoading, mutate };
 }
-
+*/
 //Project statistics
 export function useProjectStatistics(projectId: number, userId: string) {
   const query = supabase.rpc("get_project_statistics", {
