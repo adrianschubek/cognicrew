@@ -61,7 +61,7 @@ export default function RateProjectComponent(props: {
       }
     }
     fetchData().then((data) => {
-      console.log("result: ", data);
+      //console.log("result: ", data);
       setRating(data.data[0]?.rating);
     });
   });
