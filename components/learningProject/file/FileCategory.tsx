@@ -62,16 +62,16 @@ export default function FileCategory({ title, folder, projectId }) {
       expanded={expanded}
       onPress={() => setExpanded(!expanded)}
     >
-      {!files.length && (
-        <HelperText
-          type="info"
-          style={{ backgroundColor: theme.colors.secondaryContainer }}
-        >
-          There are no cognifiles in this set. Add some via the buttons on the
-          bottom right
-        </HelperText>
-      )}
       <View style={{ marginLeft: -40, marginRight: -40 }}>
+        {!files.length && (
+          <HelperText
+            type="info"
+            style={{ backgroundColor: theme.colors.secondaryContainer }}
+          >
+            There are no cognifiles in this set. Add some via the buttons on the
+            bottom right
+          </HelperText>
+        )}
         <FlatList
           data={files}
           renderItem={({ item }) => (
