@@ -25,10 +25,11 @@ export default function SearchProjects() {
         {
           event: "*",
           schema: "public",
-          table: "learning_projects",
-          filter: "is_published=eq.true",
+          table: "tracker",
+          filter: "key=eq.public_projects",
         },
         (payload) => {
+          //console.log(payload);
           mutate();
         },
       )
