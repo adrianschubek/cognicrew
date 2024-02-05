@@ -10,14 +10,16 @@ export default function MusicPlayer() {
   const { inGame } = useSoundsStore();
   const { musicVolume } = usePersistingSoundsStore();
   const [isLoading, setIsLoading] = useState(false);
-  async function playMusic() {
-    if (isLoading) return;
-
-    setIsLoading(true);
+  async function stopMusic() {
     if (music.current._loaded) {
       await music.current.stopAsync();
       await music.current.unloadAsync();
     }
+  }
+  async function playMusic() {
+    if (isLoading) return;
+    setIsLoading(true);
+    stopMusic();
     try {
       if (!inGame) {
         await music.current.loadAsync(
@@ -47,6 +49,11 @@ export default function MusicPlayer() {
     }
   }
 
+  useEffect(() => {
+    return () => {
+      stopMusic();
+    };
+  }, []);
   useEffect(() => {
     playMusic();
   }, [inGame]);
