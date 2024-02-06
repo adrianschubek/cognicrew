@@ -25,8 +25,8 @@ function handleErrors<T>(
   const { error: errorAlert } = useAlerts();
   // @ts-expect-error fn.error always exists
   if (fn.error) {
-    // @ts-expect-error
-    errorAlert({ title: "Error", message: getErrorMessage(fn.error.message) });
+    /*
+    errorAlert({ title: "Error", message: getErrorMessage(fn.error.message) });*/
     // @ts-expect-error
     console.log("[handleErrors] " + getErrorMessage(fn.error.message));
   }
